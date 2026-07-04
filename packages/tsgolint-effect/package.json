@@ -2,6 +2,12 @@
   "name": "@tiara-stack/tsgolint-effect",
   "version": "0.1.0",
   "description": "Native tsgolint with Effect diagnostics for Tiara Stack tooling.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiara-stack/native-tooling.git",
+    "directory": "packages/tsgolint-effect"
+  },
   "bin": {
     "tsgolint-effect": "./bin/tsgolint-effect.mjs"
   },
@@ -18,6 +24,9 @@
     },
     "./bin/tsgolint-effect": "./bin/tsgolint-effect.mjs",
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "vp pack",

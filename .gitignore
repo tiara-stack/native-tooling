@@ -6,6 +6,7 @@ pnpm-debug.log*
 dist
 .ts-out
 *.tsbuildinfo
+.tmp
 
 # Native build outputs
 native/tsgolint-effect-fork/tsgolint

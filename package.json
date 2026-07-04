@@ -15,14 +15,16 @@
     "native:build:tsgolint": "cd native/tsgolint-effect-fork && GOCACHE=${GOCACHE:-/tmp/go-build-cache} GOTMPDIR=${GOTMPDIR:-/tmp} go build -o tsgolint ./cmd/tsgolint",
     "native:build:oxlint": "cd native/oxc-oxlint-effect-fork && PATH=\"$HOME/.cargo/bin:/opt/data/dev-home/.cargo/bin:$PATH\" cargo build -p oxlint --release --features allocator",
     "native:stage": "node scripts/stage-local-binaries.mjs",
-    "native:smoke": "cd native/tsgolint-effect-fork && ./scripts/headless-smoke.mjs",
-    "publish:stage": "pnpm build && pnpm native:stage && vp pm stage publish -r --filter './packages/*'",
+    "native:smoke": "node scripts/headless-smoke.mjs",
+    "publish:stage": "pnpm build && pnpm native:stage && vp pm stage publish -r --filter './packages/*' --access public --provenance -- --no-git-checks",
+    "publish:stage:dry-run": "pnpm build && pnpm native:stage && vp pm stage publish -r --filter './packages/*' --access public --provenance --dry-run -- --no-git-checks",
     "publish:stage:list": "vp pm stage list",
     "publish:stage:approve": "vp pm stage approve",
     "publish:stage:reject": "vp pm stage reject"
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "effect": "catalog:",
     "tsx": "catalog:",
     "typescript": "^5.9.3",
     "vite": "catalog:",

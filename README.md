@@ -42,6 +42,34 @@ vp pm stage approve <stage-id>
 `vp pm stage publish` uploads without 2FA so CI can perform the staging step.
 Approval or rejection should happen from a trusted maintainer device.
 
+## CI and Trusted Publishing
+
+GitHub Actions owns two workflows:
+
+- `.github/workflows/ci.yml` builds, lints, tests, builds native Go/Rust
+  tooling, stages the Linux x64 binaries, and runs the headless smoke test.
+- `.github/workflows/publish.yml` builds the same artifacts and calls
+  `vp pm stage publish --provenance` with GitHub OIDC enabled.
+
+To enable npm trusted publishing, configure each npm package with a trusted
+publisher entry:
+
+- package: `@tiara-stack/tsgolint-effect`
+- package: `@tiara-stack/oxlint-effect`
+- owner/repository: `tiara-stack/native-tooling`
+- workflow file: `publish.yml`
+- environment: `npm`
+
+The workflow is safe to run manually with its default `dry-run` input. For a
+real staged publish, run it with `dry-run=false` or push a `v*` tag. After CI
+stages the packages, approve the staged versions from a trusted maintainer
+device:
+
+```sh
+vp pm stage list
+vp pm stage approve <stage-id>
+```
+
 The `patches/` directory contains the current consumer-side pnpm patches for
 Vite+ and Oxlint. These are kept here so app repos can consume a versioned patch
 source until the integration can be upstreamed or replaced with first-class

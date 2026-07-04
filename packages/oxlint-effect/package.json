@@ -2,6 +2,12 @@
   "name": "@tiara-stack/oxlint-effect",
   "version": "0.1.0",
   "description": "Oxlint binary wrapper for Tiara Stack native Effect diagnostics tooling.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiara-stack/native-tooling.git",
+    "directory": "packages/oxlint-effect"
+  },
   "bin": {
     "oxlint-effect": "./bin/oxlint-effect.mjs"
   },
@@ -18,6 +24,9 @@
     },
     "./bin/oxlint-effect": "./bin/oxlint-effect.mjs",
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "vp pack",
