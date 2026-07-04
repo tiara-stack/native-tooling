@@ -1,5 +1,6 @@
 packages:
-  - packages/*
+  - packages/oxlint-effect
+  - packages/tsgolint-effect
 
 catalog:
   {

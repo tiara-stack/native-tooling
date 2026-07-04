@@ -7,6 +7,11 @@ This repo owns the native forks and publishable npm package boundaries for:
 - `@tiara-stack/tsgolint-effect`
 - `@tiara-stack/oxlint-effect`
 
+It also carries the Vite+ integration fork at
+`packages/vite-plus-effect-fork`. Vite+ is JavaScript/CLI tooling, so it lives
+under `packages/` rather than `native/`; the actual Go/Rust/compiler forks stay
+under `native/`.
+
 The package layer uses normal Vite+ for TypeScript build, lint, format, and
 tests. Native Go/Rust builds are explicit root scripts because they produce
 platform binaries that are later staged into package `vendor/` directories.
@@ -73,6 +78,7 @@ vp pm stage approve <stage-id>
 ```
 
 The `patches/` directory contains the current consumer-side pnpm patches for
-Vite+ and Oxlint. These are kept here so app repos can consume a versioned patch
-source until the integration can be upstreamed or replaced with first-class
-configuration.
+Vite+ and Oxlint. The Vite+ fork source now lives in
+`packages/vite-plus-effect-fork`; the patch files are transitional consumer
+artifacts until app repos can depend directly on the forked packages or the
+integration is upstreamed.
