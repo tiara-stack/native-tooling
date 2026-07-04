@@ -1,0 +1,513 @@
+mod convert_to_dotted_properties;
+mod fold_constants;
+mod inline;
+mod minimize_conditional_expression;
+mod minimize_conditions;
+mod minimize_expression_in_boolean_context;
+mod minimize_for_statement;
+mod minimize_if_statement;
+mod minimize_logical_expression;
+mod minimize_not_expression;
+mod minimize_statements;
+mod normalize;
+mod remove_dead_code;
+mod remove_unused_declaration;
+mod remove_unused_expression;
+mod remove_unused_private_members;
+mod replace_known_methods;
+mod substitute_alternate_syntax;
+
+use oxc_ast_visit::Visit;
+use oxc_semantic::ReferenceId;
+use rustc_hash::FxHashSet;
+
+use oxc_allocator::Vec;
+use oxc_ast::ast::*;
+
+use crate::{ReusableTraverseCtx, Traverse, TraverseCtx, minifier_traverse::traverse_mut_with_ctx};
+
+pub use self::normalize::{Normalize, NormalizeOptions};
+
+/// Stateless peephole optimizer. The `dce` flag and `changed` state are stored in `MinifierState`.
+pub struct PeepholeOptimizations;
+
+impl<'a> PeepholeOptimizations {
+    pub fn run_once(&mut self, program: &mut Program<'a>, ctx: &mut ReusableTraverseCtx<'a>) {
+        traverse_mut_with_ctx(self, program, ctx);
+    }
+
+    pub fn commutative_pair<'x, A, F, G, RetF: 'x, RetG: 'x>(
+        pair: (&'x A, &'x A),
+        check_a: F,
+        check_b: G,
+    ) -> Option<(RetF, RetG)>
+    where
+        F: Fn(&'x A) -> Option<RetF>,
+        G: Fn(&'x A) -> Option<RetG>,
+    {
+        match check_a(pair.0) {
+            Some(a) => {
+                if let Some(b) = check_b(pair.1) {
+                    return Some((a, b));
+                }
+            }
+            _ => {
+                if let Some(a) = check_a(pair.1)
+                    && let Some(b) = check_b(pair.0)
+                {
+                    return Some((a, b));
+                }
+            }
+        }
+        None
+    }
+
+    /// Checks if a member expression's base object may be mutated.
+    ///
+    /// This is used to prevent incorrect transformations like:
+    /// `x.y || (x = {}, x.y = 3)` → `x.y ||= (x = {}, 3)`
+    ///
+    /// The `||=` operator evaluates `x.y` (capturing `x`) before the RHS reassigns `x`,
+    /// which would change the semantics.
+    pub fn member_object_may_be_mutated(
+        assignment_target: &AssignmentTarget<'a>,
+        ctx: &TraverseCtx<'a>,
+    ) -> bool {
+        let object = match assignment_target {
+            AssignmentTarget::ComputedMemberExpression(member_expr) => &member_expr.object,
+            AssignmentTarget::PrivateFieldExpression(member_expr) => &member_expr.object,
+            AssignmentTarget::StaticMemberExpression(member_expr) => &member_expr.object,
+            _ => return false,
+        };
+
+        Self::is_expression_that_reference_may_change(object, ctx)
+    }
+
+    /// Checks if an expression's reference may change due to mutation.
+    ///
+    /// Returns `true` if the expression references a symbol that may be mutated,
+    /// or if the expression is not a simple identifier/this reference.
+    pub fn is_expression_that_reference_may_change(
+        expr: &Expression<'a>,
+        ctx: &TraverseCtx<'a>,
+    ) -> bool {
+        match expr {
+            Expression::Identifier(id) => {
+                if let Some(symbol_id) = ctx.scoping().get_reference(id.reference_id()).symbol_id()
+                {
+                    ctx.scoping().symbol_is_mutated(symbol_id)
+                } else {
+                    true
+                }
+            }
+            Expression::ThisExpression(_) => false,
+            _ => true,
+        }
+    }
+}
+
+impl<'a> Traverse<'a> for PeepholeOptimizations {
+    fn enter_program(&mut self, _program: &mut Program<'a>, ctx: &mut TraverseCtx<'a>) {
+        ctx.state.symbol_values.clear();
+        ctx.state.changed = false;
+    }
+
+    fn exit_program(&mut self, program: &mut Program<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.changed {
+            // Remove unused references by visiting the AST again and diff the collected references.
+            let refs_before =
+                ctx.scoping().resolved_references().flatten().copied().collect::<FxHashSet<_>>();
+            let mut counter = ReferencesCounter::default();
+            counter.visit_program(program);
+            for reference_id_to_remove in refs_before.difference(&counter.refs) {
+                ctx.scoping_mut().delete_reference(*reference_id_to_remove);
+            }
+        }
+        // Only check class_symbols_stack in full optimization mode (not DCE mode)
+        debug_assert!(ctx.state.dce || ctx.state.class_symbols_stack.is_exhausted());
+    }
+
+    fn exit_statements(&mut self, stmts: &mut Vec<'a, Statement<'a>>, ctx: &mut TraverseCtx<'a>) {
+        Self::minimize_statements(stmts, ctx);
+    }
+
+    fn enter_statement(&mut self, stmt: &mut Statement<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::keep_track_of_pure_functions(stmt, ctx);
+    }
+
+    fn exit_statement(&mut self, stmt: &mut Statement<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            match stmt {
+                Statement::BlockStatement(_) => Self::try_optimize_block(stmt, ctx),
+                Statement::IfStatement(_) => Self::try_fold_if(stmt, ctx),
+                Statement::ForStatement(_) => Self::try_fold_for(stmt, ctx),
+                Statement::TryStatement(_) => Self::try_fold_try(stmt, ctx),
+                Statement::LabeledStatement(_) => Self::try_fold_labeled(stmt, ctx),
+                Statement::FunctionDeclaration(_) => {
+                    Self::remove_unused_function_declaration(stmt, ctx);
+                }
+                Statement::ClassDeclaration(_) => {
+                    Self::remove_unused_class_declaration(stmt, ctx);
+                }
+                Statement::ExpressionStatement(_) => {
+                    Self::try_fold_expression_stmt(stmt, ctx);
+                }
+                Statement::ImportDeclaration(_) => {
+                    Self::remove_unused_import_specifiers(stmt, ctx);
+                }
+                _ => {}
+            }
+        } else {
+            match stmt {
+                Statement::BlockStatement(_) => Self::try_optimize_block(stmt, ctx),
+                Statement::IfStatement(s) => {
+                    Self::minimize_expression_in_boolean_context(&mut s.test, ctx);
+                    Self::try_fold_if(stmt, ctx);
+                    if let Statement::IfStatement(if_stmt) = stmt
+                        && let Some(folded_stmt) = Self::try_minimize_if(if_stmt, ctx)
+                    {
+                        *stmt = folded_stmt;
+                        ctx.state.changed = true;
+                    }
+                }
+                Statement::WhileStatement(s) => {
+                    Self::minimize_expression_in_boolean_context(&mut s.test, ctx);
+                }
+                Statement::ForStatement(s) => {
+                    if let Some(test) = &mut s.test {
+                        Self::minimize_expression_in_boolean_context(test, ctx);
+                    }
+                    Self::try_fold_for(stmt, ctx);
+                }
+                Statement::DoWhileStatement(s) => {
+                    Self::minimize_expression_in_boolean_context(&mut s.test, ctx);
+                }
+                Statement::TryStatement(_) => Self::try_fold_try(stmt, ctx),
+                Statement::LabeledStatement(_) => Self::try_fold_labeled(stmt, ctx),
+                Statement::FunctionDeclaration(_) => {
+                    Self::remove_unused_function_declaration(stmt, ctx);
+                }
+                Statement::ClassDeclaration(_) => Self::remove_unused_class_declaration(stmt, ctx),
+                Statement::ImportDeclaration(_) => Self::remove_unused_import_specifiers(stmt, ctx),
+                _ => {}
+            }
+            Self::try_fold_expression_stmt(stmt, ctx);
+        }
+    }
+
+    fn exit_for_statement(&mut self, stmt: &mut ForStatement<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_for_statement(stmt, ctx);
+        Self::minimize_for_statement(stmt, ctx);
+    }
+
+    fn exit_return_statement(&mut self, stmt: &mut ReturnStatement<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_return_statement(stmt, ctx);
+    }
+
+    fn exit_variable_declaration(
+        &mut self,
+        decl: &mut VariableDeclaration<'a>,
+        ctx: &mut TraverseCtx<'a>,
+    ) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_variable_declaration(decl, ctx);
+    }
+
+    fn exit_variable_declarator(
+        &mut self,
+        decl: &mut VariableDeclarator<'a>,
+        ctx: &mut TraverseCtx<'a>,
+    ) {
+        Self::init_symbol_value(decl, ctx);
+    }
+
+    fn exit_expression(&mut self, expr: &mut Expression<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            match expr {
+                Expression::TemplateLiteral(t) => {
+                    Self::inline_template_literal(t, ctx);
+                }
+                Expression::ObjectExpression(e) => Self::fold_object_exp(e, ctx),
+                Expression::BinaryExpression(_) => {
+                    Self::fold_binary_expr(expr, ctx);
+                    Self::fold_binary_typeof_comparison(expr, ctx);
+                }
+                Expression::UnaryExpression(_) => Self::fold_unary_expr(expr, ctx),
+                Expression::StaticMemberExpression(_) => {
+                    Self::fold_static_member_expr(expr, ctx);
+                }
+                Expression::ComputedMemberExpression(_) => {
+                    Self::fold_computed_member_expr(expr, ctx);
+                }
+                Expression::LogicalExpression(_) => Self::fold_logical_expr(expr, ctx),
+                Expression::ChainExpression(_) => Self::fold_chain_expr(expr, ctx),
+                Expression::CallExpression(_) => {
+                    Self::fold_call_expression(expr, ctx);
+                    Self::substitute_iife_call(expr, ctx);
+                    Self::remove_dead_code_call_expression(expr, ctx);
+                }
+                Expression::ConditionalExpression(_) => {
+                    Self::try_fold_conditional_expression(expr, ctx);
+                }
+                Expression::SequenceExpression(_) => {
+                    Self::remove_sequence_expression(expr, ctx);
+                }
+                Expression::AssignmentExpression(_) => {
+                    Self::remove_unused_assignment_expr(expr, ctx);
+                }
+                _ => {}
+            }
+        } else {
+            match expr {
+                Expression::TemplateLiteral(t) => {
+                    Self::inline_template_literal(t, ctx);
+                    Self::substitute_template_literal(expr, ctx);
+                }
+                Expression::ObjectExpression(e) => Self::fold_object_exp(e, ctx),
+                Expression::BinaryExpression(e) => {
+                    Self::substitute_swap_binary_expressions(e);
+                    Self::fold_binary_expr(expr, ctx);
+                    Self::fold_binary_typeof_comparison(expr, ctx);
+                    Self::minimize_loose_boolean(expr, ctx);
+                    Self::minimize_binary(expr, ctx);
+                    Self::substitute_loose_equals_undefined(expr, ctx);
+                    Self::substitute_typeof_undefined(expr, ctx);
+                    Self::substitute_rotate_binary_expression(expr, ctx);
+                }
+                Expression::UnaryExpression(_) => {
+                    Self::fold_unary_expr(expr, ctx);
+                    Self::minimize_unary(expr, ctx);
+                    Self::substitute_unary_plus(expr, ctx);
+                }
+                Expression::StaticMemberExpression(_) => {
+                    Self::fold_static_member_expr(expr, ctx);
+                    Self::replace_known_property_access(expr, ctx);
+                }
+                Expression::ComputedMemberExpression(_) => {
+                    Self::fold_computed_member_expr(expr, ctx);
+                    Self::replace_known_property_access(expr, ctx);
+                }
+                Expression::LogicalExpression(_) => {
+                    Self::fold_logical_expr(expr, ctx);
+                    Self::minimize_logical_expression(expr, ctx);
+                    Self::substitute_is_object_and_not_null(expr, ctx);
+                    Self::substitute_rotate_logical_expression(expr, ctx);
+                }
+                Expression::ChainExpression(_) => {
+                    Self::fold_chain_expr(expr, ctx);
+                    Self::substitute_chain_expression(expr, ctx);
+                }
+                Expression::CallExpression(_) => {
+                    Self::fold_call_expression(expr, ctx);
+                    Self::substitute_iife_call(expr, ctx);
+                    Self::remove_dead_code_call_expression(expr, ctx);
+                    Self::replace_concat_chain(expr, ctx);
+                    Self::replace_known_global_methods(expr, ctx);
+                    Self::substitute_simple_function_call(expr, ctx);
+                    Self::substitute_object_or_array_constructor(expr, ctx);
+                }
+                Expression::ConditionalExpression(logical_expr) => {
+                    Self::minimize_expression_in_boolean_context(&mut logical_expr.test, ctx);
+                    if let Some(changed) = Self::minimize_conditional_expression(logical_expr, ctx)
+                    {
+                        *expr = changed;
+                        ctx.state.changed = true;
+                    }
+                    Self::try_fold_conditional_expression(expr, ctx);
+                }
+                Expression::AssignmentExpression(e) => {
+                    Self::minimize_normal_assignment_to_combined_logical_assignment(e, ctx);
+                    Self::minimize_normal_assignment_to_combined_assignment(e, ctx);
+                    Self::minimize_assignment_to_update_expression(expr, ctx);
+                    Self::remove_unused_assignment_expr(expr, ctx);
+                }
+                Expression::SequenceExpression(_) => Self::remove_sequence_expression(expr, ctx),
+                Expression::ArrowFunctionExpression(e) => Self::substitute_arrow_expression(e, ctx),
+                Expression::FunctionExpression(e) => Self::try_remove_name_from_functions(e, ctx),
+                Expression::ClassExpression(e) => Self::try_remove_name_from_classes(e, ctx),
+                Expression::NewExpression(e) => {
+                    Self::substitute_typed_array_constructor(e, ctx);
+                    Self::substitute_global_new_expression(expr, ctx);
+                    Self::substitute_object_or_array_constructor(expr, ctx);
+                }
+                Expression::BooleanLiteral(_) => Self::substitute_boolean(expr, ctx),
+                Expression::ArrayExpression(_) => Self::substitute_array_expression(expr, ctx),
+                Expression::Identifier(_) => Self::inline_identifier_reference(expr, ctx),
+                _ => {}
+            }
+        }
+    }
+
+    fn exit_unary_expression(&mut self, expr: &mut UnaryExpression<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            return;
+        }
+        if expr.operator.is_not() {
+            Self::minimize_expression_in_boolean_context(&mut expr.argument, ctx);
+        }
+    }
+
+    fn exit_call_expression(&mut self, e: &mut CallExpression<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_call_expression(e, ctx);
+        Self::remove_empty_spread_arguments(&mut e.arguments);
+    }
+
+    fn exit_new_expression(&mut self, e: &mut NewExpression<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_new_expression(e, ctx);
+        Self::remove_empty_spread_arguments(&mut e.arguments);
+    }
+
+    fn exit_object_property(&mut self, prop: &mut ObjectProperty<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_object_property(prop, ctx);
+    }
+
+    fn exit_assignment_target_property(
+        &mut self,
+        node: &mut AssignmentTargetProperty<'a>,
+        ctx: &mut TraverseCtx<'a>,
+    ) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_assignment_target_property(node, ctx);
+    }
+
+    fn exit_assignment_target_property_property(
+        &mut self,
+        prop: &mut AssignmentTargetPropertyProperty<'a>,
+        ctx: &mut TraverseCtx<'a>,
+    ) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_assignment_target_property_property(prop, ctx);
+    }
+
+    fn exit_binding_property(&mut self, prop: &mut BindingProperty<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_binding_property(prop, ctx);
+    }
+
+    fn exit_method_definition(
+        &mut self,
+        prop: &mut MethodDefinition<'a>,
+        ctx: &mut TraverseCtx<'a>,
+    ) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_method_definition(prop, ctx);
+    }
+
+    fn exit_property_definition(
+        &mut self,
+        prop: &mut PropertyDefinition<'a>,
+        ctx: &mut TraverseCtx<'a>,
+    ) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_property_definition(prop, ctx);
+    }
+
+    fn exit_accessor_property(
+        &mut self,
+        prop: &mut AccessorProperty<'a>,
+        ctx: &mut TraverseCtx<'a>,
+    ) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_accessor_property(prop, ctx);
+    }
+
+    fn exit_member_expression(
+        &mut self,
+        expr: &mut MemberExpression<'a>,
+        ctx: &mut TraverseCtx<'a>,
+    ) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::convert_to_dotted_properties(expr, ctx);
+    }
+
+    fn enter_class_body(&mut self, _body: &mut ClassBody<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            return;
+        }
+        ctx.state.class_symbols_stack.push_class_scope();
+    }
+
+    fn exit_class_body(&mut self, body: &mut ClassBody<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::remove_dead_code_exit_class_body(body, ctx);
+        Self::remove_unused_private_members(body, ctx);
+        ctx.state.class_symbols_stack.pop_class_scope(Self::get_declared_private_symbols(body));
+    }
+
+    fn exit_catch_clause(&mut self, catch: &mut CatchClause<'a>, ctx: &mut TraverseCtx<'a>) {
+        if ctx.state.dce {
+            return;
+        }
+        Self::substitute_catch_clause(catch, ctx);
+    }
+
+    fn exit_private_field_expression(
+        &mut self,
+        node: &mut PrivateFieldExpression<'a>,
+        ctx: &mut TraverseCtx<'a>,
+    ) {
+        if ctx.state.dce {
+            return;
+        }
+        ctx.state.class_symbols_stack.push_private_member_to_current_class(node.field.name.into());
+    }
+
+    fn exit_private_in_expression(
+        &mut self,
+        node: &mut PrivateInExpression<'a>,
+        ctx: &mut TraverseCtx<'a>,
+    ) {
+        if ctx.state.dce {
+            return;
+        }
+        ctx.state.class_symbols_stack.push_private_member_to_current_class(node.left.name.into());
+    }
+}
+
+#[derive(Default)]
+struct ReferencesCounter {
+    refs: FxHashSet<ReferenceId>,
+}
+
+impl<'a> Visit<'a> for ReferencesCounter {
+    fn visit_identifier_reference(&mut self, it: &IdentifierReference<'a>) {
+        let reference_id = it.reference_id();
+        self.refs.insert(reference_id);
+    }
+}

@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "packages/oxlint-effect/tsconfig.build.json"
+    },
+    {
+      "path": "packages/tsgolint-effect/tsconfig.build.json"
+    }
+  ]
+}

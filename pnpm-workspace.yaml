@@ -1,0 +1,17 @@
+packages:
+  - packages/*
+
+catalog:
+  {
+    "@types/node": ^24.7.2,
+    tsx: npm:tsx@4.22.3,
+    vite: npm:@voidzero-dev/vite-plus-core@0.1.15,
+    vite-plus: 0.1.15,
+  }
+
+ignoredBuiltDependencies: []
+overrides:
+  vite: "catalog:"
+peerDependencyRules:
+  allowAny:
+    - vite

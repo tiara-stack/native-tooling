@@ -1,0 +1,46 @@
+# Run `cargo bloat` for finding out what takes most of the space in your executable.
+
+name: Cargo Bloat
+
+permissions: {}
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  bloat:
+    name: Cargo Bloat
+    runs-on: ubuntu-latest
+    steps:
+      - uses: taiki-e/checkout-action@83ed61bfbe2b8abbb3c66e8b65b1335484c70009 # v1.4.1
+
+      - uses: oxc-project/setup-rust@23f38cfb0c04af97a055f76acee94d5be71c7c82 # v1.0.16
+        with:
+          cache-key: warm
+          tools: cargo-bloat
+
+      - name: Run
+        env:
+          RUSTFLAGS: "-C debuginfo=2 -C strip=none"
+        shell: bash
+        run: |
+          echo "# Bloat Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "## Largest functions" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cargo bloat --release -p oxlint --features allocator -n 15 >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          echo "## Largest crates" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cargo bloat --release -p oxlint --features allocator --crates -n 15 >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY

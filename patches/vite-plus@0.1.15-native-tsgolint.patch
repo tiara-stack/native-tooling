@@ -1,0 +1,93 @@
+diff --git a/dist/resolve-lint.js b/dist/resolve-lint.js
+index 23b4368..9f44622 100644
+--- a/dist/resolve-lint.js
++++ b/dist/resolve-lint.js
+@@ -35,6 +35,11 @@ export async function lint() {
+     const oxlintPackageRoot = dirname(dirname(oxlintMainPath));
+     const binPath = join(oxlintPackageRoot, 'bin', 'oxlint');
+     let oxlintTsgolintPath = resolve('oxlint-tsgolint/bin/tsgolint');
++    const packagedTsgolintPath = resolve('@tiara-stack/tsgolint-effect/bin/tsgolint-effect');
++    const nativeTsgolintPath = process.env.TIARA_REAL_TSGOLINT_PATH ?? process.env.TIARA_TSGOLINT_EFFECT_PATH ?? packagedTsgolintPath;
++    if (existsSync(nativeTsgolintPath)) {
++        oxlintTsgolintPath = nativeTsgolintPath;
++    }
+     if (process.platform === 'win32') {
+         // On Windows, try .exe first (bun creates .exe), then .cmd (npm/pnpm/yarn create .cmd)
+         const localBinDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'node_modules', '.bin');
+diff --git a/dist/resolve-test.js b/dist/resolve-test.js
+index 5d01075..6f4a6cd 100644
+--- a/dist/resolve-test.js
++++ b/dist/resolve-test.js
+@@ -8,6 +8,7 @@
+  * Used for: `vite-plus test` command
+  */
+ import { dirname, join } from 'node:path';
++import { fileURLToPath } from 'node:url';
+ import { DEFAULT_ENVS, resolve } from './utils/constants.js';
+ /**
+  * Resolves the Vitest binary path and environment variables.
+@@ -21,17 +22,20 @@ import { DEFAULT_ENVS, resolve } from './utils/constants.js';
+  * The function points to the bundled Vitest in the CLI's dist directory.
+  */
+ export async function test() {
+-    const binPath = join(dirname(resolve('@voidzero-dev/vite-plus-test')), 'dist', 'cli.js');
++    const vitestCliPath = join(dirname(resolve('@voidzero-dev/vite-plus-test')), 'dist', 'cli.js');
++    const binPath = join(dirname(fileURLToPath(import.meta.url)), 'test-delegate.js');
+     return {
+         binPath,
+         // Pass through source map debugging environment variable if set
+         envs: process.env.DEBUG_DISABLE_SOURCE_MAP
+             ? {
+                 ...DEFAULT_ENVS,
++                VP_VITEST_CLI_PATH: vitestCliPath,
+                 DEBUG_DISABLE_SOURCE_MAP: process.env.DEBUG_DISABLE_SOURCE_MAP,
+             }
+             : {
+                 ...DEFAULT_ENVS,
++                VP_VITEST_CLI_PATH: vitestCliPath,
+             },
+     };
+ }
+diff --git a/dist/test-delegate.js b/dist/test-delegate.js
+new file mode 100644
+index 0000000..119dc84
+--- /dev/null
++++ b/dist/test-delegate.js
+@@ -0,0 +1,37 @@
++import { spawnSync } from 'node:child_process';
++import { existsSync, realpathSync } from 'node:fs';
++import { delimiter, dirname, join, sep } from 'node:path';
++import { pathToFileURL } from 'node:url';
++
++const localVp = join(process.cwd(), 'node_modules', '.bin', process.platform === 'win32' ? 'vp.cmd' : 'vp');
++const localVitePlus = join(process.cwd(), 'node_modules', 'vite-plus');
++
++function localNodePath() {
++    const vitePlusRoot = realpathSync(localVitePlus);
++    const storeNodeModules = dirname(vitePlusRoot);
++    const pnpmMarker = `${sep}node_modules${sep}.pnpm${sep}`;
++    const markerIndex = vitePlusRoot.indexOf(pnpmMarker);
++    const pnpmNodeModules = markerIndex === -1 ? undefined : join(vitePlusRoot.slice(0, markerIndex), 'node_modules', '.pnpm', 'node_modules');
++    return [join(vitePlusRoot, 'node_modules'), storeNodeModules, pnpmNodeModules].filter(Boolean).join(delimiter);
++}
++
++if (process.env.VP_TEST_DELEGATED !== '1' && existsSync(localVp) && existsSync(localVitePlus)) {
++    const env = {
++        ...process.env,
++        NODE_PATH: localNodePath(),
++        VP_TEST_DELEGATED: '1',
++    };
++    delete env.VP_VITEST_CLI_PATH;
++
++    const result = spawnSync(localVp, ['test', ...process.argv.slice(2)], {
++        stdio: 'inherit',
++        env,
++    });
++    process.exit(result.status ?? 1);
++}
++
++if (!process.env.VP_VITEST_CLI_PATH) {
++    throw new Error('Missing VP_VITEST_CLI_PATH for Vite+ test runner');
++}
++
++await import(pathToFileURL(process.env.VP_VITEST_CLI_PATH).href);

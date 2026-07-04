@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "packages/oxlint-effect"
+    },
+    {
+      "path": "packages/tsgolint-effect"
+    }
+  ]
+}

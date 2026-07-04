@@ -1,0 +1,30 @@
+# Run `cargo-llvm-lines` for finding out bloat generic functions
+
+name: Cargo LLVM Lines
+
+permissions: {}
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  bloat:
+    name: Cargo LLVM Lines
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: taiki-e/checkout-action@83ed61bfbe2b8abbb3c66e8b65b1335484c70009 # v1.4.1
+
+      - uses: oxc-project/setup-rust@23f38cfb0c04af97a055f76acee94d5be71c7c82 # v1.0.16
+
+      - name: Install cargo-llvm-lines
+        uses: taiki-e/install-action@fd0f63e180a477d7434580b6d80817978b9ff2b8 # v2.70.1
+        with:
+          tool: cargo-llvm-lines
+
+      - name: Run
+        run: cargo llvm-lines -p oxc_parser | head -20 > $GITHUB_STEP_SUMMARY

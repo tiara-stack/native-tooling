@@ -1,0 +1,22 @@
+# Package manager
+node_modules
+pnpm-debug.log*
+
+# JS build outputs
+dist
+.ts-out
+*.tsbuildinfo
+
+# Native build outputs
+native/tsgolint-effect-fork/tsgolint
+native/oxc-oxlint-effect-fork/target
+native/oxc-oxlint-effect-fork/.worktrees
+
+# Published binary staging
+packages/*/vendor
+
+# Logs and local files
+*.log
+.env
+.env.*
+.DS_Store

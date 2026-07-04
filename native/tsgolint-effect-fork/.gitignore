@@ -1,0 +1,42 @@
+# Local binaries
+/tsgolint
+/tsgolint.exe
+/cmd/tsgolint/tsgolint
+
+# Go build/test artifacts
+*.test
+*.out
+*.coverprofile
+coverage.*
+coverage/
+__debug_bin*
+*.pprof
+*.prof
+*.pb.gz
+
+# Go build caches, when pointed inside the checkout
+/.cache/
+/.gocache/
+/go-build-cache/
+/go-build-cache-*/
+/GOCACHE/
+
+# Generated/local scratch output
+/gen_shims
+/tmp/
+/.tmp/
+
+# Node/e2e artifacts
+e2e/node_modules/
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json

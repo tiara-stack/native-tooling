@@ -1,0 +1,35 @@
+name: Update implementation status of all linter plugins
+
+permissions: {}
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/lint_rules.yml"
+      - "crates/oxc_linter/src/rules.rs"
+      - "crates/oxc_linter/src/utils/mod.rs" # here are the remaps for some plugins
+      - "tasks/lint_rules/**"
+
+jobs:
+  lint_rules:
+    if: github.repository == 'oxc-project/oxc'
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout Branch
+        uses: taiki-e/checkout-action@83ed61bfbe2b8abbb3c66e8b65b1335484c70009 # v1.4.1
+
+      - uses: oxc-project/setup-node@4c26e7cb3605b6bdef5450dacd02c434b10fd8ba # v1.2.0
+
+      - name: Install latest plugins
+        working-directory: tasks/lint_rules
+        run: npm install
+
+      - name: Run task
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node ./tasks/lint_rules --update
