@@ -9,7 +9,7 @@
     "directory": "packages/oxlint-effect"
   },
   "bin": {
-    "oxlint-effect": "./bin/oxlint-effect.mjs"
+    "oxlint-effect": "bin/oxlint-effect.mjs"
   },
   "files": [
     "bin",

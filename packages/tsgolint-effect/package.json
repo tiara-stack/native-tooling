@@ -9,7 +9,7 @@
     "directory": "packages/tsgolint-effect"
   },
   "bin": {
-    "tsgolint-effect": "./bin/tsgolint-effect.mjs"
+    "tsgolint-effect": "bin/tsgolint-effect.mjs"
   },
   "files": [
     "bin",
