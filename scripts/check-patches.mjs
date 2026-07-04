@@ -24,6 +24,8 @@ for (const entry of cases) {
     run("tar", ["-xzf", `${entry.packageName}-${entry.version}.tgz`], dir);
     const packageDir = join(dir, "package");
     run("git", ["init", "-q"], packageDir);
+    run("git", ["config", "user.email", "ci@example.invalid"], packageDir);
+    run("git", ["config", "user.name", "CI"], packageDir);
     run("git", ["add", "."], packageDir);
     run("git", ["commit", "-qm", "init"], packageDir);
     run("git", ["apply", "--check", entry.patch], packageDir);
