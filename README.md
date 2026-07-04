@@ -10,6 +10,8 @@ This repo owns the native forks and publishable npm package boundaries for:
 The package layer uses normal Vite+ for TypeScript build, lint, format, and
 tests. Native Go/Rust builds are explicit root scripts because they produce
 platform binaries that are later staged into package `vendor/` directories.
+Those `vendor/` directories are generated publish artifacts and are not tracked
+in git.
 
 ## Development
 
