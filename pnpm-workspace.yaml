@@ -10,9 +10,9 @@ catalog:
     vite-plus: 0.2.2,
   }
 
-onlyBuiltDependencies:
-  - esbuild
-  - msgpackr-extract
+allowBuilds:
+  esbuild: true
+  msgpackr-extract: true
 overrides:
   vite: "catalog:"
 peerDependencyRules:
