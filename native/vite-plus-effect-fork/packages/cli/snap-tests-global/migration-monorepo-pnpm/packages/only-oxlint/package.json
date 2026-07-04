@@ -1,0 +1,9 @@
+{
+  "name": "@vite-plus-test/only-oxlint",
+  "scripts": {
+    "lint": "oxlint --fix"
+  },
+  "devDependencies": {
+    "oxlint": "catalog:"
+  }
+}

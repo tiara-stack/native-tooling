@@ -1,0 +1,3 @@
+{
+  "commands": ["vp install --no-frozen-lockfile", "vp run check-yarn-version"]
+}

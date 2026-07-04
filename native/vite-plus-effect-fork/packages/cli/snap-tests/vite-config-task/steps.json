@@ -1,0 +1,3 @@
+{
+  "commands": ["# Test that task config is picked up from vite.config.ts", "vp run build"]
+}

@@ -1,0 +1,7 @@
+{
+  "ignoredPlatforms": ["win32"],
+  "commands": [
+    "vp check --fix",
+    "vp check"
+  ]
+}

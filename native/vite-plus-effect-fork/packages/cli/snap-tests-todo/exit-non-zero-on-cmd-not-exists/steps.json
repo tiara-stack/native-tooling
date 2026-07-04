@@ -1,0 +1,4 @@
+{
+  "ignoredPlatforms": ["win32"],
+  "commands": ["vite command-not-exists # should exit with non-zero code"]
+}

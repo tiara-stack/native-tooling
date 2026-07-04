@@ -1,0 +1,3 @@
+{
+  "commands": ["vp migrate --help # show help"]
+}

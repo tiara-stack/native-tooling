@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "module": "nodenext",
+    "moduleDetection": "force",
+    "moduleResolution": "nodenext",
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "esnext",
+    "types": ["node"],
+    "verbatimModuleSyntax": true
+  },
+  "exclude": [
+    "packages/cli/docs",
+    "packages/cli/snap-tests",
+    "packages/cli/snap-tests-global",
+    // build.ts imports vite/packages/vite/rolldown.config.ts which doesn't use .js extensions
+    "packages/core/build.ts",
+    "vite",
+    "rolldown",
+    "target"
+  ]
+}

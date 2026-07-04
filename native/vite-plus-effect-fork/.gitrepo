@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/voidzero-dev/vite-plus
+	branch = v0.2.2
+	commit = 4f7fd0b66ebb5433acdb06f8660cf0f08c5a0d4b
+	parent = 1780bfa0c36870e21320b6ad1cef30a014f6bd7b
+	method = merge
+	cmdver = 0.4.9

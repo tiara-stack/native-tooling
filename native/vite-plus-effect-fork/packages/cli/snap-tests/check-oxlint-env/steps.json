@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "OXLINT_TSGOLINT_PATH=./invalid-path vp lint --type-aware # should error that ./invalid-path doesn't exist"
+  ]
+}

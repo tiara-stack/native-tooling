@@ -1,0 +1,220 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+import { globSync } from 'glob';
+import { minimatch } from 'minimatch';
+import { Scalar, YAMLSeq } from 'yaml';
+
+import { detectWorkspace as detectWorkspaceBinding } from '../../binding/index.js';
+import {
+  DependencyType,
+  PackageManager,
+  type WorkspaceInfo,
+  type WorkspaceInfoOptional,
+  type WorkspacePackage,
+} from '../types/index.ts';
+import { editJsonFile, readJsonFile } from './json.ts';
+import { getScopeFromPackageName } from './package.ts';
+import { editYamlFile, readYamlFile } from './yaml.ts';
+
+// npm/yarn use an array; Bun catalogs and Yarn classic nohoist use an object with `packages`.
+export type NpmWorkspaces =
+  | string[]
+  | {
+      packages?: string[];
+      catalog?: Record<string, string>;
+      catalogs?: Record<string, Record<string, string>>;
+    };
+
+export function findPackageJsonFilesFromPatterns(patterns: string[], cwd: string): string[] {
+  if (patterns.length === 0) {
+    return [];
+  }
+  return globSync(
+    patterns.map((pattern) => `${pattern}/package.json`),
+    { absolute: true, cwd },
+  );
+}
+
+// Detect if we're in a monorepo and get workspace info
+export async function detectWorkspace(rootDir: string): Promise<WorkspaceInfoOptional> {
+  const bindingResult = await detectWorkspaceBinding(rootDir);
+  const result: WorkspaceInfoOptional = {
+    rootDir,
+    packageManager: undefined,
+    packageManagerVersion: 'latest',
+    isMonorepo: false,
+    monorepoScope: '',
+    workspacePatterns: [],
+    parentDirs: [],
+    packages: [],
+  };
+  if (bindingResult.packageManagerName) {
+    result.packageManager = bindingResult.packageManagerName as PackageManager;
+  }
+  if (bindingResult.packageManagerVersion) {
+    result.packageManagerVersion = bindingResult.packageManagerVersion;
+  }
+  if (bindingResult.isMonorepo) {
+    result.isMonorepo = bindingResult.isMonorepo;
+  }
+  if (bindingResult.root) {
+    // automatically correct the root directory from cwd
+    result.rootDir = bindingResult.root;
+  }
+
+  // Extract parent directories from workspace patterns
+  if (result.isMonorepo) {
+    const pnpmWorkspaceFile = path.join(result.rootDir, 'pnpm-workspace.yaml');
+    const packageJsonFile = path.join(result.rootDir, 'package.json');
+    if (fs.existsSync(pnpmWorkspaceFile)) {
+      const workspaceConfig = readYamlFile(pnpmWorkspaceFile) as { packages?: string[] };
+      if (Array.isArray(workspaceConfig.packages)) {
+        result.workspacePatterns = workspaceConfig.packages;
+      }
+    } else if (fs.existsSync(packageJsonFile)) {
+      // Check for npm/yarn/bun workspace (array or object form)
+      const pkg = readJsonFile(packageJsonFile) as { workspaces?: NpmWorkspaces };
+      if (Array.isArray(pkg.workspaces)) {
+        result.workspacePatterns = pkg.workspaces;
+      } else if (pkg.workspaces && Array.isArray(pkg.workspaces.packages)) {
+        result.workspacePatterns = pkg.workspaces.packages;
+      }
+    }
+
+    const dirs = new Set<string>();
+    for (const pattern of result.workspacePatterns) {
+      // Extract directory from patterns like "apps/*", "packages/*", "foo/bar/*", "website", etc
+      if (!pattern.endsWith('*')) {
+        continue;
+      }
+      // Extract the directory name, ignore the wildcard
+      const dir = pattern.replace(/\/\*{1,2}$/, '');
+      if (dir) {
+        dirs.add(dir);
+      }
+    }
+    // eslint-disable-next-line unicorn/no-array-sort -- safe: sorting a fresh Array.from copy
+    result.parentDirs = Array.from(dirs).sort();
+
+    // Extract the scope from the package.json
+    const pkg = readJsonFile(packageJsonFile) as { name?: string };
+    if (pkg.name) {
+      result.monorepoScope = getScopeFromPackageName(pkg.name);
+    }
+    result.packages = discoverWorkspacePackages(result.workspacePatterns, result.rootDir);
+  }
+
+  return result;
+}
+
+// Check if a package should run as a Bingo template (https://www.create.bingo/).
+// This is an execution hint only: a Bingo template runs through its bin entry
+// with `--skip-requests` appended. Whether a package is offered as a template
+// is governed by `create.templates` in vite.config.ts, not by this check.
+export function isBingoTemplate(pkg: { dependencies?: Record<string, string> }): boolean {
+  return !!pkg.dependencies?.bingo;
+}
+
+// Discover all workspace packages
+export function discoverWorkspacePackages(
+  workspacePatterns: string[],
+  rootDir: string,
+): WorkspacePackage[] {
+  const packages: WorkspacePackage[] = [];
+
+  if (workspacePatterns.length === 0) {
+    return packages;
+  }
+
+  // Find all package.json files in the workspace
+  const packageJsonRelativePaths = globSync(
+    workspacePatterns.map((pattern) => `${pattern}/package.json`),
+    {
+      absolute: false,
+      cwd: rootDir,
+      ignore: ['**/node_modules/**'],
+    },
+  );
+  for (const packageJsonRelativePath of packageJsonRelativePaths) {
+    const packageJsonPath = path.join(rootDir, packageJsonRelativePath);
+    const pkg = readJsonFile(packageJsonPath) as {
+      name?: string;
+      description?: string;
+      version?: string;
+    };
+    if (!pkg.name) {
+      continue;
+    }
+    packages.push({
+      name: pkg.name,
+      // glob returns native separators; normalize to forward slashes so the
+      // path compares cleanly against workspace-pattern-derived values like
+      // `parentDirs` on Windows (path.join accepts either separator).
+      path: path.dirname(packageJsonRelativePath).split(path.sep).join('/'),
+      description: pkg.description,
+      version: pkg.version,
+    });
+  }
+
+  return packages;
+}
+
+// Update package.json with workspace dependencies
+export function updatePackageJsonWithDeps(
+  rootDir: string,
+  projectDir: string,
+  dependencies: string[],
+  dependencyType: DependencyType,
+) {
+  const packageJsonPath = path.join(rootDir, projectDir, 'package.json');
+  editJsonFile<{ [key in DependencyType]?: Record<string, string> }>(packageJsonPath, (pkg) => {
+    if (!pkg[dependencyType]) {
+      pkg[dependencyType] = {};
+    }
+    for (const dep of dependencies) {
+      pkg[dependencyType][dep] = 'workspace:*';
+    }
+    return pkg;
+  });
+}
+
+// Update workspace configuration to include new project
+export function updateWorkspaceConfig(projectPath: string, workspaceInfo: WorkspaceInfo) {
+  // Check if project path matches any workspace pattern
+  for (const pattern of workspaceInfo.workspacePatterns) {
+    if (minimatch(projectPath, pattern)) {
+      return;
+    }
+  }
+
+  // Derive pattern from project path (e.g., "packages/my-app" -> "packages/*", "website" -> "website", "foo/bar/app" -> "foo/bar/*")
+  const parentDir = path.dirname(projectPath);
+  // path.dirname returns '.' for single-segment paths, treat that as no parent
+  const pattern = parentDir === '.' ? projectPath : `${parentDir}/*`;
+
+  if (workspaceInfo.packageManager === PackageManager.pnpm) {
+    editYamlFile(path.join(workspaceInfo.rootDir, 'pnpm-workspace.yaml'), (doc) => {
+      let packages = doc.getIn(['packages']) as YAMLSeq<Scalar<string>>;
+      if (!packages) {
+        packages = new YAMLSeq<Scalar<string>>();
+      }
+      packages.add(new Scalar(pattern));
+      doc.setIn(['packages'], packages);
+    });
+  } else {
+    // Update package.json workspaces (array or object form)
+    editJsonFile<{ workspaces?: NpmWorkspaces }>(
+      path.join(workspaceInfo.rootDir, 'package.json'),
+      (pkg) => {
+        if (pkg.workspaces && !Array.isArray(pkg.workspaces)) {
+          // Preserve object form (e.g., Bun catalogs, Yarn classic nohoist)
+          pkg.workspaces.packages = [...(pkg.workspaces.packages || []), pattern];
+        } else {
+          pkg.workspaces = [...(pkg.workspaces || []), pattern];
+        }
+        return pkg;
+      },
+    );
+  }
+}
