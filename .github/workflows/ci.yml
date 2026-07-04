@@ -44,19 +44,19 @@ jobs:
         run: vp install
 
       - name: Build package wrappers
-        run: pnpm build
+        run: vp run -w build
 
       - name: Lint package wrappers
-        run: pnpm lint
+        run: vp run -w lint
 
       - name: Test package wrappers
-        run: pnpm test
+        run: vp run -w test
 
       - name: Build native tooling
-        run: pnpm native:build
+        run: vp run -w native:build
 
       - name: Stage native binaries
-        run: pnpm native:stage
+        run: vp run -w native:stage
 
       - name: Verify package binary resolution
         run: |
@@ -65,4 +65,4 @@ jobs:
           node packages/oxlint-effect/bin/oxlint-effect.mjs --version
 
       - name: Run native headless smoke test
-        run: pnpm native:smoke
+        run: vp run -w native:smoke

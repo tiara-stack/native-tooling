@@ -62,15 +62,15 @@ jobs:
 
       - name: Build and test package wrappers
         run: |
-          pnpm build
-          pnpm lint
-          pnpm test
+          vp run -w build
+          vp run -w lint
+          vp run -w test
 
       - name: Build native tooling
-        run: pnpm native:build
+        run: vp run -w native:build
 
       - name: Stage native binaries
-        run: pnpm native:stage
+        run: vp run -w native:stage
 
       - name: Verify package binary resolution
         run: |
@@ -79,7 +79,7 @@ jobs:
           node packages/oxlint-effect/bin/oxlint-effect.mjs --version
 
       - name: Run native headless smoke test
-        run: pnpm native:smoke
+        run: vp run -w native:smoke
 
       - name: Dry-run staged publish
         if: ${{ github.event_name == 'workflow_dispatch' && inputs['dry-run'] }}
