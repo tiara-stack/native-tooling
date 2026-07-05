@@ -37,6 +37,9 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Setup npm
+        run: npm install -g npm@11.16.0
+
       - name: Setup Tiara Vite+
         uses: tiara-stack/setup-vp@v1
         with:
@@ -91,8 +94,13 @@ jobs:
 
       - name: Dry-run staged publish
         if: ${{ github.event_name == 'workflow_dispatch' && inputs['dry-run'] }}
-        run: vp pm stage publish -r --filter './packages/*' --access public --provenance --tag "${{ inputs.tag }}" --dry-run -- --no-git-checks
+        run: node scripts/stage-npm-packages.mjs
+        env:
+          NPM_STAGE_DRY_RUN: "true"
+          NPM_TAG: ${{ inputs.tag }}
 
       - name: Stage packages for npm trusted publishing
         if: ${{ github.event_name != 'workflow_dispatch' || !inputs['dry-run'] }}
-        run: vp pm stage publish -r --filter './packages/*' --access public --provenance --tag "${{ inputs.tag || 'latest' }}" -- --no-git-checks
+        run: node scripts/stage-npm-packages.mjs
+        env:
+          NPM_TAG: ${{ inputs.tag || 'latest' }}
