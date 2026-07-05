@@ -30,7 +30,6 @@ function resolveBinary() {
   const candidates = [];
   for (const candidate of [
     process.env.TIARA_TSGOLINT_EFFECT_PATH,
-    process.env.TIARA_REAL_TSGOLINT_PATH,
     join(packageRoot, "vendor", `${process.platform}-${process.arch}`, executableName),
     findUp(process.cwd(), join("native", "tsgolint-effect-fork", executableName)),
     findUp(packageRoot, join("native", "tsgolint-effect-fork", executableName)),

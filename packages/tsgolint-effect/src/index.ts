@@ -9,7 +9,6 @@ const packageRoot = findPackageRoot(fileURLToPath(import.meta.url));
 export const resolveTsgolintEffectPath = (): string => {
   const candidates = [
     process.env.TIARA_TSGOLINT_EFFECT_PATH,
-    process.env.TIARA_REAL_TSGOLINT_PATH,
     join(packageRoot, "vendor", `${process.platform}-${process.arch}`, executableName),
     findUp(process.cwd(), join("native", "tsgolint-effect-fork", executableName)),
     findUp(packageRoot, join("native", "tsgolint-effect-fork", executableName)),

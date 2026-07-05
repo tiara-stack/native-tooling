@@ -11,6 +11,7 @@
  * provides ESLint-compatible linting with significantly better performance.
  */
 
+import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 import { CONFIG_METADATA_ENV, DEFAULT_ENVS, resolve } from './utils/constants.ts';
@@ -40,10 +41,11 @@ export async function lint(): Promise<{
   const oxlintMainPath = resolve('oxlint');
   const oxlintPackageRoot = dirname(dirname(oxlintMainPath));
   const binPath = join(oxlintPackageRoot, 'bin', 'oxlint');
-  const oxlintTsgolintPath = resolveTsgolintExecutable(
+  const upstreamTsgolintPath = resolveTsgolintExecutable(
     resolve('oxlint-tsgolint/bin/tsgolint'),
     import.meta.url,
   );
+  const oxlintTsgolintPath = resolveTiaraTsgolintExecutable() ?? upstreamTsgolintPath;
   const result = {
     binPath,
     // TODO: provide envs inference API
@@ -56,4 +58,19 @@ export async function lint(): Promise<{
     },
   };
   return result;
+}
+
+function resolveTiaraTsgolintExecutable(): string | undefined {
+  const candidate =
+    process.env.TIARA_TSGOLINT_EFFECT_PATH ??
+    resolveOptional('@tiara-stack/tsgolint-effect/bin/tsgolint-effect');
+  return candidate && existsSync(candidate) ? candidate : undefined;
+}
+
+function resolveOptional(path: string): string | undefined {
+  try {
+    return resolve(path);
+  } catch {
+    return undefined;
+  }
 }
