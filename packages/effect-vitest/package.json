@@ -1,6 +1,6 @@
 {
   "name": "@tiara-stack/effect-vitest",
-  "version": "4.0.0-beta.93.tiara.1",
+  "version": "4.0.0-beta.93.tiara.2",
   "description": "Tiara Stack fork of @effect/vitest wired to Vite+ test exports.",
   "bugs": {
     "url": "https://github.com/tiara-stack/native-tooling/issues"
@@ -22,12 +22,12 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
     },
     "./utils": {
-      "types": "./dist/utils.d.ts",
-      "default": "./dist/utils.js"
+      "types": "./dist/utils.d.mts",
+      "default": "./dist/utils.mjs"
     }
   },
   "publishConfig": {
