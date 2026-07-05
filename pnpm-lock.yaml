@@ -47,6 +47,9 @@ importers:
 
   packages/effect-vitest:
     devDependencies:
+      '@tiara-stack/vite-plus':
+        specifier: ^0.2.2
+        version: 0.2.2(@types/node@24.13.2)(@vitest/browser-playwright@4.1.9)(@vitest/browser-webdriverio@4.1.9)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(vite-plus@0.2.2(@types/node@24.13.2)(@vitest/browser-playwright@4.1.9)(@vitest/browser-webdriverio@4.1.9)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(yaml@2.9.0)
       '@types/node':
         specifier: 'catalog:'
         version: 24.13.2
@@ -698,6 +701,19 @@ packages:
   '@tiara-stack/tsgolint-effect@0.1.0':
     resolution: {integrity: sha512-foC4I3QP4QL4z/zX3KtBhKLTIreBk6s5yyD4B0VuFDwilIHWlRVHbuZB39lMlVX71U6gkeSj7uRn9svqrlVoeg==}
     hasBin: true
+
+  '@tiara-stack/vite-plus@0.2.2':
+    resolution: {integrity: sha512-56bFw0+WA+mkqQT5p7RGRg6uCaf+PQC4LrVtgIgRTqRdpffDW3ynLqmEVu3Cuo2xXVncq9a+e9wbfXd0aE7d9A==}
+    engines: {node: ^20.19.0 || ^22.18.0 || >=24.11.0}
+    hasBin: true
+    peerDependencies:
+      '@vitest/browser-playwright': 4.1.9
+      '@vitest/browser-webdriverio': 4.1.9
+    peerDependenciesMeta:
+      '@vitest/browser-playwright':
+        optional: true
+      '@vitest/browser-webdriverio':
+        optional: true
 
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
@@ -2401,6 +2417,68 @@ snapshots:
       '@testing-library/dom': 10.4.1
 
   '@tiara-stack/tsgolint-effect@0.1.0': {}
+
+  '@tiara-stack/vite-plus@0.2.2(@types/node@24.13.2)(@vitest/browser-playwright@4.1.9)(@vitest/browser-webdriverio@4.1.9)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(vite-plus@0.2.2(@types/node@24.13.2)(@vitest/browser-playwright@4.1.9)(@vitest/browser-webdriverio@4.1.9)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(yaml@2.9.0)':
+    dependencies:
+      '@oxc-project/types': 0.138.0
+      '@oxlint/plugins': 1.68.0
+      '@tiara-stack/tsgolint-effect': 0.1.0
+      '@vitest/browser': 4.1.9(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(vitest@4.1.9)
+      '@vitest/browser-preview': 4.1.9(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(vitest@4.1.9)
+      '@vitest/expect': 4.1.9
+      '@vitest/mocker': 4.1.9(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))
+      '@vitest/pretty-format': 4.1.9
+      '@vitest/runner': 4.1.9
+      '@vitest/snapshot': 4.1.9
+      '@vitest/spy': 4.1.9
+      '@vitest/utils': 4.1.9
+      '@voidzero-dev/vite-plus-core': 0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0)
+      oxfmt: 0.57.0(vite-plus@0.2.2(@types/node@24.13.2)(@vitest/browser-playwright@4.1.9)(@vitest/browser-webdriverio@4.1.9)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))
+      oxlint: 1.72.0(oxlint-tsgolint@0.24.0)(vite-plus@0.2.2(@types/node@24.13.2)(@vitest/browser-playwright@4.1.9)(@vitest/browser-webdriverio@4.1.9)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))
+      oxlint-tsgolint: 0.24.0
+      vitest: 4.1.9(@types/node@24.13.2)(@vitest/browser-playwright@4.1.9)(@vitest/browser-preview@4.1.9)(@vitest/browser-webdriverio@4.1.9)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))
+    optionalDependencies:
+      '@vitest/browser-playwright': 4.1.9(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(playwright@1.61.1)(vitest@4.1.9)
+      '@vitest/browser-webdriverio': 4.1.9(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(vitest@4.1.9)(webdriverio@9.29.1)
+      '@voidzero-dev/vite-plus-darwin-arm64': 0.2.2
+      '@voidzero-dev/vite-plus-darwin-x64': 0.2.2
+      '@voidzero-dev/vite-plus-linux-arm64-gnu': 0.2.2
+      '@voidzero-dev/vite-plus-linux-arm64-musl': 0.2.2
+      '@voidzero-dev/vite-plus-linux-x64-gnu': 0.2.2
+      '@voidzero-dev/vite-plus-linux-x64-musl': 0.2.2
+      '@voidzero-dev/vite-plus-win32-arm64-msvc': 0.2.2
+      '@voidzero-dev/vite-plus-win32-x64-msvc': 0.2.2
+    transitivePeerDependencies:
+      - '@arethetypeswrong/core'
+      - '@edge-runtime/vm'
+      - '@opentelemetry/api'
+      - '@types/node'
+      - '@vitejs/devtools'
+      - '@vitest/coverage-istanbul'
+      - '@vitest/coverage-v8'
+      - '@vitest/ui'
+      - bufferutil
+      - esbuild
+      - happy-dom
+      - jiti
+      - jsdom
+      - less
+      - msw
+      - publint
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - svelte
+      - terser
+      - tsx
+      - typescript
+      - unplugin-unused
+      - unrun
+      - utf-8-validate
+      - vite
+      - vite-plus
+      - yaml
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 

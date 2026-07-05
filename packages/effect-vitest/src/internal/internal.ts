@@ -2,7 +2,7 @@
  * @since 4.0.0
  */
 
-import { getCurrentSuite } from "vite-plus/test/suite";
+import { getCurrentSuite } from "@tiara-stack/vite-plus/test/suite";
 import * as Cause from "effect/Cause";
 import * as Duration from "effect/Duration";
 import * as Effect from "effect/Effect";
@@ -16,7 +16,7 @@ import * as Scope from "effect/Scope";
 import * as fc from "effect/testing/FastCheck";
 import * as TestClock from "effect/testing/TestClock";
 import * as TestConsole from "effect/testing/TestConsole";
-import * as V from "vite-plus/test";
+import * as V from "@tiara-stack/vite-plus/test";
 import type * as Vitest from "../index.ts";
 
 const runPromise: <E, A>(_: Effect.Effect<A, E, never>, ctx?: V.TestContext) => Promise<A> =

@@ -6,10 +6,10 @@ In this guide, we'll walk you through setting up the necessary dependencies and 
 
 # Requirements
 
-First, ensure you have [`vite-plus`](https://github.com/voidzero-dev/vite-plus) installed.
+First, ensure you have [`@tiara-stack/vite-plus`](https://github.com/tiara-stack/native-tooling) installed.
 
 ```sh
-pnpm add -D vite-plus
+pnpm add -D @tiara-stack/vite-plus
 ```
 
 Next, install the `@tiara-stack/effect-vitest` package, which integrates Effect with the Vite+ test runner.

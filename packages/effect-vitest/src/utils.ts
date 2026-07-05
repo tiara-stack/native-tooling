@@ -16,7 +16,7 @@ import * as Option from "effect/Option";
 import * as Predicate from "effect/Predicate";
 import * as Result from "effect/Result";
 import * as assert from "node:assert";
-import { assert as vassert } from "vite-plus/test";
+import { assert as vassert } from "@tiara-stack/vite-plus/test";
 
 // ----------------------------
 // Primitives

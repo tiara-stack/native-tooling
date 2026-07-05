@@ -7,13 +7,13 @@ import type * as Layer from "effect/Layer";
 import type * as Schema from "effect/Schema";
 import type * as Scope from "effect/Scope";
 import type * as FC from "effect/testing/FastCheck";
-import * as V from "vite-plus/test";
+import * as V from "@tiara-stack/vite-plus/test";
 import * as internal from "./internal/internal.ts";
 
 /**
  * @since 4.0.0
  */
-export * from "vite-plus/test";
+export * from "@tiara-stack/vite-plus/test";
 
 /**
  * @since 4.0.0

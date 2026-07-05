@@ -23,3 +23,4 @@ peerDependencyRules:
     - vite
 minimumReleaseAgeExclude:
   - '@tiara-stack/tsgolint-effect@0.1.0'
+  - '@tiara-stack/vite-plus@0.2.2'
