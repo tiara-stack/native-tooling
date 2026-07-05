@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import module from 'node:module';
+import { existsSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 
 import {
   buildWithConfigs,
@@ -77,6 +79,67 @@ cli.help();
 
 // support `TSDOWN_` for migration compatibility
 const DEFAULT_ENV_PREFIXES = ['VITE_PACK_', 'TSDOWN_'];
+const require = module.createRequire(import.meta.url);
+
+function resolveTiaraTsgoPath(): string {
+  const executableName = process.platform === 'win32' ? 'tsgo.exe' : 'tsgo';
+  const candidates = [
+    process.env.TIARA_TSGO_EFFECT_PATH,
+    process.env.TIARA_TSGO_PATH,
+    resolvePackagedTsgoPath(executableName),
+    findUp(process.cwd(), join('native', 'typescript-go', 'built', 'local', executableName)),
+  ].filter((path): path is string => Boolean(path));
+
+  const binaryPath = candidates.find((path) => existsSync(path));
+  if (!binaryPath) {
+    throw new Error(
+      [
+        'Unable to locate tsgo-effect for dts generation.',
+        'Install @tiara-stack/tsgo-effect with a platform binary or build native/typescript-go/built/local/tsgo.',
+        'Set TIARA_TSGO_EFFECT_PATH to override the binary path.',
+      ].join(' '),
+    );
+  }
+
+  return binaryPath;
+}
+
+function resolvePackagedTsgoPath(executableName: string): string | undefined {
+  try {
+    const packageJsonPath = require.resolve('@tiara-stack/tsgo-effect/package.json');
+    return join(dirname(packageJsonPath), 'vendor', `${process.platform}-${process.arch}`, executableName);
+  } catch {
+    return undefined;
+  }
+}
+
+function withTiaraTsgoDtsConfig(dts: InlineConfig['dts']): InlineConfig['dts'] {
+  if (!dts || typeof dts !== 'object' || dts.tsgo !== true) {
+    return dts;
+  }
+
+  return {
+    ...dts,
+    tsgo: {
+      path: resolveTiaraTsgoPath(),
+    },
+  };
+}
+
+function findUp(start: string, relativePath: string): string | undefined {
+  let directory = resolve(start);
+  while (true) {
+    const candidate = join(directory, relativePath);
+    if (existsSync(candidate)) {
+      return candidate;
+    }
+    const parent = dirname(directory);
+    if (parent === directory) {
+      return undefined;
+    }
+    directory = parent;
+  }
+}
 
 cli
   .command('[...files]', 'Bundle files', {
@@ -160,6 +223,7 @@ cli
         : [viteConfig.pack ?? {}];
       for (const packConfig of packConfigs) {
         const merged = { ...packConfig, ...flags };
+        merged.dts = withTiaraTsgoDtsConfig(merged.dts);
         // Keep postcss/lightningcss external to the dts bundle (see plugin doc)
         if (merged.dts) {
           const existingPlugins = Array.isArray(merged.plugins) ? merged.plugins : [];

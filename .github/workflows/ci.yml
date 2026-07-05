@@ -68,6 +68,8 @@ jobs:
 
       - name: Verify package binary resolution
         run: |
+          node packages/tsgo-effect/bin/tsgo-effect.mjs --print-path
+          node packages/tsgo-effect/bin/tsgo-effect.mjs --version
           node packages/tsgolint-effect/bin/tsgolint-effect.mjs --print-path
           node packages/oxlint-effect/bin/oxlint-effect.mjs --print-path
           node packages/oxlint-effect/bin/oxlint-effect.mjs --version

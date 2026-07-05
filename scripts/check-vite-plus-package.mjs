@@ -13,6 +13,7 @@ assertEqual(pkg.bin?.vp, "bin/vp", "vp bin path");
 assertEqual(pkg.bin?.vpr, "bin/vpr", "vpr bin path");
 assertEqual(pkg.bin?.oxlint, "bin/oxlint", "oxlint bin path");
 assertEqual(pkg.bin?.oxfmt, "bin/oxfmt", "oxfmt bin path");
+assertEqual(pkg.dependencies?.["@tiara-stack/tsgo-effect"], "workspace:^", "tsgo dependency");
 assertEqual(pkg.dependencies?.["@tiara-stack/tsgolint-effect"], "^0.1.0", "tsgolint dependency");
 assertEqual(pkg.napi?.packageName, "@tiara-stack/vite-plus", "napi package name");
 
@@ -37,6 +38,17 @@ assertIncludes(tsgolintPathSource, "TIARA_TSGOLINT_EFFECT_PATH", "custom tsgolin
 const oxlintBinSource = await readFile(join(packageRoot, "bin", "oxlint"), "utf8");
 assertIncludes(oxlintBinSource, "resolveTsgolintExecutable", "oxlint LSP wrapper resolver import");
 assertIncludes(oxlintBinSource, "OXLINT_TSGOLINT_PATH", "oxlint LSP wrapper tsgolint env");
+
+const packBinFile =
+  distFiles.find((file) => file.startsWith("pack-bin-") && file.endsWith(".js")) ??
+  (distFiles.includes("pack-bin.js") ? "pack-bin.js" : undefined);
+if (!packBinFile) {
+  throw new Error("Unable to find generated dist/pack-bin*.js file");
+}
+const packBinSource = await readFile(join(packageRoot, "dist", packBinFile), "utf8");
+assertIncludes(packBinSource, "@tiara-stack/tsgo-effect/package.json", "custom tsgo package resolver");
+assertIncludes(packBinSource, "TIARA_TSGO_EFFECT_PATH", "custom tsgo override env");
+assertIncludes(packBinSource, "withTiaraTsgoDtsConfig", "custom dts tsgo path rewrite");
 
 await import(pathToFileURL(join(packageRoot, "dist", "test", "index.js")).href);
 await import(pathToFileURL(join(packageRoot, "dist", "test", "suite.js")).href);

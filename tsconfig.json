@@ -8,6 +8,9 @@
       "path": "packages/oxlint-effect"
     },
     {
+      "path": "packages/tsgo-effect"
+    },
+    {
       "path": "packages/tsgolint-effect"
     }
   ]

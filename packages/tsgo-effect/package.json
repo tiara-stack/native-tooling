@@ -1,0 +1,43 @@
+{
+  "name": "@tiara-stack/tsgo-effect",
+  "version": "0.1.0",
+  "description": "Patched tsgo compiler binary for Tiara Stack tooling.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiara-stack/native-tooling.git",
+    "directory": "packages/tsgo-effect"
+  },
+  "bin": {
+    "tsgo-effect": "bin/tsgo-effect.mjs"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "vendor"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./bin/tsgo-effect": "./bin/tsgo-effect.mjs",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "format": "vp fmt --check",
+    "format:apply": "vp fmt",
+    "lint": "vp lint src bin",
+    "test": "echo 'no tests defined'"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

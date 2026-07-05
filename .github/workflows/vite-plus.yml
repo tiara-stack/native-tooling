@@ -8,6 +8,7 @@ on:
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
       - "packages/vite-plus/**"
+      - "packages/tsgo-effect/**"
       - "scripts/check-vite-plus-package.mjs"
       - "scripts/sync-vite-plus.mjs"
   push:
@@ -19,6 +20,7 @@ on:
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
       - "packages/vite-plus/**"
+      - "packages/tsgo-effect/**"
       - "scripts/check-vite-plus-package.mjs"
       - "scripts/sync-vite-plus.mjs"
   workflow_dispatch:

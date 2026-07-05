@@ -1,6 +1,7 @@
 packages:
   - packages/effect-vitest
   - packages/oxlint-effect
+  - packages/tsgo-effect
   - packages/tsgolint-effect
   - packages/vite-plus
 
@@ -24,5 +25,7 @@ peerDependencyRules:
   allowAny:
     - vite
 minimumReleaseAgeExclude:
+  - '@tiara-stack/tsgo-effect@0.1.0'
   - '@tiara-stack/tsgolint-effect@0.1.0'
   - '@tiara-stack/vite-plus@0.2.2'
+  - '@tiara-stack/vite-plus@0.2.3'

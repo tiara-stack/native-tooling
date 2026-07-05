@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { a as resolveViteConfig } from "./resolve-vite-config-r91rIaPs.js";
 import module from "node:module";
+import { existsSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { buildWithConfigs, enableDebug, globalLogger, resolveUserConfig } from "@voidzero-dev/vite-plus-core/pack";
 //#region ../../node_modules/.pnpm/cac@7.0.0/node_modules/cac/dist/index.js
 function toArr(any) {
@@ -676,6 +678,36 @@ function externalDtsTypeOnlyPlugin() {
 }
 const cli = cac("vp pack");
 cli.help();
+const require = module.createRequire(import.meta.url);
+function resolveTiaraTsgoPath() {
+	const executableName = process.platform === "win32" ? "tsgo.exe" : "tsgo";
+	const candidates = [process.env.TIARA_TSGO_EFFECT_PATH, process.env.TIARA_TSGO_PATH, resolvePackagedTsgoPath(executableName), findUp(process.cwd(), join("native", "typescript-go", "built", "local", executableName))].filter((path) => Boolean(path));
+	const binaryPath = candidates.find((path) => existsSync(path));
+	if (!binaryPath) throw new Error(["Unable to locate tsgo-effect for dts generation.", "Install @tiara-stack/tsgo-effect with a platform binary or build native/typescript-go/built/local/tsgo.", "Set TIARA_TSGO_EFFECT_PATH to override the binary path."].join(" "));
+	return binaryPath;
+}
+function resolvePackagedTsgoPath(executableName) {
+	try {
+		const packageJsonPath = require.resolve("@tiara-stack/tsgo-effect/package.json");
+		return join(dirname(packageJsonPath), "vendor", `${process.platform}-${process.arch}`, executableName);
+	} catch {
+		return;
+	}
+}
+function withTiaraTsgoDtsConfig(dts) {
+	if (!dts || typeof dts !== "object" || dts.tsgo !== true) return dts;
+	return { ...dts, tsgo: { path: resolveTiaraTsgoPath() } };
+}
+function findUp(start, relativePath) {
+	let directory = resolve(start);
+	while (true) {
+		const candidate = join(directory, relativePath);
+		if (existsSync(candidate)) return candidate;
+		const parent = dirname(directory);
+		if (parent === directory) return;
+		directory = parent;
+	}
+}
 const DEFAULT_ENV_PREFIXES = ["VITE_PACK_", "TSDOWN_"];
 cli.command("[...files]", "Bundle files", {
 	ignoreOptionDefaultValue: true,
@@ -694,6 +726,7 @@ cli.command("[...files]", "Bundle files", {
 				...packConfig,
 				...flags
 			};
+			merged.dts = withTiaraTsgoDtsConfig(merged.dts);
 			if (merged.dts) merged.plugins = [...Array.isArray(merged.plugins) ? merged.plugins : [], externalDtsTypeOnlyPlugin()];
 			const resolvedConfig = await resolveUserConfig(merged, flags, configDeps);
 			configs.push(...resolvedConfig);
