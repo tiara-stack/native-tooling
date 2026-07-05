@@ -2,6 +2,9 @@
   "files": [],
   "references": [
     {
+      "path": "packages/effect-vitest/tsconfig.build.json"
+    },
+    {
       "path": "packages/oxlint-effect/tsconfig.build.json"
     },
     {

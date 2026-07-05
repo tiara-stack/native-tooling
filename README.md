@@ -6,11 +6,13 @@ This repo owns the native forks and publishable npm package boundaries for:
 
 - `@tiara-stack/tsgolint-effect`
 - `@tiara-stack/oxlint-effect`
+- `@tiara-stack/effect-vitest`
 
 It also carries the Vite+ integration fork at
-`packages/vite-plus-effect-fork`. Vite+ is JavaScript/CLI tooling, so it lives
-under `packages/` rather than `native/`; the actual Go/Rust/compiler forks stay
-under `native/`.
+`packages/vite-plus-effect-fork` and an upstream-clean Effect v4 source fork at
+`packages/effect-smol-fork`. Vite+ and Effect helper forks are JavaScript/CLI
+tooling, so they live under `packages/` rather than `native/`; the actual
+Go/Rust/compiler forks stay under `native/`.
 
 The package layer uses normal Vite+ for TypeScript build, lint, format, and
 tests. Native Go/Rust builds are explicit root scripts because they produce
@@ -26,6 +28,14 @@ pnpm build
 pnpm native:build
 pnpm native:stage
 pnpm native:smoke
+```
+
+`@tiara-stack/effect-vitest` is generated from
+`packages/effect-smol-fork/packages/vitest` with Vitest imports rewritten to
+Vite+ test exports. After pulling the Effect source fork, run:
+
+```sh
+pnpm effect-vitest:sync
 ```
 
 ## Publishing Shape
@@ -63,6 +73,7 @@ publisher entry:
 
 - package: `@tiara-stack/tsgolint-effect`
 - package: `@tiara-stack/oxlint-effect`
+- package: `@tiara-stack/effect-vitest`
 - owner/repository: `tiara-stack/native-tooling`
 - workflow file: `publish.yml`
 - environment: `npm`

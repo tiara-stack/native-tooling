@@ -1,11 +1,12 @@
 packages:
+  - packages/effect-vitest
   - packages/oxlint-effect
   - packages/tsgolint-effect
 
 catalog:
   {
     "@types/node": ^24.7.2,
-    effect: 4.0.0-beta.67,
+    effect: 4.0.0-beta.93,
     tsx: npm:tsx@4.22.3,
     vite: npm:@voidzero-dev/vite-plus-core@0.2.2,
     vite-plus: 0.2.2,

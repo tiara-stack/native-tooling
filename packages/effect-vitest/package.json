@@ -1,0 +1,53 @@
+{
+  "name": "@tiara-stack/effect-vitest",
+  "version": "4.0.0-beta.93",
+  "description": "Tiara Stack fork of @effect/vitest wired to Vite+ test exports.",
+  "bugs": {
+    "url": "https://github.com/tiara-stack/native-tooling/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiara-stack/native-tooling.git",
+    "directory": "packages/effect-vitest"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "sideEffects": [],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "default": "./dist/utils.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "format": "vp fmt --check",
+    "format:apply": "vp fmt",
+    "lint": "vp lint src",
+    "test": "echo 'no tests defined'"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "effect": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.0-beta.0",
+    "vite-plus": "^0.2.2"
+  }
+}
