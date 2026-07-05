@@ -16,7 +16,7 @@
     "vite-plus:sync": "node scripts/sync-vite-plus.mjs",
     "native:build": "pnpm native:build:tsgo && pnpm native:build:tsgolint && pnpm native:build:oxlint",
     "native:build:tsgo": "cd native/typescript-go && mkdir -p built/local && GOCACHE=${GOCACHE:-/tmp/go-build-cache} GOTMPDIR=${GOTMPDIR:-/tmp} go build -o built/local/tsgo ./cmd/tsgo",
-    "native:build:tsgolint": "cd native/tsgolint-effect-fork && GOCACHE=${GOCACHE:-/tmp/go-build-cache} GOTMPDIR=${GOTMPDIR:-/tmp} go build -o tsgolint ./cmd/tsgolint",
+    "native:build:tsgolint": "cd native/tsgolint-effect-fork && GOWORK=off GOCACHE=${GOCACHE:-/tmp/go-build-cache} GOTMPDIR=${GOTMPDIR:-/tmp} go build -o tsgolint ./cmd/tsgolint",
     "native:build:oxlint": "cd native/oxc-oxlint-effect-fork && PATH=\"$HOME/.cargo/bin:/opt/data/dev-home/.cargo/bin:$PATH\" cargo build -p oxlint --release --features allocator",
     "native:stage": "node scripts/stage-local-binaries.mjs",
     "native:smoke": "node scripts/headless-smoke.mjs",
