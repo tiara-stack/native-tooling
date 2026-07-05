@@ -7,6 +7,7 @@ This repo owns the native forks and publishable npm package boundaries for:
 - `@tiara-stack/tsgolint-effect`
 - `@tiara-stack/oxlint-effect`
 - `@tiara-stack/effect-vitest`
+- `@tiara-stack/vite-plus`
 
 It also carries the Vite+ integration fork at
 `packages/vite-plus-effect-fork` and an upstream-clean Effect v4 source fork at
@@ -36,6 +37,15 @@ Vite+ test exports. After pulling the Effect source fork, run:
 
 ```sh
 pnpm effect-vitest:sync
+```
+
+`@tiara-stack/vite-plus` is generated from the installed upstream `vite-plus`
+package with the tsgolint resolver patched to prefer
+`@tiara-stack/tsgolint-effect`. After updating the Vite+ source fork and
+installed upstream package, run:
+
+```sh
+pnpm vite-plus:sync
 ```
 
 ## Publishing Shape
@@ -74,6 +84,7 @@ publisher entry:
 - package: `@tiara-stack/tsgolint-effect`
 - package: `@tiara-stack/oxlint-effect`
 - package: `@tiara-stack/effect-vitest`
+- package: `@tiara-stack/vite-plus`
 - owner/repository: `tiara-stack/native-tooling`
 - workflow file: `publish.yml`
 - environment: `npm`

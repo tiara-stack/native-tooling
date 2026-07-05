@@ -12,6 +12,7 @@
     "check:tsc-build": "tsc -b tsconfig.build.json --pretty false",
     "check:patches": "node scripts/check-patches.mjs",
     "effect-vitest:sync": "node scripts/sync-effect-vitest.mjs",
+    "vite-plus:sync": "node scripts/sync-vite-plus.mjs",
     "native:build": "pnpm native:build:tsgolint && pnpm native:build:oxlint",
     "native:build:tsgolint": "cd native/tsgolint-effect-fork && GOCACHE=${GOCACHE:-/tmp/go-build-cache} GOTMPDIR=${GOTMPDIR:-/tmp} go build -o tsgolint ./cmd/tsgolint",
     "native:build:oxlint": "cd native/oxc-oxlint-effect-fork && PATH=\"$HOME/.cargo/bin:/opt/data/dev-home/.cargo/bin:$PATH\" cargo build -p oxlint --release --features allocator",

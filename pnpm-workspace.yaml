@@ -2,6 +2,7 @@ packages:
   - packages/effect-vitest
   - packages/oxlint-effect
   - packages/tsgolint-effect
+  - packages/vite-plus
 
 catalog:
   {
@@ -20,3 +21,5 @@ overrides:
 peerDependencyRules:
   allowAny:
     - vite
+minimumReleaseAgeExclude:
+  - '@tiara-stack/tsgolint-effect@0.1.0'
