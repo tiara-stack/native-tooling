@@ -1,7 +1,6 @@
 packages:
   - packages/effect-vitest
   - packages/oxlint-effect
-  - packages/setup-vp
   - packages/tsgolint-effect
   - packages/vite-plus
 

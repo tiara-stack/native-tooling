@@ -9,8 +9,8 @@ This repo owns the native forks and publishable npm package boundaries for:
 - `@tiara-stack/effect-vitest`
 - `@tiara-stack/vite-plus`
 
-It also carries the GitHub Action fork at `packages/setup-vp`, the Vite+
-integration fork at
+The GitHub Action that installs the scoped Vite+ package lives separately at
+`tiara-stack/setup-vp`. This repo carries the Vite+ integration fork at
 `packages/vite-plus-effect-fork` and an upstream-clean Effect v4 source fork at
 `packages/effect-smol-fork`. Vite+ and Effect helper forks are JavaScript/CLI
 tooling, so they live under `packages/` rather than `native/`; the actual
@@ -52,7 +52,7 @@ pnpm vite-plus:sync
 Use the Tiara setup action anywhere CI needs the scoped Vite+ package:
 
 ```yaml
-- uses: tiara-stack/native-tooling/packages/setup-vp@main
+- uses: tiara-stack/setup-vp@v1
   with:
     version: "0.2.2"
     node-version: "22"
