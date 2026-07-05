@@ -15,11 +15,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - name: Setup Tiara Vite+
         uses: tiara-stack/setup-vp@v1
         with:
           version: "0.2.2"
-          node-version: "22"
           cache: true
           run-install: false
 

@@ -14,7 +14,9 @@ catalog:
   }
 
 allowBuilds:
+  edgedriver: false
   esbuild: true
+  geckodriver: false
   msgpackr-extract: true
 overrides:
   vite: "catalog:"
