@@ -1,0 +1,57 @@
+name: "Setup Tiara vp"
+description: "Install Tiara Stack Vite+ (vp) and optionally cache project dependencies"
+author: "tiara-stack"
+branding:
+  icon: zap
+  color: purple
+
+inputs:
+  version:
+    description: "Version of @tiara-stack/vite-plus to install. Takes precedence over version-file. When neither is set, the version is auto-detected from the project's package.json (its @tiara-stack/vite-plus dependency or catalog entry; a semver range is resolved to the exact version in the lockfile), falling back to the latest release."
+    required: false
+    default: ""
+  version-file:
+    description: "Path to a file to resolve the @tiara-stack/vite-plus version from (package.json, pnpm-workspace.yaml, or .yarnrc.yml). A package.json `@tiara-stack/vite-plus` entry of `catalog:`/`catalog:<name>` is resolved through the nearest catalog source: pnpm-workspace.yaml (pnpm), .yarnrc.yml (yarn), or a root package.json `catalog`/`catalogs` (bun). Ignored when version is specified."
+    required: false
+  run-install:
+    description: "Run `vp install` after setup. Accepts boolean or YAML object with cwd/args."
+    required: false
+    default: "true"
+  sfw:
+    description: "Wrap `vp install` with Socket Firewall Free (sfw) to block malicious dependency fetches. Works on Linux, macOS, and Windows (macOS/Windows require Vite+ v0.1.23+). See https://docs.socket.dev/docs/socket-firewall-free."
+    required: false
+    default: "false"
+  node-version:
+    description: "Node.js version to install via `vp env use`. Defaults to Node.js latest LTS version."
+    required: false
+  node-version-file:
+    description: "Path to file containing the Node.js version spec (.nvmrc, .node-version, .tool-versions, package.json). Ignored when node-version is specified."
+    required: false
+  working-directory:
+    description: "Project directory to use for relative paths, lockfile auto-detection, environment checks, and default `vp install` execution."
+    required: false
+  cache:
+    description: "Enable caching of project dependencies"
+    required: false
+    default: "false"
+  cache-dependency-path:
+    description: "Path to lock file for cache key generation. Auto-detected if not specified."
+    required: false
+  registry-url:
+    description: "Optional registry to set up for auth. Will write .npmrc in $RUNNER_TEMP with registry and auth config, and set NPM_CONFIG_USERCONFIG to point npm at it. Auth token is read from env.NODE_AUTH_TOKEN."
+    required: false
+  scope:
+    description: "Optional scope for authenticating against scoped registries. Will fall back to the repository owner when using the GitHub Packages registry (https://npm.pkg.github.com/)."
+    required: false
+
+outputs:
+  version:
+    description: "The installed version of Vite+"
+  cache-hit:
+    description: "Boolean indicating if cache was restored"
+
+runs:
+  using: node24
+  main: dist/index.mjs
+  post: dist/index.mjs
+  post-if: success()

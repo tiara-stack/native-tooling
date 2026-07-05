@@ -1,0 +1,56 @@
+name: Custom Vite+
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/vite-plus.yml"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "packages/vite-plus/**"
+      - "scripts/check-vite-plus-package.mjs"
+      - "scripts/sync-vite-plus.mjs"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/vite-plus.yml"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "packages/vite-plus/**"
+      - "scripts/check-vite-plus-package.mjs"
+      - "scripts/sync-vite-plus.mjs"
+  workflow_dispatch:
+
+jobs:
+  vite-plus:
+    name: custom vite-plus package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Tiara Vite+
+        uses: ./packages/setup-vp
+        with:
+          version: "0.2.2"
+          node-version: "22"
+          cache: true
+          run-install: false
+
+      - name: Install dependencies
+        run: vp install
+
+      - name: Build package wrappers
+        run: vp run -w build
+
+      - name: Verify custom Vite+ package
+        run: vp run -w check:vite-plus
+
+      - name: Verify Vite+ CLI
+        run: node packages/vite-plus/bin/vp --version
+
+      - name: Dry-run Vite+ npm pack
+        run: npm pack --dry-run --json
+        working-directory: packages/vite-plus

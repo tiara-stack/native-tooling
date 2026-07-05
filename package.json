@@ -11,6 +11,7 @@
     "build": "vp run -r build && pnpm check:tsc-build",
     "check:tsc-build": "tsc -b tsconfig.build.json --pretty false",
     "check:patches": "node scripts/check-patches.mjs",
+    "check:vite-plus": "node scripts/check-vite-plus-package.mjs",
     "effect-vitest:sync": "node scripts/sync-effect-vitest.mjs",
     "vite-plus:sync": "node scripts/sync-vite-plus.mjs",
     "native:build": "pnpm native:build:tsgolint && pnpm native:build:oxlint",

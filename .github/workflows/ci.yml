@@ -15,9 +15,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Vite+
-        uses: voidzero-dev/setup-vp@v1
+      - name: Setup Tiara Vite+
+        uses: ./packages/setup-vp
         with:
+          version: "0.2.2"
           node-version: "22"
           cache: true
           run-install: false
@@ -51,6 +52,9 @@ jobs:
 
       - name: Test package wrappers
         run: vp run -w test
+
+      - name: Verify custom Vite+ package
+        run: vp run -w check:vite-plus
 
       - name: Build native tooling
         run: vp run -w native:build

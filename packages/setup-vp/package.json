@@ -1,0 +1,29 @@
+{
+  "name": "@tiara-stack/setup-vp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vp pack",
+    "format": "vp fmt --check",
+    "format:apply": "vp fmt",
+    "lint": "vp lint src",
+    "test": "echo 'no tests defined'",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@actions/cache": "^6.0.0",
+    "@actions/core": "^3.0.0",
+    "@actions/exec": "^3.0.0",
+    "@actions/glob": "^0.7.0",
+    "yaml": "^2.8.2",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^6.0.0",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  },
+  "packageManager": "pnpm@11.9.0"
+}

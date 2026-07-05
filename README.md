@@ -9,7 +9,8 @@ This repo owns the native forks and publishable npm package boundaries for:
 - `@tiara-stack/effect-vitest`
 - `@tiara-stack/vite-plus`
 
-It also carries the Vite+ integration fork at
+It also carries the GitHub Action fork at `packages/setup-vp`, the Vite+
+integration fork at
 `packages/vite-plus-effect-fork` and an upstream-clean Effect v4 source fork at
 `packages/effect-smol-fork`. Vite+ and Effect helper forks are JavaScript/CLI
 tooling, so they live under `packages/` rather than `native/`; the actual
@@ -48,6 +49,19 @@ installed upstream package, run:
 pnpm vite-plus:sync
 ```
 
+Use the Tiara setup action anywhere CI needs the scoped Vite+ package:
+
+```yaml
+- uses: tiara-stack/native-tooling/packages/setup-vp@main
+  with:
+    version: "0.2.2"
+    node-version: "22"
+    cache: true
+```
+
+The action preserves the upstream `setup-vp` inputs, but installs
+`@tiara-stack/vite-plus` instead of `vite-plus`.
+
 ## Publishing Shape
 
 The current packages resolve binaries in this order:
@@ -71,12 +85,14 @@ Approval or rejection should happen from a trusted maintainer device.
 
 ## CI and Trusted Publishing
 
-GitHub Actions owns two workflows:
+GitHub Actions owns three workflows:
 
 - `.github/workflows/ci.yml` builds, lints, tests, builds native Go/Rust
   tooling, stages the Linux x64 binaries, and runs the headless smoke test.
 - `.github/workflows/publish.yml` builds the same artifacts and calls
   `vp pm stage publish --provenance` with GitHub OIDC enabled.
+- `.github/workflows/vite-plus.yml` runs a focused check for the scoped Vite+
+  package and setup action wiring.
 
 To enable npm trusted publishing, configure each npm package with a trusted
 publisher entry:

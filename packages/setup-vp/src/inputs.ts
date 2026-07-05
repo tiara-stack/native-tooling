@@ -1,0 +1,52 @@
+import { getInput, getBooleanInput } from "@actions/core";
+import { parse as parseYaml } from "yaml";
+import { z } from "zod/mini";
+import type { Inputs, RunInstall } from "./types.js";
+import { RunInstallInputSchema } from "./types.js";
+
+export function getInputs(): Inputs {
+  return {
+    // Keep raw here (may be empty); the effective version, including any
+    // version-file resolution and the "latest" fallback, is computed in runMain.
+    version: getInput("version"),
+    versionFile: getInput("version-file") || undefined,
+    nodeVersion: getInput("node-version") || undefined,
+    nodeVersionFile: getInput("node-version-file") || undefined,
+    workingDirectory: getInput("working-directory") || undefined,
+    runInstall: parseRunInstall(getInput("run-install")),
+    sfw: getBooleanInput("sfw"),
+    cache: getBooleanInput("cache"),
+    cacheDependencyPath: getInput("cache-dependency-path") || undefined,
+    registryUrl: getInput("registry-url") || undefined,
+    scope: getInput("scope") || undefined,
+  };
+}
+
+function parseRunInstall(input: string): RunInstall[] {
+  if (!input || input === "false" || input === "null") {
+    return [];
+  }
+
+  // Handle boolean true
+  if (input === "true") {
+    return [{}];
+  }
+
+  // Parse YAML/JSON input
+  const parsed: unknown = parseYaml(input);
+
+  try {
+    const result = RunInstallInputSchema.parse(parsed);
+    if (!result) return [];
+    if (result === true) return [{}];
+    if (Array.isArray(result)) return result;
+    return [result];
+  } catch (error) {
+    if (error instanceof z.core.$ZodError) {
+      throw new Error(
+        `Invalid run-install input: ${error.issues.map((e) => e.message).join(", ")}`,
+      );
+    }
+    throw error;
+  }
+}
