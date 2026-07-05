@@ -23,14 +23,6 @@ const run = (command, args, options = {}) => {
   }
 }
 
-if (process.env.GITHUB_ACTIONS) {
-  console.log(
-    `GitHub OIDC env: url=${process.env.ACTIONS_ID_TOKEN_REQUEST_URL ? "set" : "unset"} token=${
-      process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN ? "set" : "unset"
-    }`,
-  )
-}
-
 const packageExists = (name, version) => {
   const result = spawnSync("npm", ["view", `${name}@${version}`, "version", "--json"], {
     encoding: "utf8",
@@ -65,8 +57,6 @@ for (const dir of packageDirs) {
     "--access",
     "public",
     "--provenance",
-    "--loglevel",
-    "verbose",
     "--tag",
     tag,
   ]
