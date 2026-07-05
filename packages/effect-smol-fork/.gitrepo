@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Effect-TS/effect-smol
+	branch = main
+	commit = 4b6856f914e992e1e90e04055efa537df28fdc54
+	parent = d5f6067bada6dd7d28818884c7cc99b46ea11a90
+	method = merge
+	cmdver = 0.4.9
