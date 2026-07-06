@@ -31,7 +31,7 @@ for (const entry of copyEntries) {
 const pkgPath = join(target, "package.json");
 const pkg = JSON.parse(await readFile(pkgPath, "utf8"));
 pkg.name = "@tiara-stack/vite-plus";
-pkg.version = "0.2.3";
+pkg.version = "0.2.4";
 pkg.description = "Tiara Stack fork of Vite+ wired to native Effect tsgolint tooling.";
 pkg.homepage = "https://github.com/tiara-stack/native-tooling#readme";
 pkg.bugs = {
@@ -56,8 +56,8 @@ pkg.scripts = {
   test: "node bin/vp --version",
 };
 pkg.dependencies ??= {};
-pkg.dependencies["@tiara-stack/tsgo-effect"] = "workspace:^";
-pkg.dependencies["@tiara-stack/tsgolint-effect"] = "^0.1.0";
+pkg.dependencies["@tiara-stack/tsgo-effect"] = "^0.1.2";
+pkg.dependencies["@tiara-stack/tsgolint-effect"] = "^0.1.2";
 delete pkg.devDependencies;
 if (pkg.napi) {
   pkg.napi.packageName = "@tiara-stack/vite-plus";
@@ -110,11 +110,11 @@ if (!packBinFile) {
 await patchFile(join("dist", packBinFile), [
   [
     'import module from "node:module";',
-    'import module from "node:module";\nimport { existsSync } from "node:fs";\nimport { dirname, join, resolve } from "node:path";',
+    'import module from "node:module";\nimport { spawnSync } from "node:child_process";\nimport { existsSync } from "node:fs";\nimport { dirname, join, resolve } from "node:path";',
   ],
   [
     'const DEFAULT_ENV_PREFIXES = ["VITE_PACK_", "TSDOWN_"];',
-    'const require = module.createRequire(import.meta.url);\nfunction resolveTiaraTsgoPath() {\n\tconst executableName = process.platform === "win32" ? "tsgo.exe" : "tsgo";\n\tconst candidates = [process.env.TIARA_TSGO_EFFECT_PATH, process.env.TIARA_TSGO_PATH, resolvePackagedTsgoPath(executableName), findUp(process.cwd(), join("native", "typescript-go", "built", "local", executableName))].filter((path) => Boolean(path));\n\tconst binaryPath = candidates.find((path) => existsSync(path));\n\tif (!binaryPath) throw new Error(["Unable to locate tsgo-effect for dts generation.", "Install @tiara-stack/tsgo-effect with a platform binary or build native/typescript-go/built/local/tsgo.", "Set TIARA_TSGO_EFFECT_PATH to override the binary path."].join(" "));\n\treturn binaryPath;\n}\nfunction resolvePackagedTsgoPath(executableName) {\n\ttry {\n\t\tconst packageJsonPath = require.resolve("@tiara-stack/tsgo-effect/package.json");\n\t\treturn join(dirname(packageJsonPath), "vendor", `${process.platform}-${process.arch}`, executableName);\n\t} catch {\n\t\treturn;\n\t}\n}\nfunction withTiaraTsgoDtsConfig(dts) {\n\tif (!dts || typeof dts !== "object" || dts.tsgo !== true) return dts;\n\treturn { ...dts, tsgo: { path: resolveTiaraTsgoPath() } };\n}\nfunction findUp(start, relativePath) {\n\tlet directory = resolve(start);\n\twhile (true) {\n\t\tconst candidate = join(directory, relativePath);\n\t\tif (existsSync(candidate)) return candidate;\n\t\tconst parent = dirname(directory);\n\t\tif (parent === directory) return;\n\t\tdirectory = parent;\n\t}\n}\nconst DEFAULT_ENV_PREFIXES = ["VITE_PACK_", "TSDOWN_"];',
+    'const require = module.createRequire(import.meta.url);\nfunction resolveTiaraTsgoPath() {\n\tconst executableName = process.platform === "win32" ? "tsgo.exe" : "tsgo";\n\tconst candidates = [process.env.TIARA_TSGO_EFFECT_PATH, process.env.TIARA_TSGO_PATH, resolvePackagedTsgoPath(), findUp(process.cwd(), join("native", "typescript-go", "built", "local", executableName))].filter((path) => Boolean(path));\n\tconst binaryPath = candidates.find((path) => existsSync(path));\n\tif (!binaryPath) throw new Error(["Unable to locate tsgo-effect for dts generation.", "Install @tiara-stack/tsgo-effect with a platform binary or build native/typescript-go/built/local/tsgo.", "Set TIARA_TSGO_EFFECT_PATH to override the binary path."].join(" "));\n\treturn binaryPath;\n}\nfunction resolvePackagedTsgoPath() {\n\ttry {\n\t\tconst binPath = require.resolve("@tiara-stack/tsgo-effect/bin/tsgo-effect");\n\t\tconst result = spawnSync(process.execPath, [binPath, "--print-path"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });\n\t\tconst binaryPath = result.status === 0 ? result.stdout.trim() : undefined;\n\t\treturn binaryPath && existsSync(binaryPath) ? binaryPath : undefined;\n\t} catch {\n\t\treturn;\n\t}\n}\nfunction withTiaraTsgoDtsConfig(dts) {\n\tif (!dts || typeof dts !== "object" || dts.tsgo !== true) return dts;\n\treturn { ...dts, tsgo: { path: resolveTiaraTsgoPath() } };\n}\nfunction findUp(start, relativePath) {\n\tlet directory = resolve(start);\n\twhile (true) {\n\t\tconst candidate = join(directory, relativePath);\n\t\tif (existsSync(candidate)) return candidate;\n\t\tconst parent = dirname(directory);\n\t\tif (parent === directory) return;\n\t\tdirectory = parent;\n\t}\n}\nconst DEFAULT_ENV_PREFIXES = ["VITE_PACK_", "TSDOWN_"];',
   ],
   [
     "const merged = {\n\t\t\t\t...packConfig,\n\t\t\t\t...flags\n\t\t\t};",

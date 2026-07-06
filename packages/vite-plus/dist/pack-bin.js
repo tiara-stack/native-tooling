@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { a as resolveViteConfig } from "./resolve-vite-config-r91rIaPs.js";
 import module from "node:module";
+import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { buildWithConfigs, enableDebug, globalLogger, resolveUserConfig } from "@voidzero-dev/vite-plus-core/pack";
@@ -681,15 +682,17 @@ cli.help();
 const require = module.createRequire(import.meta.url);
 function resolveTiaraTsgoPath() {
 	const executableName = process.platform === "win32" ? "tsgo.exe" : "tsgo";
-	const candidates = [process.env.TIARA_TSGO_EFFECT_PATH, process.env.TIARA_TSGO_PATH, resolvePackagedTsgoPath(executableName), findUp(process.cwd(), join("native", "typescript-go", "built", "local", executableName))].filter((path) => Boolean(path));
+	const candidates = [process.env.TIARA_TSGO_EFFECT_PATH, process.env.TIARA_TSGO_PATH, resolvePackagedTsgoPath(), findUp(process.cwd(), join("native", "typescript-go", "built", "local", executableName))].filter((path) => Boolean(path));
 	const binaryPath = candidates.find((path) => existsSync(path));
 	if (!binaryPath) throw new Error(["Unable to locate tsgo-effect for dts generation.", "Install @tiara-stack/tsgo-effect with a platform binary or build native/typescript-go/built/local/tsgo.", "Set TIARA_TSGO_EFFECT_PATH to override the binary path."].join(" "));
 	return binaryPath;
 }
-function resolvePackagedTsgoPath(executableName) {
+function resolvePackagedTsgoPath() {
 	try {
-		const packageJsonPath = require.resolve("@tiara-stack/tsgo-effect/package.json");
-		return join(dirname(packageJsonPath), "vendor", `${process.platform}-${process.arch}`, executableName);
+		const binPath = require.resolve("@tiara-stack/tsgo-effect/bin/tsgo-effect");
+		const result = spawnSync(process.execPath, [binPath, "--print-path"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+		const binaryPath = result.status === 0 ? result.stdout.trim() : undefined;
+		return binaryPath && existsSync(binaryPath) ? binaryPath : undefined;
 	} catch {
 		return;
 	}

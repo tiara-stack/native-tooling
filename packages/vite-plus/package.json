@@ -1,6 +1,6 @@
 {
   "name": "@tiara-stack/vite-plus",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Tiara Stack fork of Vite+ wired to native Effect tsgolint tooling.",
   "homepage": "https://github.com/tiara-stack/native-tooling#readme",
   "bugs": {
@@ -368,8 +368,8 @@
     "oxlint-tsgolint": "=0.24.0",
     "vitest": "4.1.9",
     "@voidzero-dev/vite-plus-core": "0.2.2",
-    "@tiara-stack/tsgo-effect": "workspace:^",
-    "@tiara-stack/tsgolint-effect": "^0.1.0"
+    "@tiara-stack/tsgo-effect": "^0.1.2",
+    "@tiara-stack/tsgolint-effect": "^0.1.2"
   },
   "peerDependencies": {
     "@vitest/browser-playwright": "4.1.9",

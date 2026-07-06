@@ -126,11 +126,11 @@ importers:
         specifier: '=1.68.0'
         version: 1.68.0
       '@tiara-stack/tsgo-effect':
-        specifier: workspace:^
-        version: link:../tsgo-effect
+        specifier: ^0.1.2
+        version: 0.1.2
       '@tiara-stack/tsgolint-effect':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.1.2
+        version: 0.1.2
       '@vitest/browser':
         specifier: 4.1.9
         version: 4.1.9(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.9)
@@ -741,6 +741,10 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@tiara-stack/tsgo-effect@0.1.2':
+    resolution: {integrity: sha512-YSUrZMBZcNtcUE0j+qJERXeJ2ydwQQtCP3ihiCQ6C8VJdld9vGqaY8G7Ac1JrIU1rhodb2y+2PCd5ZVeyxqpeQ==}
+    hasBin: true
+
   '@tiara-stack/tsgolint-effect-linux-x64@0.1.0':
     resolution: {integrity: sha512-RWizZWtlENPIjzWj2pHamX7JeSzHYCnevwE6N0s22f0gpRRfbbaFwgFY6q+XV/984jqLG73dF06+wSJqO3sXlw==}
     cpu: [x64]
@@ -748,6 +752,10 @@ packages:
 
   '@tiara-stack/tsgolint-effect@0.1.0':
     resolution: {integrity: sha512-foC4I3QP4QL4z/zX3KtBhKLTIreBk6s5yyD4B0VuFDwilIHWlRVHbuZB39lMlVX71U6gkeSj7uRn9svqrlVoeg==}
+    hasBin: true
+
+  '@tiara-stack/tsgolint-effect@0.1.2':
+    resolution: {integrity: sha512-vYrYQuDDUqBpVlXvCgK5cpkTOFjnQZKgxLH9UaoIGf8azhA0IgRVHxQOTJq5IkaR9wVKocMJk3gZ/yra8n7ryA==}
     hasBin: true
 
   '@tiara-stack/vite-plus@0.2.2':
@@ -2475,10 +2483,18 @@ snapshots:
   '@tiara-stack/tsgo-effect-linux-x64@0.1.0':
     optional: true
 
+  '@tiara-stack/tsgo-effect@0.1.2':
+    optionalDependencies:
+      '@tiara-stack/tsgo-effect-linux-x64': 0.1.0
+
   '@tiara-stack/tsgolint-effect-linux-x64@0.1.0':
     optional: true
 
   '@tiara-stack/tsgolint-effect@0.1.0': {}
+
+  '@tiara-stack/tsgolint-effect@0.1.2':
+    optionalDependencies:
+      '@tiara-stack/tsgolint-effect-linux-x64': 0.1.0
 
   '@tiara-stack/vite-plus@0.2.2(@types/node@24.13.2)(@vitest/browser-playwright@4.1.9)(@vitest/browser-webdriverio@4.1.9)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(vite-plus@0.2.2(@types/node@24.13.2)(@vitest/browser-playwright@4.1.9)(@vitest/browser-webdriverio@4.1.9)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@6.0.3)(yaml@2.9.0))(yaml@2.9.0)':
     dependencies:

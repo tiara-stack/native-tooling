@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import module from 'node:module';
+import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
@@ -104,10 +105,15 @@ function resolveTiaraTsgoPath(): string {
   return binaryPath;
 }
 
-function resolvePackagedTsgoPath(executableName: string): string | undefined {
+function resolvePackagedTsgoPath(_executableName: string): string | undefined {
   try {
-    const packageJsonPath = require.resolve('@tiara-stack/tsgo-effect/package.json');
-    return join(dirname(packageJsonPath), 'vendor', `${process.platform}-${process.arch}`, executableName);
+    const binPath = require.resolve('@tiara-stack/tsgo-effect/bin/tsgo-effect');
+    const result = spawnSync(process.execPath, [binPath, '--print-path'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
+    const binaryPath = result.status === 0 ? result.stdout.trim() : undefined;
+    return binaryPath && existsSync(binaryPath) ? binaryPath : undefined;
   } catch {
     return undefined;
   }

@@ -1,6 +1,6 @@
 import { createRequire } from "node:module";
 //#region package.json
-var version = "0.2.3";
+var version = "0.2.4";
 //#endregion
 //#region src/utils/constants.ts
 const VITE_PLUS_NAME = "vite-plus";
