@@ -1,6 +1,6 @@
 {
   "name": "@tiara-stack/tsgo-effect",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Patched tsgo compiler binary for Tiara Stack tooling.",
   "license": "MIT",
   "repository": {
