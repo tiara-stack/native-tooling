@@ -14,6 +14,14 @@ on:
         description: "npm dist-tag for staged packages"
         type: string
         default: "latest"
+      package-filter:
+        description: "vp package filter for staged packages"
+        type: string
+        default: "./packages/*"
+      build-native:
+        description: "Build and stage native binaries before publishing"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -45,6 +53,7 @@ jobs:
           run-install: false
 
       - name: Setup Go
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
         uses: actions/setup-go@v5
         with:
           go-version: "1.26.x"
@@ -55,9 +64,11 @@ jobs:
             native/typescript-go/go.sum
 
       - name: Setup Rust
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
         uses: dtolnay/rust-toolchain@stable
 
       - name: Cache Rust builds
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: native/oxc-oxlint-effect-fork
@@ -73,12 +84,15 @@ jobs:
           vp run -w check:vite-plus
 
       - name: Build native tooling
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
         run: vp run -w native:build
 
       - name: Stage native binaries
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
         run: vp run -w native:stage
 
       - name: Verify package binary resolution
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
         run: |
           node packages/tsgo-effect/bin/tsgo-effect.mjs --print-path
           node packages/tsgo-effect/bin/tsgo-effect.mjs --version
@@ -87,12 +101,13 @@ jobs:
           node packages/oxlint-effect/bin/oxlint-effect.mjs --version
 
       - name: Run native headless smoke test
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
         run: vp run -w native:smoke
 
       - name: Dry-run staged publish
         if: ${{ github.event_name == 'workflow_dispatch' && inputs['dry-run'] }}
-        run: vp pm stage publish -r --filter './packages/*' --access public --provenance --tag "${{ inputs.tag }}" --dry-run -- --no-git-checks
+        run: vp pm stage publish -r --filter "${{ inputs['package-filter'] }}" --access public --provenance --tag "${{ inputs.tag }}" --dry-run -- --no-git-checks
 
       - name: Stage packages for npm trusted publishing
         if: ${{ github.event_name != 'workflow_dispatch' || !inputs['dry-run'] }}
-        run: vp pm stage publish -r --filter './packages/*' --access public --provenance --tag "${{ inputs.tag || 'latest' }}" -- --no-git-checks
+        run: vp pm stage publish -r --filter "${{ inputs['package-filter'] || './packages/*' }}" --access public --provenance --tag "${{ inputs.tag || 'latest' }}" -- --no-git-checks
