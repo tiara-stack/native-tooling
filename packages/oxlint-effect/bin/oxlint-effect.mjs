@@ -1,11 +1,17 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const executableName = process.platform === "win32" ? "oxlint.exe" : "oxlint";
 const packageRoot = findPackageRoot(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
+const platformPackageName =
+  process.platform === "linux" && process.arch === "x64"
+    ? "@tiara-stack/oxlint-effect-linux-x64"
+    : undefined;
 
 const binaryPath = resolveBinary();
 
@@ -31,6 +37,7 @@ function resolveBinary() {
   for (const candidate of [
     process.env.TIARA_OXLINT_EFFECT_PATH,
     process.env.TIARA_REAL_OXLINT_PATH,
+    platformPackageName ? resolvePackageBinary(platformPackageName) : undefined,
     join(packageRoot, "vendor", `${process.platform}-${process.arch}`, executableName),
     findUp(
       process.cwd(),
@@ -51,7 +58,7 @@ function resolveBinary() {
     console.error(
       [
         "Unable to locate oxlint-effect.",
-        "Build native/oxc-oxlint-effect-fork/target/release/oxlint or install a platform package that provides vendor binaries.",
+        "Build native/oxc-oxlint-effect-fork/target/release/oxlint or install @tiara-stack/oxlint-effect-linux-x64.",
         "Set TIARA_OXLINT_EFFECT_PATH to override the binary path.",
       ].join(" "),
     );
@@ -59,6 +66,18 @@ function resolveBinary() {
   }
 
   return binaryPath;
+}
+
+/**
+ * @param {string} packageName
+ * @returns {string | undefined}
+ */
+function resolvePackageBinary(packageName) {
+  try {
+    return join(dirname(require.resolve(`${packageName}/package.json`)), "vendor", executableName);
+  } catch {
+    return undefined;
+  }
 }
 
 /**

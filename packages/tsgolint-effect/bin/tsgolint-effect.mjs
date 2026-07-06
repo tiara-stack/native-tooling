@@ -1,11 +1,17 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const executableName = process.platform === "win32" ? "tsgolint.exe" : "tsgolint";
 const packageRoot = findPackageRoot(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
+const platformPackageName =
+  process.platform === "linux" && process.arch === "x64"
+    ? "@tiara-stack/tsgolint-effect-linux-x64"
+    : undefined;
 
 const binaryPath = resolveBinary();
 
@@ -30,6 +36,7 @@ function resolveBinary() {
   const candidates = [];
   for (const candidate of [
     process.env.TIARA_TSGOLINT_EFFECT_PATH,
+    platformPackageName ? resolvePackageBinary(platformPackageName) : undefined,
     join(packageRoot, "vendor", `${process.platform}-${process.arch}`, executableName),
     findUp(process.cwd(), join("native", "tsgolint-effect-fork", executableName)),
     findUp(packageRoot, join("native", "tsgolint-effect-fork", executableName)),
@@ -44,7 +51,7 @@ function resolveBinary() {
     console.error(
       [
         "Unable to locate tsgolint-effect.",
-        "Build native/tsgolint-effect-fork/tsgolint or install a platform package that provides vendor binaries.",
+        "Build native/tsgolint-effect-fork/tsgolint or install @tiara-stack/tsgolint-effect-linux-x64.",
         "Set TIARA_TSGOLINT_EFFECT_PATH to override the binary path.",
       ].join(" "),
     );
@@ -52,6 +59,18 @@ function resolveBinary() {
   }
 
   return binaryPath;
+}
+
+/**
+ * @param {string} packageName
+ * @returns {string | undefined}
+ */
+function resolvePackageBinary(packageName) {
+  try {
+    return join(dirname(require.resolve(`${packageName}/package.json`)), "vendor", executableName);
+  } catch {
+    return undefined;
+  }
 }
 
 /**

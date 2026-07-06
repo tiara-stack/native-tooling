@@ -6,12 +6,18 @@ const root = process.cwd();
 
 stage({
   source: join(root, "native", "typescript-go", "built", "local", process.platform === "win32" ? "tsgo.exe" : "tsgo"),
-  target: join(root, "packages", "tsgo-effect", "vendor", platformDir, process.platform === "win32" ? "tsgo.exe" : "tsgo"),
+  target: join(root, "packages", `tsgo-effect-${platformDir}`, "vendor", process.platform === "win32" ? "tsgo.exe" : "tsgo"),
 });
 
 stage({
   source: join(root, "native", "tsgolint-effect-fork", process.platform === "win32" ? "tsgolint.exe" : "tsgolint"),
-  target: join(root, "packages", "tsgolint-effect", "vendor", platformDir, process.platform === "win32" ? "tsgolint.exe" : "tsgolint"),
+  target: join(
+    root,
+    "packages",
+    `tsgolint-effect-${platformDir}`,
+    "vendor",
+    process.platform === "win32" ? "tsgolint.exe" : "tsgolint",
+  ),
 });
 
 stage({
@@ -23,7 +29,7 @@ stage({
     "release",
     process.platform === "win32" ? "oxlint.exe" : "oxlint",
   ),
-  target: join(root, "packages", "oxlint-effect", "vendor", platformDir, process.platform === "win32" ? "oxlint.exe" : "oxlint"),
+  target: join(root, "packages", `oxlint-effect-${platformDir}`, "vendor", process.platform === "win32" ? "oxlint.exe" : "oxlint"),
 });
 
 function stage({ source, target }) {

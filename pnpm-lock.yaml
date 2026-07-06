@@ -74,6 +74,12 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 0.2.2(@types/node@24.13.2)(@vitest/browser-playwright@4.1.9)(@vitest/browser-webdriverio@4.1.9)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@6.0.3)(yaml@2.9.0)
+    optionalDependencies:
+      '@tiara-stack/oxlint-effect-linux-x64':
+        specifier: workspace:0.1.0
+        version: link:../oxlint-effect-linux-x64
+
+  packages/oxlint-effect-linux-x64: {}
 
   packages/tsgo-effect:
     devDependencies:
@@ -86,6 +92,12 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 0.2.2(@types/node@24.13.2)(@vitest/browser-playwright@4.1.9)(@vitest/browser-webdriverio@4.1.9)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@6.0.3)(yaml@2.9.0)
+    optionalDependencies:
+      '@tiara-stack/tsgo-effect-linux-x64':
+        specifier: workspace:0.1.0
+        version: link:../tsgo-effect-linux-x64
+
+  packages/tsgo-effect-linux-x64: {}
 
   packages/tsgolint-effect:
     devDependencies:
@@ -98,6 +110,12 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 0.2.2(@types/node@24.13.2)(@vitest/browser-playwright@4.1.9)(@vitest/browser-webdriverio@4.1.9)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.3)(typescript@6.0.3)(yaml@2.9.0)
+    optionalDependencies:
+      '@tiara-stack/tsgolint-effect-linux-x64':
+        specifier: workspace:0.1.0
+        version: link:../tsgolint-effect-linux-x64
+
+  packages/tsgolint-effect-linux-x64: {}
 
   packages/vite-plus:
     dependencies:

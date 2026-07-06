@@ -1,8 +1,11 @@
 packages:
   - packages/effect-vitest
   - packages/oxlint-effect
+  - packages/oxlint-effect-linux-x64
   - packages/tsgo-effect
+  - packages/tsgo-effect-linux-x64
   - packages/tsgolint-effect
+  - packages/tsgolint-effect-linux-x64
   - packages/vite-plus
 
 catalog:
@@ -25,7 +28,10 @@ peerDependencyRules:
   allowAny:
     - vite
 minimumReleaseAgeExclude:
+  - '@tiara-stack/oxlint-effect-linux-x64@0.1.0'
   - '@tiara-stack/tsgo-effect@0.1.0'
+  - '@tiara-stack/tsgo-effect-linux-x64@0.1.0'
   - '@tiara-stack/tsgolint-effect@0.1.0'
+  - '@tiara-stack/tsgolint-effect-linux-x64@0.1.0'
   - '@tiara-stack/vite-plus@0.2.2'
   - '@tiara-stack/vite-plus@0.2.3'

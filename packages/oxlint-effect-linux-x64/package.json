@@ -1,0 +1,26 @@
+{
+  "name": "@tiara-stack/oxlint-effect-linux-x64",
+  "version": "0.1.0",
+  "description": "Linux x64 native oxlint binary for Tiara Stack tooling.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiara-stack/native-tooling.git",
+    "directory": "packages/oxlint-effect-linux-x64"
+  },
+  "files": [
+    "vendor"
+  ],
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

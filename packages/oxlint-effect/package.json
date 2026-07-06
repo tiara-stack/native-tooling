@@ -13,8 +13,7 @@
   },
   "files": [
     "bin",
-    "dist",
-    "vendor"
+    "dist"
   ],
   "type": "module",
   "exports": {
@@ -39,5 +38,8 @@
     "@types/node": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
+  },
+  "optionalDependencies": {
+    "@tiara-stack/oxlint-effect-linux-x64": "workspace:0.1.0"
   }
 }
