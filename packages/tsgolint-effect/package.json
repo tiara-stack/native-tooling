@@ -1,6 +1,6 @@
 {
   "name": "@tiara-stack/tsgolint-effect",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Native tsgolint with Effect diagnostics for Tiara Stack tooling.",
   "license": "MIT",
   "repository": {
@@ -40,6 +40,6 @@
     "vite-plus": "catalog:"
   },
   "optionalDependencies": {
-    "@tiara-stack/tsgolint-effect-linux-x64": "workspace:0.1.0"
+    "@tiara-stack/tsgolint-effect-linux-x64": "0.1.0"
   }
 }
