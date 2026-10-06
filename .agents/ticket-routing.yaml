@@ -1,0 +1,23 @@
+version: 1
+
+levels:
+  quick:
+    coding_agent: "worker"
+    model: "gpt-6-luna"
+    reasoning_effort: "medium"
+  focused:
+    coding_agent: "worker"
+    model: "gpt-6-luna"
+    reasoning_effort: "high"
+  standard:
+    coding_agent: "worker"
+    model: "gpt-6-luna"
+    reasoning_effort: "max"
+  complex:
+    coding_agent: "worker"
+    model: "gpt-6-sol"
+    reasoning_effort: "max"
+  architectural:
+    coding_agent: "worker"
+    model: "gpt-6-sol"
+    reasoning_effort: "max"

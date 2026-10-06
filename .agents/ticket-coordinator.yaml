@@ -1,0 +1,25 @@
+version: 1
+worker_backend: subagent
+max_workers: 2
+stack_backend: graphite
+review_pools:
+  open-code-review-delegate:
+    scope: local
+    reviewers:
+      - open-code-review-delegate
+    max_active: 1
+  coderabbit-cli:
+    scope: local
+    reviewers:
+      - coderabbit
+    max_active: 1
+  implement-code-review:
+    scope: local
+    reviewers:
+      - "$implement /code-review"
+    max_active: 1
+  github-coderabbit:
+    scope: hosted
+    reviewers:
+      - "coderabbitai[bot]"
+    max_active: 1
