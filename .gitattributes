@@ -3,3 +3,4 @@ packages/vite-plus/dist/** whitespace=-blank-at-eol
 packages/vite-plus-core/dist/** whitespace=-blank-at-eol
 packages/vite-plus/LICENSE whitespace=-blank-at-eol
 packages/vite-plus-core/LICENSE whitespace=-blank-at-eol
+docs/review/TIA-314/custom-source.patch whitespace=-blank-at-eol
