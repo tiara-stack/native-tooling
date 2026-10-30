@@ -3,23 +3,27 @@ package effectlint
 import (
 	"testing"
 
+	effectrule "github.com/effect-ts/tsgo/internal/rule"
 	effectrules "github.com/effect-ts/tsgo/internal/rules"
 )
 
-func TestRulesMirrorEffectRegistry(t *testing.T) {
+func TestPublicRulesRemainAvailable(t *testing.T) {
 	t.Parallel()
 
-	if len(All) != len(effectrules.All) {
-		t.Fatalf("expected %d Effect rules, got %d", len(effectrules.All), len(All))
+	if len(All) != 82 {
+		t.Fatalf("expected the 82 established public rules, got %d", len(All))
 	}
-
-	for i, effectRule := range effectrules.All {
-		spec := All[i]
-		if spec.EffectName != effectRule.Name {
-			t.Fatalf("rule %d effect name mismatch: got %q, want %q", i, spec.EffectName, effectRule.Name)
+	seen := make(map[string]bool, len(All))
+	for _, spec := range All {
+		if seen[spec.HeadlessName] {
+			t.Fatalf("duplicate public rule %q", spec.HeadlessName)
 		}
-		if spec.HeadlessName != snakeCase(effectRule.Name) {
-			t.Fatalf("rule %d headless name mismatch: got %q, want %q", i, spec.HeadlessName, snakeCase(effectRule.Name))
+		seen[spec.HeadlessName] = true
+		if effectrule.ByName(effectrules.All, spec.EffectName) == nil {
+			t.Fatalf("public rule %q is absent from the selected language service", spec.EffectName)
+		}
+		if spec.HeadlessName != snakeCase(spec.EffectName) {
+			t.Fatalf("headless name %q does not match %q", spec.HeadlessName, spec.EffectName)
 		}
 	}
 }

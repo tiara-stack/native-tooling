@@ -15,7 +15,8 @@ exports[`Setup CLI > should add LSP plugin alongside existing plugins > change s
 
 exports[`Setup CLI > should add LSP plugin alongside existing plugins > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
 ]
 `;
 
@@ -24,12 +25,13 @@ exports[`Setup CLI > should add LSP plugin alongside existing plugins > package.
   "name": "test-project",
   "version": "1.0.0",
   "dependencies": {},
-"devDependencies": { "@effect/tsgo": "^0.0.5","@typescript/native-preview": "latest" }
+  "devDependencies": { "@effect/tsgo": "^0.0.5", "typescript": "7.1.0-dev.test" }
 }"
 `;
 
 exports[`Setup CLI > should add LSP plugin alongside existing plugins > tsconfig.json 1`] = `
 "{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
@@ -37,20 +39,22 @@ exports[`Setup CLI > should add LSP plugin alongside existing plugins > tsconfig
       {
         "name": "typescript-plugin-css-modules"
       },
-{
-	"name": "@effect/language-service"
-}
+      {
+        "name": "@effect/language-service"
+      }
     ]
-  },
-"$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json"
+  }
 }"
 `;
 
 exports[`Setup CLI > should add LSP with VS Code editor selected and create new settings file > .vscode/settings.json 1`] = `
 "{
-  "typescript.native-preview.tsdk": "node_modules/@typescript/native-preview",
-  "typescript.experimental.useTsgo": true,
-  "js/ts.experimental.useTsgo": true
+  "js/ts.experimental.useTsgo": true,
+  "js/ts.tsdk.path": "./node_modules/typescript/bin",
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "js/ts.tsdk.additionalLocations": [
+    "./node_modules/typescript/bin"
+  ]
 }
 "
 `;
@@ -74,10 +78,11 @@ exports[`Setup CLI > should add LSP with VS Code editor selected and create new 
 
 exports[`Setup CLI > should add LSP with VS Code editor selected and create new settings file > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
   "",
   "VS Code / Cursor / VS Code-based editors:",
-  "  1. Install the @typescript/native-preview extension",
+  "  1. Install the TypeScript 7 extension",
   "  2. Open a TypeScript file and ensure the native TS server is active",
   "  3. The language service plugin will be loaded automatically",
   "",
@@ -89,22 +94,22 @@ exports[`Setup CLI > should add LSP with VS Code editor selected and create new 
   "name": "test-project",
   "version": "1.0.0",
   "dependencies": {},
-"devDependencies": { "@effect/tsgo": "^0.0.5","@typescript/native-preview": "latest" }
+  "devDependencies": { "@effect/tsgo": "^0.0.5", "typescript": "7.1.0-dev.test" }
 }"
 `;
 
 exports[`Setup CLI > should add LSP with VS Code editor selected and create new settings file > tsconfig.json 1`] = `
 "{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
-"plugins": [
-	{
-		"name": "@effect/language-service"
-	}
-]
-  },
-"$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json"
+    "plugins": [
+      {
+        "name": "@effect/language-service"
+      }
+    ]
+  }
 }"
 `;
 
@@ -123,7 +128,8 @@ exports[`Setup CLI > should add LSP with custom diagnostic severities when no pl
 
 exports[`Setup CLI > should add LSP with custom diagnostic severities when no plugin exists > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
 ]
 `;
 
@@ -132,33 +138,33 @@ exports[`Setup CLI > should add LSP with custom diagnostic severities when no pl
   "name": "test-project",
   "version": "1.0.0",
   "dependencies": {},
-"devDependencies": { "@effect/tsgo": "^0.0.5","@typescript/native-preview": "latest" }
+  "devDependencies": { "@effect/tsgo": "^0.0.5", "typescript": "7.1.0-dev.test" }
 }"
 `;
 
 exports[`Setup CLI > should add LSP with custom diagnostic severities when no plugin exists > tsconfig.json 1`] = `
 "{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
-"plugins": [
-	{
-		"name": "@effect/language-service",
-		"diagnosticSeverity": {
-			"floatingEffect": "warning",
-			"missingEffectError": "off"
-		}
-	}
-]
-  },
-"$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json"
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "diagnosticSeverity": {
+          "floatingEffect": "warning",
+          "missingEffectError": "off"
+        }
+      }
+    ]
+  }
 }"
 `;
 
 exports[`Setup CLI > should add custom diagnostic severities when plugin exists without custom values > change summary 1`] = `
 [
   {
-    "description": "Add @typescript/native-preview@latest to devDependencies",
+    "description": "Add typescript@7.1.0-dev.test to devDependencies",
     "file": "package.json",
   },
   {
@@ -170,7 +176,8 @@ exports[`Setup CLI > should add custom diagnostic severities when plugin exists 
 
 exports[`Setup CLI > should add custom diagnostic severities when plugin exists without custom values > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
 ]
 `;
 
@@ -181,34 +188,34 @@ exports[`Setup CLI > should add custom diagnostic severities when plugin exists 
   "dependencies": {},
   "devDependencies": {
     "@effect/tsgo": "^0.0.5",
-"@typescript/native-preview": "latest"
+    "typescript": "7.1.0-dev.test"
   }
 }"
 `;
 
 exports[`Setup CLI > should add custom diagnostic severities when plugin exists without custom values > tsconfig.json 1`] = `
 "{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
     "plugins": [
       {
         "name": "@effect/language-service",
-"diagnosticSeverity": {
-	"floatingEffect": "warning",
-	"missingEffectContext": "message"
-}
+        "diagnosticSeverity": {
+          "floatingEffect": "warning",
+          "missingEffectContext": "message"
+        }
       }
     ]
-  },
-"$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json"
+  }
 }"
 `;
 
 exports[`Setup CLI > should generate changes for Astro-style configs using the legacy prepare command > change summary 1`] = `
 [
   {
-    "description": "Add @effect/tsgo@^0.0.5 to devDependencies; Add @typescript/native-preview@latest to devDependencies; Update prepare script to include patch command",
+    "description": "Add @effect/tsgo@^0.0.5 to devDependencies; Add typescript@7.1.0-dev.test to devDependencies; Update prepare script to include patch command",
     "file": "package.json",
   },
   {
@@ -220,28 +227,29 @@ exports[`Setup CLI > should generate changes for Astro-style configs using the l
 
 exports[`Setup CLI > should generate changes for Astro-style configs using the legacy prepare command > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
 ]
 `;
 
 exports[`Setup CLI > should generate changes for Astro-style configs using the legacy prepare command > package.json 1`] = `
 "{
   "scripts": {
-    "prepare": "effect-language-service patch && effect-tsgo patch",
+    "prepare": "effect-language-service patch && effect-tsgo patch --typescript --no-oxlint",
     "dev": "astro dev"
   },
   "dependencies": {},
   "devDependencies": {
     "@effect/language-service": "^0.80.0",
-    "typescript": "^5.9.3",
-"@typescript/native-preview": "latest",
-"@effect/tsgo": "^0.0.5"
+    "typescript": "7.1.0-dev.test",
+    "@effect/tsgo": "^0.0.5"
   }
 }"
 `;
 
 exports[`Setup CLI > should generate changes for Astro-style configs using the legacy prepare command > tsconfig.json 1`] = `
 "{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "extends": "astro/tsconfigs/strictest",
   "include": [
     ".astro/types.d.ts",
@@ -268,8 +276,7 @@ exports[`Setup CLI > should generate changes for Astro-style configs using the l
         ]
       }
     ]
-  },
-"$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json"
+  }
 }"
 `;
 
@@ -288,7 +295,8 @@ exports[`Setup CLI > should generate changes for adding LSP with defaults > chan
 
 exports[`Setup CLI > should generate changes for adding LSP with defaults > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
 ]
 `;
 
@@ -297,22 +305,22 @@ exports[`Setup CLI > should generate changes for adding LSP with defaults > pack
   "name": "test-project",
   "version": "1.0.0",
   "dependencies": {},
-"devDependencies": { "@effect/tsgo": "^0.0.5","@typescript/native-preview": "latest" }
+  "devDependencies": { "@effect/tsgo": "^0.0.5", "typescript": "7.1.0-dev.test" }
 }"
 `;
 
 exports[`Setup CLI > should generate changes for adding LSP with defaults > tsconfig.json 1`] = `
 "{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
-"plugins": [
-	{
-		"name": "@effect/language-service"
-	}
-]
-  },
-"$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json"
+    "plugins": [
+      {
+        "name": "@effect/language-service"
+      }
+    ]
+  }
 }"
 `;
 
@@ -331,7 +339,8 @@ exports[`Setup CLI > should generate changes for adding LSP with prepare script 
 
 exports[`Setup CLI > should generate changes for adding LSP with prepare script > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
 ]
 `;
 
@@ -340,23 +349,23 @@ exports[`Setup CLI > should generate changes for adding LSP with prepare script 
   "name": "test-project",
   "version": "1.0.0",
   "dependencies": {},
-"scripts": { "prepare": "effect-tsgo patch" },
-"devDependencies": { "@effect/tsgo": "^0.0.5","@typescript/native-preview": "latest" }
+  "scripts": { "prepare": "effect-tsgo patch --typescript --no-oxlint" },
+  "devDependencies": { "@effect/tsgo": "^0.0.5", "typescript": "7.1.0-dev.test" }
 }"
 `;
 
 exports[`Setup CLI > should generate changes for adding LSP with prepare script > tsconfig.json 1`] = `
 "{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
-"plugins": [
-	{
-		"name": "@effect/language-service"
-	}
-]
-  },
-"$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json"
+    "plugins": [
+      {
+        "name": "@effect/language-service"
+      }
+    ]
+  }
 }"
 `;
 
@@ -375,7 +384,8 @@ exports[`Setup CLI > should generate changes for removing LSP and prepare script
 
 exports[`Setup CLI > should generate changes for removing LSP and prepare script > messages 1`] = `
 [
-  "Run \`effect-tsgo unpatch\` to restore the original TypeScript-Go binary.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo unpatch --typescript --no-oxlint\` to restore the original integrations.",
 ]
 `;
 
@@ -417,7 +427,8 @@ exports[`Setup CLI > should generate changes for removing LSP when already insta
 
 exports[`Setup CLI > should generate changes for removing LSP when already installed > messages 1`] = `
 [
-  "Run \`effect-tsgo unpatch\` to restore the original TypeScript-Go binary.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo unpatch --typescript --no-oxlint\` to restore the original integrations.",
 ]
 `;
 
@@ -458,7 +469,8 @@ exports[`Setup CLI > should not override existing plugins when adding LSP plugin
 
 exports[`Setup CLI > should not override existing plugins when adding LSP plugin > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
 ]
 `;
 
@@ -467,12 +479,13 @@ exports[`Setup CLI > should not override existing plugins when adding LSP plugin
   "name": "test-project",
   "version": "1.0.0",
   "dependencies": {},
-"devDependencies": { "@effect/tsgo": "^0.0.5","@typescript/native-preview": "latest" }
+  "devDependencies": { "@effect/tsgo": "^0.0.5", "typescript": "7.1.0-dev.test" }
 }"
 `;
 
 exports[`Setup CLI > should not override existing plugins when adding LSP plugin > tsconfig.json 1`] = `
 "{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
@@ -486,12 +499,11 @@ exports[`Setup CLI > should not override existing plugins when adding LSP plugin
       {
         "name": "another-typescript-plugin"
       },
-{
-	"name": "@effect/language-service"
-}
+      {
+        "name": "@effect/language-service"
+      }
     ]
-  },
-"$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json"
+  }
 }"
 `;
 
@@ -512,9 +524,10 @@ exports[`Setup CLI > should preserve all existing VS Code settings from a real r
   "editor.wordBasedSuggestions": "matchingDocuments",
   "editor.parameterHints.enabled": true,
   "files.insertFinalNewline": true,
-"js/ts.experimental.useTsgo": true,
-"typescript.experimental.useTsgo": true,
-"typescript.native-preview.tsdk": "node_modules/@typescript/native-preview"
+  "js/ts.tsdk.additionalLocations": ["./node_modules/typescript/bin"],
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "js/ts.tsdk.path": "./node_modules/typescript/bin",
+  "js/ts.experimental.useTsgo": true
 }"
 `;
 
@@ -529,7 +542,7 @@ exports[`Setup CLI > should preserve all existing VS Code settings from a real r
     "file": "tsconfig.json",
   },
   {
-    "description": "Add typescript.native-preview.tsdk setting; Add typescript.experimental.useTsgo setting; Add js/ts.experimental.useTsgo setting",
+    "description": "Add js/ts.experimental.useTsgo setting; Add js/ts.tsdk.path setting; Add js/ts.tsdk.promptToUseWorkspaceVersion setting; Add js/ts.tsdk.additionalLocations setting",
     "file": ".vscode/settings.json",
   },
 ]
@@ -537,10 +550,11 @@ exports[`Setup CLI > should preserve all existing VS Code settings from a real r
 
 exports[`Setup CLI > should preserve all existing VS Code settings from a real repository config > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
   "",
   "VS Code / Cursor / VS Code-based editors:",
-  "  1. Install the @typescript/native-preview extension",
+  "  1. Install the TypeScript 7 extension",
   "  2. Open a TypeScript file and ensure the native TS server is active",
   "  3. The language service plugin will be loaded automatically",
   "",
@@ -552,22 +566,22 @@ exports[`Setup CLI > should preserve all existing VS Code settings from a real r
   "name": "test-project",
   "version": "1.0.0",
   "dependencies": {},
-"devDependencies": { "@effect/tsgo": "^0.0.5","@typescript/native-preview": "latest" }
+  "devDependencies": { "@effect/tsgo": "^0.0.5", "typescript": "7.1.0-dev.test" }
 }"
 `;
 
 exports[`Setup CLI > should preserve all existing VS Code settings from a real repository config > tsconfig.json 1`] = `
 "{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
-"plugins": [
-	{
-		"name": "@effect/language-service"
-	}
-]
-  },
-"$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json"
+    "plugins": [
+      {
+        "name": "@effect/language-service"
+      }
+    ]
+  }
 }"
 `;
 
@@ -576,9 +590,10 @@ exports[`Setup CLI > should preserve existing VS Code settings when adding LSP-s
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
   "files.autoSave": "onFocusChange",
-"js/ts.experimental.useTsgo": true,
-"typescript.experimental.useTsgo": true,
-"typescript.native-preview.tsdk": "node_modules/@typescript/native-preview"
+  "js/ts.tsdk.additionalLocations": ["./node_modules/typescript/bin"],
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "js/ts.tsdk.path": "./node_modules/typescript/bin",
+  "js/ts.experimental.useTsgo": true
 }"
 `;
 
@@ -593,7 +608,7 @@ exports[`Setup CLI > should preserve existing VS Code settings when adding LSP-s
     "file": "tsconfig.json",
   },
   {
-    "description": "Add typescript.native-preview.tsdk setting; Add typescript.experimental.useTsgo setting; Add js/ts.experimental.useTsgo setting",
+    "description": "Add js/ts.experimental.useTsgo setting; Add js/ts.tsdk.path setting; Add js/ts.tsdk.promptToUseWorkspaceVersion setting; Add js/ts.tsdk.additionalLocations setting",
     "file": ".vscode/settings.json",
   },
 ]
@@ -601,10 +616,11 @@ exports[`Setup CLI > should preserve existing VS Code settings when adding LSP-s
 
 exports[`Setup CLI > should preserve existing VS Code settings when adding LSP-specific settings > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
   "",
   "VS Code / Cursor / VS Code-based editors:",
-  "  1. Install the @typescript/native-preview extension",
+  "  1. Install the TypeScript 7 extension",
   "  2. Open a TypeScript file and ensure the native TS server is active",
   "  3. The language service plugin will be loaded automatically",
   "",
@@ -616,22 +632,22 @@ exports[`Setup CLI > should preserve existing VS Code settings when adding LSP-s
   "name": "test-project",
   "version": "1.0.0",
   "dependencies": {},
-"devDependencies": { "@effect/tsgo": "^0.0.5","@typescript/native-preview": "latest" }
+  "devDependencies": { "@effect/tsgo": "^0.0.5", "typescript": "7.1.0-dev.test" }
 }"
 `;
 
 exports[`Setup CLI > should preserve existing VS Code settings when adding LSP-specific settings > tsconfig.json 1`] = `
 "{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
-"plugins": [
-	{
-		"name": "@effect/language-service"
-	}
-]
-  },
-"$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json"
+    "plugins": [
+      {
+        "name": "@effect/language-service"
+      }
+    ]
+  }
 }"
 `;
 
@@ -650,8 +666,8 @@ exports[`Setup CLI > should remove only LSP patch command from prepare script wi
 
 exports[`Setup CLI > should remove only LSP patch command from prepare script with multiple commands > messages 1`] = `
 [
-  "WARNING: Your prepare script contained multiple commands. I attempted to automatically remove only the 'effect-tsgo patch' command. Please verify that the prepare script is correct after this change.",
-  "Run \`effect-tsgo unpatch\` to restore the original TypeScript-Go binary.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo unpatch --typescript --no-oxlint\` to restore the original integrations.",
 ]
 `;
 
@@ -695,7 +711,8 @@ exports[`Setup CLI > should remove only LSP plugin while preserving other plugin
 
 exports[`Setup CLI > should remove only LSP plugin while preserving other plugins > messages 1`] = `
 [
-  "Run \`effect-tsgo unpatch\` to restore the original TypeScript-Go binary.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo unpatch --typescript --no-oxlint\` to restore the original integrations.",
 ]
 `;
 
@@ -739,7 +756,8 @@ exports[`Setup CLI > should replace existing tsconfig schema when adding LSP > c
 
 exports[`Setup CLI > should replace existing tsconfig schema when adding LSP > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
 ]
 `;
 
@@ -748,21 +766,21 @@ exports[`Setup CLI > should replace existing tsconfig schema when adding LSP > p
   "name": "test-project",
   "version": "1.0.0",
   "dependencies": {},
-"devDependencies": { "@effect/tsgo": "^0.0.5","@typescript/native-preview": "latest" }
+  "devDependencies": { "@effect/tsgo": "^0.0.5", "typescript": "7.1.0-dev.test" }
 }"
 `;
 
 exports[`Setup CLI > should replace existing tsconfig schema when adding LSP > tsconfig.json 1`] = `
 "{
-  "$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json",
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
-"plugins": [
-	{
-		"name": "@effect/language-service"
-	}
-]
+    "plugins": [
+      {
+        "name": "@effect/language-service"
+      }
+    ]
   }
 }"
 `;
@@ -770,7 +788,7 @@ exports[`Setup CLI > should replace existing tsconfig schema when adding LSP > t
 exports[`Setup CLI > should update LSP version when already installed with older version > change summary 1`] = `
 [
   {
-    "description": "Update @effect/tsgo from ^0.0.1 to ^0.0.5; Add @typescript/native-preview@latest to devDependencies",
+    "description": "Update @effect/tsgo from ^0.0.1 to ^0.0.5; Add typescript@7.1.0-dev.test to devDependencies",
     "file": "package.json",
   },
   {
@@ -782,7 +800,8 @@ exports[`Setup CLI > should update LSP version when already installed with older
 
 exports[`Setup CLI > should update LSP version when already installed with older version > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
 ]
 `;
 
@@ -793,14 +812,14 @@ exports[`Setup CLI > should update LSP version when already installed with older
   "dependencies": {},
   "devDependencies": {
     "@effect/tsgo": "^0.0.5",
-    "typescript": "^5.0.0",
-"@typescript/native-preview": "latest"
+    "typescript": "7.1.0-dev.test"
   }
 }"
 `;
 
 exports[`Setup CLI > should update LSP version when already installed with older version > tsconfig.json 1`] = `
 "{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
@@ -809,15 +828,14 @@ exports[`Setup CLI > should update LSP version when already installed with older
         "name": "@effect/language-service"
       }
     ]
-  },
-"$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json"
+  }
 }"
 `;
 
 exports[`Setup CLI > should update custom diagnostic severities when plugin already has custom values > change summary 1`] = `
 [
   {
-    "description": "Add @typescript/native-preview@latest to devDependencies",
+    "description": "Add typescript@7.1.0-dev.test to devDependencies",
     "file": "package.json",
   },
   {
@@ -829,7 +847,8 @@ exports[`Setup CLI > should update custom diagnostic severities when plugin alre
 
 exports[`Setup CLI > should update custom diagnostic severities when plugin already has custom values > messages 1`] = `
 [
-  "Run \`effect-tsgo patch\` to complete the installation.",
+  "\`package.json\` changed. Run your package manager's install command (for example, \`pnpm install\`, \`npm install\`, \`yarn install\`, or \`bun install\`).",
+  "Run \`effect-tsgo patch --typescript --no-oxlint\` to complete the installation.",
 ]
 `;
 
@@ -840,13 +859,14 @@ exports[`Setup CLI > should update custom diagnostic severities when plugin alre
   "dependencies": {},
   "devDependencies": {
     "@effect/tsgo": "^0.0.5",
-"@typescript/native-preview": "latest"
+    "typescript": "7.1.0-dev.test"
   }
 }"
 `;
 
 exports[`Setup CLI > should update custom diagnostic severities when plugin already has custom values > tsconfig.json 1`] = `
 "{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
@@ -854,13 +874,12 @@ exports[`Setup CLI > should update custom diagnostic severities when plugin alre
       {
         "name": "@effect/language-service",
         "diagnosticSeverity": {
-					"floatingEffect": "warning",
-					"missingEffectError": "off",
-					"missingLayerContext": "error"
-				}
+          "floatingEffect": "warning",
+          "missingEffectError": "off",
+          "missingLayerContext": "error"
+        }
       }
     ]
-  },
-"$schema": "https://raw.githubusercontent.com/Effect-TS/tsgo/refs/heads/main/schema.json"
+  }
 }"
 `;

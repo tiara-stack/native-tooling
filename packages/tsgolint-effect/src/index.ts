@@ -7,8 +7,21 @@ const executableName = process.platform === "win32" ? "tsgolint.exe" : "tsgolint
 const packageRoot = findPackageRoot(fileURLToPath(import.meta.url));
 
 export const resolveTsgolintEffectPath = (): string => {
+  const explicitPath = [process.env.TIARA_TSGOLINT_EFFECT_PATH].find((path): path is string =>
+    Boolean(path && existsSync(path)),
+  );
+  if (explicitPath) return explicitPath;
+
+  const sourceRoot = resolve(packageRoot, "../..");
+  if (existsSync(join(sourceRoot, "native", "tsgolint-effect-fork", "go.mod"))) {
+    const sourceBinary = join(sourceRoot, "native", "tsgolint-effect-fork", executableName);
+    if (existsSync(sourceBinary)) return sourceBinary;
+    throw new Error(
+      "Repository-local tsgolint-effect is not built. Run pnpm native:build:tsgolint.",
+    );
+  }
+
   const candidates = [
-    process.env.TIARA_TSGOLINT_EFFECT_PATH,
     join(packageRoot, "vendor", `${process.platform}-${process.arch}`, executableName),
     findUp(process.cwd(), join("native", "tsgolint-effect-fork", executableName)),
     findUp(packageRoot, join("native", "tsgolint-effect-fork", executableName)),

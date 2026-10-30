@@ -4,11 +4,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 // UnnecessaryFailYieldableError suggests yielding yieldable errors directly
@@ -56,20 +56,18 @@ func AnalyzeUnnecessaryFailYieldableError(tp *typeparser.TypeParser, _ *checker.
 			// Must be yield* (not plain yield)
 			if yield.AsteriskToken != nil && yield.Expression != nil && yield.Expression.Kind == ast.KindCallExpression {
 				call := yield.Expression.AsCallExpression()
-				if call.Expression != nil && call.Expression.Kind == ast.KindPropertyAccessExpression {
-					if tp.IsNodeReferenceToEffectModuleApi(call.Expression, "fail") {
-						if call.Arguments != nil && len(call.Arguments.Nodes) >= 1 {
-							arg := call.Arguments.Nodes[0]
-							argType := tp.GetTypeAtLocation(arg)
-							if argType != nil && tp.IsYieldableErrorType(argType) {
-								matches = append(matches, UnnecessaryFailYieldableErrorMatch{
-									SourceFile:   sf,
-									Location:     scanner.GetErrorRangeForNode(sf, n),
-									YieldNode:    n,
-									CallNode:     yield.Expression,
-									FailArgument: arg,
-								})
-							}
+				if call.Expression != nil && tp.IsNodeReferenceToEffectModuleApi(call.Expression, "fail") {
+					if call.Arguments != nil && len(call.Arguments.Nodes) >= 1 {
+						arg := call.Arguments.Nodes[0]
+						argType := tp.GetTypeAtLocation(arg)
+						if argType != nil && tp.IsYieldableErrorType(argType) {
+							matches = append(matches, UnnecessaryFailYieldableErrorMatch{
+								SourceFile:   sf,
+								Location:     scanner.GetErrorRangeForNode(sf, n),
+								YieldNode:    n,
+								CallNode:     yield.Expression,
+								FailArgument: arg,
+							})
 						}
 					}
 				}

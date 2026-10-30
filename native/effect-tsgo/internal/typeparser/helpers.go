@@ -1,8 +1,8 @@
 package typeparser
 
 import (
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
 )
 
 // extractCovariantType gets the type argument from a covariant property.
@@ -67,6 +67,21 @@ func (tp *TypeParser) GetTypeOfPropertyByName(t *checker.Type, name string) *che
 	return tp.checker.GetTypeOfPropertyOfType(t, name)
 }
 
+// GetSymbolAtLocation wraps checker.GetSymbolAtLocation with a meta-property
+// guard. Meta properties (import.meta, import.defer, new.target) never
+// reference a symbol rules care about, and the checker debug-asserts (panics)
+// when asked for `import.defer` used as an import-call callee. Always use
+// this instead of the raw checker call.
+func (tp *TypeParser) GetSymbolAtLocation(node *ast.Node) *ast.Symbol {
+	if tp == nil || tp.checker == nil || node == nil {
+		return nil
+	}
+	if node.Kind == ast.KindMetaProperty {
+		return nil
+	}
+	return tp.checker.GetSymbolAtLocation(node)
+}
+
 func (tp *TypeParser) resolveAliasedSymbol(sym *ast.Symbol) *ast.Symbol {
 	if tp == nil || tp.checker == nil {
 		return sym
@@ -84,7 +99,6 @@ func (tp *TypeParser) ResolveToGlobalSymbol(sym *ast.Symbol) *ast.Symbol {
 	if tp == nil || tp.checker == nil || sym == nil {
 		return nil
 	}
-	c := tp.checker
 
 	sym = tp.resolveAliasedSymbol(sym)
 	depth := 0
@@ -94,7 +108,7 @@ func (tp *TypeParser) ResolveToGlobalSymbol(sym *ast.Symbol) *ast.Symbol {
 			break
 		}
 
-		next := c.GetSymbolAtLocation(decl.Initializer)
+		next := tp.GetSymbolAtLocation(decl.Initializer)
 		if next == nil {
 			break
 		}
@@ -108,4 +122,25 @@ func (tp *TypeParser) ResolveToGlobalSymbol(sym *ast.Symbol) *ast.Symbol {
 	}
 
 	return sym
+}
+
+// IsNodeReferenceToGlobalMember reports whether node resolves to a property of
+// a global value. ReferenceSymbolAtNode follows import and const aliases, so
+// callers do not need to constrain the source expression to property-access
+// syntax merely to recognize the global API.
+func (tp *TypeParser) IsNodeReferenceToGlobalMember(node *ast.Node, globalName string, memberName string) bool {
+	if tp == nil || tp.checker == nil || node == nil {
+		return false
+	}
+	global := tp.checker.ResolveName(globalName, nil, ast.SymbolFlagsValue, false)
+	if global == nil {
+		return false
+	}
+	globalType := tp.checker.GetTypeOfSymbolAtLocation(global, node)
+	if globalType == nil {
+		return false
+	}
+	member := tp.checker.GetPropertyOfType(globalType, memberName)
+	actual := tp.ReferenceSymbolAtNode(node)
+	return member != nil && actual != nil && checker.Checker_getSymbolIfSameReference(tp.checker, member, actual) != nil
 }

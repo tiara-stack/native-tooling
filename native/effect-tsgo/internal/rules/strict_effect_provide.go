@@ -3,8 +3,8 @@ package rules
 import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
-	"github.com/microsoft/typescript-go/shim/ast"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
 )
 
 // StrictEffectProvide warns when Effect.provide is called with a Layer argument.
@@ -67,7 +67,7 @@ func checkEffectProvideWithLayer(ctx *rule.Context, node *ast.Node) *ast.Diagnos
 		if argType == nil {
 			continue
 		}
-		if ctx.TypeParser.LayerType(argType, arg) != nil {
+		if ctx.TypeParser.LayerType(argType) != nil {
 			// Found a Layer argument — emit diagnostic on the call expression
 			return ctx.NewDiagnostic(ctx.SourceFile, ctx.GetErrorRange(node), tsdiag.Effect_provide_with_a_Layer_should_only_be_used_at_application_entry_points_If_this_is_an_entry_point_you_can_safely_disable_this_diagnostic_Otherwise_using_Effect_provide_may_break_scope_lifetimes_Compose_all_layers_at_your_entry_point_and_provide_them_at_once_effect_strictEffectProvide, nil)
 		}

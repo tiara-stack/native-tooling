@@ -4,8 +4,8 @@ package rules
 import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
-	"github.com/microsoft/typescript-go/shim/ast"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
 )
 
 // EffectInFailure detects when an Effect type appears in the failure (E) channel
@@ -60,19 +60,27 @@ var EffectInFailure = rule.Rule{
 				continue
 			}
 
+			// Declared-type prefilter: skip the expensive flow-analysis query
+			// for reference nodes that conclusively cannot have a strict
+			// Effect flow type. Skipped nodes can never match, so no
+			// shouldSkip bookkeeping is needed.
+			if !ctx.TypeParser.NodeCouldBeStrictEffect(node) {
+				continue
+			}
+
 			nodeType := ctx.TypeParser.GetTypeAtLocation(node)
 			if nodeType == nil {
 				continue
 			}
 
-			effect := ctx.TypeParser.StrictEffectType(nodeType, node)
+			effect := ctx.TypeParser.StrictEffectType(nodeType)
 			if effect == nil {
 				continue
 			}
 
 			// Check if any union member of the failure channel (E) is a strict Effect type
 			failureMembers := ctx.TypeParser.UnrollUnionMembers(effect.E)
-			memberWithEffect := findFirstStrictEffect(ctx.TypeParser, ctx.Checker, failureMembers, node)
+			memberWithEffect := findFirstStrictEffect(ctx.TypeParser, ctx.Checker, failureMembers)
 			if memberWithEffect == nil {
 				continue
 			}

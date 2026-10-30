@@ -4287,5 +4287,100 @@ item?.value === null;
 		},
 	})
 
+	// https://github.com/oxc-project/tsgolint/issues/1060
+	// `x == null || !x.y` collapses to `!x?.y`, not `x?.y`.
+	// Dropping the outer negation inverts runtime behaviour, so this fix must
+	// preserve it.
+	invalidCases = append(invalidCases, rule_tester.InvalidTestCase{
+		Code: `
+declare const item: { myField?: string } | undefined;
+if (item == null || !item.myField) {
+  throw new Error('missing');
+}
+`,
+		Output: []string{`
+declare const item: { myField?: string } | undefined;
+if (!item?.myField) {
+  throw new Error('missing');
+}
+`},
+		Errors: []rule_tester.InvalidTestCaseError{{MessageId: "preferOptionalChain"}},
+	})
+
+	invalidCases = append(invalidCases, rule_tester.InvalidTestCase{
+		Code: `
+declare const item: { myField?: string } | null;
+if (item === null || !item.myField) {
+  throw new Error('missing');
+}
+`,
+		Output: []string{`
+declare const item: { myField?: string } | null;
+if (!item?.myField) {
+  throw new Error('missing');
+}
+`},
+		Errors: []rule_tester.InvalidTestCaseError{{MessageId: "preferOptionalChain"}},
+	})
+
+	invalidCases = append(invalidCases, rule_tester.InvalidTestCase{
+		Code: `
+declare const item: { myField?: string } | undefined;
+if (item === undefined || !item.myField) {
+  throw new Error('missing');
+}
+`,
+		Output: []string{`
+declare const item: { myField?: string } | undefined;
+if (!item?.myField) {
+  throw new Error('missing');
+}
+`},
+		Errors: []rule_tester.InvalidTestCaseError{{MessageId: "preferOptionalChain"}},
+	})
+
+	for _, falsy := range []string{"false", "0", "0n", `""`} {
+		for _, options := range []PreferOptionalChainOptions{
+			{},
+			{AllowPotentiallyUnsafeFixesThatModifyTheReturnTypeIKnowWhatImDoing: true},
+		} {
+			validCases = append(validCases,
+				rule_tester.ValidTestCase{Code: `declare const x: ` + falsy + ` | { y: string } | null | undefined; x && x.y;`, Options: options},
+				rule_tester.ValidTestCase{Code: `declare const x: { y: ` + falsy + ` | { z: string } | null }; x.y && x.y.z;`, Options: options},
+				rule_tester.ValidTestCase{Code: `declare const x: ` + falsy + ` | { y: string } | null | undefined; !x || !x.y;`, Options: options},
+				rule_tester.ValidTestCase{Code: `declare const x: { y: ` + falsy + ` | { z: string } | null }; !x.y || !x.y.z;`, Options: options},
+			)
+		}
+	}
+	invalidCases = append(invalidCases, rule_tester.InvalidTestCase{
+		Code:   `declare const x: { y: false | string | null } | null; !x || !x.y;`,
+		Output: []string{`declare const x: { y: false | string | null } | null; !x?.y;`},
+		Errors: []rule_tester.InvalidTestCaseError{{MessageId: "preferOptionalChain"}},
+	})
+
+	invalidCases = append(invalidCases,
+		rule_tester.InvalidTestCase{
+			Code:   `declare const x: false | { y: { z: string } | undefined } | null; !x || !x.y || !x.y.z;`,
+			Output: []string{`declare const x: false | { y: { z: string } | undefined } | null; !x || !x.y?.z;`},
+			Errors: []rule_tester.InvalidTestCaseError{{MessageId: "preferOptionalChain"}},
+		},
+		rule_tester.InvalidTestCase{
+			Code:   `declare const x: false | { y: { z: string } | undefined } | null; x && x.y && x.y.z;`,
+			Output: []string{`declare const x: false | { y: { z: string } | undefined } | null; x && x.y?.z;`},
+			Errors: []rule_tester.InvalidTestCaseError{{MessageId: "preferOptionalChain"}},
+		},
+	)
+
+	// https://github.com/oxc-project/tsgolint/issues/1182
+	validCases = append(validCases, rule_tester.ValidTestCase{Code: `
+          declare const flag: boolean;
+          declare const node: { querySelector(s: string): Element | null } | null;
+          function label(): string | false {
+            const el = flag && node?.querySelector('[data-x]');
+            if (!el || !el.textContent) return false;
+            return el.textContent.trim();
+          }
+        `})
+
 	rule_tester.RunRuleTester(fixtures.GetRootDir(), "tsconfig.json", t, &PreferOptionalChainRule, validCases, invalidCases)
 }

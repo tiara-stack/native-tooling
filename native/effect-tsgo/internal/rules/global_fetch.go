@@ -4,9 +4,9 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 var GlobalFetch = rule.Rule{
@@ -39,7 +39,7 @@ func runGlobalFetch(ctx *rule.Context, checkInEffect bool) []*ast.Diagnostic {
 		return nil
 	}
 
-	packageName := "effect/unstable/http"
+	packageName := "effect/http"
 	if ctx.TypeParser.SupportedEffectVersion() == typeparser.EffectMajorV3 {
 		packageName = "@effect/platform"
 	}
@@ -59,7 +59,7 @@ func runGlobalFetch(ctx *rule.Context, checkInEffect bool) []*ast.Diagnostic {
 			inEffect := ctx.TypeParser.GetEffectContextFlags(node)&typeparser.EffectContextFlagInEffect != 0
 			if inEffect == checkInEffect {
 				call := node.AsCallExpression()
-				if ctx.TypeParser.ResolveToGlobalSymbol(ctx.Checker.GetSymbolAtLocation(call.Expression)) == fetchSymbol {
+				if ctx.TypeParser.ResolveToGlobalSymbol(ctx.TypeParser.GetSymbolAtLocation(call.Expression)) == fetchSymbol {
 					diags = append(diags, ctx.NewDiagnostic(
 						ctx.SourceFile,
 						scanner.GetErrorRangeForNode(ctx.SourceFile, call.Expression),

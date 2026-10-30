@@ -6,7 +6,6 @@ import (
 	"log"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/effect-ts/tsgo/internal/effectconfigraw"
@@ -54,12 +53,6 @@ type Fixes struct {
 type TypeErrors struct {
 	ReportSyntactic bool
 	ReportSemantic  bool
-}
-
-type checkerWorkload struct {
-	checker *checker.Checker
-	program *compiler.Program
-	queue   chan *ast.SourceFile
 }
 
 type RunLinterOptions struct {
@@ -132,23 +125,23 @@ func RunLinter(options RunLinterOptions) error {
 			log.Printf("Program created with %d source files", len(program.GetSourceFiles()))
 		}
 
-		fileSet := make(map[string]struct{}, len(filePaths))
+		fileSet := make(map[tspath.Path]string, len(filePaths))
 		for _, f := range filePaths {
-			fileSet[f] = struct{}{}
+			fileSet[tspath.ToPath(f, currentDirectory, fs.UseCaseSensitiveFileNames())] = f
 		}
 
 		sourceFiles := make([]*ast.SourceFile, 0, len(filePaths))
 		for _, sf := range program.SourceFiles() {
-			if _, ok := fileSet[sf.FileName()]; ok {
+			if _, ok := fileSet[sf.Path()]; ok {
 				sourceFiles = append(sourceFiles, sf)
-				delete(fileSet, sf.FileName())
+				delete(fileSet, sf.Path())
 			}
 		}
 
 		if len(fileSet) > 0 {
 			var unmatchedFiles []string
-			for k := range fileSet {
-				unmatchedFiles = append(unmatchedFiles, k)
+			for _, fileName := range fileSet {
+				unmatchedFiles = append(unmatchedFiles, fileName)
 			}
 			unmatchedFilesString := strings.Join(unmatchedFiles, ", ")
 			log.Println("Unmatched files found:", unmatchedFilesString)
@@ -303,7 +296,10 @@ func (b *ruleContextBuilder) reportNodeWithFixes(node *ast.Node, msg rule.RuleMe
 }
 
 func (b *ruleContextBuilder) reportNodeWithSuggestions(node *ast.Node, msg rule.RuleMessage, suggestionsFn func() []rule.RuleSuggestion) {
-	suggestions := suggestionsFn()
+	var suggestions []rule.RuleSuggestion
+	if b.fixState.FixSuggestions {
+		suggestions = suggestionsFn()
+	}
 	b.emitDiagnostic(rule.RuleDiagnostic{
 		Range:       utils.TrimNodeTextRange(b.file, node),
 		Message:     msg,
@@ -376,33 +372,6 @@ func reportTypeScriptDiagnostics(program *compiler.Program, files []*ast.SourceF
 	}
 }
 
-func makeSourceFileQueue(files []*ast.SourceFile) chan *ast.SourceFile {
-	queue := make(chan *ast.SourceFile, len(files))
-	for _, file := range files {
-		queue <- file
-	}
-	close(queue)
-	return queue
-}
-
-func makeCheckerWorkloadQueue(program *compiler.Program, files []*ast.SourceFile) chan checkerWorkload {
-	queue := makeSourceFileQueue(files)
-	flatQueue := []checkerWorkload{}
-	var flatQueueMu sync.Mutex
-	program.ForEachCheckerParallel(func(idx int, ch *checker.Checker) {
-		flatQueueMu.Lock()
-		flatQueue = append(flatQueue, checkerWorkload{ch, program, queue})
-		flatQueueMu.Unlock()
-	})
-
-	workloadQueue := make(chan checkerWorkload, len(flatQueue))
-	for _, w := range flatQueue {
-		workloadQueue <- w
-	}
-	close(workloadQueue)
-	return workloadQueue
-}
-
 func visitLintNodes(file *ast.SourceFile, runListeners func(kind ast.Kind, node *ast.Node)) {
 	/* convert.ts -> allowPattern:
 	catch name
@@ -472,6 +441,7 @@ func visitLintNodes(file *ast.SourceFile, runListeners func(kind ast.Kind, node 
 	file.Node.ForEachChild(childVisitor)
 }
 
+// RunLinterOnProgram requires exclusive use of the program's checkers until it returns.
 func RunLinterOnProgram(options RunLinterOnProgramOptions) error {
 	logLevel := options.LogLevel
 	program := options.Program
@@ -484,12 +454,17 @@ func RunLinterOnProgram(options RunLinterOnProgramOptions) error {
 	typeErrors := options.TypeErrors
 	timingStore := options.TimingStore
 
+	scheduling := checkerSchedulingFromEnvironment()
 	reportTypeScriptDiagnostics(program, files, typeErrors, onInternalDiagnostic)
-	workloadQueue := makeCheckerWorkloadQueue(program, files)
+	scheduler := newCheckerScheduler(scheduling, program, files, workers)
 
-	wg := core.NewWorkGroup(workers == 1)
-	for range workers {
+	wg := core.NewWorkGroup(scheduler.workers == 1)
+	for i := range scheduler.workers {
 		wg.Queue(func() {
+			initial, hasWork := scheduler.initialWorkload(i)
+			if !hasWork {
+				return
+			}
 			ctxBuilder := &ruleContextBuilder{
 				fixState:     fixState,
 				onDiagnostic: onDiagnostic,
@@ -508,13 +483,13 @@ func RunLinterOnProgram(options RunLinterOnProgramOptions) error {
 				}
 				registeredListeners := make(map[ast.Kind][]taggedListener, 20)
 
-				for w := range workloadQueue {
+				for w, ok := initial, true; ok; w, ok = w.nextWorkload() {
 					ctxBuilder.program = w.program
 					ctxBuilder.checker = w.checker
 					ctx.Program = w.program
 					ctx.TypeChecker = w.checker
 
-					for file := range w.queue {
+					for file := w.nextFile(); file != nil; file = w.nextFile() {
 						if logLevel == utils.LogLevelDebug {
 							log.Print(file.FileName())
 						}
@@ -569,13 +544,13 @@ func RunLinterOnProgram(options RunLinterOnProgramOptions) error {
 				stat.Calls++
 			}
 
-			for w := range workloadQueue {
+			for w, ok := initial, true; ok; w, ok = w.nextWorkload() {
 				ctxBuilder.program = w.program
 				ctxBuilder.checker = w.checker
 				ctx.Program = w.program
 				ctx.TypeChecker = w.checker
 
-				for file := range w.queue {
+				for file := w.nextFile(); file != nil; file = w.nextFile() {
 					if logLevel == utils.LogLevelDebug {
 						log.Print(file.FileName())
 					}

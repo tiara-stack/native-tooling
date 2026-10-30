@@ -3,9 +3,9 @@ package typeparser
 import (
 	"testing"
 
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/core"
-	"github.com/microsoft/typescript-go/shim/parser"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	"github.com/microsoft/TypeScript/tsc/shim/parser"
 )
 
 func parseSource(source string) *ast.SourceFile {
@@ -16,7 +16,7 @@ func parseSource(source string) *ast.SourceFile {
 
 func TestFindModuleIdentifierForPackage_NamespaceImport(t *testing.T) {
 	t.Parallel()
-	source := `import * as Model from "effect/unstable/schema"`
+	source := `import * as Model from "effect/schema"`
 	sf := parseSource(source)
 
 	got := FindModuleIdentifierForPackage(sf, "effect/unstable", "schema")

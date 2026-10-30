@@ -31,13 +31,25 @@ import (
 
 var ErrNeedsAutoImports = errors.New("completion list needs auto imports")
 
+// AfterCompletionCallback is invoked after completions are computed
+// to allow external packages to add or modify completion items.
+var AfterCompletionCallback func(ctx context.Context, sf *ast.SourceFile, position int, items []*lsproto.CompletionItem, program *compiler.Program, langService *LanguageService) []*lsproto.CompletionItem
+
+// RegisterAfterCompletionCallback registers a callback to be called after
+// completions are computed. The callback can add or modify completion items
+// before they are returned.
+// Note: Only one callback can be registered. Subsequent calls will replace the previous callback.
+func RegisterAfterCompletionCallback(cb func(ctx context.Context, sf *ast.SourceFile, position int, items []*lsproto.CompletionItem, program *compiler.Program, langService *LanguageService) []*lsproto.CompletionItem) {
+	AfterCompletionCallback = cb
+}
+
 func (l *LanguageService) ProvideCompletion(
 	ctx context.Context,
 	documentURI lsproto.DocumentUri,
 	LSPPosition lsproto.Position,
 	context *lsproto.CompletionContext,
 ) (lsproto.CompletionResponse, error) {
-	_, file := l.getProgramAndFile(documentURI)
+	program, file := l.getProgramAndFile(documentURI)
 	var triggerCharacter *string
 	if context != nil {
 		triggerCharacter = context.TriggerCharacter
@@ -54,7 +66,23 @@ func (l *LanguageService) ProvideCompletion(
 	if err != nil {
 		return lsproto.CompletionItemsOrListOrNull{}, err
 	}
-	completionList := ensureItemData(file.FileName(), position, completionListInternal.toLSP())
+	completionList := completionListInternal.toLSP()
+	// EFFECT HOOK: Allow Effect to add or modify completion items
+	if AfterCompletionCallback != nil {
+		var existingItems []*lsproto.CompletionItem
+		if completionList != nil {
+			existingItems = completionList.Items
+		}
+		items := AfterCompletionCallback(ctx, file, position, existingItems, program, l)
+		if len(items) > 0 {
+			if completionList == nil {
+				completionList = &lsproto.CompletionList{}
+			}
+			completionList.Items = items
+		}
+	}
+
+	completionList = ensureItemData(file.FileName(), position, completionList)
 	return lsproto.CompletionItemsOrListOrNull{List: completionList}, nil
 }
 
@@ -4159,7 +4187,7 @@ func tryGetContainingJsxElement(contextToken *ast.Node, file *ast.SourceFile) *a
 	parent := contextToken.Parent
 	switch contextToken.Kind {
 	case ast.KindGreaterThanToken, ast.KindLessThanSlashToken, ast.KindSlashToken, ast.KindIdentifier,
-		ast.KindPropertyAccessExpression, ast.KindJsxAttributes, ast.KindJsxAttribute, ast.KindJsxSpreadAttribute:
+		ast.KindPropertyAccessExpression, ast.KindJsxNamespacedName, ast.KindJsxAttributes, ast.KindJsxAttribute, ast.KindJsxSpreadAttribute:
 		if parent != nil && (parent.Kind == ast.KindJsxSelfClosingElement || parent.Kind == ast.KindJsxOpeningElement) {
 			if contextToken.Kind == ast.KindGreaterThanToken {
 				precedingToken := astnav.FindPrecedingToken(file, contextToken.Pos())
@@ -4169,6 +4197,9 @@ func tryGetContainingJsxElement(contextToken *ast.Node, file *ast.SourceFile) *a
 				}
 			}
 			return parent
+		} else if parent != nil && ast.IsJsxNamespacedName(parent) &&
+			parent.Parent != nil && (parent.Parent.Kind == ast.KindJsxSelfClosingElement || parent.Parent.Kind == ast.KindJsxOpeningElement) {
+			return parent.Parent
 		} else if parent != nil && parent.Kind == ast.KindJsxAttribute {
 			// Currently we parse JsxOpeningLikeElement as:
 			//      JsxOpeningLikeElement

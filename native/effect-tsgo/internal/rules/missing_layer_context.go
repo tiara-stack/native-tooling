@@ -8,9 +8,9 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
 )
 
 // MissingLayerContext detects when a Layer has context requirements that are not
@@ -28,8 +28,8 @@ var MissingLayerContext = rule.Rule{
 
 		for _, re := range ctx.Checker.GetRelationErrors(ctx.SourceFile) {
 			// Parse both types as Layers
-			srcLayer := ctx.TypeParser.LayerType(re.Source, re.ErrorNode)
-			tgtLayer := ctx.TypeParser.LayerType(re.Target, re.ErrorNode)
+			srcLayer := ctx.TypeParser.LayerType(re.Source)
+			tgtLayer := ctx.TypeParser.LayerType(re.Target)
 
 			// Both must be Layer types
 			if srcLayer == nil || tgtLayer == nil {

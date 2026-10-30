@@ -46,42 +46,48 @@ func buildConditionErrorOtherMessage() rule.RuleMessage {
 func buildConditionErrorNullableBooleanMessage() rule.RuleMessage {
 	return rule.RuleMessage{
 		Id:          "conditionErrorNullableBoolean",
-		Description: "Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.",
+		Description: "Unexpected nullable boolean value in conditional.",
+		Help:        "Handle the nullish case explicitly.",
 	}
 }
 
 func buildConditionErrorNullableObjectMessage() rule.RuleMessage {
 	return rule.RuleMessage{
 		Id:          "conditionErrorNullableObject",
-		Description: "Unexpected nullable object value in conditional. Please handle the nullish case explicitly.",
+		Description: "Unexpected nullable object value in conditional.",
+		Help:        "Handle the nullish case explicitly.",
 	}
 }
 
 func buildConditionErrorNullableStringMessage() rule.RuleMessage {
 	return rule.RuleMessage{
 		Id:          "conditionErrorNullableString",
-		Description: "Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.",
+		Description: "Unexpected nullable string value in conditional.",
+		Help:        "Handle the nullish and empty string cases explicitly.",
 	}
 }
 
 func buildConditionErrorNullableNumberMessage() rule.RuleMessage {
 	return rule.RuleMessage{
 		Id:          "conditionErrorNullableNumber",
-		Description: "Unexpected nullable number value in conditional. Please handle the nullish and zero cases explicitly.",
+		Description: "Unexpected nullable number value in conditional.",
+		Help:        "Handle the nullish and zero cases explicitly.",
 	}
 }
 
 func buildConditionErrorNullableEnumMessage() rule.RuleMessage {
 	return rule.RuleMessage{
 		Id:          "conditionErrorNullableEnum",
-		Description: "Unexpected nullable enum value in conditional. Please handle the nullish and falsy enum cases explicitly.",
+		Description: "Unexpected nullable enum value in conditional.",
+		Help:        "Handle the nullish and falsy enum cases explicitly.",
 	}
 }
 
 func buildConditionErrorAnyMessage() rule.RuleMessage {
 	return rule.RuleMessage{
 		Id:          "conditionErrorAny",
-		Description: "Unexpected any value in conditional. Use a more specific type to ensure type safety.",
+		Description: "Unexpected any value in conditional.",
+		Help:        "Use a more specific type to ensure type safety.",
 	}
 }
 
@@ -157,8 +163,7 @@ var StrictBooleanExpressionsRule = rule.Rule{
 						if arg == nil {
 							return
 						}
-						isFunction := arg.Kind&(ast.KindArrowFunction|ast.KindFunctionExpression|ast.KindFunctionDeclaration) != 0
-						if isFunction && ast.GetFunctionFlags(arg)&ast.FunctionFlagsAsync != 0 {
+						if ast.GetFunctionFlags(arg)&ast.FunctionFlagsAsync != 0 {
 							ctx.ReportNode(arg, buildPredicateCannotBeAsyncMessage())
 							return
 						}
@@ -330,15 +335,19 @@ func analyzeTypeParts(typeChecker *checker.Checker, types []*checker.Type) typeI
 		isUnion: len(types) > 1,
 		types:   types,
 	}
-	variants := make(map[typeVariant]bool)
+	hasNonNullishVariant := false
 
 	metNotTruthy := false
 
 	for _, part := range info.types {
 		partInfo := analyzeTypePart(typeChecker, part)
-		variants[partInfo.variant] = true
 		if partInfo.variant == typeVariantNullish {
 			info.isNullable = true
+		} else if !hasNonNullishVariant {
+			info.variant = partInfo.variant
+			hasNonNullishVariant = true
+		} else if info.variant != partInfo.variant {
+			info.variant = typeVariantMixed
 		}
 		if partInfo.isEnum {
 			info.isEnum = true
@@ -352,18 +361,7 @@ func analyzeTypeParts(typeChecker *checker.Checker, types []*checker.Type) typeI
 		}
 	}
 
-	if len(variants) == 1 {
-		for v := range variants {
-			info.variant = v
-		}
-	} else if len(variants) == 2 && info.isNullable {
-		for v := range variants {
-			if v != typeVariantNullish {
-				info.variant = v
-				break
-			}
-		}
-	} else {
+	if len(types) == 0 {
 		info.variant = typeVariantMixed
 	}
 

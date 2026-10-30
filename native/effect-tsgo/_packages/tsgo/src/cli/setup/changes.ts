@@ -1,0 +1,1211 @@
+import * as Console from "effect/Console"
+import * as nodePath from "node:path"
+import * as Effect from "effect/Effect"
+import * as FileSystem from "effect/FileSystem"
+import * as Option from "effect/Option"
+import * as Path from "effect/Path"
+import * as Prompt from "effect/cli/Prompt"
+import * as ts from "typescript"
+import { renderCodeActions } from "./diff-renderer.js"
+import type { Assessment, PackageDependency, SetupCodeAction, Target } from "./types.js"
+import {
+  defaultTypescriptPackageNames,
+  LSP_PACKAGE_NAME,
+  LSP_PLUGIN_NAME,
+  OXLINT_PACKAGE_NAME,
+  OXLINT_TSGOLINT_PACKAGE_NAME
+} from "./consts.js"
+import { getPatchCommand, updatePatchCommand } from "./patch-command.js"
+import type { RuleSeverity } from "./rule-info.js"
+
+interface ComputeFileChangesResult {
+  readonly codeActions: ReadonlyArray<SetupCodeAction>
+  readonly messages: ReadonlyArray<string>
+}
+
+function emptyFileChangesResult(): ComputeFileChangesResult {
+  return { codeActions: [], messages: [] }
+}
+
+export interface ComputeChangesResult {
+  readonly codeActions: ReadonlyArray<SetupCodeAction>
+  readonly messages: ReadonlyArray<string>
+}
+
+/**
+ * Find a property in an object literal expression by name
+ */
+function findPropertyInObject(
+  obj: ts.ObjectLiteralExpression,
+  propertyName: string
+): ts.PropertyAssignment | undefined {
+  for (const prop of obj.properties) {
+    if (ts.isPropertyAssignment(prop)) {
+      const name = prop.name
+      if (ts.isIdentifier(name) && ts.idText(name) === propertyName) {
+        return prop
+      }
+      if (ts.isStringLiteral(name) && name.text === propertyName) {
+        return prop
+      }
+    }
+  }
+  return undefined
+}
+
+/**
+ * Get the root object literal from a JSON source file
+ */
+function getRootObject(
+  sourceFile: ts.JsonSourceFile
+): ts.ObjectLiteralExpression | undefined {
+  if (sourceFile.statements.length === 0) return undefined
+  const statement = sourceFile.statements[0]
+  if (!ts.isExpressionStatement(statement)) return undefined
+  const expr = statement.expression
+  if (!ts.isObjectLiteralExpression(expr)) return undefined
+  return expr
+}
+
+/**
+ * Delete a node from a list (array or object properties), handling commas properly
+ */
+function deleteNodeFromList<T extends ts.Node>(
+  tracker: any,
+  sourceFile: ts.SourceFile,
+  nodeArray: ts.NodeArray<T>,
+  nodeToDelete: T
+) {
+  const index = nodeArray.indexOf(nodeToDelete)
+  if (index === -1) return
+
+  if (index === 0 && nodeArray.length > 1) {
+    const secondElement = nodeArray[1]
+    tracker.deleteRange(sourceFile, { pos: nodeToDelete.pos, end: secondElement.pos })
+  } else if (index > 0) {
+    const previousElement = nodeArray[index - 1]
+    tracker.deleteRange(sourceFile, { pos: previousElement.end, end: nodeToDelete.end })
+  } else {
+    tracker.delete(sourceFile, nodeToDelete)
+  }
+}
+
+const emptyListInsertions = new WeakMap<object, WeakSet<object>>()
+
+/**
+ * Insert a node at the end of a list (array or object properties), handling commas properly
+ */
+function insertNodeAtEndOfList<T extends ts.Node>(
+  tracker: any,
+  sourceFile: ts.SourceFile,
+  nodeArray: ts.NodeArray<T>,
+  newNode: T
+) {
+  const formatOptions = getFormatOptions(sourceFile)
+  if (nodeArray.length === 0) {
+    const insertedLists = emptyListInsertions.get(tracker) ?? new WeakSet<object>()
+    const hasPreviousInsertion = insertedLists.has(nodeArray)
+    insertedLists.add(nodeArray)
+    emptyListInsertions.set(tracker, insertedLists)
+    const closingIndentation = getIndentationAtPosition(sourceFile, nodeArray.pos, formatOptions.tabSize)
+    const hasFollowingLineBreak = /^[ \t]*\r?\n/.test(sourceFile.text.slice(nodeArray.pos))
+    tracker.insertNodeAt(sourceFile, nodeArray.pos, newNode, {
+      indentation: closingIndentation.column + formatOptions.indentSize,
+      prefix: formatOptions.newLineCharacter,
+      suffix: hasPreviousInsertion
+        ? ","
+        : hasFollowingLineBreak ? "" : `${formatOptions.newLineCharacter}${closingIndentation.text}`
+    })
+  } else {
+    const lastElement = nodeArray[nodeArray.length - 1]
+    const indentation = getIndentationAtPosition(
+      sourceFile,
+      lastElement.getStart(sourceFile),
+      formatOptions.tabSize
+    )
+    tracker.insertNodeAt(sourceFile, lastElement.end, newNode, {
+      indentation: indentation.column,
+      prefix: `,${formatOptions.newLineCharacter}`
+    })
+  }
+}
+
+function getFormatOptions(sourceFile: ts.SourceFile) {
+  const indentation = sourceFile.text.match(/^([ \t]+)\S/m)?.[1]
+  const indentSize = indentation?.includes("\t") ? 2 : indentation?.length ?? 2
+  const newLineCharacter = sourceFile.text.includes("\r\n") ? "\r\n" : "\n"
+  return {
+    ...ts.getDefaultFormatCodeSettings(newLineCharacter),
+    indentSize,
+    tabSize: indentSize,
+    convertTabsToSpaces: !indentation?.includes("\t"),
+    newLineCharacter
+  }
+}
+
+function getIndentationAtPosition(sourceFile: ts.SourceFile, position: number, tabSize: number) {
+  const { line } = sourceFile.getLineAndCharacterOfPosition(position)
+  const lineStart = sourceFile.getPositionOfLineAndCharacter(line, 0)
+  const text = sourceFile.text.slice(lineStart, position).match(/^[ \t]*/)?.[0] ?? ""
+  const column = [...text].reduce(
+    (column, character) => character === "\t" ? column + tabSize - (column % tabSize) : column + 1,
+    0
+  )
+  return { column, text }
+}
+
+function findDependencyCollectionProperty(
+  rootObj: ts.ObjectLiteralExpression,
+  dependencyType: "dependencies" | "devDependencies"
+): ts.PropertyAssignment | undefined {
+  return findPropertyInObject(rootObj, dependencyType)
+}
+
+function upsertDependency(
+  tracker: any,
+  sourceFile: ts.SourceFile,
+  rootObj: ts.ObjectLiteralExpression,
+  dependencyName: string,
+  dependency: PackageDependency
+) {
+  const depsProperty = findDependencyCollectionProperty(rootObj, dependency.dependencyType)
+
+  if (!depsProperty) {
+    const newDepsProp = ts.factory.createPropertyAssignment(
+      ts.factory.createStringLiteral(dependency.dependencyType),
+      ts.factory.createObjectLiteralExpression([
+        ts.factory.createPropertyAssignment(
+          ts.factory.createStringLiteral(dependencyName),
+          ts.factory.createStringLiteral(dependency.version)
+        )
+      ], false)
+    )
+    insertNodeAtEndOfList(tracker, sourceFile, rootObj.properties, newDepsProp)
+    return
+  }
+
+  if (!ts.isObjectLiteralExpression(depsProperty.initializer)) {
+    return
+  }
+
+  const existingProperty = findPropertyInObject(depsProperty.initializer, dependencyName)
+  if (!existingProperty) {
+    const newDepProp = ts.factory.createPropertyAssignment(
+      ts.factory.createStringLiteral(dependencyName),
+      ts.factory.createStringLiteral(dependency.version)
+    )
+    insertNodeAtEndOfList(tracker, sourceFile, depsProperty.initializer.properties, newDepProp)
+    return
+  }
+
+  if (ts.isStringLiteral(existingProperty.initializer) && existingProperty.initializer.text !== dependency.version) {
+    tracker.replaceNode(sourceFile, existingProperty.initializer, ts.factory.createStringLiteral(dependency.version))
+  }
+}
+
+function createDiagnosticSeverityObject(
+  severities: Record<string, RuleSeverity>
+): ts.ObjectLiteralExpression {
+  const entries = Object.entries(severities).sort(([a], [b]) => a.localeCompare(b))
+  return ts.factory.createObjectLiteralExpression(
+    entries.map(([name, severity]) =>
+      ts.factory.createPropertyAssignment(
+        ts.factory.createStringLiteral(name),
+        ts.factory.createStringLiteral(severity)
+      )
+    ),
+    true
+  )
+}
+
+function createLspPluginObject(target: Target.TsConfig): ts.ObjectLiteralExpression {
+  const properties: Array<ts.PropertyAssignment> = [
+    ts.factory.createPropertyAssignment(
+      ts.factory.createStringLiteral("name"),
+      ts.factory.createStringLiteral(LSP_PLUGIN_NAME)
+    )
+  ]
+  if (Option.isSome(target.diagnosticSeverities)) {
+    properties.push(
+      ts.factory.createPropertyAssignment(
+        ts.factory.createStringLiteral("diagnosticSeverity"),
+        createDiagnosticSeverityObject(target.diagnosticSeverities.value)
+      )
+    )
+  }
+  return ts.factory.createObjectLiteralExpression(properties, true)
+}
+
+/**
+ * Create a minimal LanguageServiceHost for use with ChangeTracker
+ */
+function createMinimalHost(): ts.LanguageServiceHost {
+  return {
+    getCompilationSettings: () => ({}),
+    getScriptFileNames: () => [],
+    getScriptVersion: () => "1",
+    getScriptSnapshot: () => undefined,
+    getCurrentDirectory: () => "",
+    getDefaultLibFileName: () => "lib.d.ts",
+    fileExists: () => false,
+    readFile: () => undefined
+  }
+}
+
+// Access internal TypeScript APIs not exposed in public type definitions
+const tsInternal = ts as any
+
+/**
+ * Create a ChangeTracker context
+ */
+function createTrackerContext(sourceFile: ts.SourceFile) {
+  const host = createMinimalHost()
+  const formatOptions = getFormatOptions(sourceFile)
+  const formatContext = tsInternal.formatting.getFormatContext(formatOptions, host)
+  const preferences = {} as ts.UserPreferences
+  return { host, formatContext, preferences }
+}
+
+/**
+ * Compute package.json changes using ChangeTracker
+ */
+const computePackageJsonChanges = (
+  current: Assessment.PackageJson,
+  target: Target.PackageJson
+): ComputeFileChangesResult => {
+  const descriptions: Array<string> = []
+  const messages: Array<string> = []
+
+  const rootObj = getRootObject(current.sourceFile)
+  if (!rootObj) {
+    return emptyFileChangesResult()
+  }
+
+  const ctx = createTrackerContext(current.sourceFile)
+
+  const fileChanges = tsInternal.textChanges.ChangeTracker.with(
+    ctx,
+    (tracker: any) => {
+      const shouldAddTypescriptWithDependencyType = (dependencyType: "dependencies" | "devDependencies") =>
+        Option.isSome(target.typescriptVersion) &&
+        Option.isNone(current.typescriptVersion) &&
+        target.typescriptVersion.value.dependencyType === dependencyType
+
+      const getTypescriptPackageName = (dependency: PackageDependency) =>
+        dependency.packageName ?? defaultTypescriptPackageNames[0]
+
+      const appendTypescriptDependencyProperty = (dependencyProperties: Array<ts.PropertyAssignment>) => {
+        const targetTypescript = target.typescriptVersion.pipe(Option.getOrUndefined)
+        if (!targetTypescript) {
+          return
+        }
+
+        dependencyProperties.push(
+          ts.factory.createPropertyAssignment(
+            ts.factory.createStringLiteral(getTypescriptPackageName(targetTypescript)),
+            ts.factory.createStringLiteral(targetTypescript.version)
+          )
+        )
+      }
+
+      const appendNewOxlintDependencies = (
+        dependencyProperties: Array<ts.PropertyAssignment>,
+        dependencyType: "dependencies" | "devDependencies"
+      ) => {
+        for (const [packageName, currentDependency, targetDependency] of [
+          [OXLINT_PACKAGE_NAME, current.oxlintVersion, target.oxlintVersion],
+          [OXLINT_TSGOLINT_PACKAGE_NAME, current.oxlintTsgolintVersion, target.oxlintTsgolintVersion]
+        ] as const) {
+          if (
+            target.integrations.includes("oxlint") &&
+            Option.isNone(current.vitePlusVersion) &&
+            Option.isNone(currentDependency) &&
+            Option.isSome(targetDependency) &&
+            targetDependency.value.dependencyType === dependencyType
+          ) {
+            descriptions.push(`Add ${packageName}@${targetDependency.value.version} in ${dependencyType}`)
+            dependencyProperties.push(
+              ts.factory.createPropertyAssignment(
+                ts.factory.createStringLiteral(packageName),
+                ts.factory.createStringLiteral(targetDependency.value.version)
+              )
+            )
+          }
+        }
+      }
+
+      const ensureTypescriptDependency = () => {
+        if (Option.isNone(target.typescriptVersion) || Option.isSome(current.typescriptVersion)) {
+          return
+        }
+
+        const targetTypescript = target.typescriptVersion.value
+        const targetTypescriptPackageName = getTypescriptPackageName(targetTypescript)
+        const typescriptDepsProperty = findDependencyCollectionProperty(rootObj, targetTypescript.dependencyType)
+
+        if (
+          !typescriptDepsProperty &&
+          Option.isSome(target.lspVersion) &&
+          target.lspVersion.value.dependencyType === targetTypescript.dependencyType
+        ) {
+          return
+        }
+
+        descriptions.push(
+          `Add ${targetTypescriptPackageName}@${targetTypescript.version} to ${targetTypescript.dependencyType}`
+        )
+        upsertDependency(tracker, current.sourceFile, rootObj, targetTypescriptPackageName, targetTypescript)
+      }
+
+      const ensurePinnedDependency = (
+        packageName: string,
+        currentDependency: Option.Option<PackageDependency>,
+        targetDependency: Option.Option<PackageDependency>
+      ) => {
+        if (Option.isNone(targetDependency)) return
+        if (Option.isNone(currentDependency) && Option.isSome(current.vitePlusVersion)) return
+        if (
+          Option.isSome(currentDependency) &&
+          currentDependency.value.version === targetDependency.value.version &&
+          currentDependency.value.dependencyType === targetDependency.value.dependencyType
+        ) return
+        if (
+          Option.isNone(currentDependency) &&
+          !findDependencyCollectionProperty(rootObj, targetDependency.value.dependencyType) &&
+          Option.isSome(target.lspVersion) &&
+          target.lspVersion.value.dependencyType === targetDependency.value.dependencyType
+        ) return
+
+        descriptions.push(
+          `${Option.isSome(currentDependency) ? "Update" : "Add"} ${packageName}@${targetDependency.value.version} in ${
+            targetDependency.value.dependencyType
+          }`
+        )
+        upsertDependency(tracker, current.sourceFile, rootObj, packageName, targetDependency.value)
+      }
+
+      // Handle @effect/tsgo dependency
+      if (Option.isSome(target.lspVersion)) {
+        const targetDepType = target.lspVersion.value.dependencyType
+        const targetVersion = target.lspVersion.value.version
+
+        if (Option.isSome(current.lspVersion)) {
+          const currentDepType = current.lspVersion.value.dependencyType
+          const currentVersion = current.lspVersion.value.version
+
+          if (currentDepType !== targetDepType) {
+            // Move from one dependency type to another
+            descriptions.push(`Move ${LSP_PACKAGE_NAME} from ${currentDepType} to ${targetDepType}`)
+
+            // Remove from old location
+            const oldDepsProperty = findPropertyInObject(rootObj, currentDepType)
+            if (oldDepsProperty && ts.isObjectLiteralExpression(oldDepsProperty.initializer)) {
+              const lspProperty = findPropertyInObject(oldDepsProperty.initializer, LSP_PACKAGE_NAME)
+              if (lspProperty) {
+                deleteNodeFromList(tracker, current.sourceFile, oldDepsProperty.initializer.properties, lspProperty)
+              }
+            }
+
+            // Add to new location
+            const newDepsProperty = findDependencyCollectionProperty(rootObj, targetDepType)
+
+            if (!newDepsProperty) {
+              const dependencyProperties: Array<ts.PropertyAssignment> = [
+                ts.factory.createPropertyAssignment(
+                  ts.factory.createStringLiteral(LSP_PACKAGE_NAME),
+                  ts.factory.createStringLiteral(targetVersion)
+                )
+              ]
+
+              if (shouldAddTypescriptWithDependencyType(targetDepType)) {
+                appendTypescriptDependencyProperty(dependencyProperties)
+              }
+              appendNewOxlintDependencies(dependencyProperties, targetDepType)
+
+              const newDepsProp = ts.factory.createPropertyAssignment(
+                ts.factory.createStringLiteral(targetDepType),
+                ts.factory.createObjectLiteralExpression(dependencyProperties, false)
+              )
+              insertNodeAtEndOfList(tracker, current.sourceFile, rootObj.properties, newDepsProp)
+            } else if (ts.isObjectLiteralExpression(newDepsProperty.initializer)) {
+              insertNodeAtEndOfList(
+                tracker,
+                current.sourceFile,
+                newDepsProperty.initializer.properties,
+                ts.factory.createPropertyAssignment(
+                  ts.factory.createStringLiteral(LSP_PACKAGE_NAME),
+                  ts.factory.createStringLiteral(targetVersion)
+                )
+              )
+            }
+          } else if (currentVersion !== targetVersion) {
+            // Same dependency type, just update version
+            descriptions.push(`Update ${LSP_PACKAGE_NAME} from ${currentVersion} to ${targetVersion}`)
+
+            const depsProperty = findPropertyInObject(rootObj, targetDepType)
+            if (depsProperty && ts.isObjectLiteralExpression(depsProperty.initializer)) {
+              const lspProperty = findPropertyInObject(depsProperty.initializer, LSP_PACKAGE_NAME)
+              if (lspProperty && ts.isStringLiteral(lspProperty.initializer)) {
+                tracker.replaceNode(
+                  current.sourceFile,
+                  lspProperty.initializer,
+                  ts.factory.createStringLiteral(targetVersion)
+                )
+              }
+            }
+          }
+        } else {
+          // LSP not currently installed, add it
+          descriptions.push(`Add ${LSP_PACKAGE_NAME}@${targetVersion} to ${targetDepType}`)
+
+          const depsProperty = findDependencyCollectionProperty(rootObj, targetDepType)
+
+          if (!depsProperty) {
+            const dependencyProperties: Array<ts.PropertyAssignment> = [
+              ts.factory.createPropertyAssignment(
+                ts.factory.createStringLiteral(LSP_PACKAGE_NAME),
+                ts.factory.createStringLiteral(targetVersion)
+              )
+            ]
+
+            if (shouldAddTypescriptWithDependencyType(targetDepType)) {
+              appendTypescriptDependencyProperty(dependencyProperties)
+            }
+            appendNewOxlintDependencies(dependencyProperties, targetDepType)
+
+            const newDepsProp = ts.factory.createPropertyAssignment(
+              ts.factory.createStringLiteral(targetDepType),
+              ts.factory.createObjectLiteralExpression(dependencyProperties, false)
+            )
+            insertNodeAtEndOfList(tracker, current.sourceFile, rootObj.properties, newDepsProp)
+          } else if (ts.isObjectLiteralExpression(depsProperty.initializer)) {
+            insertNodeAtEndOfList(
+              tracker,
+              current.sourceFile,
+              depsProperty.initializer.properties,
+              ts.factory.createPropertyAssignment(
+                ts.factory.createStringLiteral(LSP_PACKAGE_NAME),
+                ts.factory.createStringLiteral(targetVersion)
+              )
+            )
+          }
+        }
+
+        ensureTypescriptDependency()
+        if (target.integrations.includes("oxlint")) {
+          ensurePinnedDependency(OXLINT_PACKAGE_NAME, current.oxlintVersion, target.oxlintVersion)
+          ensurePinnedDependency(
+            OXLINT_TSGOLINT_PACKAGE_NAME,
+            current.oxlintTsgolintVersion,
+            target.oxlintTsgolintVersion
+          )
+        }
+      } else if (Option.isSome(current.lspVersion)) {
+        // User wants to remove LSP
+        descriptions.push(`Remove ${LSP_PACKAGE_NAME} from dependencies`)
+
+        const currentDepType = current.lspVersion.value.dependencyType
+        const depsProperty = findPropertyInObject(rootObj, currentDepType)
+
+        if (depsProperty && ts.isObjectLiteralExpression(depsProperty.initializer)) {
+          const lspProperty = findPropertyInObject(depsProperty.initializer, LSP_PACKAGE_NAME)
+          if (lspProperty) {
+            deleteNodeFromList(tracker, current.sourceFile, depsProperty.initializer.properties, lspProperty)
+          }
+        }
+      }
+
+      // Handle prepare script
+      const patchCommand = target.prepareScript && Option.isSome(target.lspVersion)
+        ? getPatchCommand(target.integrations)
+        : undefined
+      if (!target.managePrepareScript) {
+        return
+      } else if (patchCommand !== undefined) {
+        const scriptsProperty = findPropertyInObject(rootObj, "scripts")
+
+        if (!scriptsProperty) {
+          descriptions.push("Add scripts section with prepare script")
+
+          const newScriptsProp = ts.factory.createPropertyAssignment(
+            ts.factory.createStringLiteral("scripts"),
+            ts.factory.createObjectLiteralExpression([
+                ts.factory.createPropertyAssignment(
+                  ts.factory.createStringLiteral("prepare"),
+                  ts.factory.createStringLiteral(patchCommand)
+              )
+            ], false)
+          )
+          insertNodeAtEndOfList(tracker, current.sourceFile, rootObj.properties, newScriptsProp)
+        } else if (ts.isObjectLiteralExpression(scriptsProperty.initializer)) {
+          const prepareProperty = findPropertyInObject(scriptsProperty.initializer, "prepare")
+
+          if (!prepareProperty) {
+            descriptions.push("Add prepare script")
+
+            const newPrepareProp = ts.factory.createPropertyAssignment(
+              ts.factory.createStringLiteral("prepare"),
+              ts.factory.createStringLiteral(patchCommand)
+            )
+            insertNodeAtEndOfList(tracker, current.sourceFile, scriptsProperty.initializer.properties, newPrepareProp)
+          } else if (Option.isSome(current.prepareScript) && !current.prepareScript.value.hasPatch) {
+            // Modify existing prepare script to add patch command
+            descriptions.push("Update prepare script to include patch command")
+
+            const currentScript = current.prepareScript.value.script
+            const newScript = `${currentScript} && ${patchCommand}`
+            tracker.replaceNode(
+              current.sourceFile,
+              prepareProperty.initializer,
+              ts.factory.createStringLiteral(newScript)
+            )
+          } else if (Option.isSome(current.prepareScript)) {
+            const currentScript = current.prepareScript.value.script
+            const updated = updatePatchCommand(currentScript, target.integrations)
+            if (updated.found && updated.script !== currentScript) {
+              descriptions.push("Update effect-tsgo patch integrations in prepare script")
+              tracker.replaceNode(
+                current.sourceFile,
+                prepareProperty.initializer,
+                ts.factory.createStringLiteral(updated.script)
+              )
+            }
+          }
+        }
+      } else if (
+        Option.isSome(current.prepareScript) &&
+        current.prepareScript.value.hasPatch
+      ) {
+        const scriptsProperty = findPropertyInObject(rootObj, "scripts")
+        if (scriptsProperty && ts.isObjectLiteralExpression(scriptsProperty.initializer)) {
+          const prepareProperty = findPropertyInObject(scriptsProperty.initializer, "prepare")
+          if (prepareProperty && ts.isStringLiteral(prepareProperty.initializer)) {
+            const currentScript = current.prepareScript.value.script
+            const updated = updatePatchCommand(currentScript, [])
+            if (updated.found && updated.script.length > 0) {
+              descriptions.push("Remove effect-tsgo patch command from prepare script")
+              tracker.replaceNode(
+                current.sourceFile,
+                prepareProperty.initializer,
+                ts.factory.createStringLiteral(updated.script)
+              )
+            } else if (updated.found) {
+              descriptions.push("Remove prepare script with patch command")
+              deleteNodeFromList(tracker, current.sourceFile, scriptsProperty.initializer.properties, prepareProperty)
+            } else {
+              messages.push(
+                "WARNING: The prepare script uses shell control flow that cannot be safely rewritten. " +
+                  "Remove the effect-tsgo patch command manually."
+              )
+            }
+          }
+        }
+      }
+    }
+  )
+
+  const fileChange = fileChanges.find((fc: ts.FileTextChanges) => fc.fileName === current.path)
+  const changes = fileChange ? fileChange.textChanges : []
+
+  if (changes.length === 0) {
+    return { codeActions: [], messages }
+  }
+
+  return {
+    codeActions: [{
+      description: descriptions.join("; "),
+      changes: [{
+        fileName: current.path,
+        textChanges: changes,
+        isNewFile: false
+      }]
+    }],
+    messages
+  }
+}
+
+/**
+ * Compute tsconfig.json changes using ChangeTracker
+ */
+const computeTsConfigChanges = (
+  current: Assessment.TsConfig,
+  target: Target.TsConfig,
+  lspVersion: Option.Option<{ readonly dependencyType: "dependencies" | "devDependencies"; readonly version: string }>
+): ComputeFileChangesResult => {
+  const descriptions: Array<string> = []
+  const messages: Array<string> = []
+
+  const rootObj = getRootObject(current.sourceFile)
+  if (!rootObj) {
+    return emptyFileChangesResult()
+  }
+
+  const isEffectSchemaProperty = (property: ts.PropertyAssignment | undefined) =>
+    property !== undefined &&
+    ts.isStringLiteral(property.initializer) &&
+    property.initializer.text.replaceAll("\\", "/").endsWith("node_modules/@effect/tsgo/schema.json")
+
+  const compilerOptionsProperty = findPropertyInObject(rootObj, "compilerOptions")
+  if (!compilerOptionsProperty || !ts.isObjectLiteralExpression(compilerOptionsProperty.initializer)) {
+    if (Option.isNone(lspVersion)) {
+      if (!target.manageIntegration) return emptyFileChangesResult()
+
+      const schemaProperty = findPropertyInObject(rootObj, "$schema")
+      if (!isEffectSchemaProperty(schemaProperty)) return emptyFileChangesResult()
+
+      const ctx = createTrackerContext(current.sourceFile)
+      const fileChanges = tsInternal.textChanges.ChangeTracker.with(ctx, (tracker: any) => {
+        descriptions.push("Remove $schema from tsconfig")
+        deleteNodeFromList(tracker, current.sourceFile, rootObj.properties, schemaProperty!)
+      })
+      const fileChange = fileChanges.find((fc: ts.FileTextChanges) => fc.fileName === current.sourceFile.fileName)
+      return {
+        codeActions: fileChange
+          ? [{
+            description: descriptions.join("; "),
+            changes: [{
+              fileName: current.sourceFile.fileName,
+              textChanges: fileChange.textChanges,
+              isNewFile: false
+            }]
+          }]
+          : [],
+        messages
+      }
+    }
+
+    // Create compilerOptions with the plugin entry
+    const ctx = createTrackerContext(current.sourceFile)
+
+    const fileChanges = tsInternal.textChanges.ChangeTracker.with(
+      ctx,
+      (tracker: any) => {
+        const schemaProperty = findPropertyInObject(rootObj, "$schema")
+        const shouldAddSchema = Option.isSome(target.schemaPath) && !schemaProperty
+        const shouldUpdateSchema = Option.isSome(target.schemaPath) && !!schemaProperty && (
+          !ts.isStringLiteral(schemaProperty.initializer) ||
+          schemaProperty.initializer.text !== target.schemaPath.value
+        )
+
+        if (shouldAddSchema) {
+          descriptions.push("Add $schema to tsconfig")
+        } else if (shouldUpdateSchema) {
+          descriptions.push("Update $schema in tsconfig")
+        }
+
+        descriptions.push(`Add compilerOptions with ${LSP_PLUGIN_NAME} plugin`)
+
+        const schemaPropertyAssignment = Option.map(target.schemaPath, (schemaPath) =>
+          ts.factory.createPropertyAssignment(
+            ts.factory.createStringLiteral("$schema"),
+            ts.factory.createStringLiteral(schemaPath)
+          ))
+
+        const compilerOptionsAssignment = ts.factory.createPropertyAssignment(
+          ts.factory.createStringLiteral("compilerOptions"),
+          ts.factory.createObjectLiteralExpression([
+            ts.factory.createPropertyAssignment(
+              ts.factory.createStringLiteral("plugins"),
+              ts.factory.createArrayLiteralExpression([createLspPluginObject(target)], true)
+            )
+          ], true)
+        )
+
+        // Rebuild the root object preserving existing properties, updating/adding $schema, appending compilerOptions
+        const nextProperties: Array<ts.ObjectLiteralElementLike> = rootObj.properties.map((property) => {
+          if (schemaProperty && property === schemaProperty && Option.isSome(schemaPropertyAssignment)) {
+            return schemaPropertyAssignment.value
+          }
+          return property
+        })
+
+        if (shouldAddSchema && Option.isSome(schemaPropertyAssignment)) {
+          nextProperties.unshift(schemaPropertyAssignment.value)
+        }
+        nextProperties.push(compilerOptionsAssignment)
+
+        tracker.replaceNode(
+          current.sourceFile,
+          rootObj,
+          ts.factory.createObjectLiteralExpression(nextProperties, true)
+        )
+      }
+    )
+
+    const fileChange = fileChanges.find((fc: ts.FileTextChanges) => fc.fileName === current.sourceFile.fileName)
+    const changes = fileChange ? fileChange.textChanges : []
+    if (changes.length === 0) {
+      return { codeActions: [], messages }
+    }
+
+    return {
+      codeActions: [{
+        description: descriptions.join("; "),
+        changes: [{
+          fileName: current.sourceFile.fileName,
+          textChanges: changes,
+          isNewFile: false
+        }]
+      }],
+      messages
+    }
+  }
+
+  const compilerOptions = compilerOptionsProperty.initializer
+
+  const ctx = createTrackerContext(current.sourceFile)
+
+  const fileChanges = tsInternal.textChanges.ChangeTracker.with(
+    ctx,
+    (tracker: any) => {
+      const schemaProperty = findPropertyInObject(rootObj, "$schema")
+      const pluginsProperty = findPropertyInObject(compilerOptions, "plugins")
+      const schemaPropertyAssignment = Option.map(target.schemaPath, (schemaPath) =>
+        ts.factory.createPropertyAssignment(
+          ts.factory.createStringLiteral("$schema"),
+          ts.factory.createStringLiteral(schemaPath)
+        ))
+
+      const updateDiagnosticSeverity = (lspPluginElement: ts.ObjectLiteralExpression) => {
+        const diagnosticSeverityProperty = findPropertyInObject(lspPluginElement, "diagnosticSeverity")
+        if (Option.isSome(target.diagnosticSeverities)) {
+          const newDiagnosticSeverityValue = createDiagnosticSeverityObject(target.diagnosticSeverities.value)
+          if (!diagnosticSeverityProperty) {
+            descriptions.push(`Add diagnosticSeverity to ${LSP_PLUGIN_NAME} plugin`)
+            insertNodeAtEndOfList(tracker, current.sourceFile, lspPluginElement.properties, ts.factory.createPropertyAssignment(
+              ts.factory.createStringLiteral("diagnosticSeverity"),
+              newDiagnosticSeverityValue
+            ))
+          } else {
+            descriptions.push(`Update diagnosticSeverity in ${LSP_PLUGIN_NAME} plugin`)
+            tracker.replaceNode(current.sourceFile, diagnosticSeverityProperty.initializer, newDiagnosticSeverityValue)
+          }
+        } else if (diagnosticSeverityProperty) {
+          descriptions.push(`Remove diagnosticSeverity from ${LSP_PLUGIN_NAME} plugin`)
+          deleteNodeFromList(tracker, current.sourceFile, lspPluginElement.properties, diagnosticSeverityProperty)
+        }
+      }
+
+      const findLspPlugin = () => {
+        if (!pluginsProperty || !ts.isArrayLiteralExpression(pluginsProperty.initializer)) return undefined
+        return pluginsProperty.initializer.elements.find((element): element is ts.ObjectLiteralExpression => {
+          if (!ts.isObjectLiteralExpression(element)) return false
+          const nameProperty = findPropertyInObject(element, "name")
+          return nameProperty !== undefined && ts.isStringLiteral(nameProperty.initializer) &&
+            nameProperty.initializer.text === LSP_PLUGIN_NAME
+        })
+      }
+
+      if (!target.manageIntegration) {
+        const lspPluginElement = findLspPlugin()
+        if (lspPluginElement) {
+          updateDiagnosticSeverity(lspPluginElement)
+          return
+        }
+        if (Option.isNone(lspVersion)) return
+      }
+
+      if (Option.isNone(lspVersion)) {
+        // User wants to remove LSP
+        if (isEffectSchemaProperty(schemaProperty)) {
+          descriptions.push("Remove $schema from tsconfig")
+          deleteNodeFromList(tracker, current.sourceFile, rootObj.properties, schemaProperty!)
+        }
+
+        if (pluginsProperty && ts.isArrayLiteralExpression(pluginsProperty.initializer)) {
+          const pluginsArray = pluginsProperty.initializer
+
+          const lspPluginElement = findLspPlugin()
+
+          if (lspPluginElement) {
+            descriptions.push(`Remove ${LSP_PLUGIN_NAME} plugin from tsconfig`)
+            deleteNodeFromList(tracker, current.sourceFile, pluginsArray.elements, lspPluginElement)
+          }
+        }
+      } else {
+        // User wants to add/keep LSP
+        if (!schemaProperty && Option.isSome(schemaPropertyAssignment)) {
+          descriptions.push("Add $schema to tsconfig")
+          tracker.insertNodeAtObjectStart(current.sourceFile, rootObj, schemaPropertyAssignment.value)
+        } else if (
+          schemaProperty &&
+          Option.isSome(target.schemaPath) &&
+          (!ts.isStringLiteral(schemaProperty.initializer) || schemaProperty.initializer.text !== target.schemaPath.value)
+        ) {
+          descriptions.push("Update $schema in tsconfig")
+          tracker.replaceNode(
+            current.sourceFile,
+            schemaProperty.initializer,
+            Option.getOrThrow(schemaPropertyAssignment).initializer
+          )
+        }
+
+        const pluginObject = createLspPluginObject(target)
+
+        if (!pluginsProperty) {
+          descriptions.push(`Add plugins array with ${LSP_PLUGIN_NAME} plugin`)
+
+          const newPluginsProp = ts.factory.createPropertyAssignment(
+            ts.factory.createStringLiteral("plugins"),
+            ts.factory.createArrayLiteralExpression([pluginObject], true)
+          )
+          insertNodeAtEndOfList(tracker, current.sourceFile, compilerOptions.properties, newPluginsProp)
+        } else if (ts.isArrayLiteralExpression(pluginsProperty.initializer)) {
+          const pluginsArray = pluginsProperty.initializer
+
+          const lspPluginElement = findLspPlugin()
+
+          if (!lspPluginElement) {
+            descriptions.push(`Add ${LSP_PLUGIN_NAME} plugin to existing plugins array`)
+            insertNodeAtEndOfList(tracker, current.sourceFile, pluginsArray.elements, pluginObject)
+          } else if (ts.isObjectLiteralExpression(lspPluginElement)) {
+            updateDiagnosticSeverity(lspPluginElement)
+          }
+        }
+      }
+    }
+  )
+
+  const fileChange = fileChanges.find((fc: ts.FileTextChanges) => fc.fileName === current.path)
+  const changes = fileChange ? fileChange.textChanges : []
+
+  if (changes.length === 0) {
+    return { codeActions: [], messages }
+  }
+
+  return {
+    codeActions: [{
+      description: descriptions.join("; "),
+      changes: [{
+        fileName: current.sourceFile.fileName,
+        textChanges: changes,
+        isNewFile: false
+      }]
+    }],
+    messages
+  }
+}
+
+const computeOxlintConfigChanges = (
+  current: Assessment.OxlintConfig,
+  schemaPath: Option.Option<string>
+): ComputeFileChangesResult => {
+  if (Option.isNone(schemaPath)) return emptyFileChangesResult()
+
+  const rootObj = getRootObject(current.sourceFile)
+  if (!rootObj) return emptyFileChangesResult()
+
+  const schemaProperty = findPropertyInObject(rootObj, "$schema")
+  if (schemaProperty && ts.isStringLiteral(schemaProperty.initializer) &&
+    schemaProperty.initializer.text === schemaPath.value) {
+    return emptyFileChangesResult()
+  }
+
+  const schemaPropertyAssignment = ts.factory.createPropertyAssignment(
+    ts.factory.createStringLiteral("$schema"),
+    ts.factory.createStringLiteral(schemaPath.value)
+  )
+  const ctx = createTrackerContext(current.sourceFile)
+  const fileChanges = tsInternal.textChanges.ChangeTracker.with(ctx, (tracker: any) => {
+    if (schemaProperty) {
+      tracker.replaceNode(current.sourceFile, schemaProperty.initializer, schemaPropertyAssignment.initializer)
+    } else {
+      tracker.insertNodeAtObjectStart(current.sourceFile, rootObj, schemaPropertyAssignment)
+    }
+  })
+  const fileChange = fileChanges.find((change: ts.FileTextChanges) => change.fileName === current.sourceFile.fileName)
+  if (!fileChange) return emptyFileChangesResult()
+
+  return {
+    codeActions: [{
+      description: schemaProperty ? "Update $schema in .oxlintrc.json" : "Add $schema to .oxlintrc.json",
+      changes: [{
+        fileName: current.path,
+        textChanges: fileChange.textChanges,
+        isNewFile: false
+      }]
+    }],
+    messages: []
+  }
+}
+
+/**
+ * Compute .vscode/settings.json changes using ChangeTracker
+ */
+const computeVSCodeSettingsChanges = (
+  current: Assessment.VSCodeSettings,
+  target: Target.VSCodeSettings
+): ComputeFileChangesResult => {
+  const descriptions: Array<string> = []
+  const messages: Array<string> = []
+
+  const rootObj = getRootObject(current.sourceFile)
+  if (!rootObj) {
+    return emptyFileChangesResult()
+  }
+
+  const ctx = createTrackerContext(current.sourceFile)
+
+  const createSettingValue = (value: unknown): ts.Expression =>
+    typeof value === "string"
+      ? ts.factory.createStringLiteral(value)
+      : typeof value === "boolean"
+      ? value ? ts.factory.createTrue() : ts.factory.createFalse()
+      : Array.isArray(value) && value.every((item): item is string => typeof item === "string")
+      ? ts.factory.createArrayLiteralExpression(value.map((item) => ts.factory.createStringLiteral(item)))
+      : ts.factory.createNull()
+
+  const fileChanges = tsInternal.textChanges.ChangeTracker.with(
+    ctx,
+    (tracker: any) => {
+      if (rootObj.properties.length === 0) {
+        // Empty object — replace entirely
+        const newProperties: Array<ts.PropertyAssignment> = []
+
+        for (const [key, value] of Object.entries(target.settings)) {
+          descriptions.push(`Add ${key} setting`)
+          newProperties.push(
+            ts.factory.createPropertyAssignment(
+              ts.factory.createStringLiteral(key),
+              createSettingValue(value)
+            )
+          )
+        }
+
+        const newRootObj = ts.factory.createObjectLiteralExpression(newProperties, true)
+        tracker.replaceNode(current.sourceFile, rootObj, newRootObj)
+      } else {
+        // Only add missing properties
+        for (const [key, value] of Object.entries(target.settings)) {
+          const existingProp = findPropertyInObject(rootObj, key)
+
+          if (!existingProp) {
+            descriptions.push(`Add ${key} setting`)
+
+            const newProp = ts.factory.createPropertyAssignment(
+              ts.factory.createStringLiteral(key),
+              createSettingValue(value)
+            )
+            insertNodeAtEndOfList(tracker, current.sourceFile, rootObj.properties, newProp)
+          }
+        }
+      }
+    }
+  )
+
+  const fileChange = fileChanges.find((fc: ts.FileTextChanges) => fc.fileName === current.path)
+  const changes = fileChange ? fileChange.textChanges : []
+
+  if (changes.length === 0) {
+    return { codeActions: [], messages }
+  }
+
+  return {
+    codeActions: [{
+      description: descriptions.join("; "),
+      changes: [{
+        fileName: current.path,
+        textChanges: changes,
+        isNewFile: false
+      }]
+    }],
+    messages
+  }
+}
+
+/**
+ * Compute the set of changes needed to go from assessment state to target state
+ */
+export const computeChanges = (
+  assessment: Assessment.State,
+  target: Target.State
+): ComputeChangesResult => {
+  let codeActions: ReadonlyArray<SetupCodeAction> = []
+  let messages: ReadonlyArray<string> = []
+
+  // Compute package.json changes
+  const packageJsonResult = computePackageJsonChanges(assessment.packageJson, target.packageJson)
+  codeActions = [...codeActions, ...packageJsonResult.codeActions]
+  messages = [...messages, ...packageJsonResult.messages]
+  if (packageJsonResult.codeActions.length > 0) {
+    messages = [
+      ...messages,
+      "`package.json` changed. Run your package manager's install command " +
+        "(for example, `pnpm install`, `npm install`, `yarn install`, or `bun install`)."
+    ]
+  }
+
+  // Compute tsconfig changes
+  const tsconfigResult = computeTsConfigChanges(
+    assessment.tsconfig,
+    target.tsconfig,
+    target.packageJson.integrations.includes("typescript")
+      ? target.packageJson.lspVersion
+      : Option.none()
+  )
+  codeActions = [...codeActions, ...tsconfigResult.codeActions]
+  messages = [...messages, ...tsconfigResult.messages]
+
+  if (Option.isSome(assessment.oxlintConfig)) {
+    const oxlintConfigResult = computeOxlintConfigChanges(
+      assessment.oxlintConfig.value,
+      target.oxlintrcSchemaPath
+    )
+    codeActions = [...codeActions, ...oxlintConfigResult.codeActions]
+    messages = [...messages, ...oxlintConfigResult.messages]
+  }
+
+  // Compute VSCode settings changes if user selected VSCode editor
+  if (target.editors.includes("vscode")) {
+    if (Option.isSome(target.packageJson.lspVersion) && Option.isSome(target.vscodeSettings)) {
+      const vscodeTarget = target.vscodeSettings.value
+
+      if (Option.isSome(assessment.vscodeSettings)) {
+        const vscodeResult = computeVSCodeSettingsChanges(assessment.vscodeSettings.value, vscodeTarget)
+        codeActions = [...codeActions, ...vscodeResult.codeActions]
+        messages = [...messages, ...vscodeResult.messages]
+      } else {
+        // File doesn't exist — emit a new-file code action with full content
+        const dir = nodePath.dirname(assessment.packageJson.path)
+        const vscodeSettingsPath = nodePath.join(dir, ".vscode", "settings.json")
+        const content = JSON.stringify(vscodeTarget.settings, null, 2) + "\n"
+        codeActions = [...codeActions, {
+          description: "Create .vscode/settings.json",
+          changes: [{
+            fileName: vscodeSettingsPath,
+            textChanges: [{ span: { start: 0, length: 0 }, newText: content }],
+            isNewFile: true
+          }]
+        }]
+      }
+    }
+  }
+
+  // Add post-apply next-step messages
+  if (Option.isSome(target.packageJson.lspVersion) && codeActions.length > 0) {
+    const patchCommand = getPatchCommand(target.packageJson.integrations)
+    messages = [
+      ...messages,
+      `Run \`${patchCommand ?? "effect-tsgo patch"}\` to complete the installation.`
+    ]
+  } else if (Option.isNone(target.packageJson.lspVersion) && Option.isSome(assessment.packageJson.lspVersion)) {
+    const integrations = Option.match(assessment.packageJson.prepareScript, {
+      onNone: () => ["typescript" as const],
+      onSome: (_) => _.integrations
+    })
+    const unpatchCommand = getPatchCommand(integrations)?.replace(" patch ", " unpatch ") ?? "effect-tsgo unpatch"
+    messages = [
+      ...messages,
+      `Run \`${unpatchCommand}\` to restore the original integrations.`
+    ]
+  }
+
+  // Add editor-specific setup instructions as messages
+  if (Option.isSome(target.packageJson.lspVersion) && target.editors.length > 0) {
+    messages = [...messages, ""]
+
+    if (target.editors.includes("vscode")) {
+      messages = [
+        ...messages,
+        "VS Code / Cursor / VS Code-based editors:",
+        "  1. Install the TypeScript 7 extension",
+        "  2. Open a TypeScript file and ensure the native TS server is active",
+        "  3. The language service plugin will be loaded automatically",
+        ""
+      ]
+    }
+
+  }
+
+  return { codeActions, messages }
+}
+
+export const reviewAndApplyChanges = (
+  result: ComputeChangesResult,
+  assessmentState: Assessment.State,
+  options?: {
+    readonly confirmMessage?: string
+    readonly cancelMessage?: string
+    readonly applyMessage?: string
+    readonly successMessage?: string
+  }
+) =>
+  Effect.gen(function*() {
+    yield* renderCodeActions(result, assessmentState)
+
+    if (result.codeActions.length === 0) {
+      return
+    }
+
+    const shouldProceed = yield* Prompt.Confirm({
+      message: options?.confirmMessage ?? "Apply all changes?",
+      initial: true
+    })
+
+    if (!shouldProceed) {
+      yield* Console.log(options?.cancelMessage ?? "No changes were made.")
+      return
+    }
+
+    yield* applyChanges(result, options)
+  })
+
+export const previewChanges = (result: ComputeChangesResult, assessmentState: Assessment.State) =>
+  renderCodeActions(result, assessmentState)
+
+export const applyChanges = (
+  result: ComputeChangesResult,
+  options?: {
+    readonly applyMessage?: string
+    readonly successMessage?: string
+  }
+) =>
+  Effect.gen(function*() {
+    if (result.codeActions.length === 0) {
+      return
+    }
+
+    yield* Console.log("")
+    yield* Console.log(options?.applyMessage ?? "Applying changes...")
+
+    const fs = yield* FileSystem.FileSystem
+    const path = yield* Path.Path
+
+    for (const codeAction of result.codeActions) {
+      for (const fileChange of codeAction.changes) {
+        const fileName = fileChange.fileName
+        const fileExists = yield* fs.exists(fileName)
+
+        if (!fileExists && fileChange.isNewFile) {
+          const dirName = path.dirname(fileName)
+          yield* fs.makeDirectory(dirName, { recursive: true }).pipe(Effect.ignore)
+
+          const newContent = fileChange.textChanges.length > 0
+            ? fileChange.textChanges[0].newText
+            : ""
+
+          yield* fs.writeFileString(fileName, newContent)
+        } else if (fileExists) {
+          const existingContent = yield* fs.readFileString(fileName)
+          const sortedChanges = [...fileChange.textChanges].sort((a, b) => b.span.start - a.span.start)
+
+          let newContent = existingContent
+          for (const textChange of sortedChanges) {
+            const start = textChange.span.start
+            const end = start + textChange.span.length
+
+            newContent = newContent.slice(0, start) + textChange.newText + newContent.slice(end)
+          }
+
+          yield* fs.writeFileString(fileName, newContent)
+        }
+      }
+    }
+
+    yield* Console.log(options?.successMessage ?? "Changes applied successfully!")
+    yield* Console.log("")
+
+    for (const message of result.messages) {
+      yield* Console.log(message)
+    }
+  })

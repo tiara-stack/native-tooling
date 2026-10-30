@@ -3,9 +3,9 @@ package rewriter
 import (
 	"strings"
 
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/ls/change"
-	"github.com/microsoft/typescript-go/shim/lsp/lsproto"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/ls/change"
+	"github.com/microsoft/TypeScript/tsc/shim/lsp/lsproto"
 )
 
 type NodeOptions = change.NodeOptions
@@ -39,13 +39,18 @@ func NewTracker(raw *change.Tracker) *Tracker {
 	return &Tracker{Tracker: raw}
 }
 
-func (t *Tracker) Raw() *change.Tracker {
-	return t.Tracker
-}
-
 func (t *Tracker) GetChanges() map[string][]*lsproto.TextEdit {
 	t.flushPendingBefore()
-	return t.Tracker.GetChanges()
+	return change.GetChanges(t.Tracker)
+}
+
+func (t *Tracker) NewModuleDeclaration(
+	modifiers *ast.ModifierList,
+	keyword ast.Kind,
+	name *ast.ModuleName,
+	body *ast.ModuleBody,
+) *ast.Node {
+	return change.NewModuleDeclaration(t.Tracker, modifiers, keyword, name, body)
 }
 
 func (t *Tracker) ReplaceNode(sourceFile *ast.SourceFile, oldNode *ast.Node, newNode *ast.Node, options *change.NodeOptions) {
@@ -65,41 +70,15 @@ func (t *Tracker) ReplaceNode(sourceFile *ast.SourceFile, oldNode *ast.Node, new
 	if options.Suffix != "" {
 		text += options.Suffix
 	}
-	rng := t.GetAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption)
-	t.ReplaceRangeWithText(sourceFile, rng, text)
-}
-
-func (t *Tracker) ReplaceNodeWithNodes(sourceFile *ast.SourceFile, oldNode *ast.Node, newNodes []*ast.Node, options *change.NodeOptions) {
-	if len(newNodes) == 0 || oldNode == nil {
-		return
-	}
-	if len(newNodes) == 1 {
-		newNode := newNodes[0]
-		t.ReplaceNode(sourceFile, oldNode, newNode, options)
-		return
-	}
-	if options == nil {
-		options = &change.NodeOptions{
-			LeadingTriviaOption:  change.LeadingTriviaOptionExclude,
-			TrailingTriviaOption: change.TrailingTriviaOptionExclude,
-		}
-	}
-	parts := []string{t.consumePendingPrefix(sourceFile, oldNode)}
-	for _, node := range newNodes {
-		if node == nil {
-			continue
-		}
-		parts = append(parts, t.nodeText(sourceFile, node))
-	}
-	text := strings.Join(parts, "\n")
-	if options.Prefix != "" {
-		text = options.Prefix + text
-	}
-	if options.Suffix != "" {
-		text += options.Suffix
-	}
-	rng := t.GetAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption)
-	t.ReplaceRangeWithText(sourceFile, rng, text)
+	change.ReplaceAdjustedRangeWithText(
+		t.Tracker,
+		sourceFile,
+		oldNode,
+		oldNode,
+		options.LeadingTriviaOption,
+		options.TrailingTriviaOption,
+		text,
+	)
 }
 
 func (t *Tracker) InsertNodeBefore(sourceFile *ast.SourceFile, before *ast.Node, newNode *ast.Node, blankLineBetween bool, leadingTriviaOption change.LeadingTriviaOption) {
@@ -120,8 +99,15 @@ func (t *Tracker) flushPendingBefore() {
 		if edit.before == nil || edit.sourceFile == nil || edit.text == "" {
 			continue
 		}
-		start := t.GetAdjustedRange(edit.sourceFile, edit.before, edit.before, edit.leading, change.TrailingTriviaOptionNone).Start
-		t.ReplaceRangeWithText(edit.sourceFile, lsproto.Range{Start: start, End: start}, edit.text)
+		change.InsertTextAtAdjustedRangeStart(
+			t.Tracker,
+			edit.sourceFile,
+			edit.before,
+			edit.before,
+			edit.leading,
+			change.TrailingTriviaOptionNone,
+			edit.text,
+		)
 	}
 	t.pendingBefore = nil
 }

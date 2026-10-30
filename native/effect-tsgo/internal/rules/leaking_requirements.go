@@ -7,10 +7,10 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 // LeakingRequirements detects when service methods inadvertently expose implementation
@@ -66,7 +66,7 @@ var LeakingRequirements = rule.Rule{
 				}
 			case ast.KindClassDeclaration:
 				if node.Name() != nil && node.AsClassDeclaration().HeritageClauses != nil {
-					classSym := ctx.Checker.GetSymbolAtLocation(node.Name())
+					classSym := ctx.TypeParser.GetSymbolAtLocation(node.Name())
 					if classSym != nil {
 						classType := ctx.Checker.GetTypeOfSymbolAtLocation(classSym, node)
 						if classType != nil {
@@ -86,9 +86,9 @@ var LeakingRequirements = rule.Rule{
 			matched := false
 			for _, ttc := range typesToCheck {
 				// Try ContextTag first, fall back to ServiceType
-				service := ctx.TypeParser.ContextTag(ttc.t, node)
+				service := ctx.TypeParser.ContextTag(ttc.t)
 				if service == nil {
-					service = ctx.TypeParser.ServiceType(ttc.t, node)
+					service = ctx.TypeParser.ServiceType(ttc.t)
 				}
 				if service == nil {
 					continue
@@ -221,7 +221,7 @@ func parseLeakedRequirements(tp *typeparser.TypeParser, c *checker.Checker, serv
 			return true
 		}
 		// Exclude Scope types
-		if tp.IsScopeType(t, atLocation) {
+		if tp.IsScopeType(t) {
 			return true
 		}
 		return false
@@ -241,7 +241,7 @@ func parseLeakedRequirements(tp *typeparser.TypeParser, c *checker.Checker, serv
 		// or from the return type of a single call signature
 		var effectContextType *checker.Type
 
-		effect := tp.EffectType(servicePropertyType, atLocation)
+		effect := tp.EffectType(servicePropertyType)
 		if effect != nil {
 			effectContextType = effect.R
 		} else {
@@ -250,7 +250,7 @@ func parseLeakedRequirements(tp *typeparser.TypeParser, c *checker.Checker, serv
 			if len(sigs) == 1 {
 				retType := c.GetReturnTypeOfSignature(sigs[0])
 				if retType != nil {
-					retEffect := tp.EffectType(retType, atLocation)
+					retEffect := tp.EffectType(retType)
 					if retEffect != nil {
 						effectContextType = retEffect.R
 					}

@@ -7,6 +7,7 @@ import (
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/shim/ast"
 	"github.com/microsoft/typescript-go/shim/checker"
+	"github.com/microsoft/typescript-go/shim/core"
 	"github.com/effect-ts/tsgo/tsgolint/internal/rule"
 	"github.com/effect-ts/tsgo/tsgolint/internal/utils"
 )
@@ -133,6 +134,95 @@ var NoMisusedPromisesRule = rule.Rule{
 			})
 		}
 
+		type voidExpectation struct {
+			declaration *ast.Node
+			t           *checker.Type
+		}
+
+		localExpectationForDeclaration := func(declaration *ast.Node, t *checker.Type) *voidExpectation {
+			if declaration != nil && ast.GetSourceFileOfNode(declaration) == ctx.SourceFile {
+				return &voidExpectation{declaration: declaration, t: t}
+			}
+			return nil
+		}
+
+		localExpectationForSymbol := func(symbol *ast.Symbol, t *checker.Type) *voidExpectation {
+			if symbol == nil {
+				return nil
+			}
+			declarations := make([]*ast.Node, 0, len(symbol.Declarations)+1)
+			if symbol.ValueDeclaration != nil {
+				declarations = append(declarations, symbol.ValueDeclaration)
+			}
+			declarations = append(declarations, symbol.Declarations...)
+			for _, declaration := range declarations {
+				if expectation := localExpectationForDeclaration(declaration, t); expectation != nil {
+					return expectation
+				}
+			}
+			return nil
+		}
+
+		expectationRange := func(expectation *voidExpectation) core.TextRange {
+			declaration := expectation.declaration
+			if declaration.Type() != nil {
+				return utils.TrimNodeTextRange(ctx.SourceFile, declaration.Type())
+			}
+			if declaration.Name() != nil {
+				return utils.TrimNodeTextRange(ctx.SourceFile, declaration.Name())
+			}
+			return utils.TrimNodeTextRange(ctx.SourceFile, declaration)
+		}
+
+		promiseRange := func(node *ast.Node) core.TextRange {
+			node = ast.SkipParentheses(node)
+			if ast.IsFunctionLike(node) {
+				if node.Type() != nil {
+					return utils.TrimNodeTextRange(ctx.SourceFile, node.Type())
+				}
+				if ast.IsArrowFunction(node) {
+					return utils.TrimNodeTextRange(ctx.SourceFile, node.AsArrowFunction().EqualsGreaterThanToken)
+				}
+				return utils.GetFunctionHeadLoc(ctx.SourceFile, node)
+			}
+			return utils.TrimNodeTextRange(ctx.SourceFile, node)
+		}
+
+		buildDiagnostic := func(
+			node *ast.Node,
+			primaryRange core.TextRange,
+			message rule.RuleMessage,
+			expectation *voidExpectation,
+		) rule.RuleDiagnostic {
+			t := ctx.TypeChecker.GetTypeAtLocation(node)
+			valueDescription := "This expression"
+			if ast.IsFunctionLike(ast.SkipParentheses(node)) || len(utils.GetCallSignatures(ctx.TypeChecker, t)) != 0 {
+				valueDescription = "This callback"
+			}
+			diagnostic := rule.RuleDiagnostic{
+				Range:   primaryRange,
+				Message: message,
+				LabeledRanges: []rule.RuleLabeledRange{{
+					Label: fmt.Sprintf("%s has type `%s`.", valueDescription, ctx.TypeChecker.TypeToString(t)),
+					Range: promiseRange(node),
+				}},
+			}
+			if expectation != nil && expectation.t != nil {
+				diagnostic.LabeledRanges = append(diagnostic.LabeledRanges, rule.RuleLabeledRange{
+					Label: fmt.Sprintf(
+						"This context accepts a `void`-returning callback through type `%s`.",
+						ctx.TypeChecker.TypeToString(expectation.t),
+					),
+					Range: expectationRange(expectation),
+				})
+			}
+			return diagnostic
+		}
+
+		reportNode := func(node *ast.Node, message rule.RuleMessage, expectation *voidExpectation) {
+			ctx.ReportDiagnostic(buildDiagnostic(node, promiseRange(node), message, expectation))
+		}
+
 		checkArrayPredicates := func(node *ast.Node) {
 			parent := node.Parent
 
@@ -149,7 +239,7 @@ var NoMisusedPromisesRule = rule.Rule{
 			callback := arguments[0]
 
 			if utils.IsArrayMethodCallWithPredicate(ctx.TypeChecker, expr) && returnsThenable(callback) {
-				ctx.ReportNode(callback, buildPredicateMessage())
+				reportNode(callback, buildPredicateMessage(), nil)
 			}
 		}
 
@@ -249,7 +339,7 @@ var NoMisusedPromisesRule = rule.Rule{
 			}
 
 			if isAlwaysThenable(node) {
-				ctx.ReportNode(node, buildConditionalMessage())
+				reportNode(node, buildConditionalMessage(), nil)
 			}
 		}
 
@@ -275,8 +365,8 @@ var NoMisusedPromisesRule = rule.Rule{
 			t *checker.Type,
 		) bool {
 			hadVoidReturn := false
-			for _, t := range utils.UnionTypeParts(t) {
-				for _, sig := range utils.GetCallSignatures(ctx.TypeChecker, t) {
+			if !utils.VisitUnionTypeParts(t, func(part *checker.Type) bool {
+				for _, sig := range utils.GetCallSignatures(ctx.TypeChecker, part) {
 					returnType := checker.Checker_getReturnTypeOfSignature(ctx.TypeChecker, sig)
 					// If a certain positional argument accepts both thenable and void returns,
 					// a promise-returning function is valid
@@ -286,6 +376,9 @@ var NoMisusedPromisesRule = rule.Rule{
 
 					hadVoidReturn = hadVoidReturn || utils.IsTypeFlagSet(returnType, checker.TypeFlagsVoid)
 				}
+				return true
+			}) {
+				return false
 			}
 			return hadVoidReturn
 		}
@@ -313,7 +406,11 @@ var NoMisusedPromisesRule = rule.Rule{
 			if !isVoidReturningFunctionType(nodeMember, memberType) {
 				return
 			}
-			ctx.ReportNode(nodeMember, buildVoidReturnInheritedMethodMessage(ctx.TypeChecker.TypeToString(heritageType)))
+			reportNode(
+				nodeMember,
+				buildVoidReturnInheritedMethodMessage(ctx.TypeChecker.TypeToString(heritageType)),
+				localExpectationForSymbol(heritageMember, memberType),
+			)
 		}
 
 		checkJSXAttribute := func(node *ast.JsxAttribute) {
@@ -327,13 +424,27 @@ var NoMisusedPromisesRule = rule.Rule{
 			}
 			contextualType := checker.Checker_getContextualType(ctx.TypeChecker, node.Initializer, checker.ContextFlagsNone)
 			if contextualType != nil && isVoidReturningFunctionType(node.Initializer, contextualType) && returnsThenable(expression) {
-				ctx.ReportNode(node.Initializer, buildVoidReturnAttributeMessage())
+				var expectation *voidExpectation
+				attributesType := checker.Checker_getContextualType(ctx.TypeChecker, node.AsNode().Parent, checker.ContextFlagsNone)
+				if attributesType != nil {
+					propertySymbol := checker.Checker_getPropertyOfType(ctx.TypeChecker, attributesType, node.Name().Text())
+					expectation = localExpectationForSymbol(propertySymbol, contextualType)
+				}
+				reportNode(
+					expression,
+					buildVoidReturnAttributeMessage(),
+					expectation,
+				)
 			}
 		}
 
 		checkSpread := func(node *ast.Node) {
-			if utils.IsThenableType(ctx.TypeChecker, node.Expression(), nil) {
-				ctx.ReportNode(node.Expression(), buildSpreadMessage())
+			expression := node.Expression()
+			if utils.IsThenableType(ctx.TypeChecker, expression, nil) {
+				spreadRange := utils.TrimNodeTextRange(ctx.SourceFile, node).WithEnd(
+					utils.TrimNodeTextRange(ctx.SourceFile, expression).Pos(),
+				)
+				ctx.ReportDiagnostic(buildDiagnostic(expression, spreadRange, buildSpreadMessage(), nil))
 			}
 		}
 
@@ -341,7 +452,7 @@ var NoMisusedPromisesRule = rule.Rule{
 			node *ast.Node,
 			t *checker.Type,
 		) bool {
-			return utils.Some(utils.UnionTypeParts(t), func(t *checker.Type) bool {
+			return utils.SomeUnionTypePart(t, func(t *checker.Type) bool {
 				return anySignatureIsThenableType(node, t)
 			})
 		}
@@ -352,6 +463,9 @@ var NoMisusedPromisesRule = rule.Rule{
 			index int,
 			thenableReturnIndices *[]int,
 			voidReturnIndices *[]int,
+			voidReturnExpectations map[int]*voidExpectation,
+			parameterDeclaration *ast.Node,
+			fromContextualType bool,
 		)
 		checkThenableOrVoidArgument = func(
 			node *ast.Expression,
@@ -359,6 +473,9 @@ var NoMisusedPromisesRule = rule.Rule{
 			index int,
 			thenableReturnIndices *[]int,
 			voidReturnIndices *[]int,
+			voidReturnExpectations map[int]*voidExpectation,
+			parameterDeclaration *ast.Node,
+			fromContextualType bool,
 		) {
 			if isThenableReturningFunctionType(node.Expression(), t) {
 				(*thenableReturnIndices) = append(*thenableReturnIndices, index)
@@ -368,6 +485,11 @@ var NoMisusedPromisesRule = rule.Rule{
 				!slices.Contains(*thenableReturnIndices, index) {
 
 				(*voidReturnIndices) = append(*voidReturnIndices, index)
+				if expectation := localExpectationForDeclaration(parameterDeclaration, t); expectation != nil {
+					if _, ok := voidReturnExpectations[index]; !ok || !fromContextualType {
+						voidReturnExpectations[index] = expectation
+					}
+				}
 			}
 			contextualType := checker.Checker_getContextualTypeForArgumentAtIndex(ctx.TypeChecker, node, index)
 
@@ -378,6 +500,9 @@ var NoMisusedPromisesRule = rule.Rule{
 					index,
 					thenableReturnIndices,
 					voidReturnIndices,
+					voidReturnExpectations,
+					parameterDeclaration,
+					true,
 				)
 			}
 		}
@@ -390,20 +515,21 @@ var NoMisusedPromisesRule = rule.Rule{
 		// if trailing arguments are candidates.
 		voidFunctionArguments := func(
 			node *ast.Expression,
-		) []int {
+		) ([]int, map[int]*voidExpectation) {
 			// 'new' can be used without any arguments, as in 'let b = new Object;'
 			// In this case, there are no argument positions to check, so return early.
 			if node.Arguments() == nil {
-				return []int{}
+				return []int{}, nil
 			}
 			thenableReturnIndices := []int{}
 			voidReturnIndices := []int{}
+			voidReturnExpectations := map[int]*voidExpectation{}
 			t := ctx.TypeChecker.GetTypeAtLocation(node.Expression())
 
 			// We can't use checker.getResolvedSignature because it prefers an early '() => void' over a later '() => Promise<void>'
 			// See https://github.com/microsoft/TypeScript/issues/48077
 
-			for _, subType := range utils.UnionTypeParts(t) {
+			utils.VisitUnionTypeParts(t, func(subType *checker.Type) bool {
 				// Standard function calls and `new` have two different types of signatures
 				var signatures []*checker.Signature
 				if ast.IsCallExpression(node) {
@@ -413,12 +539,12 @@ var NoMisusedPromisesRule = rule.Rule{
 				}
 				for _, signature := range signatures {
 					for index, parameter := range checker.Signature_parameters(signature) {
-						decl := parameter.ValueDeclaration
+						parameterDeclaration := parameter.ValueDeclaration
 						t := ctx.TypeChecker.GetTypeOfSymbolAtLocation(parameter, node.Expression())
 
 						// If this is a array 'rest' parameter, check all of the argument indices
 						// from the current argument to the end.
-						if decl != nil && utils.IsRestParameterDeclaration(decl) {
+						if parameterDeclaration != nil && utils.IsRestParameterDeclaration(parameterDeclaration) {
 							if checker.Checker_isArrayType(ctx.TypeChecker, t) {
 								// Unwrap 'Array<MaybeVoidFunction>' to 'MaybeVoidFunction',
 								// so that we'll handle it in the same way as a non-rest
@@ -431,6 +557,9 @@ var NoMisusedPromisesRule = rule.Rule{
 										i,
 										&thenableReturnIndices,
 										&voidReturnIndices,
+										voidReturnExpectations,
+										parameterDeclaration,
+										false,
 									)
 								}
 							} else if checker.IsTupleType(t) {
@@ -444,6 +573,9 @@ var NoMisusedPromisesRule = rule.Rule{
 										i,
 										&thenableReturnIndices,
 										&voidReturnIndices,
+										voidReturnExpectations,
+										parameterDeclaration,
+										false,
 									)
 								}
 							}
@@ -454,26 +586,31 @@ var NoMisusedPromisesRule = rule.Rule{
 								index,
 								&thenableReturnIndices,
 								&voidReturnIndices,
+								voidReturnExpectations,
+								parameterDeclaration,
+								false,
 							)
 						}
 					}
 				}
-			}
+				return true
+			})
 
 			for _, index := range thenableReturnIndices {
 				at := slices.Index(voidReturnIndices, index)
 				if at >= 0 {
 					voidReturnIndices = slices.Delete(voidReturnIndices, at, at+1)
+					delete(voidReturnExpectations, index)
 				}
 			}
 
-			return voidReturnIndices
+			return voidReturnIndices, voidReturnExpectations
 		}
 
 		checkArguments := func(
 			node *ast.Expression,
 		) {
-			voidArgs := voidFunctionArguments(node)
+			voidArgs, expectations := voidFunctionArguments(node)
 			if len(voidArgs) == 0 {
 				return
 			}
@@ -483,7 +620,7 @@ var NoMisusedPromisesRule = rule.Rule{
 					continue
 				}
 				if returnsThenable(argument) {
-					ctx.ReportNode(argument, buildVoidReturnArgumentMessage())
+					reportNode(argument, buildVoidReturnArgumentMessage(), expectations[index])
 				}
 			}
 		}
@@ -496,11 +633,7 @@ var NoMisusedPromisesRule = rule.Rule{
 				return
 			}
 
-			heritageTypes := utils.Flatten(utils.Map(heritageClauses.Nodes, func(h *ast.Node) []*checker.Type {
-				return utils.Map(h.AsHeritageClause().Types.Nodes, func(n *ast.Node) *checker.Type {
-					return ctx.TypeChecker.GetTypeAtLocation(n)
-				})
-			}))
+			var heritageTypes []*checker.Type
 
 			for _, nodeMember := range node.Members() {
 				if nodeMember.Name() == nil {
@@ -520,6 +653,13 @@ var NoMisusedPromisesRule = rule.Rule{
 				if !returnsThenable(nodeMember) {
 					continue
 				}
+				if heritageTypes == nil {
+					heritageTypes = utils.Flatten(utils.Map(heritageClauses.Nodes, func(h *ast.Node) []*checker.Type {
+						return utils.Map(h.AsHeritageClause().Types.Nodes, func(n *ast.Node) *checker.Type {
+							return ctx.TypeChecker.GetTypeAtLocation(n)
+						})
+					}))
+				}
 				for _, heritageType := range heritageTypes {
 					checkHeritageTypeForMemberReturningVoid(
 						nodeMember,
@@ -528,6 +668,18 @@ var NoMisusedPromisesRule = rule.Rule{
 					)
 				}
 			}
+		}
+
+		localPropertyExpectation := func(propertyNode *ast.Node, t *checker.Type) *voidExpectation {
+			if propertyNode.Name() == nil || !ast.IsObjectLiteralExpression(propertyNode.Parent) {
+				return nil
+			}
+			objType := checker.Checker_getContextualType(ctx.TypeChecker, propertyNode.Parent, checker.ContextFlagsNone)
+			if objType == nil {
+				return nil
+			}
+			propertySymbol := checker.Checker_getPropertyOfType(ctx.TypeChecker, objType, propertyNode.Name().Text())
+			return localExpectationForSymbol(propertySymbol, t)
 		}
 
 		checkProperty := func(node *ast.Node) {
@@ -539,27 +691,22 @@ var NoMisusedPromisesRule = rule.Rule{
 					property.Initializer,
 					contextualType,
 				) && returnsThenable(property.Initializer) {
-					if ast.IsFunctionLike(property.Initializer) {
-						returnType := property.Initializer.Type()
-						if returnType != nil {
-							ctx.ReportNode(returnType, buildVoidReturnPropertyMessage())
-						} else {
-							ctx.ReportNode(
-								// TODO(port): getFunctionHeadLoc(functionNode, context.sourceCode)
-								property.Initializer,
-								buildVoidReturnPropertyMessage(),
-							)
-						}
-					} else {
-						ctx.ReportNode(property.Initializer, buildVoidReturnPropertyMessage())
-					}
+					reportNode(
+						property.Initializer,
+						buildVoidReturnPropertyMessage(),
+						localPropertyExpectation(node, contextualType),
+					)
 				}
 			} else if ast.IsShorthandPropertyAssignment(node) {
 				contextualType := checker.Checker_getContextualType(ctx.TypeChecker, node.Name(), checker.ContextFlagsNone)
 				if contextualType != nil &&
 					isVoidReturningFunctionType(node.Name(), contextualType) &&
 					returnsThenable(node.Name()) {
-					ctx.ReportNode(node.Name(), buildVoidReturnPropertyMessage())
+					reportNode(
+						node.Name(),
+						buildVoidReturnPropertyMessage(),
+						localPropertyExpectation(node, contextualType),
+					)
 				}
 			} else if ast.IsMethodDeclaration(node) {
 				if ast.IsComputedPropertyName(node.Name()) {
@@ -595,18 +742,11 @@ var NoMisusedPromisesRule = rule.Rule{
 				)
 
 				if isVoidReturningFunctionType(node.Name(), contextualType) {
-					if ast.IsMethodDeclaration(node) {
-					}
-
-					if node.Type() != nil {
-						ctx.ReportNode(node.Type(), buildVoidReturnPropertyMessage())
-					} else {
-						ctx.ReportNode(
-							// TODO(port): getFunctionHeadLoc(functionNode, context.sourceCode)
-							node,
-							buildVoidReturnPropertyMessage(),
-						)
-					}
+					reportNode(
+						node,
+						buildVoidReturnPropertyMessage(),
+						localExpectationForSymbol(propertySymbol, contextualType),
+					)
 				}
 			}
 		}
@@ -697,7 +837,21 @@ var NoMisusedPromisesRule = rule.Rule{
 					node.Expression,
 					contextualType,
 				) && returnsThenable(node.Expression) {
-				ctx.ReportNode(node.Expression, buildVoidReturnReturnValueMessage())
+				var expectation *voidExpectation
+				if functionNode != nil && functionNode.Type() != nil {
+					expectation = &voidExpectation{declaration: functionNode, t: contextualType}
+				} else if functionNode != nil {
+					// The enclosing function may have no contextual type of its own, e.g. a
+					// getter whose type comes from its paired setter's parameter.
+					if functionType := checker.Checker_getContextualType(ctx.TypeChecker, functionNode, checker.ContextFlagsNone); functionType != nil {
+						for _, signature := range utils.GetCallSignatures(ctx.TypeChecker, functionType) {
+							if expectation = localExpectationForDeclaration(checker.Signature_declaration(signature), contextualType); expectation != nil {
+								break
+							}
+						}
+					}
+				}
+				reportNode(node.Expression, buildVoidReturnReturnValueMessage(), expectation)
 			}
 		}
 
@@ -708,7 +862,15 @@ var NoMisusedPromisesRule = rule.Rule{
 			}
 
 			if returnsThenable(node.Right) {
-				ctx.ReportNode(node.Right, buildVoidReturnVariableMessage())
+				symbol := ctx.TypeChecker.GetSymbolAtLocation(node.Left)
+				if symbol == nil && node.Left.Name() != nil {
+					symbol = ctx.TypeChecker.GetSymbolAtLocation(node.Left.Name())
+				}
+				reportNode(
+					node.Right,
+					buildVoidReturnVariableMessage(),
+					localExpectationForSymbol(symbol, varType),
+				)
 			}
 		}
 
@@ -729,7 +891,11 @@ var NoMisusedPromisesRule = rule.Rule{
 			}
 
 			if returnsThenable(node.Initializer) {
-				ctx.ReportNode(node.Initializer, buildVoidReturnVariableMessage())
+				reportNode(
+					node.Initializer,
+					buildVoidReturnVariableMessage(),
+					&voidExpectation{declaration: node.AsNode(), t: varType},
+				)
 			}
 		}
 

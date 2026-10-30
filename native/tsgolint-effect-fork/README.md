@@ -19,16 +19,16 @@ It is designed to integrate seamlessly with Oxlint's fast syntax linting, enabli
 
 Key highlights:
 
-- **Performance**: 20-40x faster than ESLint + typescript-eslint on large repositories
+- **Performance**: 10–20x faster than ESLint + typescript-eslint in the [benchmarks](./benchmarks/README.md)
 - **Coverage**: 59/61 targeted `typescript-eslint` type-aware rules implemented
 - **Parallel**: Multi-core rule execution for scalable analysis
 - **High impact**: catches production-grade bugs that syntax-only linting misses (for example `no-floating-promises`)
 
-This project originated in [typescript-eslint/tsgolint](https://github.com/effect-ts/tsgo/tsgolint), with fork permission granted by [@auvred](https://github.com/auvred).
+This project originated in [typescript-eslint/tsgolint](https://github.com/typescript-eslint/tsgolint), with fork permission granted by [@auvred](https://github.com/auvred).
 
 ## Why Teams Upgrade to Type-Aware Linting
 
-If you ship TypeScript, running `oxlint --type-aware` in CI is a high-leverage upgrade that catches bug classes syntax linting cannot.
+Running `oxlint --type-aware` in CI catches bugs that require type information to detect.
 
 For example, `typescript/no-floating-promises` catches silently dropped async failures:
 
@@ -121,29 +121,36 @@ This approach introduces several bottlenecks:
 
 `tsgolint` takes a different approach: it runs directly on `typescript-go`, avoiding these bottlenecks and allowing semantic analysis to run efficiently alongside Oxlint.
 
-Recent benchmark results (`eslint` + `typescript-eslint` vs `tsgolint`) show consistent large speedups:
+Benchmarks on an Apple M4 Pro compare ESLint + typescript-eslint with `tsgolint`:
 
 | Repository           | ESLint + typescript-eslint | tsgolint | Speedup |
 | -------------------- | -------------------------- | -------- | ------- |
-| microsoft/vscode     | 167.8s                     | 4.89s    | **34x** |
-| microsoft/typescript | 47.4s                      | 2.10s    | **23x** |
-| typeorm/typeorm      | 27.3s                      | 0.93s    | **29x** |
-| vuejs/core           | 20.7s                      | 0.95s    | **22x** |
+| microsoft/vscode     | 83.2s                      | 6.96s    | **12x** |
+| microsoft/typescript | 27.2s                      | 1.94s    | **14x** |
+| typeorm/typeorm      | 13.2s                      | 0.75s    | **18x** |
+| vuejs/core           | 12.3s                      | 0.95s    | **13x** |
 
 See [benchmarks](./benchmarks/README.md) for detailed performance comparisons.
 
 ## Status
 
-`tsgolint` is under active development.
+`tsgolint` is stable and powers Oxlint's type-aware linting mode. See the [Type-Aware Linting Stable announcement](https://oxc.rs/blog/2026-07-22-type-aware-linting-stable) for details about the stable release.
 
-The core architecture is stable and already powers Oxlint's type-aware linting mode. Current development focuses on expanding rule coverage and ecosystem integration:
+### Versioning
+
+`tsgolint` is built directly on TypeScript 7, so its versions track the TypeScript release they support. For example, in `v7.0.2001`:
+
+- `7.0.2` is the TypeScript version
+- `001` is the `tsgolint` patch version
+
+A fix released against the same TypeScript version increments the patch suffix, so the next release would be `v7.0.2002`. When the supported TypeScript version changes, the TypeScript portion changes and the patch suffix resets.
+
+Current development focuses on expanding rule coverage and ecosystem integration:
 
 - additional `typescript-eslint` rule support
 - editor integration improvements
 - configuration and rule customization
 - performance improvements for large monorepos
-
-Because `tsgolint` relies on `typescript-go`, its long-term stability evolves alongside TypeScript itself.
 
 > [!NOTE]
 > We are not currently accepting PRs for new rules beyond what `typescript-eslint` supports, so that we can focus our limited engineering capacity on the items listed above.
@@ -161,7 +168,7 @@ We welcome contributions! See [CONTRIBUTING.md](./CONTRIBUTING.md) for:
 
 ## Implemented Rules
 
-Implemented 59/61.
+60 of the 62 targeted rules are implemented.
 
 - [ ] [naming-convention](https://typescript-eslint.io/rules/naming-convention)
 - [ ] [prefer-destructuring](https://typescript-eslint.io/rules/prefer-destructuring)
@@ -176,6 +183,7 @@ Implemented 59/61.
 - [x] [no-duplicate-type-constituents](https://typescript-eslint.io/rules/no-duplicate-type-constituents)
 - [x] [no-floating-promises](https://typescript-eslint.io/rules/no-floating-promises)
 - [x] [no-for-in-array](https://typescript-eslint.io/rules/no-for-in-array)
+- [x] [no-generated-empty-object-type](https://typescript-eslint.io/rules/no-generated-empty-object-type)
 - [x] [no-implied-eval](https://typescript-eslint.io/rules/no-implied-eval)
 - [x] [no-meaningless-void-operator](https://typescript-eslint.io/rules/no-meaningless-void-operator)
 - [x] [no-misused-promises](https://typescript-eslint.io/rules/no-misused-promises)
@@ -243,3 +251,11 @@ Implemented 59/61.
 [ci-url]: https://github.com/oxc-project/tsgolint/actions/workflows/ci.yml
 [discord-badge]: https://img.shields.io/discord/1079625926024900739?logo=discord&label=Discord
 [discord-url]: https://discord.gg/9uXCAwqQZW
+
+# [Sponsored By](https://oxc.rs/sponsor)
+
+<p align="center">
+  <a href="https://oxc.rs/sponsor">
+    <img src="https://raw.githubusercontent.com/oxc-project/sponsors/main/sponsors.svg" alt="Our sponsors" />
+  </a>
+</p>

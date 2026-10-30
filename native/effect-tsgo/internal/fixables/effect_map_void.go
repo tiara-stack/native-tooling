@@ -2,12 +2,10 @@ package fixables
 
 import (
 	"github.com/effect-ts/tsgo/internal/fixable"
-	"github.com/effect-ts/tsgo/internal/rules"
-	"github.com/microsoft/typescript-go/shim/ast"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/ls"
 	"github.com/effect-ts/tsgo/internal/rewriter"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/effect-ts/tsgo/internal/rules"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/ls"
 )
 
 var EffectMapVoidFix = fixable.Fixable{
@@ -19,37 +17,31 @@ var EffectMapVoidFix = fixable.Fixable{
 }
 
 func runEffectMapVoidFix(ctx *fixable.Context) []ls.CodeAction {
-
-	c := ctx.Checker
-
 	sf := ctx.SourceFile
 
-	matches := rules.AnalyzeEffectMapVoid(ctx.TypeParser, c, sf)
+	matches := rules.AnalyzeEffectMapVoid(ctx.TypeParser, ctx.Checker, sf)
 	for _, match := range matches {
 		diagRange := match.Location
 		if !diagRange.Intersects(ctx.Span) && !ctx.Span.ContainedBy(diagRange) {
 			continue
 		}
-
-		// Extract the Effect module name, preserving the import alias
-		effectModuleName := "Effect"
-		if match.EffectModuleNode != nil && match.EffectModuleNode.Kind == ast.KindIdentifier {
-			effectModuleName = scanner.GetTextOfNode(match.EffectModuleNode)
+		if match.Transformation == nil {
+			continue
 		}
 
 		if action := ctx.NewFixAction(fixable.FixAction{
 			Description: "Replace with Effect.asVoid",
 			Run: func(tracker *rewriter.Tracker) {
-				// Build Effect.asVoid as a PropertyAccessExpression
-				effectModuleId := tracker.NewIdentifier(effectModuleName)
-				replacementNode := tracker.NewPropertyAccessExpression(effectModuleId, nil, tracker.NewIdentifier("asVoid"), ast.NodeFlagsNone)
-				ast.SetParentInChildren(replacementNode)
-				tracker.ReplaceNode(sf, match.CallNode, replacementNode, nil)
+				// Build Effect.asVoid, preserving the original module reference (and any alias).
+				asVoid := effectModuleMethod(tracker, sf, match.EffectModuleNode, "asVoid")
+				tracker.ReplacePipingFlowTransformation(sf, match.Transformation, rewriter.PipingFlowTransformationReplacement{
+					Callee: asVoid,
+				})
 			},
 		}); action != nil {
 			return []ls.CodeAction{*action}
 		}
-		return nil
+		continue
 	}
 
 	return nil

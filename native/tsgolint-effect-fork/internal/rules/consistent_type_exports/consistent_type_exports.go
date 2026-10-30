@@ -16,7 +16,8 @@ import (
 func buildTypeOverValueMessage() rule.RuleMessage {
 	return rule.RuleMessage{
 		Id:          "typeOverValue",
-		Description: "All exports in the declaration are only used as types. Use `export type`.",
+		Description: "All exports in the declaration are only used as types.",
+		Help:        "Use `export type`.",
 	}
 }
 
@@ -166,9 +167,6 @@ var ConsistentTypeExportsRule = rule.Rule{
 			if exportDecl.IsTypeOnly || exportDecl.ModuleSpecifier == nil {
 				return
 			}
-			if exportDecl.ExportClause != nil && !ast.IsNamespaceExport(exportDecl.ExportClause.AsNode()) {
-				return
-			}
 
 			moduleSymbol := ctx.TypeChecker.GetSymbolAtLocation(exportDecl.ModuleSpecifier.AsNode())
 			if moduleSymbol == nil {
@@ -215,9 +213,6 @@ var ConsistentTypeExportsRule = rule.Rule{
 
 		analyzeNamedExport := func(node *ast.Node) *analyzedNamedExport {
 			exportDecl := node.AsExportDeclaration()
-			if exportDecl.ExportClause == nil || !ast.IsNamedExports(exportDecl.ExportClause.AsNode()) {
-				return nil
-			}
 			if exportDecl.IsTypeOnly {
 				return nil
 			}

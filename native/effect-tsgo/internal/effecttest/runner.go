@@ -9,16 +9,16 @@ import (
 	"testing"
 	"testing/fstest"
 
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/bundled"
-	"github.com/microsoft/typescript-go/shim/compiler"
-	"github.com/microsoft/typescript-go/shim/core"
-	"github.com/microsoft/typescript-go/shim/parser"
-	"github.com/microsoft/typescript-go/shim/testutil/harnessutil"
-	"github.com/microsoft/typescript-go/shim/tsoptions"
-	"github.com/microsoft/typescript-go/shim/tspath"
-	"github.com/microsoft/typescript-go/shim/vfs"
-	"github.com/microsoft/typescript-go/shim/vfs/vfstest"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/bundled"
+	"github.com/microsoft/TypeScript/tsc/shim/compiler"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	"github.com/microsoft/TypeScript/tsc/shim/parser"
+	"github.com/microsoft/TypeScript/tsc/shim/testutil/harnessutil"
+	"github.com/microsoft/TypeScript/tsc/shim/tsoptions"
+	"github.com/microsoft/TypeScript/tsc/shim/tspath"
+	"github.com/microsoft/TypeScript/tsc/shim/vfs"
+	"github.com/microsoft/TypeScript/tsc/shim/vfs/vfstest"
 
 	"github.com/effect-ts/tsgo/internal/bundledeffect"
 	"github.com/effect-ts/tsgo/internal/typeparser"
@@ -113,6 +113,7 @@ func parseTestUnits(content string, defaultFileName string) []*testUnit {
 // It enables the Effect language service plugin with default diagnostic severities.
 const DefaultTsConfig = `{
   "compilerOptions": {
+    "skipLibCheck": true,
     "plugins": [
       {
         "name": "@effect/language-service",
@@ -144,6 +145,11 @@ func RunEffectTest(t *testing.T, version bundledeffect.EffectVersion, testFile s
 	// Mount Effect package
 	if err := bundledeffect.MountEffect(version, testfs); err != nil {
 		t.Fatal("Failed to mount Effect:", err)
+	}
+	if strings.Contains(string(content), "vitest") {
+		if err := bundledeffect.MountVitest(version, testfs); err != nil {
+			t.Fatal("Failed to mount Vitest:", err)
+		}
 	}
 
 	// Current directory for the test
@@ -219,6 +225,7 @@ func RunEffectTest(t *testing.T, version bundledeffect.EffectVersion, testFile s
 	compilerOptions := &core.CompilerOptions{
 		NewLine:             core.NewLineKindLF,
 		SkipDefaultLibCheck: core.TSTrue,
+		SkipLibCheck:        core.TSTrue,
 		NoErrorTruncation:   core.TSTrue,
 		Target:              core.ScriptTargetESNext,
 		Module:              core.ModuleKindNodeNext,
@@ -257,6 +264,7 @@ func RunEffectTest(t *testing.T, version bundledeffect.EffectVersion, testFile s
 			// Merge with our defaults
 			parsedConfig.CompilerOptions().NewLine = core.NewLineKindLF
 			parsedConfig.CompilerOptions().SkipDefaultLibCheck = core.TSTrue
+			parsedConfig.CompilerOptions().SkipLibCheck = core.TSTrue
 			parsedConfig.CompilerOptions().NoErrorTruncation = core.TSTrue
 			if parsedConfig.CompilerOptions().Target == core.ScriptTargetNone {
 				parsedConfig.CompilerOptions().Target = core.ScriptTargetESNext

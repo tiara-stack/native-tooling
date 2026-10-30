@@ -3,7 +3,7 @@ package effecttest_test
 import (
 	"testing"
 
-	"github.com/microsoft/typescript-go/shim/fourslash"
+	"github.com/microsoft/TypeScript/tsc/shim/fourslash"
 
 	_ "github.com/effect-ts/tsgo/etslshooks"
 	_ "github.com/effect-ts/tsgo/etstesthooks"
@@ -27,18 +27,20 @@ func TestEffectHoverYieldStar(t *testing.T) {
   }
 }
 // @Filename: /test.ts
-import { Effect } from "effect"
+import { Config, Effect } from "effect"
 const program = Effect.gen(function*() {
-  const result = /*1*/yield* Effect.succeed("hello")
+  const token = /*yield*/yield/*asterisk*/*/*space*/ Config.redacted("WEBHOOK_TOKEN")
 })`
 
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 
-	f.VerifyQuickInfoAt(t, "1",
-		"(yield*) Effect<string, never, never>",
-		"```ts\n/* Effect Type Parameters */\ntype Success = string\ntype Failure = never\ntype Requirements = never\n```\n",
-	)
+	for _, marker := range []string{"yield", "asterisk", "space"} {
+		f.VerifyQuickInfoAt(t, marker,
+			"(yield*) Config<Redacted<string>>",
+			"```ts\n/* Effect Type Parameters */\ntype Success = Redacted<string>\ntype Failure = ConfigError\ntype Requirements = never\n```\n",
+		)
+	}
 }
 
 func TestEffectHoverTypeArgs(t *testing.T) {
@@ -122,7 +124,7 @@ declare const /*2*/myEffect: Effect.Effect<string, Error, never>`
 	f.VerifyQuickInfoAt(t, "1",
 		"const app: Layer.Layer<Cache, never, never>",
 		"```\n/**\n * - Cache provided at ln 15 col 12 by `Cache.Default`\n */\n```\n"+
-			"[Show full graph](https://mermaid.live/edit#pako:eNqckk9TszAQxr_KTk7ve2hLEuuhR-3Rg-N4A4duaWoZY8AQrB3H7-7wpxgqE4K3JfvwZPN79pMk2U6QFdnL7JgcUBt4vIkUQFFunzXmBwggjMhmjQa3WIj5WuyxlCYqg4AnW72oC9F8Fq8oZXMQSwV0CUkm4WoZN-2F1d9E5Km6xr4oPmrMw4hA1-t1c529pztRQHjfVp0KrHYchBE5j2s5CbXrTM1JCtuxMDp7ESuVKdFoOvFZWo0G-1TKldGoihy1UGZAcuHU-rSSQYPuhbQGfYcnoeftZP8usf-fwJ1TP-7UyZ26udM-91tMDk7o1B86HYdOx6FTN3RWQ6_H_sNqU-aHmDkRs1iLtzLVFeKHtrIQ_7S9V9ty_EW5d7EzWzYxW-afLRvPlo1ny9zZ8jpbzPMJiV77BcqdgXI3Vz6RK_fnyse58nGufNCAwmw--4Cgrq0nVMcNqN7GVDI-LLP_Jl_fAQAA__-x8ibJ) - [Show outline](https://mermaid.live/edit#pako:eNqqVkrOT0lVslJKy8kvT85ILCpRCHGJyVNQMIiOUXJJLElMSixO1XNJTUsszSmJUYoFSRlGxyg5JyZnYIgr6OrGlBoYGKcqGCjVAgIAAP__QH8cUg)\n\n",
+			"[Show full graph](https://mermaid.live/edit#pako:eNqckk9T8jAQxr_KTk7vewCaRDxwVI4eHMdbw5SlBGGMaU1bkXH87k7_UFLspKm3bffJk83v2S8SJ1tJFmSnkmO8R5PD853QAFmxeTGY7iGAUJD1EnPcYCanS7nDQuWiCAIeb8ysKmT9mb2hUvWPSGmgc4gTBTfzqG7PrP5akJXQAPZF0dFgGgoCba_TTU3ycdjKDMLHpmpVYLWjIBTkPK7lJPW2Nc1PStqOWW6SV7nQiZZCd8RnaTka7A5KLXKDOkvRSJ33SK6cGp9G0mvQvpBWoB_wJM20mezfNfb_I7hz6sedOrlTN3fa5X6P8d4JnfpDp8PQ6TB06obOKujV2H9Ybcr8EDMnYhYZ-V4cTIn4qalWF8SXtvdqX478pty52JktG5kt88-WDWfLhrNl7mx5lS2m6YhEb_0C5c5AuZsrH8mV-3Plw1z5MFfea0BhMp18QlDV1hPK3zWozsaUMt4vs0-T758BALHyJsk) - [Show outline](https://mermaid.live/edit#pako:eNqqVkrOT0lVslJKy8kvT85ILCpRCHGJyVNQMIiOUXJJLElMSixO1XNJTUsszSmJUYoFSRlGxyg5JyZnYIgr6OrGlBoYGKcqGCjVAgYAQH8cUg)\n\n",
 	)
 
 	// Hover over a plain Effect-typed variable should show Effect type parameters (not Layer)
@@ -219,7 +221,7 @@ const app2 = /*2*/app`
 	f.VerifyQuickInfoAt(t, "1",
 		"const app: Layer.Layer<Cache, never, never>",
 		"```\n/**\n * - Cache provided at ln 15 col 12 by `Cache.Default`\n */\n```\n"+
-			"[Show full graph](https://mermaid.live/edit#pako:eNqckk9TszAQxr_KTk7ve2hLEuuhR-3Rg-N4A4duaWoZY8AQrB3H7-7wpxgqE4K3JfvwZPN79pMk2U6QFdnL7JgcUBt4vIkUQFFunzXmBwggjMhmjQa3WIj5WuyxlCYqg4AnW72oC9F8Fq8oZXMQSwV0CUkm4WoZN-2F1d9E5Km6xr4oPmrMw4hA1-t1c529pztRQHjfVp0KrHYchBE5j2s5CbXrTM1JCtuxMDp7ESuVKdFoOvFZWo0G-1TKldGoihy1UGZAcuHU-rSSQYPuhbQGfYcnoeftZP8usf-fwJ1TP-7UyZ26udM-91tMDk7o1B86HYdOx6FTN3RWQ6_H_sNqU-aHmDkRs1iLtzLVFeKHtrIQ_7S9V9ty_EW5d7EzWzYxW-afLRvPlo1ny9zZ8jpbzPMJiV77BcqdgXI3Vz6RK_fnyse58nGufNCAwmw--4Cgrq0nVMcNqN7GVDI-LLP_Jl_fAQAA__-x8ibJ) - [Show outline](https://mermaid.live/edit#pako:eNqqVkrOT0lVslJKy8kvT85ILCpRCHGJyVNQMIiOUXJJLElMSixO1XNJTUsszSmJUYoFSRlGxyg5JyZnYIgr6OrGlBoYGKcqGCjVAgIAAP__QH8cUg)\n\n",
+			"[Show full graph](https://mermaid.live/edit#pako:eNqckk9T8jAQxr_KTk7vewCaRDxwVI4eHMdbw5SlBGGMaU1bkXH87k7_UFLspKm3bffJk83v2S8SJ1tJFmSnkmO8R5PD853QAFmxeTGY7iGAUJD1EnPcYCanS7nDQuWiCAIeb8ysKmT9mb2hUvWPSGmgc4gTBTfzqG7PrP5akJXQAPZF0dFgGgoCba_TTU3ycdjKDMLHpmpVYLWjIBTkPK7lJPW2Nc1PStqOWW6SV7nQiZZCd8RnaTka7A5KLXKDOkvRSJ33SK6cGp9G0mvQvpBWoB_wJM20mezfNfb_I7hz6sedOrlTN3fa5X6P8d4JnfpDp8PQ6TB06obOKujV2H9Ybcr8EDMnYhYZ-V4cTIn4qalWF8SXtvdqX478pty52JktG5kt88-WDWfLhrNl7mx5lS2m6YhEb_0C5c5AuZsrH8mV-3Plw1z5MFfea0BhMp18QlDV1hPK3zWozsaUMt4vs0-T758BALHyJsk) - [Show outline](https://mermaid.live/edit#pako:eNqqVkrOT0lVslJKy8kvT85ILCpRCHGJyVNQMIiOUXJJLElMSixO1XNJTUsszSmJUYoFSRlGxyg5JyZnYIgr6OrGlBoYGKcqGCjVAgYAQH8cUg)\n\n",
 	)
 
 	// Marker 2: on a reference to `app` in the initializer of another variable declaration.
@@ -305,6 +307,6 @@ const /*1*/app = Cache.Default.pipe(Layer.provide(Database.Default))`
 	f.VerifyQuickInfoAt(t, "1",
 		"const app: Layer.Layer<Cache, never, never>",
 		"```\n/**\n * - Cache provided at ln 15 col 12 by `Cache.Default`\n */\n```\n"+
-			"[Show full graph](https://www.mermaidchart.com/play#pako:eNqckk9TszAQxr_KTk7ve2hLEuuhR-3Rg-N4A4duaWoZY8AQrB3H7-7wpxgqE4K3JfvwZPN79pMk2U6QFdnL7JgcUBt4vIkUQFFunzXmBwggjMhmjQa3WIj5WuyxlCYqg4AnW72oC9F8Fq8oZXMQSwV0CUkm4WoZN-2F1d9E5Km6xr4oPmrMw4hA1-t1c529pztRQHjfVp0KrHYchBE5j2s5CbXrTM1JCtuxMDp7ESuVKdFoOvFZWo0G-1TKldGoihy1UGZAcuHU-rSSQYPuhbQGfYcnoeftZP8usf-fwJ1TP-7UyZ26udM-91tMDk7o1B86HYdOx6FTN3RWQ6_H_sNqU-aHmDkRs1iLtzLVFeKHtrIQ_7S9V9ty_EW5d7EzWzYxW-afLRvPlo1ny9zZ8jpbzPMJiV77BcqdgXI3Vz6RK_fnyse58nGufNCAwmw--4Cgrq0nVMcNqN7GVDI-LLP_Jl_fAQAA__-x8ibJ) - [Show outline](https://www.mermaidchart.com/play#pako:eNqqVkrOT0lVslJKy8kvT85ILCpRCHGJyVNQMIiOUXJJLElMSixO1XNJTUsszSmJUYoFSRlGxyg5JyZnYIgr6OrGlBoYGKcqGCjVAgIAAP__QH8cUg)\n\n",
+			"[Show full graph](https://www.mermaidchart.com/play#pako:eNqckk9T8jAQxr_KTk7vewCaRDxwVI4eHMdbw5SlBGGMaU1bkXH87k7_UFLspKm3bffJk83v2S8SJ1tJFmSnkmO8R5PD853QAFmxeTGY7iGAUJD1EnPcYCanS7nDQuWiCAIeb8ysKmT9mb2hUvWPSGmgc4gTBTfzqG7PrP5akJXQAPZF0dFgGgoCba_TTU3ycdjKDMLHpmpVYLWjIBTkPK7lJPW2Nc1PStqOWW6SV7nQiZZCd8RnaTka7A5KLXKDOkvRSJ33SK6cGp9G0mvQvpBWoB_wJM20mezfNfb_I7hz6sedOrlTN3fa5X6P8d4JnfpDp8PQ6TB06obOKujV2H9Ybcr8EDMnYhYZ-V4cTIn4qalWF8SXtvdqX478pty52JktG5kt88-WDWfLhrNl7mx5lS2m6YhEb_0C5c5AuZsrH8mV-3Plw1z5MFfea0BhMp18QlDV1hPK3zWozsaUMt4vs0-T758BALHyJsk) - [Show outline](https://www.mermaidchart.com/play#pako:eNqqVkrOT0lVslJKy8kvT85ILCpRCHGJyVNQMIiOUXJJLElMSixO1XNJTUsszSmJUYoFSRlGxyg5JyZnYIgr6OrGlBoYGKcqGCjVAgYAQH8cUg)\n\n",
 	)
 }

@@ -4,11 +4,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 type moduleAlternative struct {
@@ -34,6 +34,18 @@ var moduleAlternativesV3 = map[string]moduleAlternative{
 	"node:http":          {Alternative: "HttpClient", Module: "http", Package: "@effect/platform"},
 	"https":              {Alternative: "HttpClient", Module: "https", Package: "@effect/platform"},
 	"node:https":         {Alternative: "HttpClient", Module: "https", Package: "@effect/platform"},
+	"console":              {Alternative: "Console", Module: "console", Package: "effect"},
+	"node:console":         {Alternative: "Console", Module: "console", Package: "effect"},
+	"timers":               {Alternative: "Effect", Module: "timers", Package: "effect"},
+	"node:timers":          {Alternative: "Effect", Module: "timers", Package: "effect"},
+	"timers/promises":      {Alternative: "Effect", Module: "timers", Package: "effect"},
+	"node:timers/promises": {Alternative: "Effect", Module: "timers", Package: "effect"},
+	"stream":               {Alternative: "Stream", Module: "stream", Package: "effect"},
+	"node:stream":          {Alternative: "Stream", Module: "stream", Package: "effect"},
+	"stream/promises":      {Alternative: "Stream", Module: "stream", Package: "effect"},
+	"node:stream/promises": {Alternative: "Stream", Module: "stream", Package: "effect"},
+	"stream/web":           {Alternative: "Stream", Module: "stream", Package: "effect"},
+	"node:stream/web":      {Alternative: "Stream", Module: "stream", Package: "effect"},
 }
 
 var moduleAlternativesV4 = map[string]moduleAlternative{
@@ -47,12 +59,26 @@ var moduleAlternativesV4 = map[string]moduleAlternative{
 	"node:path/posix":    {Alternative: "Path", Module: "path", Package: "effect"},
 	"path/win32":         {Alternative: "Path", Module: "path", Package: "effect"},
 	"node:path/win32":    {Alternative: "Path", Module: "path", Package: "effect"},
-	"child_process":      {Alternative: "ChildProcess", Module: "child_process", Package: "effect"},
-	"node:child_process": {Alternative: "ChildProcess", Module: "child_process", Package: "effect"},
-	"http":               {Alternative: "HttpClient", Module: "http", Package: "effect/unstable/http"},
-	"node:http":          {Alternative: "HttpClient", Module: "http", Package: "effect/unstable/http"},
-	"https":              {Alternative: "HttpClient", Module: "https", Package: "effect/unstable/http"},
-	"node:https":         {Alternative: "HttpClient", Module: "https", Package: "effect/unstable/http"},
+	"child_process":      {Alternative: "ChildProcess", Module: "child_process", Package: "effect/process"},
+	"node:child_process": {Alternative: "ChildProcess", Module: "child_process", Package: "effect/process"},
+	"http":               {Alternative: "HttpClient", Module: "http", Package: "effect/http"},
+	"node:http":          {Alternative: "HttpClient", Module: "http", Package: "effect/http"},
+	"https":              {Alternative: "HttpClient", Module: "https", Package: "effect/http"},
+	"node:https":         {Alternative: "HttpClient", Module: "https", Package: "effect/http"},
+	"console":              {Alternative: "Console", Module: "console", Package: "effect"},
+	"node:console":         {Alternative: "Console", Module: "console", Package: "effect"},
+	"timers":               {Alternative: "Effect", Module: "timers", Package: "effect"},
+	"node:timers":          {Alternative: "Effect", Module: "timers", Package: "effect"},
+	"timers/promises":      {Alternative: "Effect", Module: "timers", Package: "effect"},
+	"node:timers/promises": {Alternative: "Effect", Module: "timers", Package: "effect"},
+	"stream":               {Alternative: "Stream", Module: "stream", Package: "effect"},
+	"node:stream":          {Alternative: "Stream", Module: "stream", Package: "effect"},
+	"stream/promises":      {Alternative: "Stream", Module: "stream", Package: "effect"},
+	"node:stream/promises": {Alternative: "Stream", Module: "stream", Package: "effect"},
+	"stream/web":           {Alternative: "Stream", Module: "stream", Package: "effect"},
+	"node:stream/web":      {Alternative: "Stream", Module: "stream", Package: "effect"},
+	"crypto":               {Alternative: "Crypto", Module: "crypto", Package: "effect"},
+	"node:crypto":          {Alternative: "Crypto", Module: "crypto", Package: "effect"},
 }
 
 var NodeBuiltinImport = rule.Rule{

@@ -24,7 +24,9 @@
     "publish:stage:dry-run": "pnpm build && pnpm native:stage && vp pm stage publish -r --filter './packages/*' --access public --provenance --dry-run -- --no-git-checks",
     "publish:stage:list": "vp pm stage list",
     "publish:stage:approve": "vp pm stage approve",
-    "publish:stage:reject": "vp pm stage reject"
+    "publish:stage:reject": "vp pm stage reject",
+    "native:generate": "node scripts/generate-native.mjs",
+    "native:test:backend": "node --test scripts/test/native-backend.test.mjs"
   },
   "devDependencies": {
     "@types/node": "catalog:",

@@ -20,6 +20,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
+// ValidateCompilerOptionsCallback validates the final options after configuration
+// inheritance and existing options have been merged.
+var ValidateCompilerOptionsCallback func(*core.CompilerOptions, *ast.SourceFile) []*ast.Diagnostic
+
+func RegisterValidateCompilerOptionsCallback(cb func(*core.CompilerOptions, *ast.SourceFile) []*ast.Diagnostic) {
+	ValidateCompilerOptionsCallback = cb
+}
+
 type extendsResult struct {
 	options *core.CompilerOptions
 	// watchOptions        compiler.WatchOptions
@@ -1139,7 +1147,7 @@ func parseConfig(
 					result.compileOnSave = compileOnSave
 				}
 			}
-			mergeCompilerOptions(result.options, extendedConfig.options, extendsRaw, extendedConfigPath, tspath.GetDirectoryPath(extendedConfigPath))
+			mergeCompilerOptions(result.options, extendedConfig.options, extendsRaw, extendedConfigPath, basePath)
 		}
 	}
 
@@ -1173,7 +1181,10 @@ func parseConfig(
 				sourceFile.ExtendedSourceFiles = core.InsertSorted(sourceFile.ExtendedSourceFiles, extendedSourceFile, cmp.Compare)
 			}
 		}
-		ownConfig.options = mergeCompilerOptions(result.options, ownConfig.options, ownConfig.raw, configFileName, basePath)
+		mergeCompilerOptions := func(targetOptions, sourceOptions *core.CompilerOptions, rawSource any) *core.CompilerOptions {
+			return mergeCompilerOptions(targetOptions, sourceOptions, rawSource, configFileName, basePath)
+		}
+		ownConfig.options = mergeCompilerOptions(result.options, ownConfig.options, ownConfig.raw)
 		// ownConfig.watchOptions = ownConfig.watchOptions && result.watchOptions ?
 		//     assignWatchOptions(result, ownConfig.watchOptions) :
 		//     ownConfig.watchOptions || result.watchOptions;
@@ -1376,6 +1387,10 @@ func parseJsonConfigFileContentWorker(
 			}
 		}
 		return projectReferences
+	}
+
+	if ValidateCompilerOptionsCallback != nil {
+		errors = append(errors, ValidateCompilerOptionsCallback(parsedConfig.options, tsconfigToSourceFile(sourceFile))...)
 	}
 
 	fileNames, literalFileNamesLen := getFileNames(basePathForFileNames)

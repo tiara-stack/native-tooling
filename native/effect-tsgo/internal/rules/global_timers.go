@@ -4,9 +4,9 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 type globalTimerAlternative struct {
@@ -74,7 +74,7 @@ func runGlobalTimers(ctx *rule.Context, checkInEffect bool) []*ast.Diagnostic {
 		if node.Kind == ast.KindCallExpression {
 			inEffect := ctx.TypeParser.GetEffectContextFlags(node)&typeparser.EffectContextFlagInEffect != 0
 			if inEffect == checkInEffect {
-				resolved := ctx.TypeParser.ResolveToGlobalSymbol(ctx.Checker.GetSymbolAtLocation(node.AsCallExpression().Expression))
+				resolved := ctx.TypeParser.ResolveToGlobalSymbol(ctx.TypeParser.GetSymbolAtLocation(node.AsCallExpression().Expression))
 				if resolved != nil {
 					for name, globalSymbol := range globalSymbols {
 						if resolved != globalSymbol {

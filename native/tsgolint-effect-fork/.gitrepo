@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/oxc-project/tsgolint
 	branch = main
-	commit = 
+	commit = eb9339115edde6811ca94c3433adf69ea9852880
 	method = merge
 	cmdver = 0.4.9
