@@ -29,11 +29,23 @@ if (
   );
 }
 
+const upstreamReadme = await readFile(join(upstream, "README.md"), "utf8");
+const upstreamInstallCommand = "npm install -D vitest@^5 @effect/vitest";
+if (!upstreamReadme.includes(upstreamInstallCommand)) {
+  throw new Error(
+    `Effect helper README is missing the expected installation command: ${upstreamInstallCommand}`,
+  );
+}
+const readme = upstreamReadme.replace(
+  upstreamInstallCommand,
+  "npm install -D @tiara-stack/vite-plus @tiara-stack/effect-vitest",
+);
+
 await rm(join(target, "src"), { force: true, recursive: true });
 await mkdir(target, { recursive: true });
 await cp(join(upstream, "src"), join(target, "src"), { recursive: true });
 await cp(join(upstream, "LICENSE"), join(target, "LICENSE"));
-await cp(join(upstream, "README.md"), join(target, "README.md"));
+await writeFile(join(target, "README.md"), readme);
 
 const rewriteFile = async (path, replacements) => {
   let text = await readFile(path, "utf8");
@@ -71,15 +83,9 @@ await rewriteFile(join(target, "README.md"), [
     "This package is derived from `@effect/vitest` and routes Vitest imports through Vite+'s test exports so workspaces use the same test runner instance.",
   ],
   [
-    "[`vitest`](https://vitest.dev/guide/) installed (version `1.6.0` or later)",
-    "[`@tiara-stack/vite-plus`](https://github.com/tiara-stack/native-tooling) installed",
+    "Install Vitest 5 (`>=5.0.0 <6.0.0`) with the package as a dev dependency:",
+    "Install the Vite+ runner and Effect helper as dev dependencies:",
   ],
-  ["pnpm add -D vitest", "pnpm add -D @tiara-stack/vite-plus"],
-  [
-    "install the `@effect/vitest` package, which integrates Effect with Vitest",
-    "install the `@tiara-stack/effect-vitest` package, which integrates Effect with the Vite+ test runner",
-  ],
-  ["pnpm add -D @effect/vitest", "pnpm add -D @tiara-stack/effect-vitest"],
   ['from "@effect/vitest"', 'from "@tiara-stack/effect-vitest"'],
   ["@effect/vitest", "@tiara-stack/effect-vitest"],
 ]);
