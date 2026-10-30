@@ -1,6 +1,9 @@
 import path from 'node:path';
 
+import semver from 'semver';
+
 import { fetchNpmResource, getNpmRegistry } from '../utils/npm-config.ts';
+import { readPackageJsonFromTarball } from './org-tarball.ts';
 
 /**
  * A single template entry shared by org manifests (`createConfig.templates`)
@@ -222,6 +225,8 @@ export class CreateConfigSchemaError extends Error {
   }
 }
 
+const makeCreateConfigError = (message: string) => new CreateConfigSchemaError(message);
+
 /**
  * Validate `create.templates` from `vite.config.ts`. Returns `[]` when the field
  * is absent or an empty array; throws {@link CreateConfigSchemaError} when present
@@ -234,17 +239,28 @@ export function validateCreateTemplates(templates: unknown): CreateTemplateEntry
   if (!Array.isArray(templates)) {
     throw new CreateConfigSchemaError('create.templates must be an array');
   }
-  const makeError = (message: string) => new CreateConfigSchemaError(message);
-  return validateTemplateEntries(templates, 'create.templates', makeError, (entry, index) => {
-    const validated = validateTemplateEntry(entry, index, 'create.templates', makeError);
-    // `vite:*` names are builtin templates; a local entry resolves before the
-    // builtin in `vp create <name>`, so allowing the prefix would let config
-    // silently shadow e.g. `vite:application`.
-    if (validated.name.startsWith('vite:')) {
-      throw makeError(`create.templates[${index}].name uses the reserved \`vite:\` prefix`);
-    }
-    return validated;
-  });
+  return validateTemplateEntries(
+    templates,
+    'create.templates',
+    makeCreateConfigError,
+    (entry, index) => {
+      const validated = validateTemplateEntry(
+        entry,
+        index,
+        'create.templates',
+        makeCreateConfigError,
+      );
+      // `vite:*` names are builtin templates; a local entry resolves before the
+      // builtin in `vp create <name>`, so allowing the prefix would let config
+      // silently shadow e.g. `vite:application`.
+      if (validated.name.startsWith('vite:')) {
+        throw makeCreateConfigError(
+          `create.templates[${index}].name uses the reserved \`vite:\` prefix`,
+        );
+      }
+      return validated;
+    },
+  );
 }
 
 interface RegistryPackument {
@@ -291,6 +307,11 @@ async function fetchPackument(
  * - the package does not exist on the registry (404), or
  * - the package exists but has no `createConfig.templates` field
  *
+ * When the packument version metadata lacks `createConfig` entirely, the
+ * published tarball's package.json is consulted before giving up — some
+ * registries (GitHub Packages among them) strip custom fields from version
+ * metadata while preserving the tarball byte-for-byte.
+ *
  * Throws when:
  * - the `createConfig.templates` field is present but malformed (`OrgManifestSchemaError`), or
  * - the registry request fails for any non-404 reason
@@ -327,11 +348,34 @@ export async function readOrgManifest(
       return null;
     }
   }
+  // Registry versions become cache-path components, so reject malformed
+  // values even when the registry has matching version metadata.
+  if (semver.valid(resolvedVersion) === null) {
+    throw new OrgManifestSchemaError(
+      `invalid version "${resolvedVersion}" (expected a semantic version)`,
+      packageName,
+    );
+  }
   const meta = packument.versions?.[resolvedVersion];
   if (!meta) {
     return null;
   }
-  const templates = validateManifest(meta, packageName);
+  let templates = validateManifest(meta, packageName);
+  if (!templates && meta.createConfig === undefined && meta.dist?.tarball) {
+    // `createConfig` absent (not merely empty) means the registry either
+    // stripped it from the version metadata or the package has no manifest;
+    // probe the published tarball to tell the two apart (see
+    // `readPackageJsonFromTarball`). The probe is best-effort: any
+    // download/integrity/parse failure degrades to "no manifest" so a normal
+    // `@scope/create` package still reaches the passthrough path. A manifest
+    // that IS present but malformed still throws, because `validateManifest`
+    // runs outside the catch.
+    const packageJson = await readPackageJsonFromTarball(
+      meta.dist.tarball,
+      meta.dist.integrity,
+    ).catch(() => null);
+    templates = validateManifest(packageJson, packageName);
+  }
   if (!templates) {
     return null;
   }

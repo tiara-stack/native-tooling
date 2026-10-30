@@ -6,11 +6,10 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import {
   deriveDefaultPackageName,
-  ensureGitignoreNodeModules,
+  ensureDefaultGitignoreEntries,
   ensureGitignoreVsCodeEditorConfigs,
   formatTargetDir,
   getProjectDirFromPackageName,
-  normalizeEditorOption,
   renameFiles,
   shouldConfigureEditorsForCreate,
 } from '../utils.js';
@@ -23,13 +22,6 @@ describe('getProjectDirFromPackageName', () => {
 });
 
 describe('editor configuration policy', () => {
-  it('normalizes repeated editor options to a single editor value', () => {
-    expect(normalizeEditorOption('vscode')).toBe('vscode');
-    expect(normalizeEditorOption(['vscode', 'zed'])).toBe('zed');
-    expect(normalizeEditorOption(['vscode', false])).toBe(false);
-    expect(normalizeEditorOption([undefined, 'vscode'])).toBe('vscode');
-  });
-
   it('allows automatic editor configuration outside existing monorepos', () => {
     expect(shouldConfigureEditorsForCreate({ isMonorepo: false, editor: undefined })).toBe(true);
   });
@@ -97,6 +89,17 @@ describe('formatTargetDir', () => {
     expect(formatTargetDir('my-package@').error).matchSnapshot();
     expect(formatTargetDir('my-package@1.0.0').error).matchSnapshot();
   });
+
+  it('keeps valid package names under parent directories that need shell quoting', () => {
+    expect(formatTargetDir('examples with spaces/my-app')).toEqual({
+      directory: 'examples with spaces/my-app',
+      packageName: 'my-app',
+    });
+    expect(formatTargetDir('examples;tools/my-app')).toEqual({
+      directory: 'examples;tools/my-app',
+      packageName: 'my-app',
+    });
+  });
 });
 
 describe('deriveDefaultPackageName', () => {
@@ -124,7 +127,7 @@ describe('deriveDefaultPackageName', () => {
   });
 });
 
-describe('ensureGitignoreNodeModules', () => {
+describe('ensureDefaultGitignoreEntries', () => {
   let projectDir: string;
 
   beforeEach(() => {
@@ -139,54 +142,67 @@ describe('ensureGitignoreNodeModules', () => {
     return fs.readFileSync(path.join(projectDir, '.gitignore'), 'utf-8');
   }
 
-  it('creates a fresh `.gitignore` with `node_modules` when none exists', () => {
-    ensureGitignoreNodeModules(projectDir);
-    expect(gitignore()).toBe('node_modules\n');
+  const dotenvBlock = '# dotenv environment variable files\n.env\n.env.*\n!.env.example\n';
+
+  it('creates a fresh `.gitignore` with default entries when none exists', () => {
+    ensureDefaultGitignoreEntries(projectDir);
+    expect(gitignore()).toBe(`node_modules\n\n${dotenvBlock}`);
   });
 
-  it('appends `node_modules` to an existing `.gitignore` that omits it', () => {
+  it('appends default entries to an existing `.gitignore` that omits them', () => {
     fs.writeFileSync(path.join(projectDir, '.gitignore'), 'dist\n*.log\n');
-    ensureGitignoreNodeModules(projectDir);
-    expect(gitignore()).toBe('dist\n*.log\nnode_modules\n');
+    ensureDefaultGitignoreEntries(projectDir);
+    expect(gitignore()).toBe(`dist\n*.log\nnode_modules\n\n${dotenvBlock}`);
   });
 
   it('terminates the last line first when the existing file lacks a trailing newline', () => {
     fs.writeFileSync(path.join(projectDir, '.gitignore'), 'dist');
-    ensureGitignoreNodeModules(projectDir);
-    expect(gitignore()).toBe('dist\nnode_modules\n');
+    ensureDefaultGitignoreEntries(projectDir);
+    expect(gitignore()).toBe(`dist\nnode_modules\n\n${dotenvBlock}`);
   });
 
-  it('is a no-op when `node_modules` already appears as a standalone line', () => {
+  it('appends dotenv entries when `node_modules` already appears as a standalone line', () => {
     const existing = '# Logs\n*.log\nnode_modules\ndist\n';
     fs.writeFileSync(path.join(projectDir, '.gitignore'), existing);
-    ensureGitignoreNodeModules(projectDir);
-    expect(gitignore()).toBe(existing);
+    ensureDefaultGitignoreEntries(projectDir);
+    expect(gitignore()).toBe(`${existing}\n${dotenvBlock}`);
   });
 
   it('treats `node_modules/` (with trailing slash) as a match', () => {
     const existing = 'node_modules/\ndist\n';
     fs.writeFileSync(path.join(projectDir, '.gitignore'), existing);
-    ensureGitignoreNodeModules(projectDir);
-    expect(gitignore()).toBe(existing);
+    ensureDefaultGitignoreEntries(projectDir);
+    expect(gitignore()).toBe(`${existing}\n${dotenvBlock}`);
   });
 
-  it('handles CRLF line endings without re-appending', () => {
-    const existing = 'node_modules\r\ndist\r\n';
+  it('handles CRLF line endings without re-appending existing defaults', () => {
+    const existing = `node_modules\r\ndist\r\n${dotenvBlock.replaceAll('\n', '\r\n')}`;
     fs.writeFileSync(path.join(projectDir, '.gitignore'), existing);
-    ensureGitignoreNodeModules(projectDir);
+    ensureDefaultGitignoreEntries(projectDir);
     expect(gitignore()).toBe(existing);
   });
 
   it('does not consider a `node_modules/sub` subpath as already excluded', () => {
     fs.writeFileSync(path.join(projectDir, '.gitignore'), 'node_modules/sub\n');
-    ensureGitignoreNodeModules(projectDir);
-    expect(gitignore()).toBe('node_modules/sub\nnode_modules\n');
+    ensureDefaultGitignoreEntries(projectDir);
+    expect(gitignore()).toBe(`node_modules/sub\nnode_modules\n\n${dotenvBlock}`);
   });
 
   it('does not match `!node_modules` (an explicit un-ignore override)', () => {
     fs.writeFileSync(path.join(projectDir, '.gitignore'), '!node_modules\n');
-    ensureGitignoreNodeModules(projectDir);
-    expect(gitignore()).toBe('!node_modules\nnode_modules\n');
+    ensureDefaultGitignoreEntries(projectDir);
+    expect(gitignore()).toBe(`!node_modules\nnode_modules\n\n${dotenvBlock}`);
+  });
+
+  it('adds only missing dotenv entries', () => {
+    fs.writeFileSync(
+      path.join(projectDir, '.gitignore'),
+      '# dotenv environment variable files\n.env\nnode_modules\n',
+    );
+    ensureDefaultGitignoreEntries(projectDir);
+    expect(gitignore()).toBe(
+      '# dotenv environment variable files\n.env\nnode_modules\n.env.*\n!.env.example\n',
+    );
   });
 });
 
