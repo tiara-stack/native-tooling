@@ -8,6 +8,55 @@ on:
   workflow_dispatch:
 
 jobs:
+  effect-source-test:
+    name: Effect source tests (Node 26.4.0)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: packages/effect-smol-fork
+    env:
+      EFFECT_INTEGRATION_TESTS: "1"
+      TESTCONTAINERS_RYUK_DISABLED: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup source pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          package_json_file: packages/effect-smol-fork/package.json
+        env:
+          npm_config_audit: "false"
+          npm_config_fund: "false"
+
+      - name: Setup source Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "26.4.0"
+          cache: pnpm
+          cache-dependency-path: packages/effect-smol-fork/pnpm-lock.yaml
+
+      - name: Pre-pull source test container images
+        run: |
+          docker info
+          docker pull ghcr.io/tursodatabase/libsql-server:main
+          docker pull postgres:alpine
+          docker pull mysql:lts
+          docker pull mcr.microsoft.com/mssql/server:2022-latest
+          docker pull vitess/vttestserver:mysql80
+          docker pull redis:alpine
+
+      - name: Install source dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test complete source workspace
+        run: pnpm test --run --max-concurrency=10
+
   ci:
     name: ci
     runs-on: ubuntu-latest

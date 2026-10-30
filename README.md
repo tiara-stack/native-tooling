@@ -40,6 +40,10 @@ Vite+ test exports. After pulling the Effect source fork, run:
 pnpm effect-vitest:sync
 ```
 
+Sync checks the source helper's Vitest peer range before replacing files. The
+Effect 4.0.1 helper requires Vitest 5. Until the runner upgrade, the retained
+Vitest 4 helper uses `effect/Arbitrary` for property tests and stays in place.
+
 `@tiara-stack/vite-plus` is generated from the installed upstream `vite-plus`
 package with the tsgolint resolver patched to prefer
 `@tiara-stack/tsgolint-effect`. After updating the Vite+ source fork and

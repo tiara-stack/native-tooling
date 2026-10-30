@@ -3,17 +3,16 @@
  */
 
 import { getCurrentSuite } from "@tiara-stack/vite-plus/test/suite";
+import * as Arbitrary from "effect/Arbitrary";
 import * as Cause from "effect/Cause";
 import * as Duration from "effect/Duration";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
 import { flow, pipe } from "effect/Function";
 import * as Layer from "effect/Layer";
-import { isObject } from "effect/Predicate";
 import * as Schedule from "effect/Schedule";
 import * as Schema from "effect/Schema";
 import * as Scope from "effect/Scope";
-import * as fc from "effect/testing/FastCheck";
 import * as TestClock from "effect/testing/TestClock";
 import * as TestConsole from "effect/testing/TestConsole";
 import * as V from "@tiara-stack/vite-plus/test";
@@ -56,6 +55,59 @@ const testOptions = (timeout?: number | V.TestOptions) =>
 
 const hookTimeout = (timeout?: Duration.Input) =>
   timeout === undefined ? undefined : Duration.toMillis(Duration.fromInputUnsafe(timeout));
+
+type PropertyTimeout = Parameters<Vitest.Vitest.Methods["prop"]>[3];
+
+const compileArbitrary = (input: Schema.Schema<any> | Arbitrary.Arbitrary<unknown>) =>
+  Arbitrary.isArbitrary(input) ? input : Arbitrary.schema(input);
+
+const makeArbitrary = (inputs: Vitest.Vitest.Arbitraries): Arbitrary.Arbitrary<unknown> =>
+  Arbitrary.all(
+    Array.isArray(inputs)
+      ? inputs.map(compileArbitrary)
+      : Object.fromEntries(
+          Object.entries(inputs).map(([key, input]) => [key, compileArbitrary(input)]),
+        ),
+  );
+
+const normalizeProperty = <A, E>(
+  property: (value: A) => boolean | Effect.Effect<boolean, E>,
+  value: A,
+): Effect.Effect<boolean, E | Cause.Cause<E>> =>
+  Effect.catchCause(
+    Effect.suspend(() => {
+      const output = property(value);
+      return Effect.isEffect(output) ? output : Effect.succeed(output);
+    }),
+    (cause): Effect.Effect<never, E | Cause.Cause<E>> =>
+      Cause.hasInterrupts(cause) ? Effect.failCause(cause) : Effect.fail(cause),
+  );
+
+const registerProp = (
+  it: V.TestAPI,
+  name: string,
+  inputs: Vitest.Vitest.Arbitraries,
+  property: (values: unknown, ctx: V.TestContext) => boolean | Effect.Effect<boolean, unknown>,
+  timeout: PropertyTimeout,
+) => {
+  const arbitrary = makeArbitrary(inputs);
+  const options = typeof timeout === "number" ? undefined : timeout?.arbitrary;
+  it(name, testOptions(timeout), (ctx) =>
+    runTest(ctx)(
+      Effect.flatMap(
+        Arbitrary.checkEffect(
+          arbitrary,
+          (values) => normalizeProperty((value) => property(value, ctx), values),
+          options,
+        ),
+        (result) => {
+          const failure = Arbitrary.formatCheckFailure(result);
+          return failure === undefined ? Effect.void : Effect.die(new Error(failure));
+        },
+      ),
+    ),
+  );
+};
 
 const makeItProxy = <Methods extends object>(
   it: V.TestAPI,
@@ -132,97 +184,31 @@ const makeTester = <R>(
   const fails: Vitest.Vitest.Tester<R>["fails"] = (name, self, timeout) =>
     V.it.fails(name, testOptions(timeout), (ctx) => run(ctx, [ctx], self));
 
-  const prop: Vitest.Vitest.Tester<R>["prop"] = (name, arbitraries, self, timeout) => {
-    if (Array.isArray(arbitraries)) {
-      const arbs = arbitraries.map((arbitrary) => {
-        if (Schema.isSchema(arbitrary)) {
-          return Schema.toArbitrary(arbitrary);
-        }
-        return arbitrary as fc.Arbitrary<any>;
-      });
-      return it(name, testOptions(timeout), (ctx) =>
-        // @ts-ignore
-        fc.assert(
-          // @ts-ignore
-          fc.asyncProperty(...arbs, (...as) => run(ctx, [as as any, ctx], self)),
-          // @ts-ignore
-          isObject(timeout) ? timeout?.fastCheck : {},
+  const prop: Vitest.Vitest.Tester<R>["prop"] = (name, arbitraries, self, timeout) =>
+    registerProp(
+      it,
+      name,
+      arbitraries,
+      (values, ctx) =>
+        Effect.map(
+          mapEffect(Effect.suspend(() => self(values as any, ctx))),
+          (value) => (value as unknown) !== false,
         ),
-      );
-    }
-
-    const arbs = fc.record(
-      Object.keys(arbitraries).reduce(
-        function (result, key) {
-          const arb: any = arbitraries[key];
-          if (Schema.isSchema(arb)) {
-            result[key] = Schema.toArbitrary(arb);
-          }
-          result[key] = arb;
-          return result;
-        },
-        {} as Record<string, fc.Arbitrary<any>>,
-      ),
+      timeout,
     );
-
-    return it(name, testOptions(timeout), (ctx) =>
-      // @ts-ignore
-      fc.assert(
-        fc.asyncProperty(arbs, (...as) =>
-          // @ts-ignore
-          run(ctx, [as[0] as any, ctx], self),
-        ),
-        // @ts-ignore
-        isObject(timeout) ? timeout?.fastCheck : {},
-      ),
-    );
-  };
 
   return Object.assign(f, { skip, skipIf, runIf, only, each, fails, prop });
 };
 
 /** @internal */
-export const prop: Vitest.Vitest.Methods["prop"] = (name, arbitraries, self, timeout) => {
-  const fastCheckOptions = isObject(timeout)
-    ? (timeout as { readonly fastCheck?: fc.Parameters<any> }).fastCheck
-    : undefined;
-
-  if (Array.isArray(arbitraries)) {
-    const arbs = arbitraries.map((arbitrary) => {
-      if (Schema.isSchema(arbitrary)) {
-        throw new Error("Schemas are not supported yet");
-      }
-      return arbitrary;
-    });
-    return V.it(name, testOptions(timeout), (ctx) =>
-      fc.assert(
-        (fc.property as any)(...arbs, (...as: Array<unknown>) => self(as as any, ctx)),
-        fastCheckOptions,
-      ),
-    );
-  }
-
-  const arbs = fc.record(
-    Object.keys(arbitraries).reduce(
-      function (result, key) {
-        const arb: any = arbitraries[key];
-        if (Schema.isSchema(arb)) {
-          throw new Error("Schemas are not supported yet");
-        }
-        result[key] = arb;
-        return result;
-      },
-      {} as Record<string, fc.Arbitrary<any>>,
-    ),
+export const prop: Vitest.Vitest.Methods["prop"] = (name, arbitraries, self, timeout) =>
+  registerProp(
+    V.it,
+    name,
+    arbitraries,
+    (values, ctx) => (self(values as any, ctx) as unknown) !== false,
+    timeout,
   );
-
-  return V.it(name, testOptions(timeout), (ctx) =>
-    fc.assert(
-      (fc.property as any)(arbs, (as: Record<string, unknown>) => self(as as any, ctx)),
-      fastCheckOptions,
-    ),
-  );
-};
 
 /** @internal */
 export const layer =
