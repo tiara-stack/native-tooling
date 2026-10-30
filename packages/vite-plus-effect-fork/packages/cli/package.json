@@ -15,6 +15,7 @@
   },
   "bin": {
     "vp": "./bin/vp",
+    "vp-oxlint": "./bin/tiara-oxlint.mjs",
     "vpr": "./bin/vpr"
   },
   "files": [
@@ -347,7 +348,9 @@
   "dependencies": {
     "@oxc-project/types": "catalog:",
     "@oxlint/plugins": "catalog:",
+    "@tiara-stack/oxlint-effect": "link:../../../oxlint-effect",
     "@tiara-stack/tsgo-effect": "link:../../../tsgo-effect",
+    "@tiara-stack/tsgolint-effect": "link:../../../tsgolint-effect",
     "@vitest/browser": "catalog:",
     "@vitest/browser-preview": "catalog:",
     "@vitest/mocker": "catalog:",

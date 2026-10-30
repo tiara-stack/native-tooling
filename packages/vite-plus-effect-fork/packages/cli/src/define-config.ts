@@ -272,6 +272,7 @@ export function isVitestFamilySpecifier(id: string): boolean {
  */
 function vitePlusVitestResolverPlugin(): PluginOption {
   let isVitestServer = false;
+  const patchedMocks = new WeakSet<Plugin>();
   return {
     name: 'vite-plus:vitest-resolver',
     enforce: 'pre',
@@ -350,9 +351,48 @@ function vitePlusVitestResolverPlugin(): PluginOption {
         return true;
       });
       plugins.splice(0, plugins.length, ...unique);
+      if (isVitestServer) {
+        for (const plugin of unique) {
+          if (
+            plugin.name !== 'vitest:mocks' ||
+            typeof plugin.transform !== 'function' ||
+            patchedMocks.has(plugin)
+          )
+            continue;
+          const transform = plugin.transform;
+          plugin.transform = function (code, id, ...options) {
+            if (!code.includes('@tiara-stack/vite-plus/test'))
+              return transform.call(this, code, id, ...options);
+            const context = this;
+            const parse: typeof context.parse = (...args) => {
+              const program = context.parse(...args);
+              return {
+                ...program,
+                body: program.body.map((node) =>
+                  node.type === 'ImportDeclaration' &&
+                  node.source.value === '@tiara-stack/vite-plus/test'
+                    ? { ...node, source: { ...node.source, value: 'vitest' } }
+                    : node,
+                ),
+              };
+            };
+            // Let Vitest recognize the scoped redistribution in its parser.
+            // Keep the original import text and its source-map positions.
+            const proxy = new Proxy(context, {
+              get(target, key) {
+                if (key === 'parse') return parse;
+                const value = Reflect.get(target, key, target);
+                return typeof value === 'function' ? value.bind(target) : value;
+              },
+            });
+            return transform.call(proxy, code, id, ...options);
+          };
+          patchedMocks.add(plugin);
+        }
+      }
     },
     async resolveId(id, importer, options) {
-      if (isVitestServer && id === 'vite-plus/test') {
+      if (isVitestServer && /^(?:@tiara-stack\/)?vite-plus\/test$/.test(id)) {
         // pnpm can install separate vite-plus/Vitest peer instances for a
         // workspace's root and children. Externalizing the child wrapper lets
         // Node load its uninitialized runner state, bypassing Vite's hooks.

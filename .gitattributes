@@ -1,0 +1,5 @@
+# Preserve upstream generator output; these artifacts remain reviewable.
+packages/vite-plus/dist/** whitespace=-blank-at-eol
+packages/vite-plus-core/dist/** whitespace=-blank-at-eol
+packages/vite-plus/LICENSE whitespace=-blank-at-eol
+packages/vite-plus-core/LICENSE whitespace=-blank-at-eol

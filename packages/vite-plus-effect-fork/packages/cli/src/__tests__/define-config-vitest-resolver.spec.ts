@@ -1,6 +1,8 @@
 import { fileURLToPath } from 'node:url';
 
 import { preview } from '@vitest/browser-preview';
+import { hoistMocksPlugin } from '@vitest/mocker/node';
+import { parseAst } from 'vite';
 import { resolveConfig, type Alias, type ConfigEnv, type Plugin, type UserConfig } from 'vite';
 import { describe, expect, it } from 'vitest';
 
@@ -86,6 +88,37 @@ describe('isVitestFamilySpecifier', () => {
 });
 
 describe('vitePlusVitestResolverPlugin', () => {
+  it('recognizes scoped mock imports without changing source text or the original AST', async () => {
+    const resolver = findPlugin(defineConfig({}).plugins, RESOLVER_PLUGIN_NAME)!;
+    (resolver.config as { handler: (config: UserConfig, env: ConfigEnv) => void }).handler(
+      { environments: { __vitest__: {} } },
+      { command: 'serve', mode: 'test' },
+    );
+    const mocks = hoistMocksPlugin();
+    (resolver.configResolved as (config: { plugins: Plugin[] }) => void)({ plugins: [mocks] });
+    const code = `import { vi } from '@tiara-stack/vite-plus/test';\nvi.mock('./value.js', () => ({ value: 'mocked' }));\n`;
+    const program = parseAst(code);
+    class Context {
+      #marker = true;
+      parse() {
+        return program;
+      }
+      getCombinedSourcemap() {
+        expect(this.#marker).toBe(true);
+        return { version: 3, mappings: '', names: [], sources: ['scoped.test.js'] };
+      }
+    }
+    expect(typeof mocks.transform).toBe('function');
+    const result = (await Reflect.apply(
+      mocks.transform as (...args: unknown[]) => unknown,
+      new Context(),
+      [code, '/scoped.test.js'],
+    )) as { code: string };
+    expect(result.code).toContain("from '@tiara-stack/vite-plus/test'");
+    expect(result.code).not.toContain('There are some problems in resolving the mocks API');
+    const imported = program.body.find((node) => node.type === 'ImportDeclaration');
+    expect(imported?.source.value).toBe('@tiara-stack/vite-plus/test');
+  });
   it.each(['serve', 'build'] as const)(
     'leaves application dependencies unchanged during %s with browser tests configured',
     async (command) => {
@@ -296,15 +329,18 @@ function resolver(command: 'serve' | 'build', vitestServer: boolean): ResolveId 
 }
 
 describe('workspace test API identity', () => {
-  it('routes the wrapper through Vitest rather than the child package dependency tree', async () => {
-    const resolveId = resolver('serve', true);
-    const runnerApi = '/workspace/root-vitest/dist/index.js';
-    const { ctx, calls } = makeCtx(({ id, fromProject }) =>
-      id === 'vitest' && fromProject ? { id: runnerApi } : null,
-    );
-    expect(idOf(await resolveId.call(ctx, 'vite-plus/test', PROJECT_IMPORTER, {}))).toBe(runnerApi);
-    expect(calls).toEqual([{ id: 'vitest', importer: PROJECT_IMPORTER, fromProject: true }]);
-  });
+  it.each(['vite-plus/test', '@tiara-stack/vite-plus/test'])(
+    'routes %s through the active Vitest runtime',
+    async (id) => {
+      const resolveId = resolver('serve', true);
+      const runnerApi = '/workspace/root-vitest/dist/index.js';
+      const { ctx, calls } = makeCtx(({ id, fromProject }) =>
+        id === 'vitest' && fromProject ? { id: runnerApi } : null,
+      );
+      expect(idOf(await resolveId.call(ctx, id, PROJECT_IMPORTER, {}))).toBe(runnerApi);
+      expect(calls).toEqual([{ id: 'vitest', importer: PROJECT_IMPORTER, fromProject: true }]);
+    },
+  );
 
   it.each([
     ['serve', false],

@@ -11,7 +11,7 @@ export default defineConfig({
       onlyBundle: false,
     },
     dts: {
-      tsgo: { enabled: false },
+      generator: "tsc",
     },
   },
   lint: {

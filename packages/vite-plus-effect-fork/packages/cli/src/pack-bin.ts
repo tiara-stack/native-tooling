@@ -13,12 +13,14 @@ import {
 } from 'vite/pack';
 
 import { resolveViteConfig } from './resolve-vite-config.ts';
+import { resolveTiaraNative } from './utils/tiara-native.ts';
 
 // Matches a `.d.ts` / `.d.mts` / `.d.cts` importer.
 const RE_DTS = /\.d\.[cm]?ts$/;
 // Bare specifier for postcss / lightningcss / vitest / `@vitest/*` /
 // vite-plus (root or any subpath).
-const EXTERNAL_DTS_PKG_RE = /^(?:postcss|lightningcss|vitest|@vitest\/[^/]+|vite-plus)(?:\/|$)/;
+const EXTERNAL_DTS_PKG_RE =
+  /^(?:postcss|lightningcss|vitest|@vitest\/[^/]+|(?:@tiara-stack\/)?vite-plus)(?:\/|$)/;
 
 /**
  * Rolldown plugin that keeps `postcss` / `lightningcss` / `vitest` / `@vitest/*`
@@ -164,6 +166,18 @@ cli
         : [viteConfig?.pack ?? {}];
       for (const packConfig of packConfigs) {
         const merged = { ...packConfig, ...flags };
+        if (
+          merged.dts &&
+          typeof merged.dts === 'object' &&
+          (merged.dts.generator === 'tsgo' || merged.dts.tsgo === true)
+        ) {
+          const tsgo = typeof merged.dts.tsgo === 'object' ? merged.dts.tsgo : {};
+          merged.dts = {
+            ...merged.dts,
+            generator: 'tsgo',
+            tsgo: { ...tsgo, path: tsgo.path ?? resolveTiaraNative('tsgo') },
+          };
+        }
         // Keep postcss/lightningcss external to the dts bundle (see plugin doc)
         if (merged.dts) {
           const existingPlugins = Array.isArray(merged.plugins) ? merged.plugins : [];

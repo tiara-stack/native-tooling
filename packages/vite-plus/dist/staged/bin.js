@@ -1,110 +1,91 @@
-import { r as __toESM, t as __commonJSMin } from "../rolldown-runtime-C7HZzL1F.js";
-import { a as printHeader, n as errorMsg, r as log } from "../terminal-uTv0ZaMr.js";
-import { a as resolveViteConfig } from "../resolve-vite-config-r91rIaPs.js";
-import { t as lib_default } from "../lib-L3DWSRQp.js";
-import { t as renderCliDoc } from "../help-YP84FSEz.js";
+import { r as __toESM, t as __commonJSMin } from "../rolldown-runtime-CMFfr-1z.js";
+import { i as log, n as errorMsg, o as printHeader } from "../terminal-MKGAuy-p.js";
+import { o as resolveViteConfig } from "../resolve-vite-config-Pui04nGg.js";
+import { t as unwrapCliParseOutcome } from "../cli-parse-DHE8NrBU.js";
 import { createRequire } from "node:module";
 import path, { basename, delimiter, dirname, normalize, resolve } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { parseStagedArgs } from "../../binding/index.js";
+import util, { formatWithOptions, inspect, promisify } from "node:util";
 import { closeSync, constants, openSync, readSync, statSync } from "node:fs";
-import { formatWithOptions, inspect, promisify } from "node:util";
+import { exec, spawn } from "node:child_process";
 import { cwd } from "node:process";
 import l__default from "node:readline";
-import nodeTty from "node:tty";
-import { pathToFileURL } from "node:url";
-import { EOL } from "node:os";
-import fsPromises, { constants as constants$1 } from "node:fs/promises";
-import { PassThrough, Writable } from "node:stream";
 import crypto from "node:crypto";
-import { exec, spawn } from "node:child_process";
+import fsPromises, { constants as constants$1 } from "node:fs/promises";
+import { PassThrough } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import * as tty from "tty";
-import { format } from "util";
-import { EOL as EOL$1 } from "os";
-import { StringDecoder } from "string_decoder";
-import { Writable as Writable$1 } from "stream";
-import { randomUUID as randomUUID$1 } from "crypto";
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/colors.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/assertGitVersion.js
+/** @see {@link https://github.com/git/git/blob/master/Documentation/RelNotes/2.32.0.adoc} */
+const MIN_GIT_VERSION = "2.32.0";
+const GIT_VERSION_REGEXP = /git version\s+(\d+\.\d+\.\d+)/i;
 /**
-* @example NO_COLOR
-* @example NO_COLOR=1
-* @example NO_COLOR=true
+* @param {string} gitVersionOutput the Git version command output
+* @returns {string} the Git version number in format `<major>.<minor>.<patch>`
 */
-const TRUTHRY_ENV_VAR_VALUES = [
-	"",
-	"1",
-	"true"
-];
+const extractGitVersionNumber = (gitVersionOutput) => {
+	return gitVersionOutput.match(GIT_VERSION_REGEXP)?.[1];
+};
+const SEMVER_REGEXP = /(\d+)\.(\d+)\.(\d+)/;
 /**
-* @example FORCE_COLOR=0
-* @example FORCE_COLOR=false
+* @param {string} version the version number in format `<major>.<minor>.<patch>`
+* @returns {[string, string, string]} the version number parsed as integers `[major, minor, patch]`
 */
-const FALSY_ENV_VAR_VALUES = ["0", "false"];
-/**
-* @returns `true` if ANSI colors are supported
-*
-* @param {NodeJS.Process} [p]
-* @param {boolean} [isTty]
-*/
-const supportsAnsiColors = (p = process, isTty = nodeTty.isatty(1)) => {
-	const noColor = p?.env?.NO_COLOR?.toLowerCase();
-	if (TRUTHRY_ENV_VAR_VALUES.includes(noColor)) return false;
-	const forceColor = p?.env?.FORCE_COLOR?.toLowerCase();
-	if (TRUTHRY_ENV_VAR_VALUES.includes(forceColor)) return true;
-	else if (FALSY_ENV_VAR_VALUES.includes(forceColor)) return false;
-	const forceTty = p?.env?.FORCE_TTY;
-	if (TRUTHRY_ENV_VAR_VALUES.includes(forceTty)) return true;
-	else if (FALSY_ENV_VAR_VALUES.includes(forceTty)) return false;
-	if (isTty) return true;
-	/**
-	* Assume CI supports color
-	* @see {@link https://github.com/alexeyraspopov/picocolors/blob/0e7c4af2de299dd7bc5916f2bddd151fa2f66740/picocolors.js#L4}
-	* @see {@link https://github.com/tinylibs/tinyrainbow/blob/071034bf2eafa28d91ef0ba48a3837420d81a40a/src/index.ts#L91}
-	*/
-	if (TRUTHRY_ENV_VAR_VALUES.includes(p?.env?.CI)) return true;
-	if (p?.env?.TERM && p.env.TERM === "dumb") return false;
-	/**
-	* Assume Windows supports color
-	* @see {@link https://github.com/alexeyraspopov/picocolors/blob/0e7c4af2de299dd7bc5916f2bddd151fa2f66740/picocolors.js#L4}
-	* @see {@link https://github.com/tinylibs/tinyrainbow/blob/071034bf2eafa28d91ef0ba48a3837420d81a40a/src/index.ts#L89}
-	*/
-	if (p?.platform === "win32") return true;
-	return false;
+const parseSemver = (version) => {
+	return SEMVER_REGEXP.exec(version)?.slice(1, 4).map(Number);
 };
 /**
-* @deprecated replace this with Node.js builtin after minimum supported version is >=20.18.0
-* @example util.styleText('red', 'test') !== 'text'
-*/
-const SUPPORTS_COLOR = supportsAnsiColors();
-const ANSI_RESET = "\x1B[0m";
-/**
-* @callback WrapAnsi
-* @param {string} text
-* @returns {string}
-*/
-/**
-* @deprecated replace this with Node.js builtin after minimum supported version is >=20.18.0
-* @example (format) => (text) => util.styleText(format, text)
 *
-* @param {string} code
-* @param {boolean} [supported]
-* @returns {WrapAnsi}
-*
+* @param {string} actual the actual version number in format `<major>.<minor>.<patch>`
+* @param {string} expected the expected version number in format `<major>.<minor>.<patch>`
+* @returns {boolean} `true` when the actual version number is at least the expected version number
 */
-const wrapAnsiColor = (code, supported = SUPPORTS_COLOR) => {
-	if (supported) return (text) => code + text + ANSI_RESET;
-	return (text) => text;
+const satisfiesVersion = (actual, expected) => {
+	const a = parseSemver(actual);
+	const e = parseSemver(expected);
+	if (a[0] !== e[0]) return a[0] > e[0];
+	if (a[1] !== e[1]) return a[1] > e[1];
+	return a[2] >= e[2];
 };
-const red$1 = wrapAnsiColor("\x1B[0;31m");
-const yellow$1 = wrapAnsiColor("\x1B[0;33m");
-const blue$1 = wrapAnsiColor("\x1B[0;34m");
-const blackBright$1 = wrapAnsiColor("\x1B[0;90m");
-const bold$1 = wrapAnsiColor("\x1B[1m");
+/**
+*
+* @param {string} gitVersionOutput the Git version command output
+* @returns {boolean} `true` when the Git version number is supported
+*/
+const assertGitVersion = (gitVersionOutput) => {
+	try {
+		const version = extractGitVersionNumber(gitVersionOutput);
+		return satisfiesVersion(version, MIN_GIT_VERSION);
+	} catch {
+		return false;
+	}
+};
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/debug.js
-const format$1 = (...args) => formatWithOptions({ colors: SUPPORTS_COLOR }, ...args);
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/colors.js
+let COLORS_ENABLED = false;
+/** Node.js util checks for FORCE_COLOR/NO_COLOR and whether TTY supports ANSI colors */
+const supportsColors = (stream = process.stdout) => util.styleText("red", "test", { stream }) !== "test";
+/** @param {boolean} [enabled] */
+const enableColors = (enabled) => {
+	COLORS_ENABLED = !!enabled;
+};
+/**
+* @param {util.InspectColor | readonly util.InspectColor[]} format
+* @returns {(text: string) => string}
+*/
+const styleText$1 = (format) => (text) => COLORS_ENABLED ? util.styleText(format, text, { validateStream: false }) : text;
+const green = styleText$1("green");
+const red = styleText$1("red");
+const yellow = styleText$1("yellow");
+const blue = styleText$1("blue");
+const dim = styleText$1("dim");
+const bold = styleText$1("bold");
+//#endregion
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/debug.js
+const format = (...args) => formatWithOptions({ colors: COLORS_ENABLED }, ...args);
 let activeLogger;
 const enableDebug = (logger = console) => {
-	if (!activeLogger) activeLogger = logger;
+	activeLogger = logger;
 };
 /** @param {string} name */
 const createDebug = (name) => {
@@ -114,205 +95,217 @@ const createDebug = (name) => {
 		const now = process.hrtime.bigint();
 		const ms = (now - previous) / 1000000n;
 		previous = now;
-		activeLogger.debug(blackBright$1(name + ": ") + format$1(...args) + blackBright$1(` +${ms}ms`));
+		activeLogger.debug(dim(name + ": ") + format(...args) + dim(` +${ms}ms`));
 	};
 };
 //#endregion
-//#region ../../node_modules/.pnpm/tinyexec@1.2.4/node_modules/tinyexec/dist/main.mjs
-const h = /^path$/i;
-const g = {
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/tinyexec@1.3.1/node_modules/tinyexec/dist/main.mjs
+const isPathLikePattern = /^path$/i;
+const defaultEnvPathInfo = {
 	key: "PATH",
 	value: ""
 };
-function _(e) {
-	for (const t in e) {
-		if (!Object.prototype.hasOwnProperty.call(e, t) || !h.test(t)) continue;
-		const n = e[t];
-		if (!n) return g;
+function getPathFromEnv(env) {
+	for (const key in env) {
+		if (!Object.prototype.hasOwnProperty.call(env, key) || !isPathLikePattern.test(key)) continue;
+		const value = env[key];
+		if (!value) return defaultEnvPathInfo;
 		return {
-			key: t,
-			value: n
+			key,
+			value
 		};
 	}
-	return g;
+	return defaultEnvPathInfo;
 }
-function v(e, t) {
-	const n = t.value.split(delimiter);
-	const r = [];
-	let o = e;
-	let c;
+function addNodeBinToPath(cwd, path) {
+	const parts = path.value.split(delimiter);
+	const nodeBinPaths = [];
+	let currentPath = typeof cwd === "string" ? cwd : fileURLToPath(cwd, { windows: false });
+	let lastPath;
 	do {
-		r.push(resolve(o, "node_modules", ".bin"));
-		c = o;
-		o = dirname(o);
-	} while (o !== c);
-	r.push(dirname(process.execPath));
-	const l = r.concat(n).join(delimiter);
+		nodeBinPaths.push(resolve(currentPath, "node_modules", ".bin"));
+		lastPath = currentPath;
+		currentPath = dirname(currentPath);
+	} while (currentPath !== lastPath);
+	nodeBinPaths.push(dirname(process.execPath));
+	const newPath = nodeBinPaths.concat(parts).join(delimiter);
 	return {
-		key: t.key,
-		value: l
+		key: path.key,
+		value: newPath
 	};
 }
-function y(e, t, n = true) {
-	const r = {
+function computeEnv(cwd, env, nodePath = true) {
+	const envWithDefault = {
 		...process.env,
-		...t
+		...env
 	};
-	if (!n) return r;
-	const i = v(e, _(r));
-	r[i.key] = i.value;
-	return r;
+	if (!nodePath) return envWithDefault;
+	const envPathInfo = addNodeBinToPath(cwd, getPathFromEnv(envWithDefault));
+	envWithDefault[envPathInfo.key] = envPathInfo.value;
+	return envWithDefault;
 }
-const b = (e) => {
-	let t = e.length;
-	const n = new PassThrough();
-	const r = () => {
-		if (--t === 0) n.end();
+const combineStreams = (streams) => {
+	let streamCount = streams.length;
+	const combined = new PassThrough();
+	const maybeEmitEnd = () => {
+		if (--streamCount === 0) combined.end();
 	};
-	for (const t of e) pipeline(t, n, { end: false }).then(r).catch(r);
-	return n;
+	for (const stream of streams) pipeline(stream, combined, { end: false }).then(maybeEmitEnd).catch(maybeEmitEnd);
+	return combined;
 };
-const x = /([()\][%!^"`<>&|;, *?])/g;
-const S = /^#!\s*(.+)/;
-const C = /\.(?:com|exe)$/i;
-const w = /node_modules[\\/]\.bin[\\/][^\\/]+\.cmd$/i;
-const T = process.platform === "win32";
-const E = [
+const metaCharsRegExp = /([()\][%!^"`<>&|;, *?])/g;
+const shebangRegExp = /^#!\s*(.+)/;
+const isWindowsExecutableRegExp = /\.(?:com|exe)$/i;
+const isNodeModulesCmdRegExp = /node_modules[\\/]\.bin[\\/][^\\/]+\.cmd$/i;
+const isWindows = process.platform === "win32";
+const defaultPathExt = [
 	".EXE",
 	".CMD",
 	".BAT",
 	".COM"
 ];
+const noPathExt = [""];
 /**
 * Normalizes the command and arguments to work cross-platform.
 * On Windows, this basically handles things like shebangs, calling
 * `node_modules/.bin` commands, and escaping meta characters.
 * On other platforms, it just returns the command and arguments as-is.
 */
-function D(e, t = [], n = {}) {
-	if (n.shell === true || !T) return {
-		command: e,
-		args: t,
-		options: n
+function normalizeSpawnCommand(command, args = [], options = {}) {
+	if (options.shell === true || !isWindows) return {
+		command,
+		args,
+		options
 	};
-	let i = O(e, n);
-	let a = null;
-	if (i !== null) {
-		const e = 150;
-		const t = Buffer.alloc(e);
-		let n = null;
+	let file = resolveCommand(command, options);
+	let shebang = null;
+	if (file !== null) {
+		const size = 150;
+		const buffer = Buffer.alloc(size);
+		let fd = null;
 		try {
-			n = openSync(i, "r");
-			readSync(n, t, 0, e, 0);
+			fd = openSync(file, "r");
+			readSync(fd, buffer, 0, size, 0);
 		} catch {} finally {
-			if (n !== null) closeSync(n);
+			if (fd !== null) closeSync(fd);
 		}
-		const o = t.toString().match(S);
-		if (o !== null) {
-			const e = o[1].trim();
-			const t = e.indexOf(" ");
-			const n = t !== -1 ? e.slice(0, t) : e;
-			const i = t !== -1 ? e.slice(t + 1) : "";
-			const s = basename(n);
-			a = s === "env" ? i || null : s;
+		const match = buffer.toString().match(shebangRegExp);
+		if (match !== null) {
+			const line = match[1].trim();
+			const separatorIndex = line.indexOf(" ");
+			const path = separatorIndex !== -1 ? line.slice(0, separatorIndex) : line;
+			const argument = separatorIndex !== -1 ? line.slice(separatorIndex + 1) : "";
+			const binary = basename(path);
+			shebang = binary === "env" ? argument || null : binary;
 		}
 	}
-	if (a !== null && i !== null) {
-		t = [i, ...t];
-		e = a;
-		i = O(e, n);
+	if (shebang !== null && file !== null) {
+		args = [file, ...args];
+		command = shebang;
+		file = resolveCommand(command, options);
 	}
-	if (i === null || !C.test(i)) {
-		const r = i !== null && w.test(i);
-		e = normalize(e);
-		e = e.replace(x, "^$1");
-		t = t.map((e) => {
-			e = e.replace(/(?=(\\+?)?)\1"/g, "$1$1\\\"");
-			e = e.replace(/(?=(\\+?)?)\1$/, "$1$1");
-			e = `"${e}"`;
-			e = e.replace(x, "^$1");
-			if (r) e = e.replace(x, "^$1");
-			return e;
+	if (file === null || !isWindowsExecutableRegExp.test(file)) {
+		const needsDoubleEscapeMetaChars = file !== null && isNodeModulesCmdRegExp.test(file);
+		command = normalize(command);
+		command = command.replace(metaCharsRegExp, "^$1");
+		args = args.map((arg) => {
+			arg = arg.replace(/(?=(\\+?)?)\1"/g, "$1$1\\\"");
+			arg = arg.replace(/(?=(\\+?)?)\1$/, "$1$1");
+			arg = `"${arg}"`;
+			arg = arg.replace(metaCharsRegExp, "^$1");
+			if (needsDoubleEscapeMetaChars) arg = arg.replace(metaCharsRegExp, "^$1");
+			return arg;
 		});
-		t = [
+		args = [
 			"/d",
 			"/s",
 			"/c",
-			`"${[e, ...t].join(" ")}"`
+			`"${[command, ...args].join(" ")}"`
 		];
-		e = n.env?.comspec ?? "cmd.exe";
-		n = {
-			...n,
+		command = options.env?.comspec ?? "cmd.exe";
+		options = {
+			...options,
 			windowsVerbatimArguments: true
 		};
 	}
 	return {
-		command: e,
-		args: t,
-		options: n
+		command,
+		args,
+		options
 	};
 }
 /**
 * Resolves the command to an absolute path if possible.
 * Handles things like traversing PATH and adding extensions from PATHEXT
 */
-function O(e, t) {
-	const r = (t.cwd ?? cwd()).toString();
-	const a = t.env ?? process.env;
-	const o = _(a).value;
-	const c = e.includes("/") || e.includes("\\") ? [""] : [r, ...o.split(delimiter)];
-	const l = a.PATHEXT ? a.PATHEXT.split(delimiter) : E;
-	if (e.includes(".") && l[0] !== "") l.unshift("");
-	for (const t of c) {
-		const n = resolve(r, t.startsWith("\"") && t.endsWith("\"") && t.length > 1 ? t.slice(1, -1) : t, e);
-		for (const e of l) {
-			const t = n + e;
+function resolveCommand(command, options) {
+	const cwd$3 = (options.cwd ?? cwd()).toString();
+	const env = options.env ?? process.env;
+	const PATH = getPathFromEnv(env).value;
+	const pathEnv = command.includes("/") || command.includes("\\") ? [""] : [cwd$3, ...PATH.split(delimiter)];
+	let pathExt = env.PATHEXT ? env.PATHEXT.split(delimiter) : defaultPathExt;
+	if (command.includes(".") && pathExt[0] !== "") pathExt = ["", ...pathExt];
+	for (const extensions of [pathExt, noPathExt]) for (const path of pathEnv) {
+		const unquoted = path.startsWith("\"") && path.endsWith("\"") && path.length > 1 ? path.slice(1, -1) : path;
+		const dest = resolve(cwd$3, unquoted, command);
+		for (const ext of extensions) {
+			const destWithExt = dest + ext;
 			try {
-				if (statSync(t).isFile()) return t;
+				if (statSync(destWithExt).isFile()) return destWithExt;
 			} catch {}
 		}
 	}
 	return null;
 }
-var k = class extends Error {
+var NonZeroExitError = class extends Error {
 	result;
 	output;
-	get exitCode() {
-		if (this.result.exitCode !== null) return this.result.exitCode;
+	exitCode;
+	get signalCode() {
+		return this.result.signalCode;
 	}
-	constructor(e, t) {
-		super(`Process exited with non-zero status (${e.exitCode})`);
-		this.result = e;
-		this.output = t;
+	constructor(result, output, command, args) {
+		let target = "The process";
+		if (command) target = `The command \`${args?.length ? `${command} ${args.map((a) => /[ "'`()]/.test(a) ? JSON.stringify(a) : a).join(" ")}` : command}\``;
+		const exitCode = result.exitCode ?? 1;
+		super(result.signalCode !== null ? `${target} was killed by the signal ${result.signalCode}` : `${target} exited with a non-zero status (${exitCode})`);
+		this.result = result;
+		this.output = output;
+		this.exitCode = exitCode;
+		Object.defineProperty(this, "result", {
+			enumerable: false,
+			writable: false,
+			configurable: false
+		});
 	}
 };
-const j = {
+const defaultOptions = {
 	timeout: void 0,
 	persist: false
 };
-const N = { windowsHide: true };
-function P(e) {
-	const t = new AbortController();
-	for (const n of e) {
-		if (n.aborted) {
-			t.abort();
-			return n;
+const defaultNodeOptions = { windowsHide: true };
+function combineSignals(signals) {
+	const controller = new AbortController();
+	for (const signal of signals) {
+		if (signal.aborted) {
+			controller.abort();
+			return signal;
 		}
-		const e = () => {
-			t.abort(n.reason);
+		const onAbort = () => {
+			controller.abort(signal.reason);
 		};
-		n.addEventListener("abort", e, { signal: t.signal });
+		signal.addEventListener("abort", onAbort, { signal: controller.signal });
 	}
-	return t.signal;
+	return controller.signal;
 }
-async function F(e) {
-	let t = "";
+async function readStream(stream) {
+	let output = "";
 	try {
-		for await (const n of e) t += n.toString();
+		for await (const chunk of stream) output += chunk.toString();
 	} catch {}
-	return t;
+	return output;
 }
-var I = class {
+var ExecProcess = class {
 	_process;
 	_aborted = false;
 	_options;
@@ -330,19 +323,22 @@ var I = class {
 	get exitCode() {
 		if (this._process && this._process.exitCode !== null) return this._process.exitCode;
 	}
-	constructor(e, t, n) {
+	get signalCode() {
+		return this._process?.signalCode ?? null;
+	}
+	constructor(command, args, options) {
 		this._options = {
-			...j,
-			...n
+			...defaultOptions,
+			...options
 		};
-		this._command = e;
-		this._args = t ?? [];
-		this._processClosed = new Promise((e) => {
-			this._resolveClose = e;
+		this._command = command;
+		this._args = args ?? [];
+		this._processClosed = new Promise((resolve) => {
+			this._resolveClose = resolve;
 		});
 	}
-	kill(e) {
-		return this._process?.kill(e) === true;
+	kill(signal) {
+		return this._process?.kill(signal) === true;
 	}
 	get aborted() {
 		return this._aborted;
@@ -350,104 +346,102 @@ var I = class {
 	get killed() {
 		return this._process?.killed === true;
 	}
-	pipe(e, t, n) {
-		return z(e, t, {
-			...n,
+	pipe(command, args, options) {
+		return exec$1(command, args, {
+			...options,
 			stdin: this
 		});
 	}
 	async *[Symbol.asyncIterator]() {
-		const e = this._process;
-		if (!e) return;
-		const t = [];
-		if (this._streamErr) t.push(this._streamErr);
-		if (this._streamOut) t.push(this._streamOut);
-		const n = b(t);
-		const r = l__default.createInterface({ input: n });
-		for await (const e of r) yield e.toString();
+		const proc = this._process;
+		if (!proc) return;
+		const streams = [];
+		if (this._streamErr) streams.push(this._streamErr);
+		if (this._streamOut) streams.push(this._streamOut);
+		const streamCombined = combineStreams(streams);
+		const rl = l__default.createInterface({ input: streamCombined });
+		for await (const chunk of rl) yield chunk.toString();
 		await this._processClosed;
-		e.removeAllListeners();
+		proc.removeAllListeners();
 		if (this._thrownError) throw this._thrownError;
-		if (this._options?.throwOnError && this.exitCode !== 0 && this.exitCode !== void 0) throw new k(this);
+		if (this._options?.throwOnError && (this.exitCode !== 0 && this.exitCode !== void 0 || this.signalCode !== null)) throw new NonZeroExitError(this, void 0, this._command, this._args);
 	}
 	async _waitForOutput() {
-		const e = this._process;
-		if (!e) throw new Error("No process was started");
-		const [t, n] = await Promise.all([this._streamOut ? F(this._streamOut) : "", this._streamErr ? F(this._streamErr) : ""]);
+		const proc = this._process;
+		if (!proc) throw new Error("No process was started");
+		const [stdout, stderr] = await Promise.all([this._streamOut ? readStream(this._streamOut) : "", this._streamErr ? readStream(this._streamErr) : ""]);
 		await this._processClosed;
-		const { stdin: r } = this._options;
-		if (r && typeof r !== "string") await r;
-		e.removeAllListeners();
+		const { stdin } = this._options;
+		if (stdin && typeof stdin !== "string") await stdin;
+		proc.removeAllListeners();
 		if (this._thrownError) throw this._thrownError;
-		const i = {
-			stderr: n,
-			stdout: t,
+		const result = {
+			stderr,
+			stdout,
 			exitCode: this.exitCode
 		};
-		if (this._options.throwOnError && this.exitCode !== 0 && this.exitCode !== void 0) throw new k(this, i);
-		return i;
+		if (this._options.throwOnError && (this.exitCode !== 0 && this.exitCode !== void 0 || this.signalCode !== null)) throw new NonZeroExitError(this, result, this._command, this._args);
+		return result;
 	}
-	then(e, t) {
-		return this._waitForOutput().then(e, t);
+	then(onfulfilled, onrejected) {
+		return this._waitForOutput().then(onfulfilled, onrejected);
 	}
 	_streamOut;
 	_streamErr;
 	spawn() {
-		const t = cwd();
-		const r = this._options;
-		const i = {
-			...N,
-			...r.nodeOptions
+		const options = this._options;
+		const nodeOptions = {
+			...defaultNodeOptions,
+			...options.nodeOptions
 		};
-		const a = [];
+		const cwd$1 = nodeOptions?.cwd ?? cwd();
+		const signals = [];
 		this._resetState();
-		if (r.timeout !== void 0) a.push(AbortSignal.timeout(r.timeout));
-		if (r.signal !== void 0) a.push(r.signal);
-		if (r.persist === true) i.detached = true;
-		if (a.length > 0) i.signal = P(a);
-		i.env = y(t, i.env, r.nodePath);
-		const o = D(this._command, this._args, i);
-		const s = spawn(o.command, o.args, o.options);
-		if (s.stderr) this._streamErr = s.stderr;
-		if (s.stdout) this._streamOut = s.stdout;
-		this._process = s;
-		s.once("error", this._onError);
-		s.once("close", this._onClose);
-		if (s.stdin) {
-			const { stdin: e } = r;
-			if (typeof e === "string") s.stdin.end(e);
-			else e?.process?.stdout?.pipe(s.stdin);
+		if (options.timeout !== void 0) signals.push(AbortSignal.timeout(options.timeout));
+		if (options.signal !== void 0) signals.push(options.signal);
+		if (options.persist === true) nodeOptions.detached = true;
+		if (signals.length > 0) nodeOptions.signal = combineSignals(signals);
+		nodeOptions.env = computeEnv(cwd$1, nodeOptions.env, options.nodePath);
+		const crossResult = normalizeSpawnCommand(this._command, this._args, nodeOptions);
+		const handle = spawn(crossResult.command, crossResult.args, crossResult.options);
+		if (handle.stderr) this._streamErr = handle.stderr;
+		if (handle.stdout) this._streamOut = handle.stdout;
+		this._process = handle;
+		handle.once("error", this._onError);
+		handle.once("close", this._onClose);
+		if (handle.stdin) {
+			const { stdin } = options;
+			if (typeof stdin === "string") handle.stdin.end(stdin);
+			else stdin?.process?.stdout?.pipe(handle.stdin);
 		}
 	}
 	_resetState() {
 		this._aborted = false;
-		this._processClosed = new Promise((e) => {
-			this._resolveClose = e;
+		this._processClosed = new Promise((resolve) => {
+			this._resolveClose = resolve;
 		});
 		this._thrownError = void 0;
 	}
-	_onError = (e) => {
-		if (e.name === "AbortError" && (!(e.cause instanceof Error) || e.cause.name !== "TimeoutError")) {
+	_onError = (err) => {
+		if (err.name === "AbortError" && (!(err.cause instanceof Error) || err.cause.name !== "TimeoutError")) {
 			this._aborted = true;
 			return;
 		}
-		this._thrownError = e;
+		this._thrownError = err;
 	};
 	_onClose = () => {
 		if (this._resolveClose) this._resolveClose();
 	};
 };
-const R = (e, t, n) => {
-	const r = new I(e, t, n);
-	r.spawn();
-	return r;
+const x = (command, args, userOptions) => {
+	const proc = new ExecProcess(command, args, userOptions);
+	proc.spawn();
+	return proc;
 };
-const z = R;
+const exec$1 = x;
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/execGit.js
-const debugLog$15 = createDebug("lint-staged:execGit");
-/** @example "warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it" */
-const GIT_CRLF_WARNING = /^warning.*CRLF.*the next time Git touches it/i;
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/execGit.js
+const debugLog$17 = createDebug("lint-staged:execGit");
 /**
 * Explicitly never recurse commands into submodules, overriding local/global configuration.
 * @see https://git-scm.com/docs/git-config#Documentation/git-config.txt-submodulerecurse
@@ -456,2411 +450,476 @@ const NO_SUBMODULE_RECURSE = ["-c", "submodule.recurse=false"];
 [...NO_SUBMODULE_RECURSE];
 /** @type {(cmd: string[], options?: { cwd?: string }) => Promise<string>} */
 const execGit = async (cmd, options) => {
-	debugLog$15("Running git command:", cmd);
-	const result = z("git", [...NO_SUBMODULE_RECURSE, ...cmd], { nodeOptions: {
-		cwd: options?.cwd,
-		stdio: ["ignore"]
+	debugLog$17("Running git command:", cmd);
+	const result = await exec$1("git", [...NO_SUBMODULE_RECURSE, ...cmd], { nodeOptions: {
+		env: options?.env,
+		cwd: options?.cwd
 	} });
-	let output = "";
-	for await (const line of result) {
-		if (GIT_CRLF_WARNING.test(line)) {
-			debugLog$15("Stripped Git CRLF warning: %s", line);
-			continue;
-		}
-		output += line + "\n";
-	}
-	output = output.trimEnd();
-	if (result.exitCode > 0) throw new Error(output, { cause: result });
-	return output;
-};
-var eventemitter3_default = (/* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module) => {
-	var has = Object.prototype.hasOwnProperty, prefix = "~";
-	/**
-	* Constructor to create a storage for our `EE` objects.
-	* An `Events` instance is a plain object whose properties are event names.
-	*
-	* @constructor
-	* @private
-	*/
-	function Events() {}
-	if (Object.create) {
-		Events.prototype = Object.create(null);
-		if (!new Events().__proto__) prefix = false;
-	}
-	/**
-	* Representation of a single event listener.
-	*
-	* @param {Function} fn The listener function.
-	* @param {*} context The context to invoke the listener with.
-	* @param {Boolean} [once=false] Specify if the listener is a one-time listener.
-	* @constructor
-	* @private
-	*/
-	function EE(fn, context, once) {
-		this.fn = fn;
-		this.context = context;
-		this.once = once || false;
-	}
-	/**
-	* Add a listener for a given event.
-	*
-	* @param {EventEmitter} emitter Reference to the `EventEmitter` instance.
-	* @param {(String|Symbol)} event The event name.
-	* @param {Function} fn The listener function.
-	* @param {*} context The context to invoke the listener with.
-	* @param {Boolean} once Specify if the listener is a one-time listener.
-	* @returns {EventEmitter}
-	* @private
-	*/
-	function addListener(emitter, event, fn, context, once) {
-		if (typeof fn !== "function") throw new TypeError("The listener must be a function");
-		var listener = new EE(fn, context || emitter, once), evt = prefix ? prefix + event : event;
-		if (!emitter._events[evt]) emitter._events[evt] = listener, emitter._eventsCount++;
-		else if (!emitter._events[evt].fn) emitter._events[evt].push(listener);
-		else emitter._events[evt] = [emitter._events[evt], listener];
-		return emitter;
-	}
-	/**
-	* Clear event by name.
-	*
-	* @param {EventEmitter} emitter Reference to the `EventEmitter` instance.
-	* @param {(String|Symbol)} evt The Event name.
-	* @private
-	*/
-	function clearEvent(emitter, evt) {
-		if (--emitter._eventsCount === 0) emitter._events = new Events();
-		else delete emitter._events[evt];
-	}
-	/**
-	* Minimal `EventEmitter` interface that is molded against the Node.js
-	* `EventEmitter` interface.
-	*
-	* @constructor
-	* @public
-	*/
-	function EventEmitter() {
-		this._events = new Events();
-		this._eventsCount = 0;
-	}
-	/**
-	* Return an array listing the events for which the emitter has registered
-	* listeners.
-	*
-	* @returns {Array}
-	* @public
-	*/
-	EventEmitter.prototype.eventNames = function eventNames() {
-		var names = [], events, name;
-		if (this._eventsCount === 0) return names;
-		for (name in events = this._events) if (has.call(events, name)) names.push(prefix ? name.slice(1) : name);
-		if (Object.getOwnPropertySymbols) return names.concat(Object.getOwnPropertySymbols(events));
-		return names;
-	};
-	/**
-	* Return the listeners registered for a given event.
-	*
-	* @param {(String|Symbol)} event The event name.
-	* @returns {Array} The registered listeners.
-	* @public
-	*/
-	EventEmitter.prototype.listeners = function listeners(event) {
-		var evt = prefix ? prefix + event : event, handlers = this._events[evt];
-		if (!handlers) return [];
-		if (handlers.fn) return [handlers.fn];
-		for (var i = 0, l = handlers.length, ee = new Array(l); i < l; i++) ee[i] = handlers[i].fn;
-		return ee;
-	};
-	/**
-	* Return the number of listeners listening to a given event.
-	*
-	* @param {(String|Symbol)} event The event name.
-	* @returns {Number} The number of listeners.
-	* @public
-	*/
-	EventEmitter.prototype.listenerCount = function listenerCount(event) {
-		var evt = prefix ? prefix + event : event, listeners = this._events[evt];
-		if (!listeners) return 0;
-		if (listeners.fn) return 1;
-		return listeners.length;
-	};
-	/**
-	* Calls each of the listeners registered for a given event.
-	*
-	* @param {(String|Symbol)} event The event name.
-	* @returns {Boolean} `true` if the event had listeners, else `false`.
-	* @public
-	*/
-	EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
-		var evt = prefix ? prefix + event : event;
-		if (!this._events[evt]) return false;
-		var listeners = this._events[evt], len = arguments.length, args, i;
-		if (listeners.fn) {
-			if (listeners.once) this.removeListener(event, listeners.fn, void 0, true);
-			switch (len) {
-				case 1: return listeners.fn.call(listeners.context), true;
-				case 2: return listeners.fn.call(listeners.context, a1), true;
-				case 3: return listeners.fn.call(listeners.context, a1, a2), true;
-				case 4: return listeners.fn.call(listeners.context, a1, a2, a3), true;
-				case 5: return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
-				case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
-			}
-			for (i = 1, args = new Array(len - 1); i < len; i++) args[i - 1] = arguments[i];
-			listeners.fn.apply(listeners.context, args);
-		} else {
-			var length = listeners.length, j;
-			for (i = 0; i < length; i++) {
-				if (listeners[i].once) this.removeListener(event, listeners[i].fn, void 0, true);
-				switch (len) {
-					case 1:
-						listeners[i].fn.call(listeners[i].context);
-						break;
-					case 2:
-						listeners[i].fn.call(listeners[i].context, a1);
-						break;
-					case 3:
-						listeners[i].fn.call(listeners[i].context, a1, a2);
-						break;
-					case 4:
-						listeners[i].fn.call(listeners[i].context, a1, a2, a3);
-						break;
-					default:
-						if (!args) for (j = 1, args = new Array(len - 1); j < len; j++) args[j - 1] = arguments[j];
-						listeners[i].fn.apply(listeners[i].context, args);
-				}
-			}
-		}
-		return true;
-	};
-	/**
-	* Add a listener for a given event.
-	*
-	* @param {(String|Symbol)} event The event name.
-	* @param {Function} fn The listener function.
-	* @param {*} [context=this] The context to invoke the listener with.
-	* @returns {EventEmitter} `this`.
-	* @public
-	*/
-	EventEmitter.prototype.on = function on(event, fn, context) {
-		return addListener(this, event, fn, context, false);
-	};
-	/**
-	* Add a one-time listener for a given event.
-	*
-	* @param {(String|Symbol)} event The event name.
-	* @param {Function} fn The listener function.
-	* @param {*} [context=this] The context to invoke the listener with.
-	* @returns {EventEmitter} `this`.
-	* @public
-	*/
-	EventEmitter.prototype.once = function once(event, fn, context) {
-		return addListener(this, event, fn, context, true);
-	};
-	/**
-	* Remove the listeners of a given event.
-	*
-	* @param {(String|Symbol)} event The event name.
-	* @param {Function} fn Only remove the listeners that match this function.
-	* @param {*} context Only remove the listeners that have this context.
-	* @param {Boolean} once Only remove one-time listeners.
-	* @returns {EventEmitter} `this`.
-	* @public
-	*/
-	EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
-		var evt = prefix ? prefix + event : event;
-		if (!this._events[evt]) return this;
-		if (!fn) {
-			clearEvent(this, evt);
-			return this;
-		}
-		var listeners = this._events[evt];
-		if (listeners.fn) {
-			if (listeners.fn === fn && (!once || listeners.once) && (!context || listeners.context === context)) clearEvent(this, evt);
-		} else {
-			for (var i = 0, events = [], length = listeners.length; i < length; i++) if (listeners[i].fn !== fn || once && !listeners[i].once || context && listeners[i].context !== context) events.push(listeners[i]);
-			if (events.length) this._events[evt] = events.length === 1 ? events[0] : events;
-			else clearEvent(this, evt);
-		}
-		return this;
-	};
-	/**
-	* Remove all listeners, or those of the specified event.
-	*
-	* @param {(String|Symbol)} [event] The event name.
-	* @returns {EventEmitter} `this`.
-	* @public
-	*/
-	EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
-		var evt;
-		if (event) {
-			evt = prefix ? prefix + event : event;
-			if (this._events[evt]) clearEvent(this, evt);
-		} else {
-			this._events = new Events();
-			this._eventsCount = 0;
-		}
-		return this;
-	};
-	EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
-	EventEmitter.prototype.addListener = EventEmitter.prototype.on;
-	EventEmitter.prefixed = prefix;
-	EventEmitter.EventEmitter = EventEmitter;
-	if ("undefined" !== typeof module) module.exports = EventEmitter;
-})))(), 1)).default;
-//#endregion
-//#region ../../node_modules/.pnpm/colorette@2.0.20/node_modules/colorette/index.js
-const { env = {}, argv = [], platform = "" } = typeof process === "undefined" ? {} : process;
-const isDisabled = "NO_COLOR" in env || argv.includes("--no-color");
-const isForced = "FORCE_COLOR" in env || argv.includes("--color");
-const isWindows = platform === "win32";
-const isDumbTerminal = env.TERM === "dumb";
-const isCompatibleTerminal = tty && tty.isatty && tty.isatty(1) && env.TERM && !isDumbTerminal;
-const isCI = "CI" in env && ("GITHUB_ACTIONS" in env || "GITLAB_CI" in env || "CIRCLECI" in env);
-const isColorSupported = !isDisabled && (isForced || isWindows && !isDumbTerminal || isCompatibleTerminal || isCI);
-const replaceClose = (index, string, close, replace, head = string.substring(0, index) + replace, tail = string.substring(index + close.length), next = tail.indexOf(close)) => head + (next < 0 ? tail : replaceClose(next, tail, close, replace));
-const clearBleed = (index, string, open, close, replace) => index < 0 ? open + string + close : open + replaceClose(index, string, close, replace) + close;
-const filterEmpty = (open, close, replace = open, at = open.length + 1) => (string) => string || !(string === "" || string === void 0) ? clearBleed(("" + string).indexOf(close, at), string, open, close, replace) : "";
-const init = (open, close, replace) => filterEmpty(`\x1b[${open}m`, `\x1b[${close}m`, replace);
-const colors = {
-	reset: init(0, 0),
-	bold: init(1, 22, "\x1B[22m\x1B[1m"),
-	dim: init(2, 22, "\x1B[22m\x1B[2m"),
-	italic: init(3, 23),
-	underline: init(4, 24),
-	inverse: init(7, 27),
-	hidden: init(8, 28),
-	strikethrough: init(9, 29),
-	black: init(30, 39),
-	red: init(31, 39),
-	green: init(32, 39),
-	yellow: init(33, 39),
-	blue: init(34, 39),
-	magenta: init(35, 39),
-	cyan: init(36, 39),
-	white: init(37, 39),
-	gray: init(90, 39),
-	bgBlack: init(40, 49),
-	bgRed: init(41, 49),
-	bgGreen: init(42, 49),
-	bgYellow: init(43, 49),
-	bgBlue: init(44, 49),
-	bgMagenta: init(45, 49),
-	bgCyan: init(46, 49),
-	bgWhite: init(47, 49),
-	blackBright: init(90, 39),
-	redBright: init(91, 39),
-	greenBright: init(92, 39),
-	yellowBright: init(93, 39),
-	blueBright: init(94, 39),
-	magentaBright: init(95, 39),
-	cyanBright: init(96, 39),
-	whiteBright: init(97, 39),
-	bgBlackBright: init(100, 49),
-	bgRedBright: init(101, 49),
-	bgGreenBright: init(102, 49),
-	bgYellowBright: init(103, 49),
-	bgBlueBright: init(104, 49),
-	bgMagentaBright: init(105, 49),
-	bgCyanBright: init(106, 49),
-	bgWhiteBright: init(107, 49)
-};
-const createColors = ({ useColor = isColorSupported } = {}) => useColor ? colors : Object.keys(colors).reduce((colors, key) => ({
-	...colors,
-	[key]: String
-}), {});
-const { reset, bold, dim, italic, underline, inverse, hidden, strikethrough, black, red, green, yellow, blue, magenta, cyan, white, gray, bgBlack, bgRed, bgGreen, bgYellow, bgBlue, bgMagenta, bgCyan, bgWhite, blackBright, redBright, greenBright, yellowBright, blueBright, magentaBright, cyanBright, whiteBright, bgBlackBright, bgRedBright, bgGreenBright, bgYellowBright, bgBlueBright, bgMagentaBright, bgCyanBright, bgWhiteBright } = createColors();
-//#endregion
-//#region ../../node_modules/.pnpm/listr2@9.0.5/node_modules/listr2/dist/index.js
-var import_rfdc = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module) => {
-	module.exports = rfdc;
-	function copyBuffer(cur) {
-		if (cur instanceof Buffer) return Buffer.from(cur);
-		return new cur.constructor(cur.buffer.slice(), cur.byteOffset, cur.length);
-	}
-	function rfdc(opts) {
-		opts = opts || {};
-		if (opts.circles) return rfdcCircles(opts);
-		const constructorHandlers = /* @__PURE__ */ new Map();
-		constructorHandlers.set(Date, (o) => new Date(o));
-		constructorHandlers.set(Map, (o, fn) => new Map(cloneArray(Array.from(o), fn)));
-		constructorHandlers.set(Set, (o, fn) => new Set(cloneArray(Array.from(o), fn)));
-		if (opts.constructorHandlers) for (const handler of opts.constructorHandlers) constructorHandlers.set(handler[0], handler[1]);
-		let handler = null;
-		return opts.proto ? cloneProto : clone;
-		function cloneArray(a, fn) {
-			const keys = Object.keys(a);
-			const a2 = new Array(keys.length);
-			for (let i = 0; i < keys.length; i++) {
-				const k = keys[i];
-				const cur = a[k];
-				if (typeof cur !== "object" || cur === null) a2[k] = cur;
-				else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) a2[k] = handler(cur, fn);
-				else if (ArrayBuffer.isView(cur)) a2[k] = copyBuffer(cur);
-				else a2[k] = fn(cur);
-			}
-			return a2;
-		}
-		function clone(o) {
-			if (typeof o !== "object" || o === null) return o;
-			if (Array.isArray(o)) return cloneArray(o, clone);
-			if (o.constructor !== Object && (handler = constructorHandlers.get(o.constructor))) return handler(o, clone);
-			const o2 = {};
-			for (const k in o) {
-				if (Object.hasOwnProperty.call(o, k) === false) continue;
-				const cur = o[k];
-				if (typeof cur !== "object" || cur === null) o2[k] = cur;
-				else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) o2[k] = handler(cur, clone);
-				else if (ArrayBuffer.isView(cur)) o2[k] = copyBuffer(cur);
-				else o2[k] = clone(cur);
-			}
-			return o2;
-		}
-		function cloneProto(o) {
-			if (typeof o !== "object" || o === null) return o;
-			if (Array.isArray(o)) return cloneArray(o, cloneProto);
-			if (o.constructor !== Object && (handler = constructorHandlers.get(o.constructor))) return handler(o, cloneProto);
-			const o2 = {};
-			for (const k in o) {
-				const cur = o[k];
-				if (typeof cur !== "object" || cur === null) o2[k] = cur;
-				else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) o2[k] = handler(cur, cloneProto);
-				else if (ArrayBuffer.isView(cur)) o2[k] = copyBuffer(cur);
-				else o2[k] = cloneProto(cur);
-			}
-			return o2;
-		}
-	}
-	function rfdcCircles(opts) {
-		const refs = [];
-		const refsNew = [];
-		const constructorHandlers = /* @__PURE__ */ new Map();
-		constructorHandlers.set(Date, (o) => new Date(o));
-		constructorHandlers.set(Map, (o, fn) => new Map(cloneArray(Array.from(o), fn)));
-		constructorHandlers.set(Set, (o, fn) => new Set(cloneArray(Array.from(o), fn)));
-		if (opts.constructorHandlers) for (const handler of opts.constructorHandlers) constructorHandlers.set(handler[0], handler[1]);
-		let handler = null;
-		return opts.proto ? cloneProto : clone;
-		function cloneArray(a, fn) {
-			const keys = Object.keys(a);
-			const a2 = new Array(keys.length);
-			for (let i = 0; i < keys.length; i++) {
-				const k = keys[i];
-				const cur = a[k];
-				if (typeof cur !== "object" || cur === null) a2[k] = cur;
-				else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) a2[k] = handler(cur, fn);
-				else if (ArrayBuffer.isView(cur)) a2[k] = copyBuffer(cur);
-				else {
-					const index = refs.indexOf(cur);
-					if (index !== -1) a2[k] = refsNew[index];
-					else a2[k] = fn(cur);
-				}
-			}
-			return a2;
-		}
-		function clone(o) {
-			if (typeof o !== "object" || o === null) return o;
-			if (Array.isArray(o)) return cloneArray(o, clone);
-			if (o.constructor !== Object && (handler = constructorHandlers.get(o.constructor))) return handler(o, clone);
-			const o2 = {};
-			refs.push(o);
-			refsNew.push(o2);
-			for (const k in o) {
-				if (Object.hasOwnProperty.call(o, k) === false) continue;
-				const cur = o[k];
-				if (typeof cur !== "object" || cur === null) o2[k] = cur;
-				else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) o2[k] = handler(cur, clone);
-				else if (ArrayBuffer.isView(cur)) o2[k] = copyBuffer(cur);
-				else {
-					const i = refs.indexOf(cur);
-					if (i !== -1) o2[k] = refsNew[i];
-					else o2[k] = clone(cur);
-				}
-			}
-			refs.pop();
-			refsNew.pop();
-			return o2;
-		}
-		function cloneProto(o) {
-			if (typeof o !== "object" || o === null) return o;
-			if (Array.isArray(o)) return cloneArray(o, cloneProto);
-			if (o.constructor !== Object && (handler = constructorHandlers.get(o.constructor))) return handler(o, cloneProto);
-			const o2 = {};
-			refs.push(o);
-			refsNew.push(o2);
-			for (const k in o) {
-				const cur = o[k];
-				if (typeof cur !== "object" || cur === null) o2[k] = cur;
-				else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) o2[k] = handler(cur, cloneProto);
-				else if (ArrayBuffer.isView(cur)) o2[k] = copyBuffer(cur);
-				else {
-					const i = refs.indexOf(cur);
-					if (i !== -1) o2[k] = refsNew[i];
-					else o2[k] = cloneProto(cur);
-				}
-			}
-			refs.pop();
-			refsNew.pop();
-			return o2;
-		}
-	}
-})))(), 1);
-/**
-* Generic ANSI escape characters for terminal based operations.
-*/
-const ANSI_ESCAPE_CODES = {
-	CURSOR_HIDE: "\x1B[?25l",
-	CURSOR_SHOW: "\x1B[?25h"
-};
-/**
-* Environment variables for Listr.
-*/
-let ListrEnvironmentVariables = /* @__PURE__ */ function(ListrEnvironmentVariables$1) {
-	ListrEnvironmentVariables$1["FORCE_UNICODE"] = "LISTR_FORCE_UNICODE";
-	ListrEnvironmentVariables$1["FORCE_TTY"] = "LISTR_FORCE_TTY";
-	ListrEnvironmentVariables$1["DISABLE_COLOR"] = "NO_COLOR";
-	ListrEnvironmentVariables$1["FORCE_COLOR"] = "FORCE_COLOR";
-	return ListrEnvironmentVariables$1;
-}({});
-/**
-* The actual error type that is collected and to help identify where the error is triggered from.
-*/
-let ListrErrorTypes = /* @__PURE__ */ function(ListrErrorTypes$1) {
-	/** Task has failed and will try to retry. */
-	ListrErrorTypes$1["WILL_RETRY"] = "WILL_RETRY";
-	/** Task has failed and will try to rollback. */
-	ListrErrorTypes$1["WILL_ROLLBACK"] = "WILL_ROLLBACK";
-	/** Task has failed, ran the rollback action but the rollback action itself has failed. */
-	ListrErrorTypes$1["HAS_FAILED_TO_ROLLBACK"] = "HAS_FAILED_TO_ROLLBACK";
-	/** Task has failed. */
-	ListrErrorTypes$1["HAS_FAILED"] = "HAS_FAILED";
-	/** Task has failed, but exitOnError is set to false, so will ignore this error. */
-	ListrErrorTypes$1["HAS_FAILED_WITHOUT_ERROR"] = "HAS_FAILED_WITHOUT_ERROR";
-	return ListrErrorTypes$1;
-}({});
-/**
-* Events that are triggered by Listr.
-*
-* These are stateful and singleton events by being attached to the main Listr class and propagating to the subtasks.
-*
-* @see {@link https://listr2.kilic.dev/listr/events.html}
-*/
-let ListrEventType = /* @__PURE__ */ function(ListrEventType$1) {
-	/** Indicates that underlying renderer should refresh the current render. */
-	ListrEventType$1["SHOULD_REFRESH_RENDER"] = "SHOUD_REFRESH_RENDER";
-	return ListrEventType$1;
-}({});
-let ListrRendererSelection = /* @__PURE__ */ function(ListrRendererSelection$1) {
-	ListrRendererSelection$1["PRIMARY"] = "PRIMARY";
-	ListrRendererSelection$1["SECONDARY"] = "SECONDARY";
-	ListrRendererSelection$1["SILENT"] = "SILENT";
-	return ListrRendererSelection$1;
-}({});
-/**
-* Internal events that are fired from the Task.
-*
-* @see {@link https://listr2.kilic.dev/task/events.html}
-*/
-let ListrTaskEventType = /* @__PURE__ */ function(ListrTaskEventType$1) {
-	/** Title has changed for the current Task. */
-	ListrTaskEventType$1["TITLE"] = "TITLE";
-	/**
-	* State has changed for the current Task.
-	*
-	* @see {@link module:listr2.ListrTaskState}
-	*/
-	ListrTaskEventType$1["STATE"] = "STATE";
-	/** The current Task has been marked as enabled. */
-	ListrTaskEventType$1["ENABLED"] = "ENABLED";
-	/** The current Task is currently processing subtasks. */
-	ListrTaskEventType$1["SUBTASK"] = "SUBTASK";
-	/** The current Task is now processing a prompt. */
-	ListrTaskEventType$1["PROMPT"] = "PROMPT";
-	/** The current Task is now dumping output. */
-	ListrTaskEventType$1["OUTPUT"] = "OUTPUT";
-	/**
-	* The current Task is now dumping a message.
-	*
-	* @see {module:Listr2.ListrTaskMessage}
-	*/
-	ListrTaskEventType$1["MESSAGE"] = "MESSAGE";
-	/** The current Task is closed and no further action in expected. */
-	ListrTaskEventType$1["CLOSED"] = "CLOSED";
-	return ListrTaskEventType$1;
-}({});
-/**
-* Tasks can be in various states during the execution.
-*
-* Whenever a state change occurs, the task will emit a {@link module:listr2.ListrTaskEventType.STATE} with the appropriate state.
-*/
-let ListrTaskState = /* @__PURE__ */ function(ListrTaskState$1) {
-	/** Task has not started yet, waiting for pick-up. */
-	ListrTaskState$1["WAITING"] = "WAITING";
-	/** Task has started. */
-	ListrTaskState$1["STARTED"] = "STARTED";
-	/** Task has been completed. */
-	ListrTaskState$1["COMPLETED"] = "COMPLETED";
-	/** Task has failed. */
-	ListrTaskState$1["FAILED"] = "FAILED";
-	/** Task has been skipped. */
-	ListrTaskState$1["SKIPPED"] = "SKIPPED";
-	/** Task is currently trying to rollback. */
-	ListrTaskState$1["ROLLING_BACK"] = "ROLLING_BACK";
-	/** Task has rolledback successfully after failing. */
-	ListrTaskState$1["ROLLED_BACK"] = "ROLLED_BACK";
-	/** Task is currently retrying. */
-	ListrTaskState$1["RETRY"] = "RETRY";
-	/** Task is currently paused. */
-	ListrTaskState$1["PAUSED"] = "PAUSED";
-	/** Task is currently trying to process a prompt. */
-	ListrTaskState$1["PROMPT"] = "PROMPT";
-	/** Task has successfully processed the prompt. */
-	ListrTaskState$1["PROMPT_COMPLETED"] = "PROMPT_COMPLETED";
-	/** Task has failed to process the prompt. */
-	ListrTaskState$1["PROMPT_FAILED"] = "PROMPT_FAILED";
-	return ListrTaskState$1;
-}({});
-var EventManager = class {
-	emitter = new eventemitter3_default();
-	emit(dispatch, args) {
-		this.emitter.emit(dispatch, args);
-	}
-	on(dispatch, handler) {
-		this.emitter.addListener(dispatch, handler);
-	}
-	once(dispatch, handler) {
-		this.emitter.once(dispatch, handler);
-	}
-	off(dispatch, handler) {
-		this.emitter.off(dispatch, handler);
-	}
-	complete() {
-		this.emitter.removeAllListeners();
-	}
-};
-/**
-* Tests to see if the object is an RxJS {@link Observable}
-* @param obj the object to test
-*/
-function isObservable(obj) {
-	return !!obj && typeof obj === "object" && typeof obj.subscribe === "function";
-}
-/**
-* Tests to see if the object is an Readable or NodeJS.ReadableStream {@link Readable, NodeJS.ReadableStream}
-* @param obj the object to test
-*/
-function isReadable(obj) {
-	return !!obj && typeof obj === "object" && obj.readable === true && typeof obj.read === "function" && typeof obj.on === "function";
-}
-function isUnicodeSupported() {
-	/* istanbul ignore next */
-	return !!process.env[ListrEnvironmentVariables.FORCE_UNICODE] || process.platform !== "win32" || !!process.env.CI || !!process.env.WT_SESSION || process.env.TERM_PROGRAM === "vscode" || process.env.TERM === "xterm-256color" || process.env.TERM === "alacritty";
-}
-const CLEAR_LINE_REGEX = "(?:\\u001b|\\u009b)\\[[\\=><~/#&.:=?%@~_-]*[0-9]*[\\a-ln-tqyz=><~/#&.:=?%@~_-]+";
-const BELL_REGEX = /\u0007/;
-function cleanseAnsi(chunk) {
-	return String(chunk).replace(new RegExp(CLEAR_LINE_REGEX, "gmi"), "").replace(new RegExp(BELL_REGEX, "gmi"), "").trim();
-}
-/**
-* Creates color palette through underlying dependency of `colorette`.
-*
-* @see {@link https://www.npmjs.com/package/colorette}
-*/
-const color = createColors();
-function indent(string, count) {
-	return string.replace(/^(?!\s*$)/gm, " ".repeat(count));
-}
-const FIGURES_MAIN = {
-	warning: "⚠",
-	cross: "✖",
-	arrowDown: "↓",
-	tick: "✔",
-	arrowRight: "→",
-	pointer: "❯",
-	checkboxOn: "☒",
-	arrowLeft: "←",
-	squareSmallFilled: "◼",
-	pointerSmall: "›"
-};
-const FIGURES_FALLBACK = {
-	...FIGURES_MAIN,
-	warning: "‼",
-	cross: "×",
-	tick: "√",
-	pointer: ">",
-	checkboxOn: "[×]",
-	squareSmallFilled: "■"
-};
-const figures = isUnicodeSupported() ? FIGURES_MAIN : FIGURES_FALLBACK;
-function splat(message, ...splat$1) {
-	return format(String(message), ...splat$1);
-}
-/** Default ListrLogLevels for the logger */
-let ListrLogLevels = /* @__PURE__ */ function(ListrLogLevels$1) {
-	ListrLogLevels$1["STARTED"] = "STARTED";
-	ListrLogLevels$1["COMPLETED"] = "COMPLETED";
-	ListrLogLevels$1["FAILED"] = "FAILED";
-	ListrLogLevels$1["SKIPPED"] = "SKIPPED";
-	ListrLogLevels$1["OUTPUT"] = "OUTPUT";
-	ListrLogLevels$1["TITLE"] = "TITLE";
-	ListrLogLevels$1["ROLLBACK"] = "ROLLBACK";
-	ListrLogLevels$1["RETRY"] = "RETRY";
-	ListrLogLevels$1["PROMPT"] = "PROMPT";
-	ListrLogLevels$1["PAUSED"] = "PAUSED";
-	return ListrLogLevels$1;
-}({});
-const LISTR_LOGGER_STYLE = {
-	icon: {
-		[ListrLogLevels.STARTED]: figures.pointer,
-		[ListrLogLevels.FAILED]: figures.cross,
-		[ListrLogLevels.SKIPPED]: figures.arrowDown,
-		[ListrLogLevels.COMPLETED]: figures.tick,
-		[ListrLogLevels.OUTPUT]: figures.pointerSmall,
-		[ListrLogLevels.TITLE]: figures.arrowRight,
-		[ListrLogLevels.RETRY]: figures.warning,
-		[ListrLogLevels.ROLLBACK]: figures.arrowLeft,
-		[ListrLogLevels.PAUSED]: figures.squareSmallFilled
-	},
-	color: {
-		[ListrLogLevels.STARTED]: color.yellow,
-		[ListrLogLevels.FAILED]: color.red,
-		[ListrLogLevels.SKIPPED]: color.yellow,
-		[ListrLogLevels.COMPLETED]: color.green,
-		[ListrLogLevels.RETRY]: color.yellowBright,
-		[ListrLogLevels.ROLLBACK]: color.redBright,
-		[ListrLogLevels.PAUSED]: color.yellowBright
-	}
-};
-const LISTR_LOGGER_STDERR_LEVELS = [
-	ListrLogLevels.RETRY,
-	ListrLogLevels.ROLLBACK,
-	ListrLogLevels.FAILED
-];
-/**
-* Creates a new Listr2 logger.
-*
-* This logger is used throughout the renderers for consistency.
-*
-* @see {@link https://listr2.kilic.dev/renderer/logger.html}
-*/
-var ListrLogger = class {
-	process;
-	constructor(options) {
-		this.options = options;
-		this.options = {
-			useIcons: true,
-			toStderr: [],
-			...options ?? {}
-		};
-		this.options.fields ??= {};
-		this.options.fields.prefix ??= [];
-		this.options.fields.suffix ??= [];
-		this.process = this.options.processOutput ?? new ProcessOutput();
-	}
-	log(level, message, options) {
-		const output = this.format(level, message, options);
-		if (this.options.toStderr.includes(level)) {
-			this.process.toStderr(output);
-			return;
-		}
-		this.process.toStdout(output);
-	}
-	toStdout(message, options, eol = true) {
-		this.process.toStdout(this.format(null, message, options), eol);
-	}
-	toStderr(message, options, eol = true) {
-		this.process.toStderr(this.format(null, message, options), eol);
-	}
-	wrap(message, options) {
-		if (!message) return message;
-		return this.applyFormat(`[${message}]`, options);
-	}
-	splat(...args) {
-		const message = args.shift() ?? "";
-		return args.length === 0 ? message : splat(message, args);
-	}
-	suffix(message, ...suffixes) {
-		suffixes.filter(Boolean).forEach((suffix) => {
-			message += this.spacing(message);
-			if (typeof suffix === "string") message += this.wrap(suffix);
-			else if (typeof suffix === "object") {
-				suffix.args ??= [];
-				if (typeof suffix.condition === "function" ? !suffix.condition(...suffix.args) : !(suffix.condition ?? true)) return message;
-				message += this.wrap(typeof suffix.field === "function" ? suffix.field(...suffix.args) : suffix.field, { format: suffix?.format(...suffix.args) });
-			}
-		});
-		return message;
-	}
-	prefix(message, ...prefixes) {
-		prefixes.filter(Boolean).forEach((prefix) => {
-			message = this.spacing(message) + message;
-			if (typeof prefix === "string") message = this.wrap(prefix) + message;
-			else if (typeof prefix === "object") {
-				prefix.args ??= [];
-				if (typeof prefix.condition === "function" ? !prefix.condition(...prefix.args) : !(prefix.condition ?? true)) return message;
-				message = this.wrap(typeof prefix.field === "function" ? prefix.field(...prefix.args) : prefix.field, { format: prefix?.format() }) + message;
-			}
-		});
-		return message;
-	}
-	fields(message, options) {
-		if (this.options?.fields?.prefix) message = this.prefix(message, ...this.options.fields.prefix);
-		if (options?.prefix) message = this.prefix(message, ...options.prefix);
-		if (options?.suffix) message = this.suffix(message, ...options.suffix);
-		if (this.options?.fields?.suffix) message = this.suffix(message, ...this.options.fields.suffix);
-		return message;
-	}
-	icon(level, icon) {
-		if (!level) return null;
-		if (!icon) {
-			const i = this.options.icon?.[level];
-			icon = typeof i === "function" ? i() : i;
-		}
-		const coloring = this.options.color?.[level];
-		if (icon && coloring) icon = coloring(icon);
-		return icon;
-	}
-	format(level, message, options) {
-		if (!Array.isArray(message)) message = [message];
-		message = this.splat(message.shift(), ...message).toString().split(EOL$1).filter((m) => !m || m.trim() !== "").map((m) => {
-			return this.style(level, this.fields(m, {
-				prefix: Array.isArray(options?.prefix) ? options.prefix : [options?.prefix],
-				suffix: Array.isArray(options?.suffix) ? options.suffix : [options?.suffix]
-			}));
-		}).join(EOL$1);
-		return message;
-	}
-	style(level, message) {
-		if (!level || !message) return message;
-		const icon = this.icon(level, !this.options.useIcons && this.wrap(level));
-		if (icon) message = icon + " " + message;
-		return message;
-	}
-	applyFormat(message, options) {
-		if (options?.format) return options.format(message);
-		return message;
-	}
-	spacing(message) {
-		return typeof message === "undefined" || message.trim() === "" ? "" : " ";
-	}
-};
-var ProcessOutputBuffer = class {
-	buffer = [];
-	decoder = new StringDecoder();
-	constructor(options) {
-		this.options = options;
-	}
-	get all() {
-		return this.buffer;
-	}
-	get last() {
-		return this.buffer.at(-1);
-	}
-	get length() {
-		return this.buffer.length;
-	}
-	write(data, ...args) {
-		const callback = args[args.length - 1];
-		this.buffer.push({
-			time: Date.now(),
-			stream: this.options?.stream,
-			entry: this.decoder.write(typeof data === "string" ? Buffer.from(data, typeof args[0] === "string" ? args[0] : void 0) : Buffer.from(data))
-		});
-		if (this.options?.limit) this.buffer = this.buffer.slice(-this.options.limit);
-		if (typeof callback === "function") callback();
-		return true;
-	}
-	reset() {
-		this.buffer = [];
-	}
-};
-var ProcessOutputStream = class {
-	method;
-	buffer;
-	constructor(stream) {
-		this.stream = stream;
-		this.method = stream.write;
-		this.buffer = new ProcessOutputBuffer({ stream });
-	}
-	get out() {
-		return Object.assign({}, this.stream, { write: this.write.bind(this) });
-	}
-	hijack() {
-		this.stream.write = this.buffer.write.bind(this.buffer);
-	}
-	release() {
-		this.stream.write = this.method;
-		const buffer = [...this.buffer.all];
-		this.buffer.reset();
-		return buffer;
-	}
-	write(...args) {
-		return this.method.apply(this.stream, args);
-	}
-};
-/**
-* Creates a new Listr2 process-output controller.
-*
-* This is used to control the flow to `process.stdout` and `process.stderr` for all renderers.
-*
-* @see {@link https://listr2.kilic.dev/renderer/process-output.html}
-*/
-var ProcessOutput = class {
-	stream;
-	active;
-	constructor(stdout, stderr, options) {
-		this.options = options;
-		this.stream = {
-			stdout: new ProcessOutputStream(stdout ?? process.stdout),
-			stderr: new ProcessOutputStream(stderr ?? process.stderr)
-		};
-		this.options = {
-			dump: ["stdout", "stderr"],
-			leaveEmptyLine: true,
-			...options
-		};
-	}
-	get stdout() {
-		return this.stream.stdout.out;
-	}
-	get stderr() {
-		return this.stream.stderr.out;
-	}
-	hijack() {
-		if (this.active) throw new Error("ProcessOutput has been already hijacked!");
-		this.stream.stdout.write(ANSI_ESCAPE_CODES.CURSOR_HIDE);
-		Object.values(this.stream).forEach((stream) => stream.hijack());
-		this.active = true;
-	}
-	release() {
-		const output = Object.entries(this.stream).map(([name, stream]) => ({
-			name,
-			buffer: stream.release()
-		})).filter((output$1) => this.options.dump.includes(output$1.name)).flatMap((output$1) => output$1.buffer).sort((a, b) => a.time - b.time).map((message) => {
-			return {
-				...message,
-				entry: cleanseAnsi(message.entry)
-			};
-		}).filter((message) => message.entry);
-		if (output.length > 0) {
-			if (this.options.leaveEmptyLine) this.stdout.write(EOL$1);
-			output.forEach((message) => {
-				(message.stream ?? this.stdout).write(message.entry + EOL$1);
-			});
-		}
-		this.stream.stdout.write(ANSI_ESCAPE_CODES.CURSOR_SHOW);
-		this.active = false;
-	}
-	toStdout(buffer, eol = true) {
-		if (eol) buffer = buffer + EOL$1;
-		return this.stream.stdout.write(buffer);
-	}
-	toStderr(buffer, eol = true) {
-		if (eol) buffer = buffer + EOL$1;
-		return this.stream.stderr.write(buffer);
-	}
-};
-/* istanbul ignore next */
-function createWritable(cb) {
-	const writable = new Writable$1();
-	writable.rows = Infinity;
-	writable.columns = Infinity;
-	writable.write = (chunk) => {
-		cb(chunk.toString());
-		return true;
-	};
-	return writable;
-}
-/* istanbul ignore next */
-var Spinner = class {
-	spinner = !isUnicodeSupported() ? [
-		"-",
-		"\\",
-		"|",
-		"/"
-	] : [
-		"⠋",
-		"⠙",
-		"⠹",
-		"⠸",
-		"⠼",
-		"⠴",
-		"⠦",
-		"⠧",
-		"⠇",
-		"⠏"
-	];
-	id;
-	spinnerPosition = 0;
-	spin() {
-		this.spinnerPosition = ++this.spinnerPosition % this.spinner.length;
-	}
-	fetch() {
-		return this.spinner[this.spinnerPosition];
-	}
-	isRunning() {
-		return !!this.id;
-	}
-	start(cb, interval = 100) {
-		this.id = setInterval(() => {
-			this.spin();
-			if (cb) cb();
-		}, interval);
-	}
-	stop() {
-		clearInterval(this.id);
-	}
-};
-let ListrDefaultRendererLogLevels = /* @__PURE__ */ function(ListrDefaultRendererLogLevels$1) {
-	ListrDefaultRendererLogLevels$1["SKIPPED_WITH_COLLAPSE"] = "SKIPPED_WITH_COLLAPSE";
-	ListrDefaultRendererLogLevels$1["SKIPPED_WITHOUT_COLLAPSE"] = "SKIPPED_WITHOUT_COLLAPSE";
-	ListrDefaultRendererLogLevels$1["OUTPUT"] = "OUTPUT";
-	ListrDefaultRendererLogLevels$1["OUTPUT_WITH_BOTTOMBAR"] = "OUTPUT_WITH_BOTTOMBAR";
-	ListrDefaultRendererLogLevels$1["PENDING"] = "PENDING";
-	ListrDefaultRendererLogLevels$1["COMPLETED"] = "COMPLETED";
-	ListrDefaultRendererLogLevels$1["COMPLETED_WITH_FAILED_SUBTASKS"] = "COMPLETED_WITH_FAILED_SUBTASKS";
-	ListrDefaultRendererLogLevels$1["COMPLETED_WITH_FAILED_SISTER_TASKS"] = "COMPLETED_WITH_SISTER_TASKS_FAILED";
-	ListrDefaultRendererLogLevels$1["RETRY"] = "RETRY";
-	ListrDefaultRendererLogLevels$1["ROLLING_BACK"] = "ROLLING_BACK";
-	ListrDefaultRendererLogLevels$1["ROLLED_BACK"] = "ROLLED_BACK";
-	ListrDefaultRendererLogLevels$1["FAILED"] = "FAILED";
-	ListrDefaultRendererLogLevels$1["FAILED_WITH_FAILED_SUBTASKS"] = "FAILED_WITH_SUBTASKS";
-	ListrDefaultRendererLogLevels$1["WAITING"] = "WAITING";
-	ListrDefaultRendererLogLevels$1["PAUSED"] = "PAUSED";
-	return ListrDefaultRendererLogLevels$1;
-}({});
-const LISTR_DEFAULT_RENDERER_STYLE = {
-	icon: {
-		[ListrDefaultRendererLogLevels.SKIPPED_WITH_COLLAPSE]: figures.arrowDown,
-		[ListrDefaultRendererLogLevels.SKIPPED_WITHOUT_COLLAPSE]: figures.warning,
-		[ListrDefaultRendererLogLevels.OUTPUT]: figures.pointerSmall,
-		[ListrDefaultRendererLogLevels.OUTPUT_WITH_BOTTOMBAR]: figures.pointerSmall,
-		[ListrDefaultRendererLogLevels.PENDING]: figures.pointer,
-		[ListrDefaultRendererLogLevels.COMPLETED]: figures.tick,
-		[ListrDefaultRendererLogLevels.COMPLETED_WITH_FAILED_SUBTASKS]: figures.warning,
-		[ListrDefaultRendererLogLevels.COMPLETED_WITH_FAILED_SISTER_TASKS]: figures.squareSmallFilled,
-		[ListrDefaultRendererLogLevels.RETRY]: figures.warning,
-		[ListrDefaultRendererLogLevels.ROLLING_BACK]: figures.warning,
-		[ListrDefaultRendererLogLevels.ROLLED_BACK]: figures.arrowLeft,
-		[ListrDefaultRendererLogLevels.FAILED]: figures.cross,
-		[ListrDefaultRendererLogLevels.FAILED_WITH_FAILED_SUBTASKS]: figures.pointer,
-		[ListrDefaultRendererLogLevels.WAITING]: figures.squareSmallFilled,
-		[ListrDefaultRendererLogLevels.PAUSED]: figures.squareSmallFilled
-	},
-	color: {
-		[ListrDefaultRendererLogLevels.SKIPPED_WITH_COLLAPSE]: color.yellow,
-		[ListrDefaultRendererLogLevels.SKIPPED_WITHOUT_COLLAPSE]: color.yellow,
-		[ListrDefaultRendererLogLevels.PENDING]: color.yellow,
-		[ListrDefaultRendererLogLevels.COMPLETED]: color.green,
-		[ListrDefaultRendererLogLevels.COMPLETED_WITH_FAILED_SUBTASKS]: color.yellow,
-		[ListrDefaultRendererLogLevels.COMPLETED_WITH_FAILED_SISTER_TASKS]: color.red,
-		[ListrDefaultRendererLogLevels.RETRY]: color.yellowBright,
-		[ListrDefaultRendererLogLevels.ROLLING_BACK]: color.redBright,
-		[ListrDefaultRendererLogLevels.ROLLED_BACK]: color.redBright,
-		[ListrDefaultRendererLogLevels.FAILED]: color.red,
-		[ListrDefaultRendererLogLevels.FAILED_WITH_FAILED_SUBTASKS]: color.red,
-		[ListrDefaultRendererLogLevels.WAITING]: color.dim,
-		[ListrDefaultRendererLogLevels.PAUSED]: color.yellowBright
-	}
-};
-/**
-* A basic function to parse minutes and tasks passed given a duration.
-* Useful for renderers to show the task time.
-*/
-/* istanbul ignore next */
-function parseTimer(duration) {
-	const seconds = Math.floor(duration / 1e3);
-	const minutes = Math.floor(seconds / 60);
-	let parsedTime;
-	if (seconds === 0 && minutes === 0) parsedTime = `0.${Math.floor(duration / 100)}s`;
-	if (seconds > 0) parsedTime = `${seconds % 60}s`;
-	if (minutes > 0) parsedTime = `${minutes}m${parsedTime}`;
-	return parsedTime;
-}
-/* istanbul ignore next */
-const PRESET_TIMER = {
-	condition: true,
-	field: parseTimer,
-	format: () => color.dim
-};
-var DefaultRenderer = class DefaultRenderer {
-	static nonTTY = false;
-	static rendererOptions = {
-		indentation: 2,
-		clearOutput: false,
-		showSubtasks: true,
-		collapseSubtasks: true,
-		collapseSkips: true,
-		showSkipMessage: true,
-		suffixSkips: false,
-		collapseErrors: true,
-		showErrorMessage: true,
-		suffixRetries: true,
-		lazy: false,
-		removeEmptyLines: true,
-		formatOutput: "wrap",
-		pausedTimer: {
-			...PRESET_TIMER,
-			format: () => color.yellowBright
-		}
-	};
-	static rendererTaskOptions = { outputBar: true };
-	prompt;
-	activePrompt;
-	spinner;
-	logger;
-	updater;
-	truncate;
-	wrap;
-	buffer = {
-		output: /* @__PURE__ */ new Map(),
-		bottom: /* @__PURE__ */ new Map()
-	};
-	cache = {
-		render: /* @__PURE__ */ new Map(),
-		rendererOptions: /* @__PURE__ */ new Map(),
-		rendererTaskOptions: /* @__PURE__ */ new Map()
-	};
-	constructor(tasks, options, events) {
-		this.tasks = tasks;
-		this.options = options;
-		this.events = events;
-		this.options = {
-			...DefaultRenderer.rendererOptions,
-			...this.options,
-			icon: {
-				...LISTR_DEFAULT_RENDERER_STYLE.icon,
-				...options?.icon ?? {}
-			},
-			color: {
-				...LISTR_DEFAULT_RENDERER_STYLE.color,
-				...options?.color ?? {}
-			}
-		};
-		this.spinner = this.options.spinner ?? new Spinner();
-		this.logger = this.options.logger ?? new ListrLogger({
-			useIcons: true,
-			toStderr: []
-		});
-		this.logger.options.icon = this.options.icon;
-		this.logger.options.color = this.options.color;
-	}
-	async render() {
-		const { createLogUpdate } = await import("../log-update-DHZRyJ2m.js");
-		const { default: truncate } = await import("../cli-truncate-BVOlIIPy.js");
-		const { default: wrap } = await import("../wrap-ansi-DUi52C6W.js");
-		this.updater = createLogUpdate(this.logger.process.stdout);
-		this.truncate = truncate;
-		this.wrap = wrap;
-		this.logger.process.hijack();
-		/* istanbul ignore if */
-		if (!this.options?.lazy) this.spinner.start(() => {
-			this.update();
-		});
-		this.events.on(ListrEventType.SHOULD_REFRESH_RENDER, () => {
-			this.update();
-		});
-	}
-	update() {
-		this.updater(this.create());
-	}
-	end() {
-		this.spinner.stop();
-		this.updater.clear();
-		this.updater.done();
-		if (!this.options.clearOutput) this.logger.process.toStdout(this.create({ prompt: false }));
-		this.logger.process.release();
-	}
-	create(options) {
-		options = {
-			tasks: true,
-			bottomBar: true,
-			prompt: true,
-			...options
-		};
-		const render = [];
-		const renderTasks = this.renderer(this.tasks);
-		const renderBottomBar = this.renderBottomBar();
-		const renderPrompt = this.renderPrompt();
-		if (options.tasks && renderTasks.length > 0) render.push(...renderTasks);
-		if (options.bottomBar && renderBottomBar.length > 0) {
-			if (render.length > 0) render.push("");
-			render.push(...renderBottomBar);
-		}
-		if (options.prompt && renderPrompt.length > 0) {
-			if (render.length > 0) render.push("");
-			render.push(...renderPrompt);
-		}
-		return render.join(EOL$1);
-	}
-	style(task, output = false) {
-		const rendererOptions = this.cache.rendererOptions.get(task.id);
-		if (task.isSkipped()) {
-			if (output || rendererOptions.collapseSkips) return this.logger.icon(ListrDefaultRendererLogLevels.SKIPPED_WITH_COLLAPSE);
-			else if (rendererOptions.collapseSkips === false) return this.logger.icon(ListrDefaultRendererLogLevels.SKIPPED_WITHOUT_COLLAPSE);
-		}
-		if (output) {
-			if (this.shouldOutputToBottomBar(task)) return this.logger.icon(ListrDefaultRendererLogLevels.OUTPUT_WITH_BOTTOMBAR);
-			return this.logger.icon(ListrDefaultRendererLogLevels.OUTPUT);
-		}
-		if (task.hasSubtasks()) {
-			if (task.isStarted() || task.isPrompt() && rendererOptions.showSubtasks !== false && !task.subtasks.every((subtask) => !subtask.hasTitle())) return this.logger.icon(ListrDefaultRendererLogLevels.PENDING);
-			else if (task.isCompleted() && task.subtasks.some((subtask) => subtask.hasFailed())) return this.logger.icon(ListrDefaultRendererLogLevels.COMPLETED_WITH_FAILED_SUBTASKS);
-			else if (task.hasFailed()) return this.logger.icon(ListrDefaultRendererLogLevels.FAILED_WITH_FAILED_SUBTASKS);
-		}
-		if (task.isStarted() || task.isPrompt()) return this.logger.icon(ListrDefaultRendererLogLevels.PENDING, !this.options?.lazy && this.spinner.fetch());
-		else if (task.isCompleted()) return this.logger.icon(ListrDefaultRendererLogLevels.COMPLETED);
-		else if (task.isRetrying()) return this.logger.icon(ListrDefaultRendererLogLevels.RETRY, !this.options?.lazy && this.spinner.fetch());
-		else if (task.isRollingBack()) return this.logger.icon(ListrDefaultRendererLogLevels.ROLLING_BACK, !this.options?.lazy && this.spinner.fetch());
-		else if (task.hasRolledBack()) return this.logger.icon(ListrDefaultRendererLogLevels.ROLLED_BACK);
-		else if (task.hasFailed()) return this.logger.icon(ListrDefaultRendererLogLevels.FAILED);
-		else if (task.isPaused()) return this.logger.icon(ListrDefaultRendererLogLevels.PAUSED);
-		return this.logger.icon(ListrDefaultRendererLogLevels.WAITING);
-	}
-	format(message, icon, level) {
-		if (message.trim() === "") return [];
-		if (icon) message = icon + " " + message;
-		let parsed;
-		const columns = (process.stdout.columns ?? 80) - level * this.options.indentation - 2;
-		switch (this.options.formatOutput) {
-			case "truncate":
-				parsed = message.split(EOL$1).map((s, i) => {
-					return this.truncate(this.indent(s, i), columns);
-				});
-				break;
-			case "wrap":
-				parsed = this.wrap(message, columns, {
-					hard: true,
-					trim: false
-				}).split(EOL$1).map((s, i) => this.indent(s, i));
-				break;
-			default: throw new ListrRendererError("Format option for the renderer is wrong.");
-		}
-		if (this.options.removeEmptyLines) parsed = parsed.filter(Boolean);
-		return parsed.map((str) => indent(str, level * this.options.indentation));
-	}
-	shouldOutputToOutputBar(task) {
-		const outputBar = this.cache.rendererTaskOptions.get(task.id).outputBar;
-		return typeof outputBar === "number" && outputBar !== 0 || typeof outputBar === "boolean" && outputBar !== false;
-	}
-	shouldOutputToBottomBar(task) {
-		const bottomBar = this.cache.rendererTaskOptions.get(task.id).bottomBar;
-		return typeof bottomBar === "number" && bottomBar !== 0 || typeof bottomBar === "boolean" && bottomBar !== false || !task.hasTitle();
-	}
-	renderer(tasks, level = 0) {
-		return tasks.flatMap((task) => {
-			if (!task.isEnabled()) return [];
-			if (this.cache.render.has(task.id)) return this.cache.render.get(task.id);
-			this.calculate(task);
-			this.setupBuffer(task);
-			const rendererOptions = this.cache.rendererOptions.get(task.id);
-			const rendererTaskOptions = this.cache.rendererTaskOptions.get(task.id);
-			const output = [];
-			if (task.isPrompt()) {
-				if (this.activePrompt && this.activePrompt !== task.id) throw new ListrRendererError("Only one prompt can be active at the given time, please re-evaluate your task design.");
-				else if (!this.activePrompt) {
-					task.on(ListrTaskEventType.PROMPT, (prompt) => {
-						const cleansed = cleanseAnsi(prompt);
-						if (cleansed) this.prompt = cleansed;
-					});
-					task.on(ListrTaskEventType.STATE, (state) => {
-						if (state === ListrTaskState.PROMPT_COMPLETED || task.hasFinalized() || task.hasReset()) {
-							this.prompt = null;
-							this.activePrompt = null;
-							task.off(ListrTaskEventType.PROMPT);
-						}
-					});
-					this.activePrompt = task.id;
-				}
-			}
-			if (task.hasTitle()) if (!(tasks.some((task$1) => task$1.hasFailed()) && !task.hasFailed() && task.options.exitOnError !== false && !(task.isCompleted() || task.isSkipped()))) if (task.hasFailed() && rendererOptions.collapseErrors) output.push(...this.format(!task.hasSubtasks() && task.message.error && rendererOptions.showErrorMessage ? task.message.error : task.title, this.style(task), level));
-			else if (task.isSkipped() && rendererOptions.collapseSkips) output.push(...this.format(this.logger.suffix(task.message.skip && rendererOptions.showSkipMessage ? task.message.skip : task.title, {
-				field: ListrLogLevels.SKIPPED,
-				condition: rendererOptions.suffixSkips,
-				format: () => color.dim
-			}), this.style(task), level));
-			else if (task.isRetrying()) output.push(...this.format(this.logger.suffix(task.title, {
-				field: `${ListrLogLevels.RETRY}:${task.message.retry.count}`,
-				format: () => color.yellow,
-				condition: rendererOptions.suffixRetries
-			}), this.style(task), level));
-			else if (task.isCompleted() && task.hasTitle() && assertFunctionOrSelf(rendererTaskOptions.timer?.condition, task.message.duration)) output.push(...this.format(this.logger.suffix(task?.title, {
-				...rendererTaskOptions.timer,
-				args: [task.message.duration]
-			}), this.style(task), level));
-			else if (task.isPaused()) output.push(...this.format(this.logger.suffix(task.title, {
-				...rendererOptions.pausedTimer,
-				args: [task.message.paused - Date.now()]
-			}), this.style(task), level));
-			else output.push(...this.format(task.title, this.style(task), level));
-			else output.push(...this.format(task.title, this.logger.icon(ListrDefaultRendererLogLevels.COMPLETED_WITH_FAILED_SISTER_TASKS), level));
-			if (!task.hasSubtasks() || !rendererOptions.showSubtasks) {
-				if (task.hasFailed() && rendererOptions.collapseErrors === false && (rendererOptions.showErrorMessage || !rendererOptions.showSubtasks)) output.push(...this.dump(task, level, ListrLogLevels.FAILED));
-				else if (task.isSkipped() && rendererOptions.collapseSkips === false && (rendererOptions.showSkipMessage || !rendererOptions.showSubtasks)) output.push(...this.dump(task, level, ListrLogLevels.SKIPPED));
-			}
-			if (task.isPending() || rendererTaskOptions.persistentOutput) output.push(...this.renderOutputBar(task, level));
-			if (rendererOptions.showSubtasks !== false && task.hasSubtasks() && (task.isPending() || task.hasFinalized() && !task.hasTitle() || task.isCompleted() && rendererOptions.collapseSubtasks === false && !task.subtasks.some((subtask) => this.cache.rendererOptions.get(subtask.id)?.collapseSubtasks === true) || task.subtasks.some((subtask) => this.cache.rendererOptions.get(subtask.id)?.collapseSubtasks === false) || task.subtasks.some((subtask) => subtask.hasFailed()) || task.subtasks.some((subtask) => subtask.hasRolledBack()))) {
-				const subtaskLevel = !task.hasTitle() ? level : level + 1;
-				const subtaskRender = this.renderer(task.subtasks, subtaskLevel);
-				output.push(...subtaskRender);
-			}
-			if (task.hasFinalized()) {
-				if (!rendererTaskOptions.persistentOutput) {
-					this.buffer.bottom.delete(task.id);
-					this.buffer.output.delete(task.id);
-				}
-			}
-			if (task.isClosed()) {
-				this.cache.render.set(task.id, output);
-				this.reset(task);
-			}
-			return output;
-		});
-	}
-	renderOutputBar(task, level) {
-		const output = this.buffer.output.get(task.id);
-		if (!output) return [];
-		return output.all.flatMap((o) => this.dump(task, level, ListrLogLevels.OUTPUT, o.entry));
-	}
-	renderBottomBar() {
-		if (this.buffer.bottom.size === 0) return [];
-		return Array.from(this.buffer.bottom.values()).flatMap((output) => output.all).sort((a, b) => a.time - b.time).map((output) => output.entry);
-	}
-	renderPrompt() {
-		if (!this.prompt) return [];
-		return [this.prompt];
-	}
-	calculate(task) {
-		if (this.cache.rendererOptions.has(task.id) && this.cache.rendererTaskOptions.has(task.id)) return;
-		const rendererOptions = {
-			...this.options,
-			...task.rendererOptions
-		};
-		this.cache.rendererOptions.set(task.id, rendererOptions);
-		this.cache.rendererTaskOptions.set(task.id, {
-			...DefaultRenderer.rendererTaskOptions,
-			timer: rendererOptions.timer,
-			...task.rendererTaskOptions
-		});
-	}
-	setupBuffer(task) {
-		if (this.buffer.bottom.has(task.id) || this.buffer.output.has(task.id)) return;
-		const rendererTaskOptions = this.cache.rendererTaskOptions.get(task.id);
-		if (this.shouldOutputToBottomBar(task) && !this.buffer.bottom.has(task.id)) {
-			this.buffer.bottom.set(task.id, new ProcessOutputBuffer({ limit: typeof rendererTaskOptions.bottomBar === "number" ? rendererTaskOptions.bottomBar : 1 }));
-			task.on(ListrTaskEventType.OUTPUT, (output) => {
-				const data = this.dump(task, -1, ListrLogLevels.OUTPUT, output);
-				this.buffer.bottom.get(task.id).write(data.join(EOL$1));
-			});
-			task.on(ListrTaskEventType.STATE, (state) => {
-				switch (state) {
-					case ListrTaskState.RETRY || ListrTaskState.ROLLING_BACK:
-						this.buffer.bottom.delete(task.id);
-						break;
-				}
-			});
-		} else if (this.shouldOutputToOutputBar(task) && !this.buffer.output.has(task.id)) {
-			this.buffer.output.set(task.id, new ProcessOutputBuffer({ limit: typeof rendererTaskOptions.outputBar === "number" ? rendererTaskOptions.outputBar : 1 }));
-			task.on(ListrTaskEventType.OUTPUT, (output) => {
-				this.buffer.output.get(task.id).write(output);
-			});
-			task.on(ListrTaskEventType.STATE, (state) => {
-				switch (state) {
-					case ListrTaskState.RETRY || ListrTaskState.ROLLING_BACK:
-						this.buffer.output.delete(task.id);
-						break;
-				}
-			});
-		}
-	}
-	reset(task) {
-		this.cache.rendererOptions.delete(task.id);
-		this.cache.rendererTaskOptions.delete(task.id);
-		this.buffer.output.delete(task.id);
-	}
-	dump(task, level, source = ListrLogLevels.OUTPUT, data) {
-		if (!data) switch (source) {
-			case ListrLogLevels.OUTPUT:
-				data = task.output;
-				break;
-			case ListrLogLevels.SKIPPED:
-				data = task.message.skip;
-				break;
-			case ListrLogLevels.FAILED:
-				data = task.message.error;
-				break;
-		}
-		if (task.hasTitle() && source === ListrLogLevels.FAILED && data === task.title || typeof data !== "string") return [];
-		if (source === ListrLogLevels.OUTPUT) data = cleanseAnsi(data);
-		return this.format(data, this.style(task, true), level + 1);
-	}
-	indent(str, i) {
-		return i > 0 ? indent(str.trimEnd(), this.options.indentation) : str.trimEnd();
-	}
-};
-var SilentRenderer = class {
-	static nonTTY = true;
-	static rendererOptions;
-	static rendererTaskOptions;
-	constructor(tasks, options) {
-		this.tasks = tasks;
-		this.options = options;
-	}
-	render() {}
-	end() {}
-};
-var SimpleRenderer = class SimpleRenderer {
-	static nonTTY = true;
-	static rendererOptions = { pausedTimer: {
-		...PRESET_TIMER,
-		field: (time) => `${ListrLogLevels.PAUSED}:${time}`,
-		format: () => color.yellowBright
-	} };
-	static rendererTaskOptions = {};
-	logger;
-	cache = {
-		rendererOptions: /* @__PURE__ */ new Map(),
-		rendererTaskOptions: /* @__PURE__ */ new Map()
-	};
-	constructor(tasks, options) {
-		this.tasks = tasks;
-		this.options = options;
-		this.options = {
-			...SimpleRenderer.rendererOptions,
-			...options,
-			icon: {
-				...LISTR_LOGGER_STYLE.icon,
-				...options?.icon ?? {}
-			},
-			color: {
-				...LISTR_LOGGER_STYLE.color,
-				...options?.color ?? {}
-			}
-		};
-		this.logger = this.options.logger ?? new ListrLogger({
-			useIcons: true,
-			toStderr: LISTR_LOGGER_STDERR_LEVELS
-		});
-		this.logger.options.icon = this.options.icon;
-		this.logger.options.color = this.options.color;
-		if (this.options.timestamp) this.logger.options.fields.prefix.unshift(this.options.timestamp);
-	}
-	end() {}
-	render() {
-		this.renderer(this.tasks);
-	}
-	renderer(tasks) {
-		tasks.forEach((task) => {
-			this.calculate(task);
-			task.once(ListrTaskEventType.CLOSED, () => {
-				this.reset(task);
-			});
-			const rendererOptions = this.cache.rendererOptions.get(task.id);
-			const rendererTaskOptions = this.cache.rendererTaskOptions.get(task.id);
-			task.on(ListrTaskEventType.SUBTASK, (subtasks) => {
-				this.renderer(subtasks);
-			});
-			task.on(ListrTaskEventType.STATE, (state) => {
-				if (!task.hasTitle()) return;
-				if (state === ListrTaskState.STARTED) this.logger.log(ListrLogLevels.STARTED, task.title);
-				else if (state === ListrTaskState.COMPLETED) {
-					const timer = rendererTaskOptions?.timer;
-					this.logger.log(ListrLogLevels.COMPLETED, task.title, timer && { suffix: {
-						...timer,
-						condition: !!task.message?.duration && timer.condition,
-						args: [task.message.duration]
-					} });
-				} else if (state === ListrTaskState.PROMPT) {
-					this.logger.process.hijack();
-					task.on(ListrTaskEventType.PROMPT, (prompt) => {
-						this.logger.process.toStderr(prompt, false);
-					});
-				} else if (state === ListrTaskState.PROMPT_COMPLETED) {
-					task.off(ListrTaskEventType.PROMPT);
-					this.logger.process.release();
-				}
-			});
-			task.on(ListrTaskEventType.OUTPUT, (output) => {
-				this.logger.log(ListrLogLevels.OUTPUT, output);
-			});
-			task.on(ListrTaskEventType.MESSAGE, (message) => {
-				if (message.error) this.logger.log(ListrLogLevels.FAILED, task.title, { suffix: {
-					field: `${ListrLogLevels.FAILED}: ${message.error}`,
-					format: () => color.red
-				} });
-				else if (message.skip) this.logger.log(ListrLogLevels.SKIPPED, task.title, { suffix: {
-					field: `${ListrLogLevels.SKIPPED}: ${message.skip}`,
-					format: () => color.yellow
-				} });
-				else if (message.rollback) this.logger.log(ListrLogLevels.ROLLBACK, task.title, { suffix: {
-					field: `${ListrLogLevels.ROLLBACK}: ${message.rollback}`,
-					format: () => color.red
-				} });
-				else if (message.retry) this.logger.log(ListrLogLevels.RETRY, task.title, { suffix: {
-					field: `${ListrLogLevels.RETRY}:${message.retry.count}`,
-					format: () => color.red
-				} });
-				else if (message.paused) {
-					const timer = rendererOptions?.pausedTimer;
-					this.logger.log(ListrLogLevels.PAUSED, task.title, timer && { suffix: {
-						...timer,
-						condition: !!message?.paused && timer.condition,
-						args: [message.paused - Date.now()]
-					} });
-				}
-			});
-		});
-	}
-	calculate(task) {
-		if (this.cache.rendererOptions.has(task.id) && this.cache.rendererTaskOptions.has(task.id)) return;
-		const rendererOptions = {
-			...this.options,
-			...task.rendererOptions
-		};
-		this.cache.rendererOptions.set(task.id, rendererOptions);
-		this.cache.rendererTaskOptions.set(task.id, {
-			...SimpleRenderer.rendererTaskOptions,
-			timer: rendererOptions.timer,
-			...task.rendererTaskOptions
-		});
-	}
-	reset(task) {
-		this.cache.rendererOptions.delete(task.id);
-		this.cache.rendererTaskOptions.delete(task.id);
-	}
-};
-var TestRendererSerializer = class {
-	constructor(options) {
-		this.options = options;
-	}
-	serialize(event, data, task) {
-		return JSON.stringify(this.generate(event, data, task));
-	}
-	generate(event, data, task) {
-		const output = {
-			event,
-			data
-		};
-		if (typeof this.options?.task !== "boolean") {
-			const t = Object.fromEntries(this.options.task.map((entity) => {
-				const property = task[entity];
-				if (typeof property === "function") return [entity, property.call(task)];
-				return [entity, property];
-			}));
-			if (Object.keys(task).length > 0) output.task = t;
-		}
-		return output;
-	}
-};
-var TestRenderer = class TestRenderer {
-	static nonTTY = true;
-	static rendererOptions = {
-		subtasks: true,
-		state: Object.values(ListrTaskState),
-		output: true,
-		prompt: true,
-		title: true,
-		messages: [
-			"skip",
-			"error",
-			"retry",
-			"rollback",
-			"paused"
-		],
-		messagesToStderr: [
-			"error",
-			"rollback",
-			"retry"
-		],
-		task: [
-			"hasRolledBack",
-			"isRollingBack",
-			"isCompleted",
-			"isSkipped",
-			"hasFinalized",
-			"hasSubtasks",
-			"title",
-			"hasReset",
-			"hasTitle",
-			"isPrompt",
-			"isPaused",
-			"isPending",
-			"isSkipped",
-			"isStarted",
-			"hasFailed",
-			"isEnabled",
-			"isRetrying",
-			"path"
-		]
-	};
-	static rendererTaskOptions;
-	logger;
-	serializer;
-	constructor(tasks, options) {
-		this.tasks = tasks;
-		this.options = options;
-		this.options = {
-			...TestRenderer.rendererOptions,
-			...this.options
-		};
-		this.logger = this.options.logger ?? new ListrLogger({ useIcons: false });
-		this.serializer = new TestRendererSerializer(this.options);
-	}
-	render() {
-		this.renderer(this.tasks);
-	}
-	end() {}
-	renderer(tasks) {
-		tasks.forEach((task) => {
-			if (this.options.subtasks) task.on(ListrTaskEventType.SUBTASK, (subtasks) => {
-				this.renderer(subtasks);
-			});
-			if (this.options.state) task.on(ListrTaskEventType.STATE, (state) => {
-				this.logger.toStdout(this.serializer.serialize(ListrTaskEventType.STATE, state, task));
-			});
-			if (this.options.output) task.on(ListrTaskEventType.OUTPUT, (data) => {
-				this.logger.toStdout(this.serializer.serialize(ListrTaskEventType.OUTPUT, data, task));
-			});
-			if (this.options.prompt) task.on(ListrTaskEventType.PROMPT, (prompt) => {
-				this.logger.toStdout(this.serializer.serialize(ListrTaskEventType.PROMPT, prompt, task));
-			});
-			if (this.options.title) task.on(ListrTaskEventType.TITLE, (title) => {
-				this.logger.toStdout(this.serializer.serialize(ListrTaskEventType.TITLE, title, task));
-			});
-			task.on(ListrTaskEventType.MESSAGE, (message) => {
-				const parsed = Object.fromEntries(Object.entries(message).map(([key, value]) => {
-					if (this.options.messages.includes(key)) return [key, value];
-				}).filter(Boolean));
-				if (Object.keys(parsed).length > 0) {
-					const output = this.serializer.serialize(ListrTaskEventType.MESSAGE, parsed, task);
-					if (this.options.messagesToStderr.some((state) => Object.keys(parsed).includes(state))) this.logger.toStderr(output);
-					else this.logger.toStdout(output);
-				}
-			});
-		});
-	}
-};
-const RENDERERS = {
-	default: DefaultRenderer,
-	simple: SimpleRenderer,
-	verbose: class VerboseRenderer {
-		static nonTTY = true;
-		static rendererOptions = {
-			logTitleChange: false,
-			pausedTimer: {
-				...PRESET_TIMER,
-				format: () => color.yellowBright
-			}
-		};
-		static rendererTaskOptions;
-		logger;
-		cache = {
-			rendererOptions: /* @__PURE__ */ new Map(),
-			rendererTaskOptions: /* @__PURE__ */ new Map()
-		};
-		constructor(tasks, options) {
-			this.tasks = tasks;
-			this.options = options;
-			this.options = {
-				...VerboseRenderer.rendererOptions,
-				...this.options,
-				icon: {
-					...LISTR_LOGGER_STYLE.icon,
-					...options?.icon ?? {}
-				},
-				color: {
-					...LISTR_LOGGER_STYLE.color,
-					...options?.color ?? {}
-				}
-			};
-			this.logger = this.options.logger ?? new ListrLogger({
-				useIcons: false,
-				toStderr: LISTR_LOGGER_STDERR_LEVELS
-			});
-			this.logger.options.icon = this.options.icon;
-			this.logger.options.color = this.options.color;
-			if (this.options.timestamp) this.logger.options.fields.prefix.unshift(this.options.timestamp);
-		}
-		render() {
-			this.renderer(this.tasks);
-		}
-		end() {}
-		renderer(tasks) {
-			tasks.forEach((task) => {
-				this.calculate(task);
-				task.once(ListrTaskEventType.CLOSED, () => {
-					this.reset(task);
-				});
-				const rendererOptions = this.cache.rendererOptions.get(task.id);
-				const rendererTaskOptions = this.cache.rendererTaskOptions.get(task.id);
-				task.on(ListrTaskEventType.SUBTASK, (subtasks) => {
-					this.renderer(subtasks);
-				});
-				task.on(ListrTaskEventType.STATE, (state) => {
-					if (!task.hasTitle()) return;
-					if (state === ListrTaskState.STARTED) this.logger.log(ListrLogLevels.STARTED, task.title);
-					else if (state === ListrTaskState.COMPLETED) {
-						const timer = rendererTaskOptions.timer;
-						this.logger.log(ListrLogLevels.COMPLETED, task.title, timer && { suffix: {
-							...timer,
-							condition: !!task.message?.duration && timer.condition,
-							args: [task.message.duration]
-						} });
-					}
-				});
-				task.on(ListrTaskEventType.OUTPUT, (data) => {
-					this.logger.log(ListrLogLevels.OUTPUT, data);
-				});
-				task.on(ListrTaskEventType.PROMPT, (prompt) => {
-					const cleansed = cleanseAnsi(prompt);
-					if (cleansed) this.logger.log(ListrLogLevels.PROMPT, cleansed);
-				});
-				if (this.options?.logTitleChange !== false) task.on(ListrTaskEventType.TITLE, (title) => {
-					this.logger.log(ListrLogLevels.TITLE, title);
-				});
-				task.on(ListrTaskEventType.MESSAGE, (message) => {
-					if (message?.error) this.logger.log(ListrLogLevels.FAILED, message.error);
-					else if (message?.skip) this.logger.log(ListrLogLevels.SKIPPED, message.skip);
-					else if (message?.rollback) this.logger.log(ListrLogLevels.ROLLBACK, message.rollback);
-					else if (message?.retry) this.logger.log(ListrLogLevels.RETRY, task.title, { suffix: message.retry.count.toString() });
-					else if (message?.paused) {
-						const timer = rendererOptions?.pausedTimer;
-						this.logger.log(ListrLogLevels.PAUSED, task.title, timer && { suffix: {
-							...timer,
-							condition: !!message?.paused && timer.condition,
-							args: [message.paused - Date.now()]
-						} });
-					}
-				});
-			});
-		}
-		calculate(task) {
-			if (this.cache.rendererOptions.has(task.id) && this.cache.rendererTaskOptions.has(task.id)) return;
-			const rendererOptions = {
-				...this.options,
-				...task.rendererOptions
-			};
-			this.cache.rendererOptions.set(task.id, rendererOptions);
-			this.cache.rendererTaskOptions.set(task.id, {
-				...VerboseRenderer.rendererTaskOptions,
-				timer: rendererOptions.timer,
-				...task.rendererTaskOptions
-			});
-		}
-		reset(task) {
-			this.cache.rendererOptions.delete(task.id);
-			this.cache.rendererTaskOptions.delete(task.id);
-		}
-	},
-	test: TestRenderer,
-	silent: SilentRenderer
-};
-function isRendererSupported(renderer) {
-	return process.stdout.isTTY === true || renderer.nonTTY === true;
-}
-function getRendererClass(renderer) {
-	if (typeof renderer === "string") return RENDERERS[renderer] ?? RENDERERS.default;
-	return typeof renderer === "function" ? renderer : RENDERERS.default;
-}
-function getRenderer$1(options) {
-	if (assertFunctionOrSelf(options?.silentRendererCondition)) return {
-		renderer: getRendererClass("silent"),
-		selection: ListrRendererSelection.SILENT
-	};
-	const r = {
-		renderer: getRendererClass(options.renderer),
-		options: options.rendererOptions,
-		selection: ListrRendererSelection.PRIMARY
-	};
-	if (!isRendererSupported(r.renderer) || assertFunctionOrSelf(options?.fallbackRendererCondition)) return {
-		renderer: getRendererClass(options.fallbackRenderer),
-		options: options.fallbackRendererOptions,
-		selection: ListrRendererSelection.SECONDARY
-	};
-	return r;
-}
-/**
-* This function asserts the given value as a function or itself.
-* If the value itself is a function it will evaluate it with the passed in arguments,
-* elsewise it will directly return itself.
-*/
-function assertFunctionOrSelf(functionOrSelf, ...args) {
-	if (typeof functionOrSelf === "function") return functionOrSelf(...args);
-	else return functionOrSelf;
-}
-const clone = (0, import_rfdc.default)({ circles: true });
-/**
-* Deep clones a object in the easiest manner.
-*/
-function cloneObject(obj) {
-	return clone(obj);
-}
-var Concurrency = class {
-	concurrency;
-	count;
-	queue;
-	constructor(options) {
-		this.concurrency = options.concurrency;
-		this.count = 0;
-		this.queue = /* @__PURE__ */ new Set();
-	}
-	add(fn) {
-		if (this.count < this.concurrency) return this.run(fn);
-		return new Promise((resolve) => {
-			const callback = () => resolve(this.run(fn));
-			this.queue.add(callback);
-		});
-	}
-	flush() {
-		for (const callback of this.queue) {
-			if (this.count >= this.concurrency) break;
-			this.queue.delete(callback);
-			callback();
-		}
-	}
-	run(fn) {
-		this.count++;
-		const promise = fn();
-		const cleanup = () => {
-			this.count--;
-			this.flush();
-		};
-		promise.then(cleanup, () => {
-			this.queue.clear();
-		});
-		return promise;
-	}
-};
-function delay(time) {
-	return new Promise((resolve) => {
-		setTimeout(resolve, time);
-	});
-}
-/**
-* Internal error handling mechanism for Listr collects the errors and details for a failed task.
-*
-* @see {@link https://listr2.kilic.dev/task/error-handling.html}
-*/
-var ListrError = class extends Error {
-	path;
-	ctx;
-	constructor(error, type, task) {
-		super(error.message);
-		this.error = error;
-		this.type = type;
-		this.task = task;
-		this.name = "ListrError";
-		this.path = task.path;
-		if (task?.options.collectErrors === "full") {
-			this.task = cloneObject(task);
-			this.ctx = cloneObject(task.listr.ctx);
-		}
-		this.stack = error?.stack;
-	}
-};
-/**
-* Internal error coming from renderer.
-*/
-var ListrRendererError = class extends Error {};
-/**
-* Internal error handling mechanism for Listr prompts to identify the failing cause is coming from a prompt.
-*
-* @see {@link https://listr2.kilic.dev/task/prompts.html}
-*/
-var PromptError = class extends Error {};
-/**
-* The original Task that is defined by the user is wrapped with the TaskWrapper to provide additional functionality.
-*
-* @see {@link https://listr2.kilic.dev/task/task.html}
-*/
-var TaskWrapper = class {
-	constructor(task) {
-		this.task = task;
-	}
-	/* istanbul ignore next */
-	get title() {
-		return this.task.title;
-	}
-	/**
-	* Title of the current task.
-	*
-	* @see {@link https://listr2.kilic.dev/task/title.html}
-	*/
-	set title(title) {
-		title = Array.isArray(title) ? title : [title];
-		this.task.title$ = splat(title.shift(), ...title);
-	}
-	/* istanbul ignore next */
-	get output() {
-		return this.task.output;
-	}
-	/* istanbul ignore next */
-	/**
-	* Send output from the current task to the renderer.
-	*
-	* @see {@link https://listr2.kilic.dev/task/output.html}
-	*/
-	set output(output) {
-		output = Array.isArray(output) ? output : [output];
-		this.task.output$ = splat(output.shift(), ...output);
-	}
-	/* istanbul ignore next */
-	/** Send an output to the output channel as prompt. */
-	set promptOutput(output) {
-		this.task.promptOutput$ = output;
-	}
-	/**
-	* Creates a new set of Listr subtasks.
-	*
-	* @see {@link https://listr2.kilic.dev/task/subtasks.html}
-	*/
-	newListr(task, options) {
-		let tasks;
-		if (typeof task === "function") tasks = task(this);
-		else tasks = task;
-		return new Listr(tasks, options, this.task);
-	}
-	/**
-	* Report an error that has to be collected and handled.
-	*
-	* @see {@link https://listr2.kilic.dev/task/error-handling.html}
-	*/
-	report(error, type) {
-		if (this.task.options.collectErrors !== false) this.task.listr.errors.push(new ListrError(error, type, this.task));
-		this.task.message$ = { error: error.message ?? this.task?.title };
-	}
-	/**
-	* Skip the current task.
-	*
-	* @see {@link https://listr2.kilic.dev/task/skip.html}
-	*/
-	skip(message, ...metadata) {
-		this.task.state$ = ListrTaskState.SKIPPED;
-		if (message) this.task.message$ = { skip: message ? splat(message, ...metadata) : this.task?.title };
-	}
-	/**
-	* Check whether this task is currently in a retry state.
-	*
-	* @see {@link https://listr2.kilic.dev/task/retry.html}
-	*/
-	isRetrying() {
-		return this.task.isRetrying() ? this.task.retry : { count: 0 };
-	}
-	/* istanbul ignore next */
-	/**
-	* Create a new prompt for getting user input through the prompt adapter.
-	* This will create a new prompt through the adapter if the task is not currently rendering a prompt or will return the active instance.
-	*
-	* This part of the application requires optional peer dependencies, please refer to documentation.
-	*
-	* @see {@link https://listr2.kilic.dev/task/prompt.html}
-	*/
-	prompt(adapter) {
-		if (this.task.prompt) return this.task.prompt;
-		return new adapter(this.task, this);
-	}
-	/* istanbul ignore next */
-	/**
-	* Generates a fake stdout for your use case, where it will be tunnelled through Listr to handle the rendering process.
-	*
-	* @see {@link https://listr2.kilic.dev/renderer/process-output.html}
-	*/
-	stdout(type) {
-		return createWritable((chunk) => {
-			switch (type) {
-				case ListrTaskEventType.PROMPT:
-					this.promptOutput = chunk;
-					break;
-				default: this.output = chunk;
-			}
-		});
-	}
-	/** Run this task. */
-	run(ctx) {
-		return this.task.run(ctx, this);
-	}
-};
-var ListrTaskEventManager = class extends EventManager {};
-/**
-* Creates and handles a runnable instance of the Task.
-*/
-var Task = class extends ListrTaskEventManager {
-	/** Unique id per task, can be used for identifying a Task. */
-	id = randomUUID$1();
-	/** The current state of the task. */
-	state = ListrTaskState.WAITING;
-	/** Subtasks of the current task. */
-	subtasks;
-	/** Title of the task. */
-	title;
-	/** Initial/Untouched version of the title for using whenever task has a reset. */
-	initialTitle;
-	/** Output channel for the task. */
-	output;
-	/** Current state of the retry process whenever the task is retrying. */
-	retry;
-	/**
-	* A channel for messages.
-	*
-	* This requires a separate channel for messages like error, skip or runtime messages to further utilize in the renderers.
-	*/
-	message = {};
-	/** Current prompt instance or prompt error whenever the task is prompting. */
-	prompt;
-	/** Parent task of the current task. */
-	parent;
-	/** Enable flag of this task. */
-	enabled;
-	/** User provided Task callback function to run. */
-	taskFn;
-	/** Marks the task as closed. This is different from finalized since this is not really related to task itself. */
-	closed;
-	constructor(listr, task, options, rendererOptions, rendererTaskOptions) {
-		super();
-		this.listr = listr;
-		this.task = task;
-		this.options = options;
-		this.rendererOptions = rendererOptions;
-		this.rendererTaskOptions = rendererTaskOptions;
-		if (task.title) {
-			const title = Array.isArray(task?.title) ? task.title : [task.title];
-			this.title = splat(title.shift(), ...title);
-			this.initialTitle = this.title;
-		}
-		this.taskFn = task.task;
-		this.parent = listr.parentTask;
-	}
-	/**
-	* Update the current state of the Task and emit the neccassary events.
-	*/
-	set state$(state) {
-		this.state = state;
-		this.emit(ListrTaskEventType.STATE, state);
-		if (this.hasSubtasks() && this.hasFailed()) {
-			for (const subtask of this.subtasks) if (subtask.state === ListrTaskState.STARTED) subtask.state$ = ListrTaskState.FAILED;
-		}
-		this.listr.events.emit(ListrEventType.SHOULD_REFRESH_RENDER);
-	}
-	/**
-	* Update the current output of the Task and emit the neccassary events.
-	*/
-	set output$(data) {
-		this.output = data;
-		this.emit(ListrTaskEventType.OUTPUT, data);
-		this.listr.events.emit(ListrEventType.SHOULD_REFRESH_RENDER);
-	}
-	/**
-	* Update the current prompt output of the Task and emit the neccassary events.
-	*/
-	set promptOutput$(data) {
-		this.emit(ListrTaskEventType.PROMPT, data);
-		if (cleanseAnsi(data)) this.listr.events.emit(ListrEventType.SHOULD_REFRESH_RENDER);
-	}
-	/**
-	* Update or extend the current message of the Task and emit the neccassary events.
-	*/
-	set message$(data) {
-		this.message = {
-			...this.message,
-			...data
-		};
-		this.emit(ListrTaskEventType.MESSAGE, data);
-		this.listr.events.emit(ListrEventType.SHOULD_REFRESH_RENDER);
-	}
-	/**
-	* Update the current title of the Task and emit the neccassary events.
-	*/
-	set title$(title) {
-		this.title = title;
-		this.emit(ListrTaskEventType.TITLE, title);
-		this.listr.events.emit(ListrEventType.SHOULD_REFRESH_RENDER);
-	}
-	/**
-	* Current task path in the hierarchy.
-	*/
-	get path() {
-		return [...this.listr.path, this.initialTitle];
-	}
-	/**
-	* Checks whether the current task with the given context should be set as enabled.
-	*/
-	async check(ctx) {
-		if (this.state === ListrTaskState.WAITING) {
-			this.enabled = await assertFunctionOrSelf(this.task?.enabled ?? true, ctx);
-			this.emit(ListrTaskEventType.ENABLED, this.enabled);
-			this.listr.events.emit(ListrEventType.SHOULD_REFRESH_RENDER);
-		}
-		return this.enabled;
-	}
-	/** Returns whether this task has subtasks. */
-	hasSubtasks() {
-		return this.subtasks?.length > 0;
-	}
-	/** Returns whether this task is finalized in someform. */
-	hasFinalized() {
-		return this.isCompleted() || this.hasFailed() || this.isSkipped() || this.hasRolledBack();
-	}
-	/** Returns whether this task is in progress. */
-	isPending() {
-		return this.isStarted() || this.isPrompt() || this.hasReset();
-	}
-	/** Returns whether this task has started. */
-	isStarted() {
-		return this.state === ListrTaskState.STARTED;
-	}
-	/** Returns whether this task is skipped. */
-	isSkipped() {
-		return this.state === ListrTaskState.SKIPPED;
-	}
-	/** Returns whether this task has been completed. */
-	isCompleted() {
-		return this.state === ListrTaskState.COMPLETED;
-	}
-	/** Returns whether this task has been failed. */
-	hasFailed() {
-		return this.state === ListrTaskState.FAILED;
-	}
-	/** Returns whether this task has an active rollback task going on. */
-	isRollingBack() {
-		return this.state === ListrTaskState.ROLLING_BACK;
-	}
-	/** Returns whether the rollback action was successful. */
-	hasRolledBack() {
-		return this.state === ListrTaskState.ROLLED_BACK;
-	}
-	/** Returns whether this task has an actively retrying task going on. */
-	isRetrying() {
-		return this.state === ListrTaskState.RETRY;
-	}
-	/** Returns whether this task has some kind of reset like retry and rollback going on. */
-	hasReset() {
-		return this.state === ListrTaskState.RETRY || this.state === ListrTaskState.ROLLING_BACK;
-	}
-	/** Returns whether enabled function resolves to true. */
-	isEnabled() {
-		return this.enabled;
-	}
-	/** Returns whether this task actually has a title. */
-	hasTitle() {
-		return typeof this?.title === "string";
-	}
-	/** Returns whether this task has a prompt inside. */
-	isPrompt() {
-		return this.state === ListrTaskState.PROMPT;
-	}
-	/** Returns whether this task is currently paused. */
-	isPaused() {
-		return this.state === ListrTaskState.PAUSED;
-	}
-	/** Returns whether this task is closed. */
-	isClosed() {
-		return this.closed;
-	}
-	/** Pause the given task for certain time. */
-	async pause(time) {
-		const state = this.state;
-		this.state$ = ListrTaskState.PAUSED;
-		this.message$ = { paused: Date.now() + time };
-		await delay(time);
-		this.state$ = state;
-		this.message$ = { paused: null };
-	}
-	/** Run the current task. */
-	async run(context, wrapper) {
-		const handleResult = (result) => {
-			if (result instanceof Listr) {
-				result.options = {
-					...this.options,
-					...result.options
-				};
-				result.rendererClass = getRendererClass("silent");
-				this.subtasks = result.tasks;
-				result.errors = this.listr.errors;
-				this.emit(ListrTaskEventType.SUBTASK, this.subtasks);
-				result = result.run(context);
-			} else if (result instanceof Promise) result = result.then(handleResult);
-			else if (isReadable(result)) result = new Promise((resolve, reject) => {
-				result.on("data", (data) => {
-					this.output$ = data.toString();
-				});
-				result.on("error", (error) => reject(error));
-				result.on("end", () => resolve(null));
-			});
-			else if (isObservable(result)) result = new Promise((resolve, reject) => {
-				result.subscribe({
-					next: (data) => {
-						this.output$ = data;
-					},
-					error: reject,
-					complete: resolve
-				});
-			});
-			return result;
-		};
-		const startTime = Date.now();
-		this.state$ = ListrTaskState.STARTED;
-		const skipped = await assertFunctionOrSelf(this.task?.skip ?? false, context);
-		if (skipped) {
-			if (typeof skipped === "string") this.message$ = { skip: skipped };
-			else if (this.hasTitle()) this.message$ = { skip: this.title };
-			else this.message$ = { skip: "Skipped task without a title." };
-			this.state$ = ListrTaskState.SKIPPED;
-			return;
-		}
-		try {
-			const retryCount = typeof this.task?.retry === "number" && this.task.retry > 0 ? this.task.retry + 1 : typeof this.task?.retry === "object" && this.task.retry.tries > 0 ? this.task.retry.tries + 1 : 1;
-			const retryDelay = typeof this.task.retry === "object" && this.task.retry.delay;
-			for (let retries = 1; retries <= retryCount; retries++) try {
-				await handleResult(this.taskFn(context, wrapper));
-				break;
-			} catch (err) {
-				if (retries !== retryCount) {
-					this.retry = {
-						count: retries,
-						error: err
-					};
-					this.message$ = { retry: this.retry };
-					this.title$ = this.initialTitle;
-					this.output = void 0;
-					wrapper.report(err, ListrErrorTypes.WILL_RETRY);
-					this.state$ = ListrTaskState.RETRY;
-					if (retryDelay) await this.pause(retryDelay);
-				} else throw err;
-			}
-			if (this.isStarted() || this.isRetrying()) {
-				this.message$ = { duration: Date.now() - startTime };
-				this.state$ = ListrTaskState.COMPLETED;
-			}
-		} catch (error) {
-			if (this.prompt instanceof PromptError) error = this.prompt;
-			if (this.task?.rollback) {
-				wrapper.report(error, ListrErrorTypes.WILL_ROLLBACK);
-				try {
-					this.state$ = ListrTaskState.ROLLING_BACK;
-					await this.task.rollback(context, wrapper);
-					this.message$ = { rollback: this.title };
-					this.state$ = ListrTaskState.ROLLED_BACK;
-				} catch (err) {
-					this.state$ = ListrTaskState.FAILED;
-					wrapper.report(err, ListrErrorTypes.HAS_FAILED_TO_ROLLBACK);
-					this.close();
-					throw err;
-				}
-				if (this.listr.options?.exitAfterRollback !== false) {
-					this.close();
-					throw error;
-				}
-			} else {
-				this.state$ = ListrTaskState.FAILED;
-				if (this.listr.options.exitOnError !== false && await assertFunctionOrSelf(this.task?.exitOnError, context) !== false) {
-					wrapper.report(error, ListrErrorTypes.HAS_FAILED);
-					this.close();
-					throw error;
-				} else if (!this.hasSubtasks()) wrapper.report(error, ListrErrorTypes.HAS_FAILED_WITHOUT_ERROR);
-			}
-		} finally {
-			this.close();
-		}
-	}
-	close() {
-		this.emit(ListrTaskEventType.CLOSED);
-		this.listr.events.emit(ListrEventType.SHOULD_REFRESH_RENDER);
-		this.complete();
-	}
-};
-var ListrEventManager = class extends EventManager {};
-/**
-* Create a new task list with Listr.
-*
-* @see {@link https://listr2.kilic.dev/listr/listr.html}
-*/
-var Listr = class {
-	tasks = [];
-	errors = [];
-	ctx;
-	events;
-	path = [];
-	rendererClass;
-	rendererClassOptions;
-	rendererSelection;
-	boundSignalHandler;
-	concurrency;
-	renderer;
-	constructor(task, options, parentTask) {
-		this.task = task;
-		this.options = options;
-		this.parentTask = parentTask;
-		this.options = {
-			concurrent: false,
-			renderer: "default",
-			fallbackRenderer: "simple",
-			exitOnError: true,
-			exitAfterRollback: true,
-			collectErrors: false,
-			registerSignalListeners: true,
-			...this.parentTask?.options ?? {},
-			...options
-		};
-		if (this.options.concurrent === true) this.options.concurrent = Infinity;
-		else if (typeof this.options.concurrent !== "number") this.options.concurrent = 1;
-		this.concurrency = new Concurrency({ concurrency: this.options.concurrent });
-		if (parentTask) {
-			this.path = [...parentTask.listr.path, parentTask.title];
-			this.errors = parentTask.listr.errors;
-		}
-		if (this.parentTask?.listr.events instanceof ListrEventManager) this.events = this.parentTask.listr.events;
-		else this.events = new ListrEventManager();
-		/* istanbul ignore if */
-		if (this.options?.forceTTY || process.env[ListrEnvironmentVariables.FORCE_TTY]) {
-			process.stdout.isTTY = true;
-			process.stderr.isTTY = true;
-		}
-		/* istanbul ignore if */
-		if (this.options?.forceUnicode) process.env[ListrEnvironmentVariables.FORCE_UNICODE] = "1";
-		const renderer = getRenderer$1({
-			renderer: this.options.renderer,
-			rendererOptions: this.options.rendererOptions,
-			fallbackRenderer: this.options.fallbackRenderer,
-			fallbackRendererOptions: this.options.fallbackRendererOptions,
-			fallbackRendererCondition: this.options?.fallbackRendererCondition,
-			silentRendererCondition: this.options?.silentRendererCondition
-		});
-		this.rendererClass = renderer.renderer;
-		this.rendererClassOptions = renderer.options;
-		this.rendererSelection = renderer.selection;
-		/* istanbul ignore next */
-		this.add(task ?? []);
-		/* istanbul ignore if */
-		if (this.options.registerSignalListeners) {
-			this.boundSignalHandler = this.signalHandler.bind(this);
-			process.once("SIGINT", this.boundSignalHandler).setMaxListeners(0);
-		}
-	}
-	/**
-	* Whether this is the root task.
-	*/
-	isRoot() {
-		return !this.parentTask;
-	}
-	/**
-	* Whether this is a subtask of another task list.
-	*/
-	isSubtask() {
-		return !!this.parentTask;
-	}
-	/**
-	* Add tasks to current task list.
-	*
-	* @see {@link https://listr2.kilic.dev/task/task.html}
-	*/
-	add(tasks) {
-		this.tasks.push(...this.generate(tasks));
-	}
-	/**
-	* Run the task list.
-	*
-	* @see {@link https://listr2.kilic.dev/listr/listr.html#run-the-generated-task-list}
-	*/
-	async run(context) {
-		if (!this.renderer) this.renderer = new this.rendererClass(this.tasks, this.rendererClassOptions, this.events);
-		await this.renderer.render();
-		this.ctx = this.options?.ctx ?? context ?? {};
-		try {
-			await Promise.all(this.tasks.map((task) => task.check(this.ctx)));
-			await Promise.all(this.tasks.map((task) => this.concurrency.add(() => this.runTask(task))));
-			this.renderer.end();
-			this.removeSignalHandler();
-		} catch (err) {
-			if (this.options.exitOnError !== false) {
-				this.renderer.end(err);
-				this.removeSignalHandler();
-				throw err;
-			}
-		}
-		return this.ctx;
-	}
-	generate(tasks) {
-		tasks = Array.isArray(tasks) ? tasks : [tasks];
-		return tasks.map((task) => {
-			let rendererTaskOptions;
-			if (this.rendererSelection === ListrRendererSelection.PRIMARY) rendererTaskOptions = task.rendererOptions;
-			else if (this.rendererSelection === ListrRendererSelection.SECONDARY) rendererTaskOptions = task.fallbackRendererOptions;
-			return new Task(this, task, this.options, this.rendererClassOptions, rendererTaskOptions);
-		});
-	}
-	async runTask(task) {
-		if (!await task.check(this.ctx)) return;
-		return new TaskWrapper(task).run(this.ctx);
-	}
-	signalHandler() {
-		this.tasks?.forEach(async (task) => {
-			if (task.isPending()) task.state$ = ListrTaskState.FAILED;
-		});
-		if (this.isRoot()) {
-			this.renderer?.end(/* @__PURE__ */ new Error("Interrupted."));
-			process.exit(127);
-		}
-	}
-	removeSignalHandler() {
-		if (this.boundSignalHandler) process.removeListener("SIGINT", this.boundSignalHandler);
-	}
+	if (result.exitCode > 0) throw new Error(result.stderr.trimEnd(), { cause: result });
+	return result.stdout.trimEnd();
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/figures.js
-const info = blue$1(figures.arrowRight);
-const error = red$1(figures.cross);
-const warning = yellow$1(figures.warning);
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/figures.js
+const wip = () => blue("⋯");
+const done = () => green("✔");
+const info = () => blue("→");
+const error = () => red("✖");
+const warning = () => yellow("⚠");
+const cancelled = () => dim("↓");
+const parallelGroupStart = () => dim("┌");
+const parallelGroupMiddle = () => dim("│");
+const parallelGroupStop = () => dim("└");
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/messages.js
-const configurationError = (opt, helpMsg, value) => `${red$1(`${error} Validation Error:`)}
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/messages.js
+const configurationError = (opt, helpMsg, value) => `${red(`${error()} Validation Error:`)}
 
-  Invalid value for '${bold$1(opt)}': ${bold$1(inspect(value))}
+  Invalid value for '${bold(opt)}': ${bold(inspect(value))}
 
   ${helpMsg}`;
-const NOT_GIT_REPO = red$1(`${error} Current directory is not a git directory!`);
-const FAILED_GET_STAGED_FILES = red$1(`${error} Failed to get staged files!`);
-const incorrectBraces = (before, after) => yellow$1(`${warning} Detected incorrect braces with only single value: \`${before}\`. Reformatted as: \`${after}\`
-`);
-const NO_CONFIGURATION = `${error} lint-staged could not find any valid configuration.`;
-const NO_STAGED_FILES = `${info} lint-staged could not find any staged files.`;
-const NO_TASKS = `${info} lint-staged could not find any staged files matching configured tasks.`;
-const skippingBackup = (hasInitialCommit, diff) => {
-	return yellow$1(`${warning} Skipping backup because ${diff !== void 0 ? "`--diff` was used" : (hasInitialCommit ? "`--no-stash` was used" : "there’s no initial commit yet") + ". This might result in data loss"}.\n`);
-};
-const SKIPPING_HIDE_PARTIALLY_CHANGED = yellow$1(`${warning} Skipping hiding unstaged changes from partially staged files because \`--no-hide-partially-staged\` was used.\n`);
-const DEPRECATED_GIT_ADD = yellow$1(`${warning} Some of your tasks use \`git add\` command. Please remove it from the config since all modifications made by tasks will be automatically added to the git commit index.
-`);
-const TASK_ERROR = "Skipped because of errors from tasks.";
-const PREVENTED_TASK_MODIFICATIONS = `\n${error} lint-staged failed because \`--fail-on-changes\` was used.`;
-const SKIPPED_GIT_ERROR = "Skipped because of previous git error.";
-const GIT_ERROR = `\n  ${red$1(`${error} lint-staged failed due to a git error.`)}`;
-const invalidOption = (name, value, message) => `${red$1(`${error} Validation Error:`)}
+const notGitRepo = () => red(`${error()} Current directory is not a git directory!`);
+const failedGetStagedFiles = () => red(`${error()} Failed to get staged files!`);
+const intentToAddNotSupported = (files) => `${red(`${error()} lint-staged refused to run with files staged with "--intent-to-add":`)}
 
-  Invalid value for option '${bold$1(name)}': ${bold$1(value)}
+${files.map((f) => `- ${f}`).join("\n")}
+`;
+const incorrectBraces = (before, after) => yellow(`${warning()} Detected incorrect braces with only single value: \`${before}\`. Reformatted as: \`${after}\`
+`);
+const noConfiguration = () => `${error()} lint-staged could not find any valid configuration.`;
+const noStagedFiles = () => `${info()} lint-staged could not find any staged files.`;
+const noTasks = () => `${info()} lint-staged could not find any staged files matching configured tasks.`;
+const skippingBackup = (all, hasInitialCommit, diff) => {
+	const reason = diff !== void 0 ? "`--diff` was used" : (all ? "`--all` was used" : hasInitialCommit ? "`--no-stash` was used" : "there’s no initial commit yet") + ". This might result in data loss";
+	return yellow(`${warning()} Skipping backup because ${reason}.\n`);
+};
+const skippingHidePartiallyChanged = () => yellow(`${warning()} Skipping hiding unstaged changes from partially staged files because \`--no-hide-partially-staged\` was used.\n`);
+const deprecatedGitAdd = () => yellow(`${warning()} Some of your tasks use \`git add\` command. Please remove it from the config since all modifications made by tasks will be automatically added to the git commit index.
+`);
+const taskError = () => "Skipped because of errors from tasks.";
+const preventedTaskModifications = () => `\n${error()} lint-staged failed because \`--fail-on-changes\` was used.`;
+const gitError = () => `\n  ${red(`${error()} lint-staged failed due to a git error.`)}`;
+const invalidOption = (name, value, message) => `${red(`${error()} Validation Error:`)}
+
+  Invalid value for option '${bold(name)}': ${bold(value)}
 
   ${message}
 
-See https://github.com/okonet/lint-staged#command-line-flags`;
-const PREVENTED_EMPTY_COMMIT = `
-  ${yellow$1(`${warning} lint-staged prevented an empty git commit.
+See https://github.com/lint-staged/lint-staged#command-line-flags`;
+const preventedEmptyCommit = () => `
+  ${yellow(`${warning()} lint-staged prevented an empty git commit.
   Use the --allow-empty option to continue, or check your task configuration`)}
 `;
-const restoreStashExample = (hash = "h0a0s0h0") => `Any lost modifications can be restored from a git stash:
+const restoreStashExample = (hash = "<git-hash>") => `Any lost modifications can be restored from a git stash:
 
   > git stash list --format="%h %s"
   ${hash} On main: lint-staged automatic backup
-  > git apply --index ${hash}`;
-red$1(`${error} Failed to read config from stdin.`);
-const failedToLoadConfig = (filepath) => red$1(`${error} Failed to read config from file "${filepath}".`);
-const failedToParseConfig = (filepath, error) => `${red$1(`${error} Failed to parse config from file "${filepath}".`)}
+  > git apply --index ${hash}
+`;
+const failedToLoadConfig = (filepath) => red(`${error()} Failed to read config from file "${filepath}".`);
+const failedToParseConfig = (filepath, error$6) => `${red(`${error()} Failed to parse config from file "${filepath}".`)}
 
-${error}
+${error$6}
 
-See https://github.com/okonet/lint-staged#configuration.`;
-const UNSTAGED_CHANGES_BACKUP_STASH_LOCATION = `Unstaged changes have been kept back in a patch file:`;
+See https://github.com/lint-staged/lint-staged#configuration.`;
+const unstagedChangesBackupStashLocation = () => "Unstaged changes have been kept back in a patch file:";
+const minGitVersionRequired = (expected) => red(`${error()} lint-staged requires at least Git version ${bold(expected)}.
+
+Please update Git: https://git-scm.com/downloads`);
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/printTaskOutput.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/string-argv@0.3.2/node_modules/string-argv/index.js
+function parseArgsStringToArgv(value, env, file) {
+	var myRegexp = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi;
+	var myString = value;
+	var myArray = [];
+	if (env) myArray.push(env);
+	if (file) myArray.push(file);
+	var match;
+	do {
+		match = myRegexp.exec(myString);
+		if (match !== null) myArray.push(firstString(match[1], match[6], match[0]));
+	} while (match !== null);
+	return myArray;
+}
+function firstString() {
+	var args = [];
+	for (var _i = 0; _i < arguments.length; _i++) args[_i] = arguments[_i];
+	for (var i = 0; i < args.length; i++) {
+		var arg = args[i];
+		if (typeof arg === "string") return arg;
+	}
+}
+//#endregion
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getAbortController.js
+const Signal = {
+	SIGINT: "SIGINT",
+	SIGKILL: "SIGKILL"
+};
 /**
-* Handle logging of listr `ctx.output` to the specified `logger`
-* @param {Object} ctx - The listr initial state
+* Get an AbortController used to cancel running tasks on failure/interruption.
+* @returns AbortController
+*/
+const getAbortController = (nodeProcess = process) => {
+	const abortController = new AbortController();
+	nodeProcess.on(Signal.SIGINT, () => {
+		abortController.abort(Signal.SIGINT);
+	});
+	return abortController;
+};
+//#endregion
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/killSubprocesses.js
+const execAsync = promisify(exec);
+/**
+* End process by pid, forcefully, including child processes
+*
+* @see {@link https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/taskkill}
+*
+* @param {number} pid
+*/
+const killWin32Subprocesses = async (pid) => {
+	await execAsync(`taskkill /pid ${pid} /T /F`);
+};
+/**
+* Kill all processes in the group by using negative pid
+*
+* @see {@link https://pubs.opengroup.org/onlinepubs/9699919799/functions/kill.html}
+*
+* @param {number} pid
+*/
+const killUnixSubprocesses = async (pid) => {
+	process.kill(-pid, "SIGKILL");
+};
+/**
+* @param {number} pid
+* @param {boolean} [isWin32]
+*/
+const killSubProcesses = async (pid, isWin32 = process.platform === "win32") => {
+	try {
+		if (isWin32) await killWin32Subprocesses(pid);
+		else await killUnixSubprocesses(pid);
+	} catch {}
+};
+//#endregion
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/symbols.js
+const ApplyEmptyCommitError = Symbol("ApplyEmptyCommitError");
+const ConfigNotFoundError = /* @__PURE__ */ new Error("Configuration could not be found");
+const ConfigFormatError = /* @__PURE__ */ new Error("Configuration should be an object or a function");
+const ConfigEmptyError = /* @__PURE__ */ new Error("Configuration should not be empty");
+const GetStagedFilesError = Symbol("GetStagedFilesError");
+const IntentToAddError = Symbol("IntentToAddError");
+const GitError = Symbol("GitError");
+const GitRepoError = Symbol("GitRepoError");
+const HideUnstagedChangesError = Symbol("HideUnstagedChangesError");
+const InvalidOptionsError = /* @__PURE__ */ new Error("Invalid Options");
+const RestoreMergeStatusError = Symbol("RestoreMergeStatusError");
+const RestoreOriginalStateError = Symbol("RestoreOriginalStateError");
+const RestoreUnstagedChangesError = Symbol("RestoreUnstagedChangesError");
+const TaskError = Symbol("TaskError");
+const FailOnChangesError = Symbol("FailOnChangesError");
+//#endregion
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/state.js
+const getInitialState = ({ failOnChanges = false, hideAll = false, hideUnstaged = false, hidePartiallyStaged = !(hideAll || hideUnstaged), quiet = false, revert = true } = {}) => {
+	const initialState = {
+		backupHash: void 0,
+		errors: /* @__PURE__ */ new Set([]),
+		shouldFailOnChanges: failOnChanges,
+		hasFilesToHide: null,
+		output: [],
+		quiet,
+		runId: crypto.randomBytes(4).toString("hex"),
+		shouldBackup: null,
+		shouldHideAll: hideAll,
+		shouldHideUnstaged: hideUnstaged,
+		shouldHidePartiallyStaged: hidePartiallyStaged,
+		shouldRevert: revert,
+		unstagedDiffSha256: null,
+		unstagedPatch: null
+	};
+	if (initialState.shouldHideAll) {
+		initialState.shouldHideUnstaged = false;
+		initialState.shouldHidePartiallyStaged = false;
+	} else if (initialState.shouldHideUnstaged) initialState.shouldHidePartiallyStaged = false;
+	return initialState;
+};
+const shouldHidePartiallyStagedFiles = (ctx) => ctx.shouldHidePartiallyStaged && ctx.hasFilesToHide;
+const shouldRestoreUnstagedChanges = (ctx) => (ctx.shouldHideAll || ctx.shouldHideUnstaged || ctx.shouldHidePartiallyStaged) && ctx.hasFilesToHide;
+const shouldRestoreUntrackedFiles = (ctx) => !!ctx.shouldBackup && !!ctx.shouldHideAll;
+const updateIndexSkipped = (ctx) => {
+	if (!ctx.shouldRevert || !ctx.shouldBackup) return false;
+	if (ctx.errors.has(GitError)) return gitError();
+	if (ctx.errors.has(TaskError)) return taskError();
+};
+const restoreUnstagedChangesSkipped = (ctx) => {
+	if (ctx.errors.has(GitError)) return gitError();
+	if (!ctx.shouldRevert) return false;
+	if (ctx.errors.has(TaskError)) return taskError();
+};
+const restoreOriginalStateEnabled = (ctx) => !!ctx.shouldRevert && !!ctx.shouldBackup && (ctx.errors.has(FailOnChangesError) || ctx.errors.has(TaskError) || ctx.errors.has(RestoreUnstagedChangesError));
+const restoreOriginalStateSkipped = (ctx) => {
+	if (ctx.errors.has(GitError) && !ctx.errors.has(RestoreUnstagedChangesError)) return gitError();
+};
+const cleanupEnabled = (ctx) => ctx.shouldBackup;
+const cleanupSkipped = (ctx) => {
+	if (ctx.errors.has(FailOnChangesError) && !ctx.shouldRevert) return true;
+	/** Failed to restore hidden unstaged changes, shouldn't drop stash, @see restoreUnstagedChangesSkipped */
+	if (ctx.errors.has(RestoreUnstagedChangesError) && !ctx.shouldRevert) return gitError();
+	if (restoreOriginalStateSkipped(ctx)) return gitError();
+	if (ctx.errors.has(RestoreOriginalStateError)) return gitError();
+};
+//#endregion
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getSpawnedTask.js
+const debugLog$16 = createDebug("lint-staged:getSpawnedTask");
+/**
+* Handle task console output.
+*
+* @param {string} command
+* @param {string} output
+* @param {ReturnType<typeof getInitialState>} ctx context
+* @param {keyof typeof Signal | undefined} signal
+* @param {import('tinyexec').Result} [errorResult]
+*/
+const handleTaskOutput = (command, output, ctx, signal, errorResult) => {
+	if (output) {
+		const outputTitle = errorResult ? red(`${error()} ${command}:`) : `${info()} ${command}:`;
+		ctx.output.push([...ctx.quiet ? [] : ["", outputTitle], output].join("\n"));
+		return;
+	}
+	if (ctx.quiet) return;
+	if (signal === "SIGINT") ctx.output.push(red(`\n${error()} Task interrupted: ${command}`));
+	else if (signal === "SIGKILL") ctx.output.push(red(`\n${error()} Task killed: ${command}`));
+	else if (errorResult) ctx.output.push(red(`\n${error()} Task failed to spawn: ${command}`), signal);
+};
+/**
+* Create a error output depending on process result.
+*
+* @param {string} command
+* @param {import('tinyexec').Result} result
+* @param {ReturnType<typeof getInitialState>} ctx context
+* @param {keyof typeof Signal | undefined} signal
+* @returns {Error}
+*/
+const createTaskError = (command, result, ctx, signal = "FAILED") => {
+	ctx.errors.add(TaskError);
+	return new Error(`${red(command)} ${dim(`[${signal}]`)}`, { cause: result });
+};
+const GIT_EXE_REGEXP = /^git(\.exe)?/i;
+/**
+* Returns the spawnable task.
+*
+* @param {Object} options
+* @param {AbortController} options.abortController
+* @param {string} options.command — the command to spawn
+* @param {string} [options.continueOnError]
+* @param {string} [options.cwd]
+* @param {String} options.topLevelDir - Current git repo top-level path
+* @param {Boolean} options.isFn - Whether the task is a function instead of a string
+* @param {string[]} options.files — Filepaths to run the task against
+* @param {Boolean} [options.verbose] — Always show task verbose
+* @returns {() => Promise<Array<string>>}
+*/
+const getSpawnedTask = ({ abortController, command, continueOnError = false, cwd = process.cwd(), files, topLevelDir, isFn, verbose = false }) => {
+	const [cmd, ...args] = parseArgsStringToArgv(command);
+	debugLog$16("cmd:", cmd);
+	debugLog$16("args:", args);
+	/** @type {import('tinyexec').Options}*/
+	const tinyExecOptions = { nodeOptions: {
+		cwd: GIT_EXE_REGEXP.test(cmd) ? topLevelDir : cwd,
+		env: COLORS_ENABLED ? { FORCE_COLOR: "true" } : { NO_COLOR: "true" }
+	} };
+	debugLog$16("Tinyexec options:", tinyExecOptions);
+	/** @param {ReturnType<typeof getInitialState>} ctx context */
+	return async (ctx = getInitialState()) => {
+		const result = exec$1(cmd, isFn ? args : [...args, ...files], tinyExecOptions);
+		const taskFailed = () => result.exitCode > 0 || result.process?.signalCode;
+		/** @type {keyof typeof Signal | undefined} */
+		let signal;
+		abortController.signal.addEventListener("abort", async () => {
+			if (taskFailed() || !result.process) return;
+			signal = abortController.signal.reason;
+			const pid = result.process.pid;
+			result.process.kill(abortController.signal.reason);
+			await killSubProcesses(pid);
+		}, { once: true });
+		let output = "";
+		try {
+			for await (const line of result) output += line + "\n";
+		} catch (error) {
+			/** Probably failed to spawn (ENOENT) */
+			const errorSignal = error instanceof Error && error.code || "FAILED";
+			if (continueOnError !== true)
+ /** Other tasks should be killed */
+			abortController.abort(Signal.SIGKILL);
+			handleTaskOutput(command, output, ctx, errorSignal, result);
+			throw createTaskError(command, result, ctx, errorSignal);
+		}
+		output = output.trimEnd();
+		if (taskFailed()) {
+			if (continueOnError !== true)
+ /** Other tasks should be killed */
+			abortController.abort(Signal.SIGKILL);
+			if (result.process?.pid) await killSubProcesses(result.process.pid);
+			handleTaskOutput(command, output, ctx, signal, result);
+			throw createTaskError(command, result, ctx, result.process?.signalCode ?? signal);
+		}
+		if (verbose) handleTaskOutput(command, output, ctx, signal);
+	};
+};
+//#endregion
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getSpawnedTasks.js
+const debugLog$15 = createDebug("lint-staged:getSpawnedTasks");
+/**
+* Get the maximum length of a command-line argument string based on current platform
+*
+* https://serverfault.com/questions/69430/what-is-the-maximum-length-of-a-command-line-in-mac-os-x
+* https://support.microsoft.com/en-us/help/830473/command-prompt-cmd-exe-command-line-string-limitation
+* https://unix.stackexchange.com/a/120652
+*/
+const getMaxArgLength = (platform = process.platform) => {
+	switch (platform) {
+		case "darwin": return 262144;
+		case "win32": return 8191;
+		default: return 131072;
+	}
+};
+/**
+* Chunk `files` so that when joined with `command`, the resulting string fits into `maxArgLength`.
+* For function commands, they are evaluated with the list of files and measured afterwards.
+*
+* @param {string | Function} command
+* @param {string[]} files
+* @param {number} [maxArgLength]
+* @returns {Promise<Array<{ command: string, files: string[] }>>}
+*/
+const chunkFilesForCommand = async (command, files, maxArgLength) => {
+	const isFn = typeof command === "function";
+	const resolved = isFn ? await command([...files]) : command;
+	const resolvedCommands = Array.isArray(resolved) ? resolved : [resolved];
+	if (isFn && resolvedCommands.some((c) => typeof c !== "string")) throw new Error(configurationError("[Function]", "Function task should return a string or an array of strings", resolved));
+	if (!maxArgLength || maxArgLength === Infinity || files.length <= 1) {
+		debugLog$15("Skipping chunking because maxArgLength is %s and there are %s files", maxArgLength, files.length);
+		return resolvedCommands.map((resolvedCommand) => ({
+			command: resolvedCommand,
+			files
+		}));
+	}
+	if (resolvedCommands.every((resolvedCommand) => {
+		/**
+		* Really the command is spawned using `tinyexec` and the files passed as an array of
+		* arguments; but this approximates the length without quoting filenames.
+		*/
+		const finalCommandString = isFn ? resolvedCommand : resolvedCommand + " " + files.join(" ");
+		debugLog$15("Resolved an argument string length of %d characters from %d files", finalCommandString.length, files.length);
+		return finalCommandString.length <= maxArgLength;
+	})) return resolvedCommands.map((resolvedCommand) => ({
+		command: resolvedCommand,
+		files
+	}));
+	const middle = Math.ceil(files.length / 2);
+	const left = files.slice(0, middle);
+	const right = files.slice(middle);
+	debugLog$15("Splitting %d files into chunks of %d and %d for maxArgLength of %d", files.length, left.length, right.length, maxArgLength);
+	return (await Promise.all([chunkFilesForCommand(command, left, maxArgLength), chunkFilesForCommand(command, right, maxArgLength)])).flat();
+};
+/**
+* Creates and returns an array of tasks which map to the given commands.
+*
+* @param {object} options
+* @param {AbortController} options.abortController
+* @param {Array<string | Function | Array<string | Function>> | string | Function} options.commands
+* @param {string} options.continueOnError
+* @param {string} options.cwd
+* @param {import('./getStagedFiles.js').StagedFile[]} options.files
+* @param {number} [options.maxArgLength]
+* @param {string} options.topLevelDir
+* @param {Boolean} verbose
+*/
+const getSpawnedTasks = async ({ abortController, commands, continueOnError, cwd, files, maxArgLength, topLevelDir, verbose }) => {
+	debugLog$15("Creating tasks for commands %o", commands);
+	const commandArray = Array.isArray(commands) ? commands : [commands];
+	const filepaths = files.map((f) => f.filepath);
+	if (filepaths.length === 0) {
+		debugLog$15("Skipping task generation because no files matched", { commands });
+		return [];
+	}
+	const createTasks = async (command) => {
+		const isFn = typeof command === "function";
+		return (await chunkFilesForCommand(command, filepaths, maxArgLength)).map((chunk) => ({
+			title: chunk.command,
+			task: getSpawnedTask({
+				abortController,
+				command: chunk.command,
+				continueOnError,
+				cwd,
+				files: chunk.files,
+				topLevelDir,
+				isFn,
+				verbose
+			})
+		}));
+	};
+	return (await Promise.all(commandArray.map(async (command) => {
+		if (Array.isArray(command) && command.length > 1) return [(await Promise.all(command.map(createTasks))).flat()];
+		return createTasks(command);
+	}))).flat();
+};
+//#endregion
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/parseOptions.js
+const debugLog$14 = createDebug("lint-staged:parseOptions");
+/** @param {import('./index').Options} [options] */
+const parseOptions = ({ all, allowEmpty, color, concurrent, config: configObject, configPath, continueOnError, cwd, debug, diff, diffFilter, failOnChanges, hideAll, hidePartiallyStaged, hideUnstaged, maxArgLength, quiet, relative, revert, stash, verbose } = {}) => {
+	if (all) {
+		stash ??= false;
+		allowEmpty ??= true;
+	}
+	if (hideAll) {
+		hidePartiallyStaged = false;
+		hideUnstaged = false;
+	} else if (hideUnstaged) hidePartiallyStaged = false;
+	all ??= false;
+	allowEmpty ??= false;
+	color ??= supportsColors();
+	concurrent ??= true;
+	continueOnError ??= false;
+	debug ??= false;
+	failOnChanges ??= false;
+	hideAll ??= false;
+	hideUnstaged ??= false;
+	hidePartiallyStaged ??= true;
+	maxArgLength ??= getMaxArgLength();
+	quiet ??= false;
+	relative ??= false;
+	stash ??= diff === void 0;
+	revert ??= !failOnChanges && !!stash;
+	verbose ??= false;
+	const options = {
+		all,
+		allowEmpty,
+		color,
+		concurrent,
+		configObject,
+		configPath,
+		continueOnError,
+		cwd,
+		debug,
+		diff,
+		diffFilter,
+		failOnChanges,
+		hideAll,
+		hidePartiallyStaged,
+		hideUnstaged,
+		maxArgLength,
+		quiet,
+		relative,
+		revert,
+		stash,
+		verbose
+	};
+	debugLog$14("Parsed options: %o", options);
+	return options;
+};
+//#endregion
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/printTaskOutput.js
+/**
+* Handle logging of task `ctx.output` to the specified `logger`
+* @param {Object} ctx - The context
 * @param {Object} logger - The logger
 */
 const printTaskOutput = (ctx = {}, logger) => {
@@ -2869,94 +928,7 @@ const printTaskOutput = (ctx = {}, logger) => {
 	for (const line of ctx.output) log(line);
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/normalizePath.js
-/**
-* Reimplementation of "normalize-path"
-* @see https://github.com/jonschlinkert/normalize-path/blob/52c3a95ebebc2d98c1ad7606cbafa7e658656899/index.js
-*/
-/*!
-* normalize-path <https://github.com/jonschlinkert/normalize-path>
-*
-* Copyright (c) 2014-2018, Jon Schlinkert.
-* Released under the MIT License.
-*/
-/**
-* A file starting with \\?\
-* @see https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file#win32-file-namespaces
-*/
-const WIN32_FILE_NS = "\\\\?\\";
-/**
-* A file starting with \\.\
-* @see https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file#win32-file-namespaces
-*/
-const WIN32_DEVICE_NS = "\\\\.\\";
-/**
-* Normalize input file path to use POSIX separators
-* @param {String} input
-* @returns String
-*/
-const normalizePath = (input) => {
-	if (input === path.posix.sep || input === path.win32.sep) return path.posix.sep;
-	let normalized = input.split(/[/\\]+/).join(path.posix.sep);
-	/** Handle win32 Namespaced paths by changing e.g. \\.\ to //./ */
-	if (input.startsWith(WIN32_FILE_NS) || input.startsWith(WIN32_DEVICE_NS)) normalized = normalized.replace(/^\/(\.|\?)/, "//$1");
-	/** Remove trailing slash */
-	if (normalized.endsWith(path.posix.sep)) normalized = normalized.slice(0, -1);
-	return normalized;
-};
-//#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/chunkFiles.js
-const debugLog$14 = createDebug("lint-staged:chunkFiles");
-/**
-* Chunk array into sub-arrays
-* @param {Array} arr
-* @param {Number} chunkCount
-* @returns {Array<Array>}
-*/
-const chunkArray = (arr, chunkCount) => {
-	if (chunkCount === 1) return [arr];
-	const chunked = [];
-	let position = 0;
-	for (let i = 0; i < chunkCount; i++) {
-		const chunkLength = Math.ceil((arr.length - position) / (chunkCount - i));
-		chunked.push([]);
-		chunked[i] = arr.slice(position, chunkLength + position);
-		position += chunkLength;
-	}
-	return chunked;
-};
-/**
-* Chunk files into sub-arrays based on the length of the resulting argument string
-*
-* @typedef {import('./getStagedFiles.js').StagedFile[]} StagedFile
-*
-* @param {Object} opts
-* @param {Array<StagedFile>} opts.files
-* @param {String} [opts.baseDir] The optional base directory to resolve relative paths.
-* @param {number} [opts.maxArgLength] the maximum argument string length
-* @param {Boolean} [opts.relative] whether files are relative to `topLevelDir` or should be resolved as absolute
-* @returns {Array<Array<StagedFile>>}
-*/
-const chunkFiles = ({ files, baseDir, maxArgLength = null, relative = false }) => {
-	const normalizedFiles = files.map((file) => {
-		return {
-			filepath: normalizePath(relative || !baseDir ? file.filepath : path.resolve(baseDir, file.filepath)),
-			status: file.status
-		};
-	});
-	if (!maxArgLength) {
-		debugLog$14("Skip chunking files because of undefined maxArgLength");
-		return [normalizedFiles];
-	}
-	/** Calculate total character length of all filepaths, with added spaces in between */
-	const fileListLength = normalizedFiles.reduce((sum, file) => sum + file.filepath.length, 0) + Math.max(normalizedFiles.length - 1, 0);
-	debugLog$14(`Resolved an argument string length of ${fileListLength} characters from ${normalizedFiles.length} files`);
-	const chunkCount = Math.min(Math.ceil(fileListLength / maxArgLength), normalizedFiles.length);
-	debugLog$14(`Creating ${chunkCount} chunks for maxArgLength of ${maxArgLength}`);
-	return chunkArray(normalizedFiles, chunkCount);
-};
-//#endregion
-//#region ../../node_modules/.pnpm/picomatch@4.0.4/node_modules/picomatch/lib/constants.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/picomatch@4.0.7/node_modules/picomatch/lib/constants.js
 var require_constants = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const WIN_SLASH = "\\\\/";
 	const WIN_NO_SLASH = `[^${WIN_SLASH}]`;
@@ -3011,7 +983,7 @@ var require_constants = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	};
 	module.exports = {
 		DEFAULT_MAX_EXTGLOB_RECURSION,
-		MAX_LENGTH: 1024 * 64,
+		MAX_LENGTH: 65536,
 		POSIX_REGEX_SOURCE: {
 			__proto__: null,
 			alnum: "a-zA-Z0-9",
@@ -3125,7 +1097,7 @@ var require_constants = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	};
 }));
 //#endregion
-//#region ../../node_modules/.pnpm/picomatch@4.0.4/node_modules/picomatch/lib/utils.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/picomatch@4.0.7/node_modules/picomatch/lib/utils.js
 var require_utils = /* @__PURE__ */ __commonJSMin(((exports) => {
 	const { REGEX_BACKSLASH, REGEX_REMOVE_BACKSLASH, REGEX_SPECIAL_CHARS, REGEX_SPECIAL_CHARS_GLOBAL } = require_constants();
 	exports.isObject = (val) => val !== null && typeof val === "object" && !Array.isArray(val);
@@ -3173,7 +1145,7 @@ var require_utils = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 }));
 //#endregion
-//#region ../../node_modules/.pnpm/picomatch@4.0.4/node_modules/picomatch/lib/scan.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/picomatch@4.0.7/node_modules/picomatch/lib/scan.js
 var require_scan = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const utils = require_utils();
 	const { CHAR_ASTERISK, CHAR_AT, CHAR_BACKWARD_SLASH, CHAR_COMMA, CHAR_DOT, CHAR_EXCLAMATION_MARK, CHAR_FORWARD_SLASH, CHAR_LEFT_CURLY_BRACE, CHAR_LEFT_PARENTHESES, CHAR_LEFT_SQUARE_BRACKET, CHAR_PLUS, CHAR_QUESTION_MARK, CHAR_RIGHT_CURLY_BRACE, CHAR_RIGHT_PARENTHESES, CHAR_RIGHT_SQUARE_BRACKET } = require_constants();
@@ -3202,7 +1174,7 @@ var require_scan = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const scan = (input, options) => {
 		const opts = options || {};
 		const length = input.length - 1;
-		const scanToEnd = opts.parts === true || opts.scanToEnd === true;
+		const scanToEnd = opts.parts === true || opts.tokens === true || opts.scanToEnd === true;
 		const slashes = [];
 		const tokens = [];
 		const parts = [];
@@ -3305,14 +1277,18 @@ var require_scan = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					finished = true;
 					if (code === CHAR_EXCLAMATION_MARK && index === start) negatedExtglob = true;
 					if (scanToEnd === true) {
+						let parens = 0;
 						while (eos() !== true && (code = advance())) {
 							if (code === CHAR_BACKWARD_SLASH) {
 								backslashes = token.backslashes = true;
-								code = advance();
+								advance();
 								continue;
 							}
-							if (code === CHAR_RIGHT_PARENTHESES) {
-								isGlob = token.isGlob = true;
+							if (code === CHAR_LEFT_PARENTHESES) {
+								parens++;
+								continue;
+							}
+							if (code === CHAR_RIGHT_PARENTHESES && --parens === 0) {
 								finished = true;
 								break;
 							}
@@ -3360,13 +1336,18 @@ var require_scan = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			if (opts.noparen !== true && code === CHAR_LEFT_PARENTHESES) {
 				isGlob = token.isGlob = true;
 				if (scanToEnd === true) {
+					let parens = 1;
 					while (eos() !== true && (code = advance())) {
-						if (code === CHAR_LEFT_PARENTHESES) {
+						if (code === CHAR_BACKWARD_SLASH) {
 							backslashes = token.backslashes = true;
-							code = advance();
+							advance();
 							continue;
 						}
-						if (code === CHAR_RIGHT_PARENTHESES) {
+						if (code === CHAR_LEFT_PARENTHESES) {
+							parens++;
+							continue;
+						}
+						if (code === CHAR_RIGHT_PARENTHESES && --parens === 0) {
 							finished = true;
 							break;
 						}
@@ -3429,7 +1410,7 @@ var require_scan = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		if (opts.parts === true || opts.tokens === true) {
 			let prevIndex;
 			for (let idx = 0; idx < slashes.length; idx++) {
-				const n = prevIndex ? prevIndex + 1 : start;
+				const n = prevIndex !== void 0 ? prevIndex + 1 : start;
 				const i = slashes[idx];
 				const value = input.slice(n, i);
 				if (opts.tokens) {
@@ -3440,17 +1421,18 @@ var require_scan = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					depth(tokens[idx]);
 					state.maxDepth += tokens[idx].depth;
 				}
-				if (idx !== 0 || value !== "") parts.push(value);
-				prevIndex = i;
-			}
-			if (prevIndex && prevIndex + 1 < input.length) {
-				const value = input.slice(prevIndex + 1);
-				parts.push(value);
-				if (opts.tokens) {
-					tokens[tokens.length - 1].value = value;
-					depth(tokens[tokens.length - 1]);
-					state.maxDepth += tokens[tokens.length - 1].depth;
+				if (i >= start) {
+					parts.push(value);
+					prevIndex = i;
 				}
+			}
+			const n = prevIndex !== void 0 ? prevIndex + 1 : start;
+			const value = input.slice(n);
+			parts.push(value);
+			if (opts.tokens && prevIndex && prevIndex + 1 < input.length) {
+				tokens[tokens.length - 1].value = value;
+				depth(tokens[tokens.length - 1]);
+				state.maxDepth += tokens[tokens.length - 1].depth;
 			}
 			state.slashes = slashes;
 			state.parts = parts;
@@ -3460,7 +1442,7 @@ var require_scan = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = scan;
 }));
 //#endregion
-//#region ../../node_modules/.pnpm/picomatch@4.0.4/node_modules/picomatch/lib/parse.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/picomatch@4.0.7/node_modules/picomatch/lib/parse.js
 var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const constants = require_constants();
 	const utils = require_utils();
@@ -3615,7 +1597,10 @@ var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			}
 		}
 	};
-	const getStarExtglobSequenceOutput = (pattern) => {
+	const buildCharClassStar = (chars) => {
+		return `${chars.length === 1 ? utils.escapeRegex(chars[0]) : `[${chars.map((ch) => utils.escapeRegex(ch)).join("")}]`}*`;
+	};
+	const getStarExtglobSequenceChars = (pattern) => {
 		let index = 0;
 		const chars = [];
 		while (index < pattern.length) {
@@ -3629,7 +1614,7 @@ var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			index += match.end + 1;
 		}
 		if (chars.length < 1) return;
-		return `${chars.length === 1 ? utils.escapeRegex(chars[0]) : `[${chars.map((ch) => utils.escapeRegex(ch)).join("")}]`}*`;
+		return chars;
 	};
 	const repeatedExtglobRecursion = (pattern) => {
 		let depth = 0;
@@ -3649,14 +1634,28 @@ var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		if (branches.length > 1) {
 			if (branches.some((branch) => branch === "") || branches.some((branch) => /^[*?]+$/.test(branch)) || hasRepeatedCharPrefixOverlap(branches)) return { risky: true };
 		}
+		const safeChars = [];
+		let sawStarSequence = false;
+		let combinable = true;
 		for (const branch of branches) {
-			const safeOutput = getStarExtglobSequenceOutput(branch);
-			if (safeOutput) return {
-				risky: true,
-				safeOutput
-			};
+			const chars = getStarExtglobSequenceChars(branch);
+			if (chars) {
+				sawStarSequence = true;
+				safeChars.push(...chars);
+				continue;
+			}
+			const literal = normalizeSimpleBranch(branch);
+			if (literal && literal.length === 1) {
+				safeChars.push(literal);
+				continue;
+			}
+			combinable = false;
 			if (repeatedExtglobRecursion(branch) > max) return { risky: true };
 		}
+		if (sawStarSequence) return combinable ? {
+			risky: true,
+			safeOutput: buildCharClassStar([...new Set(safeChars)])
+		} : { risky: true };
 		return { risky: false };
 	};
 	/**
@@ -3873,10 +1872,12 @@ var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				}
 				return esc ? m : `\\${m}`;
 			});
-			if (backslashes === true) if (opts.unescape === true) output = output.replace(/\\/g, "");
-			else output = output.replace(/\\+/g, (m) => {
-				return m.length % 2 === 0 ? "\\\\" : m ? "\\" : "";
-			});
+			if (backslashes === true) {
+				if (opts.unescape === true) output = output.replace(/\\/g, "");
+				else output = output.replace(/\\+/g, (m) => {
+					return m.length % 2 === 0 ? "\\\\" : m ? "\\" : "";
+				});
+			}
 			if (output === input && opts.contains === true) {
 				state.output = input;
 				return state;
@@ -4343,6 +2344,7 @@ var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					rest = rest.slice(3);
 					consume("/**", 3);
 				}
+				const isEnd = eos() || state.parens > 0 && rest === ")".repeat(state.parens) && !extglobs.some((extglob) => extglob.type === "negate");
 				if (prior.type === "bos" && eos()) {
 					prev.type = "globstar";
 					prev.value += value;
@@ -4352,7 +2354,7 @@ var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					consume(value);
 					continue;
 				}
-				if (prior.type === "slash" && prior.prev.type !== "bos" && !afterStar && eos()) {
+				if (prior.type === "slash" && prior.prev.type !== "bos" && !afterStar && isEnd) {
 					state.output = state.output.slice(0, -(prior.output + prev.output).length);
 					prior.output = `(?:${prior.output}`;
 					prev.type = "globstar";
@@ -4517,7 +2519,7 @@ var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = parse;
 }));
 //#endregion
-//#region ../../node_modules/.pnpm/picomatch@4.0.4/node_modules/picomatch/lib/picomatch.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/picomatch@4.0.7/node_modules/picomatch/lib/picomatch.js
 var require_picomatch$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const scan = require_scan();
 	const parse = require_parse();
@@ -4538,6 +2540,18 @@ var require_picomatch$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	* const isMatch = picomatch('*.!(*a)');
 	* console.log(isMatch('a.a')); //=> false
 	* console.log(isMatch('a.b')); //=> true
+	*
+	* // For environments without `node.js`, `picomatch/posix` provides you a dependency-free matcher, without automatic OS detection.
+	* const picomatch = require('picomatch/posix');
+	* // the same API, defaulting to posix paths
+	* const isMatch = picomatch('a/*');
+	* console.log(isMatch('a\\b')); //=> false
+	* console.log(isMatch('a/b')); //=> true
+	*
+	* // you can still configure the matcher function to accept windows paths
+	* const isMatch = picomatch('a/*', { options: windows });
+	* console.log(isMatch('a\\b')); //=> true
+	* console.log(isMatch('a/b')); //=> true
 	* ```
 	* @name picomatch
 	* @param {String|Array} `globs` One or more glob patterns.
@@ -4635,8 +2649,10 @@ var require_picomatch$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			output = format ? format(input) : input;
 			match = output === glob;
 		}
-		if (match === false || opts.capture === true) if (opts.matchBase === true || opts.basename === true) match = picomatch.matchBase(input, regex, options, posix);
-		else match = regex.exec(output);
+		if (match === false || opts.capture === true) {
+			if (opts.matchBase === true || opts.basename === true) match = picomatch.matchBase(input, regex, options, posix);
+			else match = regex.exec(output);
+		}
 		return {
 			isMatch: Boolean(match),
 			match,
@@ -4656,8 +2672,8 @@ var require_picomatch$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	* @return {Boolean}
 	* @api public
 	*/
-	picomatch.matchBase = (input, glob, options) => {
-		return (glob instanceof RegExp ? glob : picomatch.makeRe(glob, options)).test(utils.basename(input));
+	picomatch.matchBase = (input, glob, options, posix = options && options.windows) => {
+		return (glob instanceof RegExp ? glob : picomatch.makeRe(glob, options)).test(utils.basename(input, { windows: posix }));
 	};
 	/**
 	* Returns true if **any** of the given glob `patterns` match the specified `string`.
@@ -4817,7 +2833,7 @@ var require_picomatch$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = picomatch;
 }));
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/matchFiles.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/matchFiles.js
 var import_picomatch = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const pico = require_picomatch$1();
 	const utils = require_utils();
@@ -4848,7 +2864,45 @@ const matchFiles = (files, pattern, cwd = process.cwd()) => {
 	return files.filter((file) => isMatch(file.filepath));
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/generateTasks.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/normalizePath.js
+/**
+* Reimplementation of "normalize-path"
+* @see https://github.com/jonschlinkert/normalize-path/blob/52c3a95ebebc2d98c1ad7606cbafa7e658656899/index.js
+*/
+/*!
+* normalize-path <https://github.com/jonschlinkert/normalize-path>
+*
+* Copyright (c) 2014-2018, Jon Schlinkert.
+* Released under the MIT License.
+*/
+/**
+* A file starting with \\?\
+* @see https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file#win32-file-namespaces
+*/
+const WIN32_FILE_NS = "\\\\?\\";
+/**
+* A file starting with \\.\
+* @see https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file#win32-file-namespaces
+*/
+const WIN32_DEVICE_NS = "\\\\.\\";
+const PATH_SEP_REGEXP = /[/\\]+/;
+const WIN32_NS_REGEXP = /^\/(\.|\?)/;
+/**
+* Normalize input file path to use POSIX separators
+* @param {String} input
+* @returns String
+*/
+const normalizePath = (input) => {
+	if (input === path.posix.sep || input === path.win32.sep) return path.posix.sep;
+	let normalized = input.split(PATH_SEP_REGEXP).join(path.posix.sep);
+	/** Handle win32 Namespaced paths by changing e.g. \\.\ to //./ */
+	if (input.startsWith(WIN32_FILE_NS) || input.startsWith(WIN32_DEVICE_NS)) normalized = normalized.replace(WIN32_NS_REGEXP, "//$1");
+	/** Remove trailing slash */
+	if (normalized.endsWith(path.posix.sep)) normalized = normalized.slice(0, -1);
+	return normalized;
+};
+//#endregion
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/generateTasks.js
 const debugLog$13 = createDebug("lint-staged:generateTasks");
 /**
 * Generates all task commands, and filelist
@@ -4860,7 +2914,7 @@ const debugLog$13 = createDebug("lint-staged:generateTasks");
 * @param {boolean} [options.relative] - Whether filepaths to should be relative to cwd
 */
 const generateTasks = ({ config, cwd = process.cwd(), files, relative = false }) => {
-	debugLog$13("Generating linter tasks");
+	debugLog$13("Generating tasks");
 	/** @type {StagedFile[]} */
 	const relativeFiles = files.map((file) => ({
 		filepath: normalizePath(path.relative(cwd, file.filepath)),
@@ -4868,13 +2922,14 @@ const generateTasks = ({ config, cwd = process.cwd(), files, relative = false })
 	}));
 	return Object.entries(config).map(([pattern, commands]) => {
 		const isParentDirPattern = pattern.startsWith("../");
+		const includedFiles = relativeFiles.filter((file) => {
+			if (isParentDirPattern) return true;
+			return !file.filepath.startsWith("..") && !path.isAbsolute(file.filepath);
+		});
 		const task = {
 			pattern,
 			commands,
-			fileList: matchFiles(relativeFiles.filter((file) => {
-				if (isParentDirPattern) return true;
-				return !file.filepath.startsWith("..") && !path.isAbsolute(file.filepath);
-			}), pattern, cwd).map((file) => ({
+			fileList: matchFiles(includedFiles, pattern, cwd).map((file) => ({
 				filepath: normalizePath(relative ? file.filepath : path.resolve(cwd, file.filepath)),
 				status: file.status
 			}))
@@ -4884,235 +2939,8 @@ const generateTasks = ({ config, cwd = process.cwd(), files, relative = false })
 	});
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/getAbortController.js
-const Signal = {
-	SIGINT: "SIGINT",
-	SIGKILL: "SIGKILL"
-};
-/**
-* Get an AbortController used to cancel running tasks on failure/interruption.
-* @returns AbortController
-*/
-const getAbortController = (nodeProcess = process) => {
-	const abortController = new AbortController();
-	nodeProcess.on(Signal.SIGINT, () => {
-		abortController.abort(Signal.SIGINT);
-	});
-	return abortController;
-};
-//#endregion
-//#region ../../node_modules/.pnpm/string-argv@0.3.2/node_modules/string-argv/index.js
-function parseArgsStringToArgv(value, env, file) {
-	var myRegexp = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi;
-	var myString = value;
-	var myArray = [];
-	if (env) myArray.push(env);
-	if (file) myArray.push(file);
-	var match;
-	do {
-		match = myRegexp.exec(myString);
-		if (match !== null) myArray.push(firstString(match[1], match[6], match[0]));
-	} while (match !== null);
-	return myArray;
-}
-function firstString() {
-	var args = [];
-	for (var _i = 0; _i < arguments.length; _i++) args[_i] = arguments[_i];
-	for (var i = 0; i < args.length; i++) {
-		var arg = args[i];
-		if (typeof arg === "string") return arg;
-	}
-}
-//#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/killSubprocesses.js
-const execAsync = promisify(exec);
-/**
-* End process by pid, forcefully, including child processes
-*
-* @see {@link https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/taskkill}
-*
-* @param {number} pid
-*/
-const killWin32Subprocesses = async (pid) => {
-	await execAsync(`taskkill /pid ${pid} /T /F`);
-};
-/**
-* Kill all processes in the group by using negative pid
-*
-* @see {@link https://pubs.opengroup.org/onlinepubs/9699919799/functions/kill.html}
-*
-* @param {number} pid
-*/
-const killUnixSubprocesses = async (pid) => {
-	process.kill(-pid, "SIGKILL");
-};
-/**
-* @param {number} pid
-* @param {boolean} [isWin32]
-*/
-const killSubProcesses = async (pid, isWin32 = process.platform === "win32") => {
-	try {
-		if (isWin32) await killWin32Subprocesses(pid);
-		else await killUnixSubprocesses(pid);
-	} catch {}
-};
-//#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/symbols.js
-const ApplyEmptyCommitError = Symbol("ApplyEmptyCommitError");
-const ConfigNotFoundError = /* @__PURE__ */ new Error("Configuration could not be found");
-const ConfigFormatError = /* @__PURE__ */ new Error("Configuration should be an object or a function");
-const ConfigEmptyError = /* @__PURE__ */ new Error("Configuration should not be empty");
-const GetBackupStashError = Symbol("GetBackupStashError");
-const GetStagedFilesError = Symbol("GetStagedFilesError");
-const GitError = Symbol("GitError");
-const GitRepoError = Symbol("GitRepoError");
-const HideUnstagedChangesError = Symbol("HideUnstagedChangesError");
-const InvalidOptionsError = /* @__PURE__ */ new Error("Invalid Options");
-const RestoreMergeStatusError = Symbol("RestoreMergeStatusError");
-const RestoreOriginalStateError = Symbol("RestoreOriginalStateError");
-const RestoreUnstagedChangesError = Symbol("RestoreUnstagedChangesError");
-const TaskError = Symbol("TaskError");
-const FailOnChangesError = Symbol("FailOnChangesError");
-//#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/state.js
-const getInitialState = ({ failOnChanges = false, hideUnstaged = false, hidePartiallyStaged = !hideUnstaged, quiet = false, revert = true } = {}) => ({
-	backupHash: null,
-	errors: /* @__PURE__ */ new Set([]),
-	shouldFailOnChanges: failOnChanges,
-	hasFilesToHide: null,
-	output: [],
-	quiet,
-	shouldBackup: null,
-	shouldHidePartiallyStaged: hidePartiallyStaged,
-	shouldHideUnstaged: hideUnstaged,
-	shouldRevert: revert,
-	unstagedDiffSha256: null,
-	unstagedPatch: null
-});
-const shouldHidePartiallyStagedFiles = (ctx) => ctx.shouldHidePartiallyStaged && ctx.hasFilesToHide;
-const shouldRestoreUnstagedChanges = (ctx) => (ctx.shouldHideUnstaged || ctx.shouldHidePartiallyStaged) && ctx.hasFilesToHide;
-const applyModificationsSkipped = (ctx) => {
-	if (!ctx.shouldRevert || !ctx.shouldBackup) return false;
-	if (ctx.errors.has(GitError)) return GIT_ERROR;
-	if (ctx.errors.has(TaskError)) return TASK_ERROR;
-};
-const restoreUnstagedChangesSkipped = (ctx) => {
-	if (ctx.errors.has(GitError)) return GIT_ERROR;
-	if (!ctx.shouldRevert) {}
-	if (ctx.errors.has(TaskError)) return TASK_ERROR;
-};
-const restoreOriginalStateEnabled = (ctx) => !!ctx.shouldRevert && !!ctx.shouldBackup && (ctx.errors.has(FailOnChangesError) || ctx.errors.has(TaskError) || ctx.errors.has(RestoreUnstagedChangesError));
-const restoreOriginalStateSkipped = (ctx) => {
-	if (ctx.errors.has(GitError) && !ctx.errors.has(RestoreUnstagedChangesError)) return GIT_ERROR;
-};
-const cleanupEnabled = (ctx) => ctx.shouldBackup;
-const cleanupSkipped = (ctx) => {
-	if (ctx.errors.has(FailOnChangesError) && !ctx.shouldRevert) return true;
-	if (restoreOriginalStateSkipped(ctx)) return GIT_ERROR;
-	if (ctx.errors.has(RestoreOriginalStateError)) return GIT_ERROR;
-};
-//#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/getSpawnedTask.js
-const debugLog$12 = createDebug("lint-staged:getSpawnedTask");
-/**
-* Handle task console output.
-*
-* @param {string} command
-* @param {string} output
-* @param {ReturnType<typeof getInitialState>} ctx context
-* @param {keyof typeof Signal | undefined} signal
-* @param {import('tinyexec').Result} [errorResult]
-*/
-const handleTaskOutput = (command, output, ctx, signal, errorResult) => {
-	if (output) {
-		const outputTitle = errorResult ? red$1(`${error} ${command}:`) : `${info} ${command}:`;
-		ctx.output.push([...ctx.quiet ? [] : ["", outputTitle], output].join("\n"));
-		return;
-	}
-	if (ctx.quiet) return;
-	if (signal === "SIGINT") ctx.output.push(red$1(`\n${error} Task interrupted: ${command}`));
-	else if (signal === "SIGKILL") ctx.output.push(red$1(`\n${error} Task killed: ${command}`));
-	else if (errorResult) ctx.output.push(red$1(`\n${error} Task failed to spawn: ${command}`), signal);
-};
-/**
-* Create a error output depending on process result.
-*
-* @param {string} command
-* @param {import('tinyexec').Result} result
-* @param {ReturnType<typeof getInitialState>} ctx context
-* @param {keyof typeof Signal | undefined} signal
-* @returns {Error}
-*/
-const createTaskError = (command, result, ctx, signal = "FAILED") => {
-	ctx.errors.add(TaskError);
-	return new Error(`${red$1(command)} ${blackBright$1(`[${signal}]`)}`, { cause: result });
-};
-/**
-* Returns the task function for the linter.
-*
-* @param {Object} options
-* @param {AbortController} options.abortController
-* @param {boolean} [options.color]
-* @param {string} options.command — Linter task
-* @param {string} [options.continueOnError]
-* @param {string} [options.cwd]
-* @param {String} options.topLevelDir - Current git repo top-level path
-* @param {Boolean} options.isFn - Whether the linter task is a function
-* @param {string[]} options.files — Filepaths to run the linter task against
-* @param {Boolean} [options.verbose] — Always show task verbose
-* @returns {() => Promise<Array<string>>}
-*/
-const getSpawnedTask = ({ abortController, color, command, continueOnError = false, cwd = process.cwd(), files, topLevelDir, isFn, verbose = false }) => {
-	const [cmd, ...args] = parseArgsStringToArgv(command);
-	debugLog$12("cmd:", cmd);
-	debugLog$12("args:", args);
-	/** @type {import('tinyexec').Options}*/
-	const tinyExecOptions = { nodeOptions: {
-		cwd: /^git(\.exe)?/i.test(cmd) ? topLevelDir : cwd,
-		env: color ? { FORCE_COLOR: "true" } : { NO_COLOR: "true" },
-		stdio: ["ignore"]
-	} };
-	debugLog$12("Tinyexec options:", tinyExecOptions);
-	/** @param {ReturnType<typeof getInitialState>} ctx context */
-	return async (ctx = getInitialState()) => {
-		const result = z(cmd, isFn ? args : args.concat(files), tinyExecOptions);
-		const taskFailed = () => result.exitCode > 0 || result.process?.signalCode;
-		/** @type {keyof typeof Signal | undefined} */
-		let signal;
-		abortController.signal.addEventListener("abort", async () => {
-			if (taskFailed() || !result.process) return;
-			signal = abortController.signal.reason;
-			const pid = result.process.pid;
-			result.process.kill(abortController.signal.reason);
-			await killSubProcesses(pid);
-		}, { once: true });
-		let output = "";
-		try {
-			for await (const line of result) output += line + "\n";
-		} catch (error) {
-			/** Probably failed to spawn (ENOENT) */
-			const errorSignal = error instanceof Error && error.code || "FAILED";
-			if (continueOnError !== true)
- /** Other tasks should be killed */
-			abortController.abort(Signal.SIGKILL);
-			handleTaskOutput(command, output, ctx, errorSignal, result);
-			throw createTaskError(command, result, ctx, errorSignal);
-		}
-		output = output.trimEnd();
-		if (taskFailed()) {
-			if (continueOnError !== true)
- /** Other tasks should be killed */
-			abortController.abort(Signal.SIGKILL);
-			if (result.process?.pid) await killSubProcesses(result.process.pid);
-			handleTaskOutput(command, output, ctx, signal, result);
-			throw createTaskError(command, result, ctx, result.process?.signalCode ?? signal);
-		}
-		if (verbose) handleTaskOutput(command, output, ctx, signal);
-	};
-};
-//#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/getFunctionTask.js
-const debugLog$11 = createDebug("lint-staged:getFunctionTasks");
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getFunctionTask.js
+const debugLog$12 = createDebug("lint-staged:getFunctionTasks");
 /**
 * @typedef {{ title: string; task: Function }} FunctionTask
 * @type {(commands: FunctionTask|Array<string|Function>|string|Function) => boolean}
@@ -5122,16 +2950,22 @@ const isFunctionTask = (commands) => typeof commands === "object" && !Array.isAr
 /**
 * Handles function configuration and pushes the tasks into the task array
 *
-* @param {object} command
-* @param {import('./getStagedFiles.js').StagedFile[]} files
+* @param {object} options
+* @param {AbortController} options.abortController
+* @param {FunctionTask} options.command
+* @param {boolean} options.continueOnError
+* @param {import('./getStagedFiles.js').StagedFile[]} options.files
 * @throws {Error} If the function configuration is not valid
 */
-const getFunctionTask = async (command, files) => {
-	debugLog$11("Creating Listr tasks for function %o", command);
+const getFunctionTask = async ({ abortController, command, continueOnError, files }) => {
+	debugLog$12("Creating task for function %o", command);
 	const task = async (ctx) => {
 		try {
 			await command.task(files.map((file) => file.filepath));
 		} catch (e) {
+			if (continueOnError !== true)
+ /** Other tasks should be killed */
+			abortController.abort(Signal.SIGKILL);
 			throw createTaskError(command.title, e, ctx);
 		}
 	};
@@ -5141,89 +2975,84 @@ const getFunctionTask = async (command, files) => {
 	}];
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/getRenderer.js
-const EOLRegex = new RegExp(EOL + "$");
-const bindLogger = (consoleLogMethod) => new Writable({ write: function(chunk, encoding, next) {
-	consoleLogMethod(chunk.toString().replace(EOLRegex, ""));
-	next();
-} });
-const getMainRendererOptions = ({ color, debug, quiet }, logger, env) => {
-	if (quiet) return { renderer: "silent" };
-	if (env.NODE_ENV === "test") return {
-		renderer: "test",
-		rendererOptions: { logger: new ListrLogger({ processOutput: new ProcessOutput(bindLogger(logger.log), bindLogger(logger.error)) }) }
-	};
-	if (debug || !color) return { renderer: "verbose" };
-	return {
-		renderer: "update",
-		rendererOptions: { formatOutput: "truncate" }
-	};
-};
-const getFallbackRenderer = ({ renderer }, { color = false }) => {
-	if (renderer === "silent" || renderer === "test" || !color) return renderer;
-	return "verbose";
-};
-const getRenderer = ({ color, debug, quiet }, logger, env = process.env) => {
-	const mainRendererOptions = getMainRendererOptions({
-		color,
-		debug,
-		quiet
-	}, logger, env);
-	return {
-		...mainRendererOptions,
-		fallbackRenderer: getFallbackRenderer(mainRendererOptions, { color })
-	};
-};
-//#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/getSpawnedTasks.js
-const debugLog$10 = createDebug("lint-staged:getSpawnedTasks");
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/parseGitZOutput.js
+const GIT_Z_REGEXP = /\u0000$/;
 /**
-* Creates and returns an array of listr tasks which map to the given commands.
+* Return array of strings split from the output of `git <something> -z`.
+* With `-z`, git prints `fileA\u0000fileB\u0000fileC\u0000` so we need to
+* remove the last occurrence of `\u0000` before splitting
 *
-* @param {object} options
-* @param {AbortController} options.abortController
-* @param {boolean} [options.color]
-* @param {Array<string|Function>|string|Function} options.commands
-* @param {string} options.continueOnError
-* @param {string} options.cwd
-* @param {import('./getStagedFiles.js').StagedFile[]} options.files
-* @param {string} options.topLevelDir
-* @param {Boolean} verbose
+* @param {string} input
+* @returns {string[]} parsed input
 */
-const getSpawnedTasks = async ({ abortController, color, commands, continueOnError, cwd, files, topLevelDir, verbose }) => {
-	debugLog$10("Creating Listr tasks for commands %o", commands);
-	const cmdTasks = [];
-	const commandArray = Array.isArray(commands) ? commands : [commands];
-	const filepaths = files.map((f) => f.filepath);
-	for (const cmd of commandArray) {
-		const isFn = typeof cmd === "function";
-		/** Pass copy of file list to prevent mutation by function from config file. */
-		const resolved = isFn ? await cmd([...filepaths]) : cmd;
-		const resolvedArray = Array.isArray(resolved) ? resolved : [resolved];
-		for (const command of resolvedArray) {
-			if (isFn && typeof command !== "string") throw new Error(configurationError("[Function]", "Function task should return a string or an array of strings", resolved));
-			const task = getSpawnedTask({
-				abortController,
-				color,
-				command,
-				continueOnError,
-				cwd,
-				files: filepaths,
-				topLevelDir,
-				isFn,
-				verbose
-			});
-			cmdTasks.push({
-				title: command,
-				command,
-				task
-			});
-		}
-	}
-	return cmdTasks;
+const parseGitZOutput = (input) => input ? input.replace(GIT_Z_REGEXP, "").split("\0") : [];
+//#endregion
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getIntentToAddFiles.js
+const debugLog$11 = createDebug("lint-staged:getIntentToAddFiles");
+const getIntentToAddFiles = async ({ cwd }) => {
+	const [stagedWithIta, stagedWithoutIta] = await Promise.all([execGit([
+		"diff",
+		"--staged",
+		"--ita-visible-in-index",
+		"--name-only",
+		"-z"
+	], { cwd }).then(parseGitZOutput), execGit([
+		"diff",
+		"--staged",
+		"--ita-invisible-in-index",
+		"--name-only",
+		"-z"
+	], { cwd }).then(parseGitZOutput)]);
+	const set = new Set(stagedWithoutIta);
+	const intentToAdd = stagedWithIta.filter((f) => !set.has(f)).map((f) => normalizePath(path.join(cwd, f)));
+	debugLog$11(`Detected ${intentToAdd.length} files staged with "--intent-to-add":`, intentToAdd);
+	return intentToAdd;
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/getDiffCommand.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/file.js
+const debugLog$10 = createDebug("lint-staged:file");
+/**
+* Read contents of a file to buffer
+* @param {String} filename
+* @param {Boolean} [ignoreENOENT=true] — Whether to throw if the file doesn't exist
+* @returns {Promise<Buffer>}
+*/
+const readFile$1 = async (filename, ignoreENOENT = true) => {
+	debugLog$10("Reading file `%s`", filename);
+	try {
+		return await fsPromises.readFile(filename);
+	} catch (error) {
+		if (ignoreENOENT && error.code === "ENOENT") {
+			debugLog$10("File `%s` doesn't exist, ignoring...", filename);
+			return null;
+		} else throw error;
+	}
+};
+/**
+* Remove a file
+* @param {String} filename
+* @param {Boolean} [ignoreENOENT=true] — Whether to throw if the file doesn't exist
+*/
+const unlink = async (filename, ignoreENOENT = true) => {
+	debugLog$10("Removing file `%s`", filename);
+	try {
+		await fsPromises.unlink(filename);
+	} catch (error) {
+		if (ignoreENOENT && error.code === "ENOENT") debugLog$10("File `%s` doesn't exist, ignoring...", filename);
+		else throw error;
+	}
+};
+/**
+* Write buffer to file
+* @param {String} filename
+* @param {Buffer} buffer
+*/
+const writeFile = async (filename, buffer) => {
+	debugLog$10("Writing file `%s`", filename);
+	await fsPromises.writeFile(filename, buffer);
+};
+//#endregion
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getDiffCommand.js
 /** @type {(diff?: string, diffFilter?: string) => string[]} */
 const getDiffCommand = (diff, diffFilter) => {
 	/**
@@ -5240,129 +3069,200 @@ const getDiffCommand = (diff, diffFilter) => {
 	];
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/parseGitZOutput.js
-/**
-* Return array of strings split from the output of `git <something> -z`.
-* With `-z`, git prints `fileA\u0000fileB\u0000fileC\u0000` so we need to
-* remove the last occurrence of `\u0000` before splitting
-*/
-const parseGitZOutput = (input) => input ? input.replace(/\u0000$/, "").split("\0") : [];
-//#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/getStagedFiles.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getStagedFiles.js
 /**
 * @typedef {'A'|'C'|'D'|'M'|'R'|'T'|'U'|'X'} FileSatus
 * @typedef { { filepath: string; status: FileSatus }} StagedFile
+*/
+/**
+* Split from all colons and remove the first one, after which lines will look like:
 *
+* 000000 100644 0000000 780ccd3 A\u0000.gitmodules\u0000
+* 000000 160000 0000000 47e5cff A\u0000submodule\u0000
+*
+* where '\u0000' is the NUL character from '-z' option. After that we
+* parse the lines by splitting from NUL, and then split the first
+* part from space. This yields us enough info both filter out submodule
+* roots and get the filename.
+*
+* @param {string} output
+* @param {string} cwd
+* @return {StagedFile[]}
+*
+*/
+const parseGitDiffOutput = (output, cwd) => {
+	if (!output) return [];
+	return output.slice(1).split("\0:").map(parseGitZOutput).flatMap(([info, src, dst]) => {
+		const [, dstMode, , , statusWithScore] = info.split(" ");
+		/**
+		* Filter out submodules and symlinks
+		* @see https://github.com/git/git/blob/cb96e1697ad6e54d11fc920c95f82977f8e438f8/Documentation/git-fast-import.adoc?plain=1#L634-L646
+		*/
+		if (dstMode === "160000" || dstMode === "120000") return [];
+		/**
+		* @example "M"
+		* @example "R86"
+		*
+		* - A: addition of a file
+		* - C: copy of a file into a new one
+		* - D: deletion of a file
+		* - M: modification of the contents or mode of a file
+		* - R: renaming of a file
+		* - T: change in the type of the file (regular file, symbolic link or submodule)
+		* - U: file is unmerged (you must complete the merge before it can be committed)
+		* - X: "unknown" change type
+		*/
+		const status = statusWithScore[0];
+		/** "dst" exists when moving files, otherwise it's undefined and only "src" exists */
+		const filename = dst ?? src;
+		return [{
+			filepath: normalizePath(path.resolve(cwd, filename)),
+			status
+		}];
+	});
+};
+/**
 * @param {Object} args
-* @param {string} [args.cwd]
+* @param {boolean} [args.all]
+* @param {string} args.cwd
+* @param {string} args.gitConfigDir
 * @param {string} [args.diff]
 * @param {string} [args.diffFilter]
 * @retuns {Promise<StagedFile[] | null>}
 */
-const getStagedFiles = async ({ cwd = process.cwd(), diff, diffFilter } = {}) => {
+const getStagedFiles = async ({ all, cwd, gitConfigDir, diff, diffFilter }) => {
 	try {
-		/**
-		* With the raw output lines look like:
-		*
-		* :000000 100644 0000000 780ccd3\u0000A\u0000.gitmodules\u0000
-		* :000000 160000 0000000 1bb568e\u0000A\u0000submodule\u0000
-		*
-		* @see https://git-scm.com/docs/git-diff#_raw_output_format
-		*/
-		const output = await execGit([
-			...getDiffCommand(diff, diffFilter),
-			"--raw",
-			"-z"
-		], { cwd });
-		if (!output) return [];
-		/**
-		* Split from all colons and remove the first one, after which lines will look like:
-		*
-		* 000000 100644 0000000 780ccd3 A\u0000.gitmodules\u0000
-		* 000000 160000 0000000 47e5cff A\u0000submodule\u0000
-		*
-		* where '\u0000' is the NUL character from '-z' option. After that we
-		* parse the lines by splitting from NUL, and then split the first
-		* part from space. This yields us enough info both filter out submodule
-		* roots and get the filename.
-		*/
-		return output.slice(1).split("\0:").map(parseGitZOutput).flatMap(([info, src, dst]) => {
-			const [, dstMode, , , statusWithScore] = info.split(" ");
-			/**
-			* Filter out submodules and symlinks
-			* @see https://github.com/git/git/blob/cb96e1697ad6e54d11fc920c95f82977f8e438f8/Documentation/git-fast-import.adoc?plain=1#L634-L646
-			*/
-			if (dstMode === "160000" || dstMode === "120000") return [];
-			/**
-			* @example "M"
-			* @example "R86"
-			*
-			* - A: addition of a file
-			* - C: copy of a file into a new one
-			* - D: deletion of a file
-			* - M: modification of the contents or mode of a file
-			* - R: renaming of a file
-			* - T: change in the type of the file (regular file, symbolic link or submodule)
-			* - U: file is unmerged (you must complete the merge before it can be committed)
-			* - X: "unknown" change type (most probably a bug, please report it)
-			*/
-			const status = statusWithScore[0];
-			/** "dst" exists when moving files, otherwise it's undefined and only "src" exists */
-			const filename = dst ?? src;
-			return [{
+		if (all) {
+			const allFiles = await execGit([
+				"ls-files",
+				"--full-name",
+				"-z"
+			]);
+			return parseGitZOutput(allFiles).map((filename) => ({
 				filepath: normalizePath(path.resolve(cwd, filename)),
-				status
-			}];
-		});
+				status: "X"
+			}));
+		}
+		/** @param {string[]} command */
+		const getFiles = async (command) => {
+			/**
+			* With the raw output lines look like:
+			*
+			* :000000 100644 0000000 780ccd3\u0000A\u0000.gitmodules\u0000
+			* :000000 160000 0000000 1bb568e\u0000A\u0000submodule\u0000
+			*
+			* @see https://git-scm.com/docs/git-diff#_raw_output_format
+			*/
+			const output = await execGit([
+				...command,
+				"--ita-visible-in-index",
+				"--raw",
+				"-z"
+			], { cwd });
+			return parseGitDiffOutput(output, cwd);
+		};
+		const stagedFiles = await getFiles(getDiffCommand(diff, diffFilter));
+		if (diff || stagedFiles.length === 0) return stagedFiles;
+		if (!await readFile$1(path.resolve(gitConfigDir, "MERGE_HEAD"))) return stagedFiles;
+		const mergeHeadFiles = new Set((await getFiles([
+			"diff",
+			"--staged",
+			"MERGE_HEAD"
+		])).map(({ filepath }) => filepath));
+		/** During merge conflict, return only files changed in both HEAD and MERGE_HEAD */
+		return stagedFiles.filter(({ filepath }) => mergeHeadFiles.has(filepath));
 	} catch {
 		return null;
 	}
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/file.js
-const debugLog$9 = createDebug("lint-staged:file");
-/**
-* Read contents of a file to buffer
-* @param {String} filename
-* @param {Boolean} [ignoreENOENT=true] — Whether to throw if the file doesn't exist
-* @returns {Promise<Buffer>}
-*/
-const readFile$1 = async (filename, ignoreENOENT = true) => {
-	debugLog$9("Reading file `%s`", filename);
-	try {
-		return await fsPromises.readFile(filename);
-	} catch (error) {
-		if (ignoreENOENT && error.code === "ENOENT") {
-			debugLog$9("File `%s` doesn't exist, ignoring...", filename);
-			return null;
-		} else throw error;
-	}
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/runParallelTasks.js
+const debugLog$9 = createDebug("lint-staged:runParallelTasks");
+/** @param {Number | boolean} options.concurrent Boolean value for whether to run concurrently */
+const parseConcurrency = (concurrent) => {
+	if (concurrent === true || concurrent === Infinity) return Infinity;
+	if (concurrent === false || concurrent < 1 || !Number.isInteger(concurrent)) return 1;
+	return concurrent;
 };
 /**
-* Remove a file
-* @param {String} filename
-* @param {Boolean} [ignoreENOENT=true] — Whether to throw if the file doesn't exist
+* @param {Object} ctx
+* @param {Array} tasks
+* @param {Object} options
+* @param {AbortController} abortController
+* @param {Number | boolean} [options.concurrent=true] Boolean value for whether to run concurrently,
+* or a number value controls the number of concurrent executions
 */
-const unlink = async (filename, ignoreENOENT = true) => {
-	debugLog$9("Removing file `%s`", filename);
-	try {
-		await fsPromises.unlink(filename);
-	} catch (error) {
-		if (ignoreENOENT && error.code === "ENOENT") debugLog$9("File `%s` doesn't exist, ignoring...", filename);
-		else throw error;
+const runParallelTasks = async (ctx, tasks, { abortController, concurrent = true, logger }) => {
+	const concurrency = parseConcurrency(concurrent);
+	debugLog$9("Running parallel tasks with concurrency:", concurrency);
+	const indent = tasks.length > 1 ? "    " : "  ";
+	const allPerGlobTasks = [];
+	for (const perConfig of tasks) {
+		if (perConfig.skip()) debugLog$9("Skipped configuration:", perConfig.title);
+		else {
+			debugLog$9("Running configuration:", perConfig.title);
+			if (tasks.length > 1) logger?.log(dim(`${indent}${perConfig.title}`));
+		}
+		for (const perGlob of perConfig.task) {
+			if (perConfig.skip()) continue;
+			if (perGlob.skip()) {
+				debugLog$9("Skipped glob from configuration:", perConfig.title, perGlob.title);
+				continue;
+			}
+			debugLog$9("Running glob:", perGlob.title);
+			logger?.log(dim(`${indent}  ${perGlob.title}`));
+			for (const sequentialTask of perGlob.task) if (Array.isArray(sequentialTask)) {
+				debugLog$9(`Running ${sequentialTask.length} parallel tasks:`, ...sequentialTask.map((t) => t.title));
+				sequentialTask.forEach((parallelTask, index) => {
+					if (index === 0) logger?.log(`${indent}    ${parallelGroupStart()} ${wip()} ${parallelTask.title}`);
+					else {
+						const groupFigure = index === sequentialTask.length - 1 ? parallelGroupStop() : parallelGroupMiddle();
+						logger?.log(`${indent}    ${groupFigure} ${wip()} ${parallelTask.title}`);
+					}
+				});
+			} else {
+				debugLog$9("Running task:", sequentialTask.title);
+				logger?.log(`${indent}    ${wip()} ${sequentialTask.title}`);
+			}
+			allPerGlobTasks.push(perGlob.task);
+		}
 	}
-};
-/**
-* Write buffer to file
-* @param {String} filename
-* @param {Buffer} buffer
-*/
-const writeFile = async (filename, buffer) => {
-	debugLog$9("Writing file `%s`", filename);
-	await fsPromises.writeFile(filename, buffer);
+	logger?.log("");
+	const runSingle = async ({ title, task }) => {
+		if (abortController.signal.aborted) {
+			debugLog$9("Skipped task because aborted:", title);
+			logger?.warn(`${cancelled()} ${title}`);
+			return;
+		}
+		try {
+			debugLog$9("Running task:", title);
+			await task(ctx);
+			debugLog$9("Done running task:", title);
+			logger?.log(`${done()} ${title}`);
+		} catch {
+			debugLog$9("Failed to run task:", title);
+			logger?.error(red(`${error()} ${title}`));
+		}
+	};
+	const runSequential = async (sequentialTasks) => {
+		for (const sequentialOrParallel of sequentialTasks) if (Array.isArray(sequentialOrParallel)) await Promise.all(sequentialOrParallel.map(runSingle));
+		else await runSingle(sequentialOrParallel);
+	};
+	let next = 0;
+	const worker = async () => {
+		while (next < allPerGlobTasks.length) {
+			const perGlobTasks = allPerGlobTasks[next++];
+			await runSequential(perGlobTasks);
+		}
+	};
+	const length = Math.min(allPerGlobTasks.length, concurrency);
+	debugLog$9("Running workers with concurrency:", length);
+	await Promise.all(Array.from({ length }, worker));
+	debugLog$9("Done running workers");
+	logger?.log("");
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/gitWorkflow.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/gitWorkflow.js
 const debugLog$8 = createDebug("lint-staged:GitWorkflow");
 const MERGE_HEAD = "MERGE_HEAD";
 const MERGE_MODE = "MERGE_MODE";
@@ -5381,7 +3281,6 @@ const processRenames = (files, includeRenameFrom = true) => files.reduce((flatte
 	} else flattened.push(file);
 	return flattened;
 }, []);
-const STASH = "lint-staged automatic backup";
 const PATCH_UNSTAGED = "lint-staged_unstaged.patch";
 const GIT_DIFF_ARGS = [
 	"--binary",
@@ -5399,35 +3298,32 @@ const GIT_APPLY_ARGS = [
 	"--recount",
 	"--unidiff-zero"
 ];
-const handleError = (error, ctx, symbol) => {
-	ctx.errors.add(GitError);
-	if (symbol) ctx.errors.add(symbol);
-	throw error;
-};
 const calculateSha256 = (input) => crypto.createHash("sha256").update(input, "utf-8").digest("hex");
+const QUOTES_REGEXP = /^"(.*)"$/;
 /**
 * The lines are wrapped in double quotes
 * @returns {string[]}
 */
-const cleanGitStashOutput = (lines) => lines.map((line) => line.replace(/^"(.*)"$/, "$1"));
+const cleanGitStashOutput = (lines) => lines.map((line) => line.replace(QUOTES_REGEXP, "$1"));
+const GIT_STATUS_Z_REGEXP = /\x00(?=[ AMDRCU?!]{2} |$)/;
 var GitWorkflow = class {
 	/**
 	* @param {Object} opts
-	* @param {import('./getStagedFiles.js').StagedFile[][]} opts.matchedFileChunks
 	*/
-	constructor({ allowEmpty, diff, diffFilter, failOnChanges, gitConfigDir, matchedFileChunks, topLevelDir }) {
+	constructor({ allowEmpty, diff, diffFilter, failOnChanges, gitConfigDir, logger, matchedFiles, maxArgLength, topLevelDir }) {
 		this.execGit = (args, options = {}) => execGit(args, {
 			...options,
 			cwd: topLevelDir
 		});
 		this.allowEmpty = allowEmpty;
-		this.deletedFiles = [];
 		this.diff = diff;
 		this.diffFilter = diffFilter;
 		this.gitConfigDir = gitConfigDir;
 		this.failOnChanges = !!failOnChanges;
-		/** @type {import('./getStagedFiles.js').StagedFile[][]} */
-		this.matchedFileChunks = matchedFileChunks;
+		this.logger = logger;
+		/** @type {Set<import('./getStagedFiles.js').StagedFile>} */
+		this.matchedFiles = matchedFiles;
+		this.maxArgLength = maxArgLength;
 		this.topLevelDir = topLevelDir;
 		/**
 		* These three files hold state about an ongoing git merge
@@ -5443,31 +3339,6 @@ var GitWorkflow = class {
 	*/
 	getHiddenFilepath(filename) {
 		return path.resolve(this.gitConfigDir, `./${filename}`);
-	}
-	/**
-	* Get name of backup stash
-	*/
-	async getBackupStash(ctx) {
-		const index = (await this.execGit([
-			"stash",
-			"list",
-			"--format=\"%h %s\"",
-			"-z"
-		]).then(parseGitZOutput).then(cleanGitStashOutput)).findIndex((line) => line.startsWith(ctx.backupHash));
-		if (index === -1) {
-			ctx.errors.add(GetBackupStashError);
-			throw new Error("lint-staged automatic backup is missing!");
-		}
-		return String(index);
-	}
-	/**
-	* Get a list of unstaged deleted files
-	*/
-	async getDeletedFiles() {
-		debugLog$8("Getting deleted files...");
-		const deletedFiles = (await this.execGit(["ls-files", "--deleted"])).split("\n").filter(Boolean).map((file) => path.resolve(this.topLevelDir, file));
-		debugLog$8("Found deleted files:", deletedFiles);
-		return deletedFiles;
 	}
 	/**
 	* Save meta information about ongoing git merge
@@ -5494,9 +3365,11 @@ var GitWorkflow = class {
 			]);
 			debugLog$8("Done restoring merge state!");
 		} catch (error) {
+			ctx.errors.add(GitError);
+			ctx.errors.add(RestoreMergeStatusError);
 			debugLog$8("Failed restoring merge state with error:");
 			debugLog$8(error);
-			handleError(/* @__PURE__ */ new Error("Merge state could not be restored due to an error!"), ctx, RestoreMergeStatusError);
+			throw error;
 		}
 	}
 	/**
@@ -5515,7 +3388,7 @@ var GitWorkflow = class {
 		* renamed file, the file names are separated by a NUL character
 		* (e.g. `to`\0`from`)
 		*/
-		const unstagedFiles = (await this.execGit(["status", "-z"])).split(/\x00(?=[ AMDRCU?!]{2} |$)/).filter((line) => {
+		const unstagedFiles = (await this.execGit(["status", "-z"])).split(GIT_STATUS_Z_REGEXP).filter((line) => {
 			const [index, workingTree] = line;
 			const updatedInIndex = index !== " " && index !== "?";
 			const updatedInWorkingTree = workingTree !== " " && workingTree !== "?";
@@ -5525,17 +3398,23 @@ var GitWorkflow = class {
 		debugLog$8(`Found ${onlyPartial ? "partially staged" : "unstaged"} files:`, unstagedFiles);
 		return unstagedFiles.length ? unstagedFiles : null;
 	}
+	/** Print stash list with commit hash and subject */
+	async listStashes() {
+		return await this.execGit([
+			"stash",
+			"list",
+			"--format=\"%H %s\"",
+			"-z"
+		]).then(parseGitZOutput).then(cleanGitStashOutput);
+	}
 	/**
 	* Create a diff of unstaged or partially staged files and backup stash if enabled.
 	*/
-	async prepare(ctx, task) {
+	async prepare(ctx) {
+		this.logger.log(dim(`${wip()} ${ctx.shouldBackup ? "Backing up original state…" : "Preparing lint-staged…"}`));
 		try {
-			debugLog$8(task.title);
-			if (ctx.shouldBackup) {
-				await this.backupMergeStatus();
-				this.deletedFiles = await this.getDeletedFiles();
-			}
-			if (ctx.shouldHideUnstaged) {
+			if (ctx.shouldBackup) await this.backupMergeStatus();
+			if (ctx.shouldHideUnstaged || ctx.shouldHideAll) {
 				this.unstagedFiles = await this.getUnstagedFiles({ onlyPartial: false });
 				ctx.hasFilesToHide = !!this.unstagedFiles;
 			} else if (ctx.shouldHidePartiallyStaged) {
@@ -5556,65 +3435,72 @@ var GitWorkflow = class {
 				]);
 			}
 			if (ctx.shouldBackup) {
-				if (ctx.shouldHideUnstaged) {
-					/** Save stash of all changes, clearing the working tree but keeping staged files as-is */
-					await this.execGit([
+				const stashMessage = `lint-staged automatic backup (${ctx.runId})`;
+				if (ctx.shouldHideUnstaged || ctx.shouldHideAll) {
+					const args = [
 						"stash",
 						"push",
 						"--keep-index",
 						"--message",
-						STASH
-					]);
-					/** The stash line starts with the short hash, so we split from space and choose the first part */
-					ctx.backupHash = (await this.execGit([
-						"stash",
-						"list",
-						"--format=\"%h %s\"",
-						"-z"
-					]).then(parseGitZOutput).then(cleanGitStashOutput)).find((line) => line.includes(STASH))?.split(" ")[0];
+						stashMessage
+					];
+					if (ctx.shouldHideAll) args.push("--include-untracked");
+					/** Save stash of all changes, clearing the working tree but keeping staged files as-is */
+					await this.execGit(args);
+					/** The stash line starts with the commit hash, so we split from space and choose the first part */
+					ctx.backupHash = (await this.listStashes()).find((line) => line.includes(ctx.runId))?.split(" ")[0];
+					await this.restoreMergeStatus(ctx);
 				} else {
+					ctx.backupHash = await this.execGit(["stash", "create"]);
 					/** Save stash of all changes, keeping all files as-is */
-					const stashHash = await this.execGit(["stash", "create"]);
-					ctx.backupHash = await this.execGit([
-						"rev-parse",
-						"--short",
-						stashHash
-					]);
 					await this.execGit([
 						"stash",
 						"store",
 						"--quiet",
 						"--message",
-						STASH,
+						stashMessage,
 						ctx.backupHash
 					]);
 				}
-				task.title = `Backed up original state in git stash (${ctx.backupHash})`;
-				debugLog$8(task.title);
+				debugLog$8("Created backup stash with commit hash %s", ctx.backupHash);
 			}
-		} catch (error) {
-			handleError(error, ctx);
+			this.logger.log(`${done()} ${ctx.shouldBackup ? `Done backing up original state (${await this.execGit([
+				"rev-parse",
+				"--short",
+				ctx.backupHash
+			])})!` : "Done preparing lint-staged!"}`);
+		} catch (error$2) {
+			ctx.errors.add(GitError);
+			const errorMessage = ctx.shouldBackup ? "Failed to back up original state!" : "Failed to prepare lint-staged!";
+			this.logger.error(`${error()} ${errorMessage}`);
+			debugLog$8(error$2);
 		}
 	}
 	async hidePartiallyStagedChanges(ctx) {
+		this.logger.log(dim(`${wip()} Hiding unstaged changes to partially staged files…`));
 		try {
 			const files = processRenames(this.unstagedFiles, false);
 			await this.execGit([
-				"checkout",
-				"--force",
+				"restore",
+				"--worktree",
 				"--",
 				...files
 			]);
-		} catch (error) {
+			this.logger.log(`${done()} Done hiding unstaged changes to partially staged files!`);
+		} catch (error$4) {
 			/**
 			* `git checkout --force` doesn't throw errors, so it shouldn't be possible to get here.
-			* If this does fail, the handleError method will set ctx.gitError and lint-staged will fail.
 			*/
-			handleError(error, ctx, HideUnstagedChangesError);
+			ctx.errors.add(GitError);
+			ctx.errors.add(HideUnstagedChangesError);
+			const errorMessage = `${error()} Failed to hude unstaged changes to partially staged files!`;
+			this.logger.error(errorMessage);
+			debugLog$8(error$4);
 		}
 	}
-	async runTasks(ctx, task, { listrTasks, concurrent }) {
-		if (ctx.shouldFailOnChanges) {
+	async runTasks(ctx, tasks, { abortController, concurrent }) {
+		this.logger.log(dim(`${wip()} Running tasks for ${this.diff ? "changed" : "staged"} files…`));
+		if (ctx.shouldFailOnChanges) try {
 			debugLog$8("Calculating SHA-256 hash of unstaged changes because \"--fail-on-changes\" was used...");
 			const diff = await this.execGit([
 				"diff",
@@ -5623,48 +3509,98 @@ var GitWorkflow = class {
 			]);
 			ctx.unstagedDiffSha256 = calculateSha256(diff);
 			debugLog$8("SHA-256 hash of unstaged changes is %s", ctx.unstagedDiffSha256);
+		} catch (error) {
+			ctx.errors.add(GitError);
+			this.logger.error("Failed to calculate SHA-256 hash of unstaged changes!");
+			debugLog$8(error);
+			return;
 		}
-		return task.newListr(listrTasks, { concurrent });
+		const failureMessage = `${error()} Failed to run tasks for ${this.diff ? "changed" : "staged"} files!`;
+		try {
+			await runParallelTasks(ctx, tasks, {
+				abortController,
+				concurrent,
+				logger: this.logger
+			});
+			this.logger.log(ctx.errors.has(TaskError) ? failureMessage : `${done()} Done running tasks for ${this.diff ? "changed" : "staged"} files!`);
+		} catch (error) {
+			ctx.errors.add(TaskError);
+			this.logger.error(failureMessage);
+			debugLog$8(error);
+		}
 	}
-	/**
-	* Applies back task modifications, and unstaged changes hidden in the stash.
-	* In case of a merge-conflict retry with 3-way merge.
-	*/
-	async applyModifications(ctx) {
-		if (ctx.shouldFailOnChanges) {
-			debugLog$8("Calculating SHA-256 hash of changes after tasks because \"--fail-on-changes\" was used...");
-			const diff = await this.execGit([
-				"diff",
-				"--patch",
-				"--unified=0"
-			]);
-			const diffSha256 = calculateSha256(diff);
-			debugLog$8("SHA-256 hash of changes after tasks is %s", diffSha256);
-			if (ctx.unstagedDiffSha256 !== diffSha256) {
-				ctx.errors.add(FailOnChangesError);
-				throw new Error("Tasks modified files and --fail-on-changes was used!");
+	/** Update Git index again for the originally staged files to stage task modifications. */
+	async updateIndex(ctx) {
+		this.logger.log(dim(`${wip()} Staging changes from tasks…`));
+		try {
+			if (ctx.shouldFailOnChanges) {
+				debugLog$8("Calculating SHA-256 hash of changes after tasks because \"--fail-on-changes\" was used...");
+				const diff = await this.execGit([
+					"diff",
+					"--patch",
+					"--unified=0"
+				]);
+				const diffSha256 = calculateSha256(diff);
+				debugLog$8("SHA-256 hash of changes after tasks is %s", diffSha256);
+				if (ctx.unstagedDiffSha256 !== diffSha256) {
+					ctx.errors.add(FailOnChangesError);
+					this.logger.error(`${error()} Tasks modified files and --fail-on-changes was used!`);
+					return;
+				}
 			}
-		}
-		debugLog$8("Adding task modifications to index...");
-		for (const files of this.matchedFileChunks) {
-			const addableFiles = (await Promise.allSettled(files.map(async (f) => {
+			const activeIndexFile = process.env.GIT_INDEX_FILE ? normalizePath(process.env.GIT_INDEX_FILE) : process.env.GIT_INDEX_FILE;
+			const addableFiles = (await Promise.allSettled(Array.from(this.matchedFiles, async (f) => {
 				if (f.status === "D") {
 					await fsPromises.access(f.filepath);
 					return f.filepath;
 				} else return f.filepath;
 			}))).flatMap((r) => r.status === "fulfilled" ? [r.value] : []);
-			await this.execGit([
-				"add",
-				"--",
-				...addableFiles
-			]);
+			const addCommands = await chunkFilesForCommand("git add --", addableFiles, this.maxArgLength);
+			/** Needs to be run serially because of locking Git operation */
+			for (const { files } of addCommands) {
+				debugLog$8("Updating active Git index: %s", activeIndexFile);
+				await this.execGit([
+					"add",
+					"--",
+					...files
+				]);
+				debugLog$8("Done updating Git index: %s", activeIndexFile);
+				if (activeIndexFile?.endsWith(".lock")) {
+					const defaultIndexLock = normalizePath(await this.execGit([
+						"rev-parse",
+						"--path-format=absolute",
+						"--git-path",
+						"index.lock"
+					]));
+					/**
+					* If the active index file is a non-default lockfile, we are committing with a pathspec
+					* without having explicitly run `git add`. In this case we need to also update the
+					* default index, otherwise there will be leftover diff after committing
+					*/
+					if (activeIndexFile !== defaultIndexLock) {
+						debugLog$8("Updating default Git index again: %s", defaultIndexLock);
+						await this.execGit([
+							"add",
+							"--",
+							...files
+						], { env: { GIT_INDEX_FILE: defaultIndexLock } });
+						debugLog$8("Done updating default Git index lock: %s", defaultIndexLock);
+					}
+				}
+			}
+			if (!await this.execGit([
+				...getDiffCommand(this.diff, this.diffFilter),
+				"--name-only",
+				"-z"
+			]) && !this.allowEmpty) {
+				ctx.errors.add(ApplyEmptyCommitError);
+				this.logger.error(`${error()} Prevented an empty git commit!`);
+			} else this.logger.log(`${done()} Done staging changes from tasks!`);
+		} catch (error$1) {
+			ctx.errors.add(GitError);
+			this.logger.log(`${error()} Failed to stage changes from tasks!`);
+			debugLog$8(error$1);
 		}
-		debugLog$8("Done adding task modifications to index!");
-		if (!await this.execGit([
-			...getDiffCommand(this.diff, this.diffFilter),
-			"--name-only",
-			"-z"
-		]) && !this.allowEmpty) handleError(/* @__PURE__ */ new Error("Prevented an empty git commit!"), ctx, ApplyEmptyCommitError);
 	}
 	/**
 	* Restore unstaged changes to partially changed files. If it at first fails,
@@ -5672,7 +3608,7 @@ var GitWorkflow = class {
 	* 3-way merge usually fixes this, and in case it doesn't we should just give up and throw.
 	*/
 	async restoreUnstagedChanges(ctx) {
-		debugLog$8("Restoring unstaged changes...");
+		this.logger.log(dim(`${wip()} Restoring unstaged changes…`));
 		const unstagedPatch = this.getHiddenFilepath(PATCH_UNSTAGED);
 		try {
 			await this.execGit([
@@ -5692,16 +3628,47 @@ var GitWorkflow = class {
 					unstagedPatch
 				]);
 			} catch (threeWayApplyError) {
-				debugLog$8("Error while restoring unstaged changes using 3-way merge:");
+				ctx.errors.add(GitError);
+				ctx.errors.add(RestoreUnstagedChangesError);
+				this.logger.error(`${error()} Failed to restore unstaged changes!`);
 				debugLog$8(threeWayApplyError);
-				handleError(/* @__PURE__ */ new Error("Unstaged changes could not be restored due to a merge conflict!"), ctx, RestoreUnstagedChangesError);
 			}
+		}
+	}
+	async restoreUntrackedFiles(ctx) {
+		this.logger.log(dim(`${wip()} Restoring untracked files…`));
+		try {
+			const untrackedTree = `${ctx.backupHash}^3`;
+			const untrackedFiles = await this.execGit([
+				"ls-tree",
+				"-r",
+				"--name-only",
+				"-z",
+				untrackedTree
+			]).then(parseGitZOutput);
+			if (untrackedFiles.length) {
+				debugLog$8("Found untracked files: %s", untrackedFiles);
+				await this.execGit([
+					"restore",
+					"--source",
+					untrackedTree,
+					"--",
+					...untrackedFiles.map(normalizePath)
+				]);
+				this.logger.log(`${done()} Done restoring untracked files!`);
+			} else this.logger.log(`${cancelled()} ${dim("No untracked files to restore!")}`);
+		} catch (restoreUntrackedFilesError) {
+			ctx.errors.add(GitError);
+			ctx.errors.add(RestoreUnstagedChangesError);
+			this.logger.error(`${error()} Failed to restore untracked files!`);
+			debugLog$8(restoreUntrackedFilesError);
 		}
 	}
 	/**
 	* Restore original HEAD state in case of errors
 	*/
 	async restoreOriginalState(ctx) {
+		this.logger.log(dim(`${wip()} Reverting to original state because of errors…`));
 		try {
 			debugLog$8("Restoring original state...");
 			await this.execGit([
@@ -5714,36 +3681,43 @@ var GitWorkflow = class {
 				"apply",
 				"--quiet",
 				"--index",
-				await this.getBackupStash(ctx)
+				ctx.backupHash
 			]);
 			await this.restoreMergeStatus(ctx);
-			await Promise.all(this.deletedFiles.map((file) => unlink(file)));
 			await unlink(this.getHiddenFilepath(PATCH_UNSTAGED));
-			debugLog$8("Done restoring original state!");
-		} catch (error) {
-			handleError(error, ctx, RestoreOriginalStateError);
+			this.logger.log(`${done()} Done reverting to original state!`);
+		} catch (error$5) {
+			ctx.errors.add(GitError);
+			ctx.errors.add(RestoreOriginalStateError);
+			this.logger.error(`${error()} Failed to revert to original state!`);
+			debugLog$8(error$5);
 		}
 	}
 	/**
 	* Drop the created stashes after everything has run
 	*/
 	async cleanup(ctx) {
+		this.logger.log(dim(`${wip()} Cleaning up temporary files…`));
 		try {
-			debugLog$8("Dropping backup stash...");
-			await this.execGit([
-				"stash",
-				"drop",
-				"--quiet",
-				await this.getBackupStash(ctx)
-			]);
-			debugLog$8("Done dropping backup stash!");
-		} catch (error) {
-			handleError(error, ctx);
+			const index = (await this.listStashes()).findIndex((line) => line.startsWith(ctx.backupHash));
+			if (index > -1) {
+				await this.execGit([
+					"stash",
+					"drop",
+					"--quiet",
+					String(index)
+				]);
+				this.logger.log(`${done()} Done cleaning up temporary files!`);
+			} else this.logger.error(`${error()} lint-staged automatic backup is missing!`);
+		} catch (error$3) {
+			ctx.errors.add(GitError);
+			this.logger.error(`${error()} Failed to clean up temporary files!`);
+			debugLog$8(error$3);
 		}
 	}
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/groupFilesByConfig.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/groupFilesByConfig.js
 const debugLog$7 = createDebug("lint-staged:groupFilesByConfig");
 /**
 * @typedef {import('./getStagedFiles.js').StagedFile} StagedFile
@@ -5787,13 +3761,13 @@ const groupFilesByConfig = async ({ configs, files, singleConfigMode }) => {
 		});
 		filesByConfig[filepath] = {
 			config,
-			files: Array.from(scopedFiles)
+			files: [...scopedFiles]
 		};
 	}
 	return filesByConfig;
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/resolveGitRepo.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/resolveGitRepo.js
 const debugLog$6 = createDebug("lint-staged:resolveGitRepo");
 /**
 * Relative path up to the repo top-level directory
@@ -5852,7 +3826,7 @@ const resolveGitRepo = async (cwd = process.cwd()) => {
 	}
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/configFiles.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/configFiles.js
 const CONFIG_NAME = "lint-staged";
 const PACKAGE_JSON_FILE = "package.json";
 const PACKAGE_YAML_FILES = ["package.yaml", "package.yml"];
@@ -5881,7 +3855,7 @@ const CONFIG_FILE_NAMES = [
 	"lint-staged.config.cts"
 ];
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/resolveConfig.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/resolveConfig.js
 /**
 * require() does not exist for ESM, so we must create it to use require.resolve().
 * @see https://nodejs.org/api/module.html#modulecreaterequirefilename
@@ -5895,7 +3869,7 @@ function resolveConfig(configPath) {
 	}
 }
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/loadConfig.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/loadConfig.js
 /** @typedef {import('./index').Logger} Logger */
 const debugLog$5 = createDebug("lint-staged:loadConfig");
 const readFile = async (filename) => fsPromises.readFile(path.resolve(filename), "utf-8");
@@ -5916,7 +3890,7 @@ const jsonParse = async (filename) => {
 const yamlParse = async (filename) => {
 	const isPackageFile = PACKAGE_YAML_FILES.includes(path.basename(filename));
 	try {
-		const [YAML, content] = await Promise.all([import("../dist-CtM2JRbM.js").then((m) => /* @__PURE__ */ __toESM(m.default, 1)), readFile(filename)]);
+		const [YAML, content] = await Promise.all([import("../dist-B6ZCNXqZ.js").then((m) => /* @__PURE__ */ __toESM(m.default, 1)), readFile(filename)]);
 		const yaml = YAML.parse(content);
 		return isPackageFile ? yaml[CONFIG_NAME] : yaml;
 	} catch (error) {
@@ -5927,7 +3901,7 @@ const yamlParse = async (filename) => {
 		throw error;
 	}
 };
-const dynamicImport = (path) => import(pathToFileURL(path)).then((module) => module.default);
+const dynamicImport = (p) => import(pathToFileURL(p)).then((module) => module.default);
 const NO_EXT = "noExt";
 /**
 * `lilconfig` doesn't support yaml files by default,
@@ -5976,7 +3950,7 @@ const loadConfig = async (configPath, logger) => {
 	}
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/validateBraces.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/validateBraces.js
 /**
 * A correctly-formed brace expansion must contain unquoted opening and closing braces,
 * and at least one unquoted comma or a valid sequence expression.
@@ -6006,6 +3980,8 @@ const loadConfig = async (configPath, logger) => {
 * - *.{js\,ts}   // the comma is escaped, so treated literally
 */
 const getIncorrectBracesRegexp = () => /(?<![\\$])({)(?:(?!(?<!\\),|\.\.|\{|\}).)*?(?<!\\)(})/g;
+const BRACE_OPEN_REGEXP = /{/;
+const BRACE_CLOSE_REGEXP = /}/;
 /**
 * @param {string} pattern
 * @returns {string}
@@ -6016,7 +3992,7 @@ const stripIncorrectBraces = (pattern) => {
 	let match = regexp.exec(output);
 	while (match) {
 		const fullMatch = match[0];
-		const withoutBraces = fullMatch.replace(/{/, "").replace(/}/, "");
+		const withoutBraces = fullMatch.replace(BRACE_OPEN_REGEXP, "").replace(BRACE_CLOSE_REGEXP, "");
 		output = output.replace(fullMatch, withoutBraces);
 		regexp.lastIndex = 0;
 		match = regexp.exec(output);
@@ -6058,9 +4034,14 @@ const validateBraces = (pattern, logger) => {
 	return fixedPattern;
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/validateConfig.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/validateConfig.js
 /** @typedef {import('./index').Logger} Logger */
 const debugLog$4 = createDebug("lint-staged:validateConfig");
+const isTask = (task) => typeof task === "string" || typeof task === "function";
+const isSequentialTasks = (tasks) => tasks.every((task) => {
+	if (Array.isArray(task)) return task.every(isTask);
+	else return isTask(task);
+});
 const validateConfigLogic = (config, configPath, logger) => {
 	debugLog$4("Validating config from `%s`...", configPath);
 	if (!config || typeof config !== "object" && typeof config !== "function") throw ConfigFormatError;
@@ -6081,8 +4062,7 @@ const validateConfigLogic = (config, configPath, logger) => {
 	*/
 	const validatedConfig = Object.entries(config).reduce((collection, [pattern, task]) => {
 		if (Array.isArray(task)) {
-			/** Array with invalid values */
-			if (task.some((item) => typeof item !== "string" && typeof item !== "function")) errors.push(configurationError(pattern, "Should be an array of strings or functions.", task));
+			if (!isSequentialTasks(task)) errors.push(configurationError(pattern, "Should be an array of strings or functions, or single-level nested array or strings of functions.", task));
 		} else if (typeof task === "object") {
 			/** Invalid function task */
 			if (typeof task.title !== "string" || typeof task.task !== "function") errors.push(configurationError(pattern, "Function task should contain `title` and `task` fields, where `title` should be a string and `task` should be a function.", task));
@@ -6121,19 +4101,12 @@ const validateConfig = (config, configPath, logger) => {
 	}
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/searchConfigs.js
-/** @typedef {import('./index').Logger} Logger */
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/searchConfigs.js
 const debugLog$3 = createDebug("lint-staged:searchConfigs");
-const EXEC_GIT = [
-	"ls-files",
-	"-z",
-	"--full-name",
-	"-t"
-];
 const CONFIG_PATHSPEC = CONFIG_FILE_NAMES.map((f) => `:(glob)**/${f}`);
 const numberOfLevels = (file) => file.split("/").length;
-const sortAlphabetically = (a, b) => a.localeCompare(b);
-const sortDeepestParth = (a, b) => numberOfLevels(a) > numberOfLevels(b) ? -1 : 1;
+const compareConfigPaths = (a, b) => numberOfLevels(b) - numberOfLevels(a) || a.localeCompare(b);
+const GIT_STATUS_REGEXP = /^[HSMRCK?U] /;
 /**
 * Get all possible config files from git
 *
@@ -6143,7 +4116,10 @@ const sortDeepestParth = (a, b) => numberOfLevels(a) > numberOfLevels(b) ? -1 : 
 * @returns {Promise<string[]>}
 */
 const listConfigFilesFromGit = async ({ cwd, topLevelDir }) => execGit([
-	...EXEC_GIT,
+	"ls-files",
+	"-z",
+	"--full-name",
+	"-t",
 	"--cached",
 	"--others",
 	"--exclude-standard",
@@ -6157,7 +4133,7 @@ const listConfigFilesFromGit = async ({ cwd, topLevelDir }) => execGit([
 		* @see https://git-scm.com/docs/git-ls-files#Documentation/git-ls-files.txt--t
 		*/
 		if (line.startsWith("S ")) return [];
-		const relativePath = line.replace(/^[HSMRCK?U] /, "");
+		const relativePath = line.replace(GIT_STATUS_REGEXP, "");
 		return [normalizePath(path.join(topLevelDir, relativePath))];
 	});
 	debugLog$3("Found possible config files from git:", possibleConfigFiles);
@@ -6195,7 +4171,7 @@ const listConfigFilesFromFs = async ({ cwd }) => {
 * @param {string} [options.configPath] - Explicit path to a config file
 * @param {string} [options.cwd] - Current working directory
 * @param {string} [options.topLevelDir] - Top-level directory of the git repo
-* @param {Logger} logger
+* @param {import('./index').Logger} logger
 *
 * @returns {Promise<{ [key: string]: { config: *, files: string[] } }>} found configs with filepath as key, and config as value
 */
@@ -6222,12 +4198,12 @@ const searchConfigs = async ({ configObject, configPath, cwd = process.cwd(), to
 		topLevelDir
 	}).then(addToSet), listConfigFilesFromFs({ cwd }).then(addToSet)]);
 	/** Create object with key as config file, and value as null */
-	const configs = Array.from(possibleConfigFiles).sort(sortAlphabetically).sort(sortDeepestParth).reduce((acc, configPath) => Object.assign(acc, { [configPath]: null }), {});
+	const configs = [...possibleConfigFiles].toSorted(compareConfigPaths).reduce((acc, groupConfigPath) => Object.assign(acc, { [groupConfigPath]: null }), {});
 	/** Load and validate all configs to the above object */
-	await Promise.all(Object.keys(configs).map((configPath) => loadConfig(configPath, logger).then(({ config, filepath }) => {
+	await Promise.all(Object.keys(configs).map((groupConfigPath) => loadConfig(groupConfigPath, logger).then(({ config, filepath }) => {
 		if (config) {
-			if (configPath !== filepath) debugLog$3("Config file \"%s\" resolved to \"%s\"", configPath, filepath);
-			configs[configPath] = validateConfig(config, filepath, logger);
+			if (groupConfigPath !== filepath) debugLog$3("Config file \"%s\" resolved to \"%s\"", groupConfigPath, filepath);
+			configs[groupConfigPath] = validateConfig(config, filepath, logger);
 		}
 	})));
 	/** Get validated configs from the above object, without any `null` values (not found) */
@@ -6239,9 +4215,25 @@ const searchConfigs = async ({ configObject, configPath, cwd = process.cwd(), to
 	return foundConfigs;
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/runAll.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/runAll.js
 /** @typedef {import('./index').Logger} Logger */
 const debugLog$2 = createDebug("lint-staged:runAll");
+/**
+* @param {Logger} logger
+* @param {boolean} quiet
+* @returns {Logger}
+*/
+const configureLogger = (logger, quiet) => {
+	if (quiet) {
+		const noop = () => {};
+		return {
+			error: logger.error,
+			log: noop,
+			warn: noop
+		};
+	}
+	return logger;
+};
 /**
 * @param {ReturnType<typeof getInitialState>} ctx context
 * @param {unknown} cause error cause
@@ -6251,14 +4243,13 @@ const createError = (ctx, cause) => Object.assign(new Error("lint-staged failed"
 * Executes all tasks and either resolves or rejects the promise
 *
 * @param {object} options
+* @param {Object} [options.all] - include all files tracked in Git instead of only staged
 * @param {boolean} [options.allowEmpty] - Allow empty commits when tasks revert all staged changes
-* @param {boolean} [options.color] - Enable or disable ANSI color codes in output.
 * @param {boolean | number} [options.concurrent] - The number of tasks to run concurrently, or false to run tasks serially
 * @param {Object} [options.configObject] - Explicit config object from the js API
 * @param {string} [options.configPath] - Explicit path to a config file
 * @param {boolean} [options.continueOnError] - Run all tasks to completion even if one fails
 * @param {string} [options.cwd] - Current working directory
-* @param {boolean} [options.debug] - Enable debug mode
 * @param {string} [options.diff] - Override the default "--staged" flag of "git diff" to get list of files
 * @param {string} [options.diffFilter] - Override the default "--diff-filter=ACMR" flag of "git diff" to get list of files
 * @param {boolean} [options.failOnChanges] - Fail with exit code 1 when tasks modify tracked files
@@ -6273,47 +4264,59 @@ const createError = (ctx, cause) => Object.assign(new Error("lint-staged failed"
 * @param {Logger} logger
 * @returns {Promise}
 */
-const runAll = async ({ allowEmpty = false, color = false, concurrent = true, configObject, configPath, continueOnError = false, cwd, debug = false, diff, diffFilter, failOnChanges = false, hideUnstaged = false, hidePartiallyStaged = !hideUnstaged, maxArgLength, quiet = false, relative = false, stash = diff === void 0, revert = stash, verbose = false }, logger = console) => {
-	debugLog$2("Running all linter scripts...");
+const runAll = async ({ all, allowEmpty, concurrent, configObject, configPath, continueOnError, cwd, diff, diffFilter, failOnChanges, hideAll, hideUnstaged, hidePartiallyStaged, maxArgLength, quiet, relative, stash, revert, verbose }, logger = console) => {
+	const thisLogger = configureLogger(logger, quiet);
+	debugLog$2("Running all tasks...");
 	const hasExplicitCwd = !!cwd;
 	cwd = hasExplicitCwd ? path.resolve(cwd) : process.cwd();
 	debugLog$2("Using working directory `%s`", cwd);
 	const ctx = getInitialState({
 		failOnChanges,
-		hidePartiallyStaged,
+		hideAll,
 		hideUnstaged,
+		hidePartiallyStaged,
 		quiet,
 		revert
 	});
 	const { topLevelDir, gitConfigDir } = await resolveGitRepo(cwd);
 	if (!topLevelDir) {
-		if (!quiet) ctx.output.push(NOT_GIT_REPO);
+		if (!quiet) ctx.output.push(notGitRepo());
 		ctx.errors.add(GitRepoError);
 		throw createError(ctx, GitRepoError);
 	}
 	const hasInitialCommit = await execGit(["log", "-1"], { cwd: topLevelDir }).then(() => true).catch(() => false);
 	ctx.shouldBackup = hasInitialCommit && stash;
-	if (!ctx.shouldBackup && !quiet) logger.warn(skippingBackup(hasInitialCommit, diff));
-	if (!ctx.shouldHidePartiallyStaged && !ctx.shouldHideUnstaged && !quiet) logger.warn(SKIPPING_HIDE_PARTIALLY_CHANGED);
-	const [stagedFiles, foundConfigs] = await Promise.all([getStagedFiles({
-		cwd: topLevelDir,
-		diff,
-		diffFilter
-	}), searchConfigs({
-		configObject,
-		configPath,
-		cwd,
-		topLevelDir
-	}, logger)]);
+	if (!ctx.shouldBackup) thisLogger.warn(skippingBackup(all, hasInitialCommit, diff));
+	if (!ctx.shouldHidePartiallyStaged && !ctx.shouldHideUnstaged && !ctx.shouldHideAll) thisLogger.warn(skippingHidePartiallyChanged());
+	const [stagedFiles, intentToAddFiles, foundConfigs] = await Promise.all([
+		getStagedFiles({
+			all,
+			cwd: topLevelDir,
+			diff,
+			diffFilter,
+			gitConfigDir
+		}),
+		getIntentToAddFiles({ cwd: topLevelDir }),
+		searchConfigs({
+			configObject,
+			configPath,
+			cwd,
+			topLevelDir
+		}, thisLogger)
+	]);
 	if (!stagedFiles) {
-		if (!quiet) ctx.output.push(FAILED_GET_STAGED_FILES);
+		if (!quiet) ctx.output.push(failedGetStagedFiles());
 		ctx.errors.add(GetStagedFilesError);
 		throw createError(ctx, GetStagedFilesError);
 	}
 	debugLog$2("Loaded list of staged files in git:\n%O", stagedFiles);
 	if (stagedFiles.length === 0) {
-		if (!quiet) ctx.output.push(NO_STAGED_FILES);
+		if (!quiet) ctx.output.push(noStagedFiles());
 		return ctx;
+	}
+	if (intentToAddFiles.length > 0) {
+		ctx.errors.add(IntentToAddError);
+		throw createError(ctx, intentToAddFiles);
 	}
 	const numberOfConfigs = Object.keys(foundConfigs).length;
 	if (numberOfConfigs === 0) {
@@ -6327,85 +4330,64 @@ const runAll = async ({ allowEmpty = false, color = false, concurrent = true, co
 	});
 	const hasMultipleConfigs = numberOfConfigs > 1;
 	let hasDeprecatedGitAdd = false;
-	const listrOptions = {
-		ctx,
-		exitOnError: false,
-		registerSignalListeners: false,
-		...getRenderer({
-			color,
-			debug,
-			quiet
-		}, logger)
-	};
-	const listrTasks = [];
+	const tasks = [];
 	/** @type {Set<import('./getStagedFiles.js').StagedFile>} */
 	const matchedFiles = /* @__PURE__ */ new Set();
 	const abortController = getAbortController();
-	for (const [configPath, { config, files }] of Object.entries(filesByConfig)) {
-		const configName = configPath ? normalizePath(path.relative(cwd, configPath)) : "Config object";
-		const stagedFileChunks = chunkFiles({
-			baseDir: topLevelDir,
+	for (const [groupConfigPath, { config, files }] of Object.entries(filesByConfig)) {
+		const configName = groupConfigPath ? normalizePath(path.relative(cwd, groupConfigPath)) : "Config object";
+		const groupCwd = hasExplicitCwd || !hasMultipleConfigs ? cwd : path.dirname(groupConfigPath);
+		const configTasks = await Promise.all(generateTasks({
+			config,
+			cwd: groupCwd,
 			files,
-			maxArgLength,
 			relative
-		});
-		const groupCwd = hasMultipleConfigs && !hasExplicitCwd ? path.dirname(configPath) : cwd;
-		const chunkCount = stagedFileChunks.length;
-		if (chunkCount > 1) debugLog$2("Chunked staged files from `%s` into %d part", configPath, chunkCount);
-		for (const [index, files] of stagedFileChunks.entries()) {
-			const chunkListrTasks = await Promise.all(generateTasks({
-				config,
-				cwd: groupCwd,
-				files,
-				relative
-			}).map((task) => (isFunctionTask(task.commands) ? getFunctionTask(task.commands, task.fileList) : getSpawnedTasks({
-				abortController,
-				color,
-				commands: task.commands,
-				continueOnError,
-				cwd: groupCwd,
-				files: task.fileList,
-				topLevelDir,
-				verbose
-			})).then((subTasks) => {
-				task.fileList.forEach((file) => {
-					const normalizedFile = path.isAbsolute(file.filepath) ? file : {
-						filepath: normalizePath(path.join(groupCwd, file.filepath)),
-						status: file.status
-					};
-					matchedFiles.add(normalizedFile);
-				});
-				hasDeprecatedGitAdd = hasDeprecatedGitAdd || subTasks.some((subTask) => subTask.command === "git add");
-				const fileCount = task.fileList.length;
-				return {
-					title: `${task.pattern}${blackBright$1(` — ${fileCount} ${fileCount === 1 ? "file" : "files"}`)}`,
-					task: async (ctx, task) => task.newListr(subTasks, {
-						concurrent: false,
-						exitOnError: !continueOnError
-					}),
-					skip: () => {
-						if (fileCount === 0) return `${task.pattern}${blackBright$1(" — no files")}`;
-						return false;
-					}
+		}).map((task) => (isFunctionTask(task.commands) ? getFunctionTask({
+			abortController,
+			command: task.commands,
+			continueOnError,
+			files: task.fileList
+		}) : getSpawnedTasks({
+			abortController,
+			commands: task.commands,
+			continueOnError,
+			cwd: groupCwd,
+			files: task.fileList,
+			maxArgLength,
+			topLevelDir,
+			verbose
+		})).then((subTasks) => {
+			task.fileList.forEach((file) => {
+				const normalizedFile = path.isAbsolute(file.filepath) ? file : {
+					filepath: normalizePath(path.join(groupCwd, file.filepath)),
+					status: file.status
 				};
-			})));
-			listrTasks.push({
-				title: `${configName}${blackBright$1(` — ${files.length} ${files.length > 1 ? "files" : "file"}`)}` + (chunkCount > 1 ? blackBright$1(` (chunk ${index + 1}/${chunkCount})...`) : ""),
-				task: (ctx, task) => task.newListr(chunkListrTasks, {
-					concurrent,
-					exitOnError: !continueOnError
-				}),
+				matchedFiles.add(normalizedFile);
+			});
+			const includesGitAdd = (subTask) => subTask.title.includes("git add");
+			hasDeprecatedGitAdd = hasDeprecatedGitAdd || subTasks.some((subTask) => Array.isArray(subTask) ? subTask.some(includesGitAdd) : includesGitAdd(subTask));
+			const fileCount = task.fileList.length;
+			return {
+				title: `${task.pattern}${dim(` — ${fileCount} ${fileCount === 1 ? "file" : "files"}`)}`,
+				task: subTasks,
 				skip: () => {
-					if (ctx.errors.has(GitError)) return SKIPPED_GIT_ERROR;
-					if (chunkListrTasks.every((task) => task.skip())) return `${configName}${blackBright$1(" — no tasks to run")}`;
+					if (fileCount === 0) return `${task.pattern}${dim(" — no files")}`;
 					return false;
 				}
-			});
-		}
+			};
+		})));
+		tasks.push({
+			title: `${configName}${dim(` — ${files.length} ${files.length > 1 ? "files" : "file"}`)}`,
+			task: configTasks,
+			skip: () => {
+				if (configTasks.every((task) => task.skip())) return `${configName}${dim(" — no tasks to run")}`;
+				return false;
+			}
+		});
 	}
-	if (hasDeprecatedGitAdd && !quiet) logger.warn(DEPRECATED_GIT_ADD);
-	if (listrTasks.every((task) => task.skip())) {
-		if (!quiet) ctx.output.push(NO_TASKS);
+	if (hasDeprecatedGitAdd) thisLogger.warn(deprecatedGitAdd());
+	if (tasks.every((task) => task.skip())) {
+		if (!quiet) ctx.output.push(noTasks());
 		return ctx;
 	}
 	const git = new GitWorkflow({
@@ -6414,62 +4396,44 @@ const runAll = async ({ allowEmpty = false, color = false, concurrent = true, co
 		diffFilter,
 		failOnChanges,
 		gitConfigDir,
-		matchedFileChunks: chunkFiles({
-			baseDir: cwd,
-			files: Array.from(matchedFiles),
-			maxArgLength,
-			relative: false
-		}),
+		logger: thisLogger,
+		matchedFiles,
+		maxArgLength,
 		topLevelDir
 	});
-	await new Listr([
-		{
-			title: ctx.shouldBackup ? "Backing up original state..." : "Preparing lint-staged...",
-			task: (ctx, task) => git.prepare(ctx, task)
-		},
-		{
-			title: "Hiding unstaged changes to partially staged files...",
-			task: (ctx) => git.hidePartiallyStagedChanges(ctx),
-			enabled: shouldHidePartiallyStagedFiles
-		},
-		{
-			title: `Running tasks for ${diff ? "changed" : "staged"} files...`,
-			task: (ctx, task) => git.runTasks(ctx, task, {
-				listrTasks,
-				concurrent
-			}),
-			skip: () => listrTasks.every((task) => task.skip())
-		},
-		{
-			title: "Applying modifications from tasks...",
-			task: (ctx) => git.applyModifications(ctx),
-			skip: applyModificationsSkipped
-		},
-		{
-			title: "Restoring unstaged changes...",
-			task: (ctx) => git.restoreUnstagedChanges(ctx),
-			enabled: shouldRestoreUnstagedChanges,
-			skip: restoreUnstagedChangesSkipped
-		},
-		{
-			title: "Reverting to original state because of errors...",
-			task: (ctx) => git.restoreOriginalState(ctx),
-			enabled: restoreOriginalStateEnabled,
-			skip: restoreOriginalStateSkipped
-		},
-		{
-			title: "Cleaning up temporary files...",
-			task: (ctx) => git.cleanup(ctx),
-			enabled: cleanupEnabled,
-			skip: cleanupSkipped
-		}
-	], listrOptions).run();
+	await git.prepare(ctx);
+	if (shouldHidePartiallyStagedFiles(ctx)) await git.hidePartiallyStagedChanges(ctx);
+	if (abortController.signal.aborted || ctx.errors.size > 0) thisLogger.log(`${cancelled()} ${dim(`Skipped running tasks…`)}`);
+	else await git.runTasks(ctx, tasks, {
+		abortController,
+		concurrent
+	});
+	if (updateIndexSkipped(ctx)) thisLogger.log(`${cancelled()} ${dim("Skipped staging changes from tasks…")}`);
+	else await git.updateIndex(ctx);
+	if (shouldRestoreUnstagedChanges(ctx)) {
+		if (restoreUnstagedChangesSkipped(ctx)) thisLogger.log(`${cancelled()} ${dim("Skipped restoring unstaged changes…")}`);
+		else await git.restoreUnstagedChanges(ctx);
+	}
+	if (shouldRestoreUntrackedFiles(ctx)) {
+		if (restoreUnstagedChangesSkipped(ctx)) thisLogger.log(`${cancelled()} ${dim("Skipped restoring untracked files…")}`);
+		else await git.restoreUntrackedFiles(ctx);
+	}
+	if (restoreOriginalStateEnabled(ctx)) {
+		if (restoreOriginalStateSkipped(ctx)) thisLogger.log(`${cancelled()} ${dim("Skipped reverting to original state because of errors…")}`);
+		else await git.restoreOriginalState(ctx);
+	}
+	if (cleanupEnabled(ctx)) {
+		if (cleanupSkipped(ctx)) thisLogger.log(`${cancelled()} ${dim("Skipped cleaning up temporary files…")}`);
+		else await git.cleanup(ctx);
+	}
 	if (ctx.errors.size > 0) throw createError(ctx);
 	return ctx;
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/validateOptions.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/validateOptions.js
 const debugLog$1 = createDebug("lint-staged:validateOptions");
+/** @type {(value: number) => boolean} */
+const isValidIntegerValue = (value) => Number.isInteger(value) || value === Infinity;
 /**
 * Validate lint-staged options, either from the Node.js API or the command line flags.
 * @param {*} options
@@ -6478,37 +4442,32 @@ const debugLog$1 = createDebug("lint-staged:validateOptions");
 */
 const validateOptions = async (options = {}, logger) => {
 	debugLog$1("Validating options...");
+	const { concurrent, cwd, maxArgLength } = options;
+	if (concurrent !== void 0 && typeof concurrent !== "boolean" && (!isValidIntegerValue(concurrent) || concurrent < 1)) {
+		logger.error(invalidOption("concurrent", `${concurrent}`, "Must be boolean, positive integer or Infinite"));
+		throw InvalidOptionsError;
+	}
 	/** Ensure the passed cwd option exists; it might also be relative */
-	if (typeof options.cwd === "string") try {
-		const resolved = path.resolve(options.cwd);
+	if (typeof cwd === "string") try {
+		const resolved = path.resolve(cwd);
 		await fsPromises.access(resolved, constants.F_OK);
 	} catch (error) {
 		debugLog$1("Failed to validate options: %o", options);
-		logger.error(invalidOption("cwd", options.cwd, error.message));
+		logger.error(invalidOption("cwd", cwd, error.message));
+		throw InvalidOptionsError;
+	}
+	if (maxArgLength !== void 0 && maxArgLength !== null && (!isValidIntegerValue(maxArgLength) || maxArgLength < 1)) {
+		logger.error(invalidOption("maxArgLength", `${maxArgLength}`, "Must be positive integer, or Infinite"));
 		throw InvalidOptionsError;
 	}
 	debugLog$1("Validated options: %o", options);
 };
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/version.js
-const getVersion = async () => "16.4.0";
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/version.js
+const getVersion = async () => "17.5.1";
 //#endregion
-//#region ../../node_modules/.pnpm/lint-staged@16.4.0/node_modules/lint-staged/lib/index.js
+//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/index.js
 const debugLog = createDebug("lint-staged");
-/**
-* Get the maximum length of a command-line argument string based on current platform
-*
-* https://serverfault.com/questions/69430/what-is-the-maximum-length-of-a-command-line-in-mac-os-x
-* https://support.microsoft.com/en-us/help/830473/command-prompt-cmd-exe-command-line-string-limitation
-* https://unix.stackexchange.com/a/120652
-*/
-const getMaxArgLength = () => {
-	switch (process.platform) {
-		case "darwin": return 262144;
-		case "win32": return 8191;
-		default: return 131072;
-	}
-};
 /**
 * @typedef {(...any) => void} LogFunction
 * @typedef {{ error: LogFunction, log: LogFunction, warn: LogFunction }} Logger
@@ -6516,6 +4475,7 @@ const getMaxArgLength = () => {
 * Root lint-staged function that is called from `bin/lint-staged`.
 *
 * @param {object} options
+* @param {Object} [options.all] - include all files tracked in Git instead of only staged
 * @param {Object} [options.allowEmpty] - Allow empty commits when tasks revert all staged changes
 * @param {boolean} [options.color] - Enable or disable ANSI color codes in output.
 * @param {boolean | number} [options.concurrent] - The number of tasks to run concurrently, or false to run tasks serially
@@ -6539,55 +4499,38 @@ const getMaxArgLength = () => {
 *
 * @returns {Promise<boolean>} Promise of whether the task passed or failed
 */
-const lintStaged = async ({ allowEmpty = false, color = SUPPORTS_COLOR, concurrent = true, config: configObject, configPath, continueOnError = false, cwd, debug = false, diff, diffFilter, failOnChanges = false, hideUnstaged = false, hidePartiallyStaged = !hideUnstaged, maxArgLength = getMaxArgLength() / 2, quiet = false, relative = false, stash = diff === void 0, revert = !failOnChanges && !!stash, verbose = false } = {}, logger = console) => {
-	if (debug) {
+const lintStaged = async (options = {}, logger = console) => {
+	const parsedOptions = parseOptions(options);
+	enableColors(parsedOptions.color);
+	if (parsedOptions.debug) {
 		enableDebug(logger);
 		debugLog("Running `lint-staged@%s` on Node.js %s (%s)", await getVersion(), process.version, process.platform);
 	}
-	const gitVersion = await execGit(["version", "--build-options"], { cwd });
+	const gitVersion = await execGit(["version", "--build-options"], { cwd: parsedOptions.cwd });
 	debugLog("%s", gitVersion);
-	const options = {
-		allowEmpty,
-		color,
-		concurrent,
-		configObject,
-		configPath,
-		continueOnError,
-		cwd,
-		debug,
-		diff,
-		diffFilter,
-		failOnChanges,
-		hidePartiallyStaged,
-		hideUnstaged,
-		maxArgLength,
-		quiet,
-		relative,
-		revert,
-		stash,
-		verbose
-	};
-	await validateOptions(options, logger);
+	if (!assertGitVersion(gitVersion)) throw new Error(minGitVersionRequired(MIN_GIT_VERSION, gitVersion), { cause: gitVersion });
+	await validateOptions(parsedOptions, logger);
 	debugLog("Unset GIT_LITERAL_PATHSPECS (was `%s`)", process.env.GIT_LITERAL_PATHSPECS);
 	delete process.env.GIT_LITERAL_PATHSPECS;
 	try {
-		const ctx = await runAll(options, logger);
+		const ctx = await runAll(parsedOptions, logger);
 		debugLog("Tasks were executed successfully!");
 		printTaskOutput(ctx, logger);
 		return true;
 	} catch (runAllError) {
 		if (runAllError?.ctx?.errors) {
 			const { ctx } = runAllError;
-			if (ctx.errors.has(ConfigNotFoundError)) logger.error(NO_CONFIGURATION);
-			else if (ctx.errors.has(ApplyEmptyCommitError)) logger.warn(PREVENTED_EMPTY_COMMIT);
+			if (ctx.errors.has(ConfigNotFoundError)) logger.error(noConfiguration());
+			else if (ctx.errors.has(IntentToAddError)) logger.error(intentToAddNotSupported(runAllError.cause));
+			else if (ctx.errors.has(ApplyEmptyCommitError)) logger.warn(preventedEmptyCommit());
 			else if (ctx.errors.has(FailOnChangesError)) {
-				logger.warn(PREVENTED_TASK_MODIFICATIONS + "\n");
+				logger.warn(preventedTaskModifications() + "\n");
 				logger.warn(restoreStashExample(ctx.backupHash));
 			} else if (ctx.errors.has(RestoreUnstagedChangesError)) {
-				logger.warn(UNSTAGED_CHANGES_BACKUP_STASH_LOCATION);
+				logger.warn(unstagedChangesBackupStashLocation());
 				logger.warn(ctx.unstagedPatch);
-			} else if ((ctx.errors.has(GitError) || cleanupSkipped(ctx)) && !ctx.errors.has(GetBackupStashError)) {
-				logger.error(GIT_ERROR);
+			} else if (ctx.errors.has(GitError) || cleanupSkipped(ctx)) {
+				logger.error(gitError());
 				if (ctx.shouldBackup) logger.error(restoreStashExample(ctx.backupHash) + "\n");
 			}
 			printTaskOutput(ctx, logger);
@@ -6598,158 +4541,43 @@ const lintStaged = async ({ allowEmpty = false, color = SUPPORTS_COLOR, concurre
 };
 //#endregion
 //#region src/staged/bin.ts
-const args = lib_default(process.argv.slice(3), {
-	alias: {
-		h: "help",
-		p: "concurrent",
-		d: "debug",
-		q: "quiet",
-		r: "relative",
-		v: "verbose"
-	},
-	boolean: [
-		"help",
-		"allow-empty",
-		"debug",
-		"continue-on-error",
-		"fail-on-changes",
-		"hide-partially-staged",
-		"hide-unstaged",
-		"quiet",
-		"relative",
-		"revert",
-		"stash",
-		"verbose"
-	],
-	string: [
-		"concurrent",
-		"cwd",
-		"diff",
-		"diff-filter"
-	]
-});
-if (args.help) {
-	const helpMessage = renderCliDoc({
-		usage: "vp staged [options]",
-		summary: "Run linters on staged files using staged config from vite.config.ts.",
-		documentationUrl: "https://viteplus.dev/guide/commit-hooks",
-		sections: [{
-			title: "Options",
-			rows: [
-				{
-					label: "--allow-empty",
-					description: "Allow empty commits when tasks revert all staged changes"
-				},
-				{
-					label: "-p, --concurrent <number|boolean>",
-					description: "Number of tasks to run concurrently, or false for serial"
-				},
-				{
-					label: "--continue-on-error",
-					description: "Run all tasks to completion even if one fails"
-				},
-				{
-					label: "--cwd <path>",
-					description: "Working directory to run all tasks in"
-				},
-				{
-					label: "-d, --debug",
-					description: "Enable debug output"
-				},
-				{
-					label: "--diff <string>",
-					description: "Override the default --staged flag of git diff"
-				},
-				{
-					label: "--diff-filter <string>",
-					description: "Override the default --diff-filter=ACMR flag of git diff"
-				},
-				{
-					label: "--fail-on-changes",
-					description: "Fail with exit code 1 when tasks modify tracked files"
-				},
-				{
-					label: "--hide-partially-staged",
-					description: "Hide unstaged changes from partially staged files"
-				},
-				{
-					label: "--hide-unstaged",
-					description: "Hide all unstaged changes before running tasks"
-				},
-				{
-					label: "--no-stash",
-					description: "Disable the backup stash"
-				},
-				{
-					label: "-q, --quiet",
-					description: "Disable console output"
-				},
-				{
-					label: "-r, --relative",
-					description: "Pass filepaths relative to cwd to tasks"
-				},
-				{
-					label: "--revert",
-					description: "Revert to original state in case of errors"
-				},
-				{
-					label: "-v, --verbose",
-					description: "Show task output even when tasks succeed"
-				},
-				{
-					label: "-h, --help",
-					description: "Show this help message"
-				}
-			]
-		}]
-	});
-	printHeader();
-	log(helpMessage);
-} else {
-	const options = {};
-	if (args["allow-empty"] != null) options.allowEmpty = args["allow-empty"];
-	if (args.debug != null) options.debug = args.debug;
-	if (args["continue-on-error"] != null) options.continueOnError = args["continue-on-error"];
-	if (args["fail-on-changes"] != null) options.failOnChanges = args["fail-on-changes"];
-	if (args["hide-partially-staged"] != null) options.hidePartiallyStaged = args["hide-partially-staged"];
-	if (args["hide-unstaged"] != null) options.hideUnstaged = args["hide-unstaged"];
-	if (args.quiet != null) options.quiet = args.quiet;
-	if (args.relative != null) options.relative = args.relative;
-	if (args.revert != null) options.revert = args.revert;
-	if (args.stash != null) options.stash = args.stash;
-	if (args.verbose != null) options.verbose = args.verbose;
-	let stagedConfig;
-	try {
-		stagedConfig = (await resolveViteConfig(args.cwd ?? process.cwd())).staged;
-	} catch (err) {
-		log(`Failed to load vite.config: ${err instanceof Error ? err.message : String(err)}`);
-		process.exit(1);
-	}
-	if (stagedConfig) options.config = stagedConfig;
-	else {
-		printHeader();
-		errorMsg("No \"staged\" config found in vite.config.ts. Please add a staged config:");
-		log("");
-		log("  // vite.config.ts");
-		log("  export default defineConfig({");
-		log("    staged: { '*': 'vp check --fix' },");
-		log("  });");
-		process.exit(1);
-	}
-	if (args.cwd != null) options.cwd = args.cwd;
-	if (args.diff != null) options.diff = args.diff;
-	if (args["diff-filter"] != null) options.diffFilter = args["diff-filter"];
-	if (args.concurrent != null) {
-		const val = args.concurrent;
-		if (val === "true") options.concurrent = true;
-		else if (val === "false") options.concurrent = false;
-		else {
-			const num = Number(val);
-			options.concurrent = Number.isNaN(num) || val === "" ? true : num;
-		}
-	}
-	const success = await lintStaged(options);
-	process.exit(success ? 0 : 1);
+const args = unwrapCliParseOutcome(parseStagedArgs(process.argv.slice(3)));
+const options = {};
+if (args.allowEmpty != null) options.allowEmpty = args.allowEmpty;
+if (args.debug != null) options.debug = args.debug;
+if (args.continueOnError != null) options.continueOnError = args.continueOnError;
+if (args.failOnChanges != null) options.failOnChanges = args.failOnChanges;
+if (args.hidePartiallyStaged != null) options.hidePartiallyStaged = args.hidePartiallyStaged;
+if (args.hideUnstaged != null) options.hideUnstaged = args.hideUnstaged;
+if (args.quiet != null) options.quiet = args.quiet;
+if (args.relative != null) options.relative = args.relative;
+if (args.revert != null) options.revert = args.revert;
+if (args.stash != null) options.stash = args.stash;
+if (args.verbose != null) options.verbose = args.verbose;
+let stagedConfig;
+try {
+	stagedConfig = (await resolveViteConfig(args.cwd ?? process.cwd())).staged;
+} catch (err) {
+	const message = err instanceof Error ? err.message : String(err);
+	log(`Failed to load vite.config: ${message}`);
+	process.exit(1);
 }
+if (stagedConfig) options.config = stagedConfig;
+else {
+	printHeader();
+	errorMsg("No \"staged\" config found in vite.config.ts. Please add a staged config:");
+	log("");
+	log("  // vite.config.ts");
+	log("  export default defineConfig({");
+	log("    staged: { '*': 'vp check --fix' },");
+	log("  });");
+	process.exit(1);
+}
+if (args.cwd != null) options.cwd = args.cwd;
+if (args.diff != null) options.diff = args.diff;
+if (args.diffFilter != null) options.diffFilter = args.diffFilter;
+if (args.concurrent != null) options.concurrent = args.concurrent;
+const success = await lintStaged(options);
+process.exit(success ? 0 : 1);
 //#endregion
 export {};

@@ -1,125 +1,176 @@
 #!/usr/bin/env node
-import { cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
-import { createRequire } from "node:module";
+import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const require = createRequire(import.meta.url);
 const root = dirname(fileURLToPath(new URL("../package.json", import.meta.url)));
-const upstream = dirname(require.resolve("vite-plus/package.json"));
-const target = join(root, "packages/vite-plus");
-
-const copyEntries = [
-  "AGENTS.md",
-  "LICENSE",
-  "README.md",
-  "bin",
-  "binding",
-  "dist",
-  "docs",
-  "rules",
-  "templates",
-  "package.json",
-];
-
-await rm(target, { force: true, recursive: true });
-await mkdir(target, { recursive: true });
-for (const entry of copyEntries) {
-  await cp(join(upstream, entry), join(target, entry), { recursive: true });
+const source = join(root, "packages/vite-plus-effect-fork");
+const pin = "fc287d7b1c0dc008dbc65d1d2b2f51a44e2a5ea4";
+const cli = JSON.parse(await readFile(join(source, "packages/cli/package.json"), "utf8"));
+const core = JSON.parse(await readFile(join(source, "packages/core/package.json"), "utf8"));
+const build = JSON.parse(await readFile(join(root, ".tmp/vite-plus-source-build.json"), "utf8"));
+if (build.pin !== pin || cli.version !== "1.0.0" || core.version !== cli.version) {
+  throw new Error(
+    "Build the approved local Vite+ 1.0.0 core and CLI before generating scoped packages",
+  );
+}
+if (!Object.keys(build.rootInputs ?? {}).length)
+  throw new Error("Local Vite+ build is missing its build-script provenance");
+for (const [relative, hash] of Object.entries(build.rootInputs)) {
+  const actual = createHash("sha256")
+    .update(await readFile(join(root, relative)))
+    .digest("hex");
+  if (actual !== hash) throw new Error(`Build script changed after validation: ${relative}`);
+}
+for (const [relative, hash] of Object.entries({ ...build.inputs, ...build.outputs })) {
+  const actual = createHash("sha256")
+    .update(await readFile(join(source, relative)))
+    .digest("hex");
+  if (actual !== hash) throw new Error(`Local build changed after validation: ${relative}`);
+}
+for (const relative of [
+  "packages/core/dist/vite/node/index.js",
+  "packages/core/dist/tsdown/index.js",
+  "packages/cli/dist/bin.js",
+  "packages/cli/dist/test/index.js",
+  "packages/cli/dist/test/index.d.ts",
+]) {
+  await readFile(join(source, relative));
+}
+if (!cli.exports?.["./test"] || cli.exports["./test/suite"]) {
+  throw new Error(
+    "The local CLI must expose the Vitest 5 root ./test API without the old ./test/suite export",
+  );
 }
 
-const pkgPath = join(target, "package.json");
-const pkg = JSON.parse(await readFile(pkgPath, "utf8"));
-pkg.name = "@tiara-stack/vite-plus";
-pkg.version = "0.2.4";
-pkg.description = "Tiara Stack fork of Vite+ wired to native Effect tsgolint tooling.";
-pkg.homepage = "https://github.com/tiara-stack/native-tooling#readme";
-pkg.bugs = {
-  url: "https://github.com/tiara-stack/native-tooling/issues",
-};
-pkg.repository = {
-  type: "git",
-  url: "git+https://github.com/tiara-stack/native-tooling.git",
-  directory: "packages/vite-plus",
-};
-pkg.bin = Object.fromEntries(
-  Object.entries(pkg.bin ?? {}).map(([name, path]) => [name, String(path).replace(/^\.\//, "")]),
-);
-pkg.publishConfig = {
-  access: "public",
-};
-pkg.scripts = {
-  build: "echo 'prebuilt from packages/vite-plus-effect-fork'",
-  format: "echo 'prebuilt package; no format step'",
-  "format:apply": "echo 'prebuilt package; no format step'",
-  lint: "echo 'prebuilt package; no lint step'",
-  test: "node bin/vp --version",
-};
-pkg.dependencies ??= {};
-pkg.dependencies["@tiara-stack/tsgo-effect"] = "^0.1.2";
-pkg.dependencies["@tiara-stack/tsgolint-effect"] = "^0.1.2";
-delete pkg.devDependencies;
-if (pkg.napi) {
-  pkg.napi.packageName = "@tiara-stack/vite-plus";
-}
-await writeFile(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
-
-const patchFile = async (relativePath, replacements) => {
-  const path = join(target, relativePath);
-  let text = await readFile(path, "utf8");
-  for (const [from, to] of replacements) {
-    if (!text.includes(from)) {
-      throw new Error(`Unable to patch ${relativePath}; missing expected text: ${from.slice(0, 120)}`);
+await mkdir(join(root, ".tmp"), { recursive: true });
+const staging = await mkdtemp(join(root, ".tmp/vite-plus-sync-"));
+try {
+  for (const [kind, name] of [
+    ["core", "vite-plus-core"],
+    ["cli", "vite-plus"],
+  ]) {
+    const archive = join(staging, `${kind}.tgz`);
+    run("pnpm", ["pack", "--out", archive], join(source, "packages", kind));
+    const unpacked = join(staging, kind);
+    await mkdir(unpacked);
+    run("tar", ["-xzf", archive, "--strip-components=1", "-C", unpacked], staging);
+    const path = join(unpacked, "package.json");
+    const pkg = JSON.parse(await readFile(path, "utf8"));
+    pkg.name = `@tiara-stack/${name}`;
+    pkg.description = `Tiara Stack ${kind === "cli" ? "Vite+ with native Effect tooling" : "Vite+ core built from the pinned local source"}.`;
+    pkg.homepage = "https://github.com/tiara-stack/native-tooling#readme";
+    pkg.bugs = { url: "https://github.com/tiara-stack/native-tooling/issues" };
+    pkg.repository = {
+      type: "git",
+      url: "git+https://github.com/tiara-stack/native-tooling.git",
+      directory: `packages/${name}`,
+    };
+    pkg.publishConfig = { access: "public" };
+    pkg.bin =
+      pkg.bin &&
+      Object.fromEntries(
+        Object.entries(pkg.bin).map(([name, path]) => [name, path.replace(/^\.\//, "")]),
+      );
+    delete pkg.devDependencies;
+    pkg.scripts = {
+      build: "echo 'generated from the built local Vite+ fork'",
+      format: "echo 'generated package'",
+      "format:apply": "echo 'generated package'",
+      lint: "echo 'generated package'",
+      test:
+        kind === "cli"
+          ? "node bin/vp --version"
+          : "node -e \"import('./dist/vite/node/index.js')\"",
+    };
+    if (kind === "cli") {
+      pkg.dependencies.vite = `npm:@tiara-stack/vite-plus-core@${core.version}`;
+      for (const tool of ["oxlint", "tsgo", "tsgolint"])
+        pkg.dependencies[`@tiara-stack/${tool}-effect`] = "^0.1.2";
+      if (pkg.dependencies.vitest !== "5.0.1")
+        throw new Error(`Unexpected packed Vitest version ${pkg.dependencies.vitest}`);
+      for (const [name, version] of Object.entries(pkg.dependencies)) {
+        if (name.startsWith("@vitest/") && version !== "5.0.1")
+          throw new Error(`Unexpected ${name} version ${version}`);
+      }
+      // The native Rust binding is unchanged from 1.0.0. Keep its generated
+      // upstream namespace and exact platform versions; include the local build.
+      pkg.optionalDependencies = Object.fromEntries(
+        [
+          "darwin-arm64",
+          "darwin-x64",
+          "linux-arm64-gnu",
+          "linux-arm64-musl",
+          "linux-x64-gnu",
+          "linux-x64-musl",
+          "win32-arm64-msvc",
+          "win32-x64-msvc",
+        ].map((platform) => [`@voidzero-dev/vite-plus-${platform}`, cli.version]),
+      );
+      await writeFile(join(unpacked, ".gitignore"), "binding/*.node\nbinding/*.wasm\n");
     }
-    text = text.replace(from, to);
+    if (kind === "core")
+      await writeFile(join(unpacked, ".gitignore"), "dist/**/*.node\ndist/**/*.wasm\n");
+    pkg.files = [...new Set([...pkg.files, "SOURCE.json"])];
+    await rewriteTree(unpacked);
+    // Preserve the native binding's file name and upstream platform package
+    // names when rewriting runtime specifiers.
+    await writeFile(path, `${JSON.stringify(pkg, null, 2)}\n`);
+    await writeFile(join(unpacked, "SOURCE.json"), `${JSON.stringify(build, null, 2)}\n`);
   }
-  await writeFile(path, text);
-};
-
-await patchFile("dist/tsgolint-path-B-yOos8p.js", [
-  [
-    'import { fileURLToPath } from "node:url";',
-    'import { fileURLToPath } from "node:url";\nimport { createRequire } from "node:module";\nconst require = createRequire(import.meta.url);',
-  ],
-  [
-    'function resolveTsgolintExecutable(tsgolintBinPath, scriptUrl) {\n\tif (process.platform !== "win32") return tsgolintBinPath;',
-    'function resolveTiaraTsgolintExecutable() {\n\tlet packagedTsgolintPath;\n\ttry {\n\t\tpackagedTsgolintPath = require.resolve("@tiara-stack/tsgolint-effect/bin/tsgolint-effect");\n\t} catch {}\n\tconst candidate = process.env.TIARA_TSGOLINT_EFFECT_PATH ?? packagedTsgolintPath;\n\treturn candidate && existsSync(candidate) ? candidate : undefined;\n}\nfunction resolveTsgolintExecutable(tsgolintBinPath, scriptUrl) {\n\tconst tiaraTsgolintPath = resolveTiaraTsgolintExecutable();\n\tif (tiaraTsgolintPath) return tiaraTsgolintPath;\n\tif (process.platform !== "win32") return tsgolintBinPath;',
-  ],
-]);
-
-await patchFile("bin/oxlint", [
-  [
-    "process.env.OXLINT_TSGOLINT_PATH ??= tsgolintBin;",
-    "process.env.OXLINT_TSGOLINT_PATH ??= tsgolintBin;",
-  ],
-]);
-
-const distFiles = await readdir(join(target, "dist"));
-const constantsFile = distFiles.find((file) => file.startsWith("constants-") && file.endsWith(".js"));
-if (!constantsFile) {
-  throw new Error("Unable to find generated dist/constants-*.js file");
+  // Both packages are staged and validated before replacing either retained tree.
+  for (const [kind, name] of [
+    ["core", "vite-plus-core"],
+    ["cli", "vite-plus"],
+  ]) {
+    const target = join(root, "packages", name);
+    await mkdir(target, { recursive: true });
+    for (const entry of await readdir(target)) {
+      if (entry !== "node_modules") await rm(join(target, entry), { recursive: true, force: true });
+    }
+    await cp(join(staging, kind), target, { recursive: true });
+  }
+} finally {
+  await rm(staging, { recursive: true, force: true });
 }
-await patchFile(join("dist", constantsFile), [[`var version = "0.2.2";`, `var version = "${pkg.version}";`]]);
+console.log(`Generated scoped Vite+ ${cli.version} and its core from the built local fork`);
 
-const packBinFile =
-  distFiles.find((file) => file.startsWith("pack-bin-") && file.endsWith(".js")) ??
-  (distFiles.includes("pack-bin.js") ? "pack-bin.js" : undefined);
-if (!packBinFile) {
-  throw new Error("Unable to find generated dist/pack-bin*.js file");
+async function rewriteTree(directory) {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) await rewriteTree(path);
+    else if (/\.(?:[cm]?js|[cm]?ts|json)$/.test(entry.name)) {
+      const text = await readFile(path, "utf8");
+      await writeFile(
+        path,
+        text
+          .replaceAll("@voidzero-dev/vite-plus-core", "@tiara-stack/vite-plus-core")
+          .replace(/(["'`])vite-plus(?=\/|["'`])/g, "$1@tiara-stack/vite-plus"),
+      );
+    }
+  }
 }
-await patchFile(join("dist", packBinFile), [
-  [
-    'import module from "node:module";',
-    'import module from "node:module";\nimport { spawnSync } from "node:child_process";\nimport { existsSync } from "node:fs";\nimport { dirname, join, resolve } from "node:path";',
-  ],
-  [
-    'const DEFAULT_ENV_PREFIXES = ["VITE_PACK_", "TSDOWN_"];',
-    'const require = module.createRequire(import.meta.url);\nfunction resolveTiaraTsgoPath() {\n\tconst executableName = process.platform === "win32" ? "tsgo.exe" : "tsgo";\n\tconst candidates = [process.env.TIARA_TSGO_EFFECT_PATH, process.env.TIARA_TSGO_PATH, resolvePackagedTsgoPath(), findUp(process.cwd(), join("native", "typescript-go", "built", "local", executableName))].filter((path) => Boolean(path));\n\tconst binaryPath = candidates.find((path) => existsSync(path));\n\tif (!binaryPath) throw new Error(["Unable to locate tsgo-effect for dts generation.", "Install @tiara-stack/tsgo-effect with a platform binary or build native/typescript-go/built/local/tsgo.", "Set TIARA_TSGO_EFFECT_PATH to override the binary path."].join(" "));\n\treturn binaryPath;\n}\nfunction resolvePackagedTsgoPath() {\n\ttry {\n\t\tconst binPath = require.resolve("@tiara-stack/tsgo-effect/bin/tsgo-effect");\n\t\tconst result = spawnSync(process.execPath, [binPath, "--print-path"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });\n\t\tconst binaryPath = result.status === 0 ? result.stdout.trim() : undefined;\n\t\treturn binaryPath && existsSync(binaryPath) ? binaryPath : undefined;\n\t} catch {\n\t\treturn;\n\t}\n}\nfunction withTiaraTsgoDtsConfig(dts) {\n\tif (!dts || typeof dts !== "object" || dts.tsgo !== true) return dts;\n\treturn { ...dts, tsgo: { path: resolveTiaraTsgoPath() } };\n}\nfunction findUp(start, relativePath) {\n\tlet directory = resolve(start);\n\twhile (true) {\n\t\tconst candidate = join(directory, relativePath);\n\t\tif (existsSync(candidate)) return candidate;\n\t\tconst parent = dirname(directory);\n\t\tif (parent === directory) return;\n\t\tdirectory = parent;\n\t}\n}\nconst DEFAULT_ENV_PREFIXES = ["VITE_PACK_", "TSDOWN_"];',
-  ],
-  [
-    "const merged = {\n\t\t\t\t...packConfig,\n\t\t\t\t...flags\n\t\t\t};",
-    "const merged = {\n\t\t\t\t...packConfig,\n\t\t\t\t...flags\n\t\t\t};\n\t\t\tmerged.dts = withTiaraTsgoDtsConfig(merged.dts);",
-  ],
-]);
-
-console.log("Synced packages/vite-plus from installed vite-plus package");
+function run(command, args, cwd) {
+  const result = spawnSync(
+    command === "pnpm" ? "corepack" : command,
+    command === "pnpm" ? ["pnpm", ...args] : args,
+    {
+      cwd,
+      stdio: "inherit",
+      env: {
+        ...process.env,
+        COREPACK_ENABLE_PROJECT_SPEC: "1",
+        ...(process.env.TIARA_VITE_PLUS_PNPM_STORE_DIR
+          ? { PNPM_CONFIG_STORE_DIR: process.env.TIARA_VITE_PLUS_PNPM_STORE_DIR }
+          : {}),
+        ...(process.env.TIARA_VITE_PLUS_PNPM_VIRTUAL_STORE_DIR
+          ? { PNPM_CONFIG_VIRTUAL_STORE_DIR: process.env.TIARA_VITE_PLUS_PNPM_VIRTUAL_STORE_DIR }
+          : {}),
+      },
+    },
+  );
+  if (result.error || result.status !== 0)
+    throw new Error(`${command} failed: ${result.error?.message ?? result.status}`);
+}

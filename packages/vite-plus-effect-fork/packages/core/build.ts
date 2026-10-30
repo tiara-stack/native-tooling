@@ -696,6 +696,7 @@ async function mergePackageJson() {
   destPkg.peerDependencies = {
     ...tsdownPkg.peerDependencies,
     ...vitePkg.peerDependencies,
+    typescript: '^5.9.3 || ^6.0.0',
   };
 
   // Merge peerDependenciesMeta from tsdown and vite

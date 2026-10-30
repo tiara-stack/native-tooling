@@ -54,6 +54,7 @@ export default defineConfig([
       'oxlint-plugin': './src/oxlint-plugin.ts',
       pack: './src/pack.ts',
       'pack-bin': './src/pack-bin.ts',
+      'tiara-native': './src/utils/tiara-native.ts',
       // Global commands — explicit entries ensure lazy loading via dynamic import in bin.ts.
       // Without these, tsdown inlines them into bin.js, breaking on-demand loading.
       'create/bin': './src/create/bin.ts',
