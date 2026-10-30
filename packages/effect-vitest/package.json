@@ -38,7 +38,7 @@
     "format": "vp fmt --check",
     "format:apply": "vp fmt",
     "lint": "vp lint src",
-    "test": "echo 'no tests defined'"
+    "test": "node node_modules/@tiara-stack/vite-plus/bin/vp test --run --maxWorkers=2 && node --test ../../scripts/test/sync-effect-vitest.test.mjs"
   },
   "devDependencies": {
     "@tiara-stack/vite-plus": "^0.2.2",

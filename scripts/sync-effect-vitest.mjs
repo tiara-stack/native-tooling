@@ -7,6 +7,28 @@ const root = dirname(fileURLToPath(new URL("../package.json", import.meta.url)))
 const upstream = join(root, "packages/effect-smol-fork/packages/vitest");
 const target = join(root, "packages/effect-vitest");
 
+const upstreamPackage = JSON.parse(await readFile(join(upstream, "package.json"), "utf8"));
+const vitePackage = JSON.parse(
+  await readFile(join(root, "packages/vite-plus/package.json"), "utf8"),
+);
+const requiredRunner = upstreamPackage.peerDependencies?.vitest;
+const runnerVersion = vitePackage.dependencies?.vitest;
+// The released helper declares a bounded range of complete runner majors.
+// Reject other range shapes until their compatibility can be checked explicitly.
+const bounds = /^>=(\d+)\.0\.0 <(\d+)\.0\.0$/.exec(requiredRunner ?? "");
+const runner = /^(\d+)\.\d+\.\d+$/.exec(runnerVersion ?? "");
+if (
+  !bounds ||
+  !runner ||
+  Number(runner[1]) < Number(bounds[1]) ||
+  Number(runner[1]) >= Number(bounds[2])
+) {
+  throw new Error(
+    `Effect helper ${upstreamPackage.version} requires Vitest ${requiredRunner}, but Vite+ embeds ${runnerVersion}. ` +
+      "Upgrade the runner before regenerating the helper.",
+  );
+}
+
 await rm(join(target, "src"), { force: true, recursive: true });
 await mkdir(target, { recursive: true });
 await cp(join(upstream, "src"), join(target, "src"), { recursive: true });
@@ -31,29 +53,32 @@ await rewriteFile(join(target, "src/internal/internal.ts"), [
   ['from "vitest"', 'from "@tiara-stack/vite-plus/test"'],
   ["ctx?: V.TestContext | undefined", "ctx?: V.TestContext"],
   [
-    'export const prop: Vitest.Vitest.Methods["prop"] = (name, arbitraries, self, timeout) => {\n  if (Array.isArray(arbitraries)) {',
-    'export const prop: Vitest.Vitest.Methods["prop"] = (name, arbitraries, self, timeout) => {\n  const fastCheckOptions = isObject(timeout)\n    ? (timeout as { readonly fastCheck?: fc.Parameters<any> }).fastCheck\n    : undefined;\n\n  if (Array.isArray(arbitraries)) {',
+    "const previousTasks = new Set(currentSuite.tasks)",
+    "const previousTasks = new Set<unknown>(currentSuite.tasks)",
   ],
-  [
-    "      // @ts-ignore\n      (ctx) => fc.assert(fc.property(...arbs, (...as) => self(as, ctx)), isObject(timeout) ? timeout?.fastCheck : {})",
-    '      (ctx) =>\n        fc.assert(\n          (fc.property as any)(...arbs, (...as: Array<unknown>) => self(as as any, ctx)),\n          fastCheckOptions,\n        ),',
-  ],
-  [
-    "    // @ts-ignore\n    (ctx) => fc.assert(fc.property(arbs, (as) => self(as, ctx)), isObject(timeout) ? timeout?.fastCheck : {})",
-    '    (ctx) =>\n      fc.assert(\n        (fc.property as any)(arbs, (as: Record<string, unknown>) => self(as as any, ctx)),\n        fastCheckOptions,\n      ),',
-  ],
-  ["const previousTasks = new Set(currentSuite.tasks)", "const previousTasks = new Set<unknown>(currentSuite.tasks)"],
 ]);
 await rewriteFile(join(target, "src/utils.ts"), [
   ['from "vitest"', 'from "@tiara-stack/vite-plus/test"'],
   ["@effect/vitest", "@tiara-stack/effect-vitest"],
 ]);
 await rewriteFile(join(target, "README.md"), [
-  ["testing Effect-based applications using `vitest` and the `@effect/vitest` package", "testing Effect-based applications using Vite+ and the `@tiara-stack/effect-vitest` package"],
-  ["This package simplifies running tests for Effect-based code with Vitest.", "This package is derived from `@effect/vitest` and routes Vitest imports through Vite+'s test exports so workspaces use the same test runner instance."],
-  ["[`vitest`](https://vitest.dev/guide/) installed (version `1.6.0` or later)", "[`@tiara-stack/vite-plus`](https://github.com/tiara-stack/native-tooling) installed"],
+  [
+    "testing Effect-based applications using `vitest` and the `@effect/vitest` package",
+    "testing Effect-based applications using Vite+ and the `@tiara-stack/effect-vitest` package",
+  ],
+  [
+    "This package simplifies running tests for Effect-based code with Vitest.",
+    "This package is derived from `@effect/vitest` and routes Vitest imports through Vite+'s test exports so workspaces use the same test runner instance.",
+  ],
+  [
+    "[`vitest`](https://vitest.dev/guide/) installed (version `1.6.0` or later)",
+    "[`@tiara-stack/vite-plus`](https://github.com/tiara-stack/native-tooling) installed",
+  ],
   ["pnpm add -D vitest", "pnpm add -D @tiara-stack/vite-plus"],
-  ["install the `@effect/vitest` package, which integrates Effect with Vitest", "install the `@tiara-stack/effect-vitest` package, which integrates Effect with the Vite+ test runner"],
+  [
+    "install the `@effect/vitest` package, which integrates Effect with Vitest",
+    "install the `@tiara-stack/effect-vitest` package, which integrates Effect with the Vite+ test runner",
+  ],
   ["pnpm add -D @effect/vitest", "pnpm add -D @tiara-stack/effect-vitest"],
   ['from "@effect/vitest"', 'from "@tiara-stack/effect-vitest"'],
   ["@effect/vitest", "@tiara-stack/effect-vitest"],
