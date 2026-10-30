@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://www.coderabbit.ai/integrations/schema.v2.json
+reviews:
+  path_filters:
+    # The Effect snapshot is pinned upstream content; retain its .gitrepo provenance.
+    - "!packages/effect-smol-fork/**/!(.gitrepo)"
+    - "!packages/effect-smol-fork/.*/**"
+    - "!packages/effect-smol-fork/.!(gitrepo)"
+    # Override CodeRabbit's default lockfile exclusion for dependency alignment.
+    - "**/pnpm-lock.yaml"
