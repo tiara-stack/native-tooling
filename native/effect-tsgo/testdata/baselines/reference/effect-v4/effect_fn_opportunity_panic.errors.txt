@@ -1,5 +1,5 @@
 === Metadata ===
-Effect version: 4.0.0
+Effect version: 4.0.1
 
 /.src/effect_fn_opportunity_panic.ts(61,7): suggestion TS377047: This expression can be rewritten in the reusable function form `Effect.fn("JsonPlaceholder.getTodo")((id) => { ... })`. effect(effectFnOpportunity)
 /.src/effect_fn_opportunity_panic.ts(83,7): suggestion TS377047: This expression can be rewritten in the reusable function form `Effect.fn("JsonPlaceholder.getUser")((id) => { ... })`. effect(effectFnOpportunity)
@@ -20,7 +20,7 @@ Effect version: 4.0.0
 
 ==== /.src/effect_fn_opportunity_panic.ts (2 errors) ====
     import { Data, Effect, flow, Layer, Schema, Context } from "effect"
-    import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http"
+    import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http"
     
     class Todo extends Schema.Class<Todo>("Todo")({
       userId: Schema.Finite,

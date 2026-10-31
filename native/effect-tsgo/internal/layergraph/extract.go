@@ -5,9 +5,9 @@ import (
 
 	"github.com/effect-ts/tsgo/internal/graph"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 // workItem represents a node to visit in the DFS work queue.
@@ -187,7 +187,7 @@ func ExtractLayerGraph(
 
 		// Case 4: Symbol following
 		if currentDepth > 0 && isSimpleIdentifier(current) {
-			sym := c.GetSymbolAtLocation(current)
+			sym := tp.GetSymbolAtLocation(current)
 			if sym != nil {
 				if sym.Flags&ast.SymbolFlagsAlias != 0 {
 					resolved := checker.SkipAlias(sym, c)
@@ -255,7 +255,7 @@ func extractNodeInfo(tp *typeparser.TypeParser, c *checker.Checker, node *ast.No
 	}
 
 	// Parse as Layer type.
-	layer := tp.LayerType(t, node)
+	layer := tp.LayerType(t)
 	if layer == nil {
 		return info
 	}

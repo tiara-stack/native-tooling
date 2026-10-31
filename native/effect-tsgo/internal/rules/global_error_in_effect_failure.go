@@ -4,8 +4,8 @@ package rules
 import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
-	"github.com/microsoft/typescript-go/shim/ast"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
 	"slices"
 )
 
@@ -63,7 +63,7 @@ func checkGlobalErrorInEffectFailure(ctx *rule.Context, node *ast.Node) *ast.Dia
 			return ast.FindAncestorFalse
 		}
 
-		effectType := ctx.TypeParser.EffectType(currentType, current)
+		effectType := ctx.TypeParser.EffectType(currentType)
 		if effectType == nil {
 			return ast.FindAncestorFalse
 		}

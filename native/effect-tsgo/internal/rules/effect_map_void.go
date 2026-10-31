@@ -4,11 +4,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 // EffectMapVoid suggests using Effect.asVoid instead of Effect.map(() => void 0),
@@ -35,8 +35,8 @@ var EffectMapVoid = rule.Rule{
 type EffectMapVoidMatch struct {
 	SourceFile       *ast.SourceFile // The source file where the diagnostic should be reported
 	Location         core.TextRange  // The pre-computed error range for this match
-	CallNode         *ast.Node       // The Effect.map(...) call expression (replacement target)
-	EffectModuleNode *ast.Node       // The Effect module identifier (e.g., "Effect" in Effect.map)
+	Transformation   *typeparser.PipingFlowTransformation
+	EffectModuleNode *ast.Node // The Effect module identifier (e.g., "Effect" in Effect.map)
 }
 
 // isVoidCallback checks if a callback argument is a "void callback":
@@ -44,7 +44,7 @@ type EffectMapVoidMatch struct {
 // (zero-param function returning void 0, undefined, or parenthesized versions).
 func isVoidCallback(node *ast.Node) bool {
 	// First try parsing as a lazy expression (thunk=true, requiring zero params)
-	lazy := typeparser.ParseLazyExpression(node, true)
+	lazy := typeparser.ParseLazyExpression(node, typeparser.LazyExpressionThunk)
 	if lazy != nil {
 		// ParseLazyExpression succeeded — check if the expression is a void expression
 		return isVoidExpression(lazy.Expression)
@@ -83,41 +83,37 @@ func isVoidCallback(node *ast.Node) bool {
 	return false
 }
 
-// AnalyzeEffectMapVoid finds all Effect.map calls with void callbacks
-// that can be replaced with Effect.asVoid.
+// AnalyzeEffectMapVoid finds data-last and data-first Effect.map calls with void
+// callbacks that can be replaced with Effect.asVoid. Driving detection off the
+// piping-flow transformations (rather than a raw AST walk) normalizes the subject
+// away, so both pipe(self, Effect.map(cb)) / self.pipe(Effect.map(cb)) and the
+// data-first Effect.map(self, cb) are matched uniformly.
 func AnalyzeEffectMapVoid(tp *typeparser.TypeParser, _ *checker.Checker, sf *ast.SourceFile) []EffectMapVoidMatch {
 	var matches []EffectMapVoidMatch
 
-	var walk ast.Visitor
-	walk = func(n *ast.Node) bool {
-		if n == nil {
-			return false
-		}
-
-		if n.Kind == ast.KindCallExpression {
-			call := n.AsCallExpression()
-			if call.Expression != nil && call.Expression.Kind == ast.KindPropertyAccessExpression {
-				if tp.IsNodeReferenceToEffectModuleApi(call.Expression, "map") {
-					if call.Arguments != nil && len(call.Arguments.Nodes) >= 1 {
-						arg := call.Arguments.Nodes[0]
-						if isVoidCallback(arg) {
-							propAccess := call.Expression.AsPropertyAccessExpression()
-							matches = append(matches, EffectMapVoidMatch{
-								SourceFile:       sf,
-								Location:         scanner.GetErrorRangeForNode(sf, call.Expression),
-								CallNode:         n,
-								EffectModuleNode: propAccess.Expression,
-							})
-						}
-					}
-				}
+	for _, flow := range tp.PipingFlows(sf, true) {
+		for index := range flow.Transformations {
+			transformation := &flow.Transformations[index]
+			if len(transformation.Args) != 1 ||
+				transformation.Callee == nil ||
+				!tp.IsNodeReferenceToEffectModuleApi(transformation.Callee, "map") {
+				continue
 			}
+			if !isVoidCallback(transformation.Args[0]) {
+				continue
+			}
+			var effectModule *ast.Node
+			if transformation.Callee.Kind == ast.KindPropertyAccessExpression {
+				effectModule = transformation.Callee.AsPropertyAccessExpression().Expression
+			}
+			matches = append(matches, EffectMapVoidMatch{
+				SourceFile:       sf,
+				Location:         scanner.GetErrorRangeForNode(sf, transformation.Callee),
+				Transformation:   transformation,
+				EffectModuleNode: effectModule,
+			})
 		}
-
-		n.ForEachChild(walk)
-		return false
 	}
 
-	walk(sf.AsNode())
 	return matches
 }

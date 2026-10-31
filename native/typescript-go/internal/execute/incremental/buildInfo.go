@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"iter"
 
+	"github.com/effect-ts/tsgo/etscore"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -474,6 +475,7 @@ type BuildInfo struct {
 	FileInfos                  []*BuildInfoFileInfo                 `json:"fileInfos,omitzero"`
 	FileIdsList                [][]BuildInfoFileId                  `json:"fileIdsList,omitzero"`
 	Options                    *collections.OrderedMap[string, any] `json:"options,omitzero"`
+	Effect                     *etscore.EffectPluginOptions         `json:"effect,omitzero"`
 	ReferencedMap              []*BuildInfoReferenceMapEntry        `json:"referencedMap,omitzero"`
 	SemanticDiagnosticsPerFile []*BuildInfoSemanticDiagnostic       `json:"semanticDiagnosticsPerFile,omitzero"`
 	EmitDiagnosticsPerFile     []*BuildInfoDiagnosticsOfFile        `json:"emitDiagnosticsPerFile,omitzero"`
@@ -526,6 +528,7 @@ func (b *BuildInfo) GetCompilerOptions(buildInfoDirectory string) *core.Compiler
 		tsoptions.ParseCompilerOptions(option, value, options)
 
 	}
+	options.Effect = b.Effect
 	return options
 }
 

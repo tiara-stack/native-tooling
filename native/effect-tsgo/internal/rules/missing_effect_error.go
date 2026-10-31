@@ -7,11 +7,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 // MissingEffectError detects when an Effect has error types that are not
@@ -52,8 +52,8 @@ func AnalyzeMissingEffectError(tp *typeparser.TypeParser, c *checker.Checker, sf
 
 	for _, re := range c.GetRelationErrors(sf) {
 		// Parse both types as Effects
-		srcEffect := tp.EffectType(re.Source, re.ErrorNode)
-		tgtEffect := tp.EffectType(re.Target, re.ErrorNode)
+		srcEffect := tp.EffectType(re.Source)
+		tgtEffect := tp.EffectType(re.Target)
 
 		// Both must be Effect types
 		if srcEffect == nil || tgtEffect == nil {

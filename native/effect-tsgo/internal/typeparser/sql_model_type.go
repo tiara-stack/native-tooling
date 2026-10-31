@@ -1,14 +1,11 @@
 package typeparser
 
 import (
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
 )
 
-var sqlModelModuleDescriptor = PackageSourceFileDescriptor{
-	PackageName:       "@effect/sql",
-	MatchesSourceFile: isSqlModelTypeSourceFile,
-}
+var sqlModelModuleDescriptor = newPackageSourceFileDescriptor("@effect/sql", isSqlModelTypeSourceFile)
 
 // isSqlModelTypeSourceFile checks if a source file is @effect/sql Model module
 // by verifying it exports "Class", "makeRepository", and "makeDataLoaders".

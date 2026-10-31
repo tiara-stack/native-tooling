@@ -4,11 +4,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 // InstanceOfSchema suggests using Schema.is instead of instanceof for Effect Schema types.
@@ -61,7 +61,7 @@ func AnalyzeInstanceOfSchema(tp *typeparser.TypeParser, _ *checker.Checker, sf *
 			binExpr := node.AsBinaryExpression()
 			rightExpr := binExpr.Right
 			rightType := tp.GetTypeAtLocation(rightExpr)
-			if rightType != nil && tp.IsSchemaType(rightType, rightExpr) {
+			if rightType != nil && tp.IsSchemaType(rightType) {
 				matches = append(matches, InstanceOfSchemaMatch{
 					SourceFile:     sf,
 					Location:       scanner.GetErrorRangeForNode(sf, node),

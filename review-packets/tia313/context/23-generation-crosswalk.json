@@ -1,0 +1,50 @@
+{
+  "source_head": "a7bfe2eb8fb3e7738f2bcc9c459633019a84bfa2",
+  "input_count": 27,
+  "inputs": {
+    "entry_count": 27,
+    "packet_parts": [
+      "review-packets/tia313/context/23-generation-crosswalk.inputs.part-01.json"
+    ]
+  },
+  "output_count": 215,
+  "outputs": {
+    "entry_count": 215,
+    "packet_parts": [
+      "review-packets/tia313/context/23-generation-crosswalk.outputs.part-01.json",
+      "review-packets/tia313/context/23-generation-crosswalk.outputs.part-02.json",
+      "review-packets/tia313/context/23-generation-crosswalk.outputs.part-03.json",
+      "review-packets/tia313/context/23-generation-crosswalk.outputs.part-04.json",
+      "review-packets/tia313/context/23-generation-crosswalk.outputs.part-05.json"
+    ]
+  },
+  "provider_canonical_normalized_pairs": {
+    "entry_count": 107,
+    "packet_parts": [
+      "review-packets/tia313/context/23-generation-crosswalk.provider_canonical_normalized_pairs.part-01.json"
+    ]
+  },
+  "provider_linter_mirrors": {
+    "entry_count": 45,
+    "packet_parts": [
+      "review-packets/tia313/context/23-generation-crosswalk.provider_linter_mirrors.part-01.json"
+    ]
+  },
+  "collection_pairs": {
+    "entry_count": 7,
+    "packet_parts": [
+      "review-packets/tia313/context/23-generation-crosswalk.collection_pairs.part-01.json"
+    ]
+  },
+  "consumer_categories": 5,
+  "consumer_slices": {
+    "entry_count": 17,
+    "packet_parts": [
+      "review-packets/tia313/context/23-generation-crosswalk.consumer_slices.part-01.json"
+    ]
+  },
+  "unchanged_outputs_since_source_load_optimization": 215,
+  "changed_outputs_since_source_load_optimization": 0,
+  "scope_limit": "Exact current source only; input, output, helper, pin or consumer changes invalidate affected coverage.",
+  "document_role": "Index; all referenced part files are separately admitted review diffs."
+}

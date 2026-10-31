@@ -19,11 +19,12 @@ import (
 )
 
 type View struct {
-	registry      *Registry
-	importingFile *ast.SourceFile
-	program       *compiler.Program
-	preferences   modulespecifiers.UserPreferences
-	projectKey    tspath.Path
+	registry       *Registry
+	importingFile  *ast.SourceFile
+	program        *compiler.Program
+	preferences    modulespecifiers.UserPreferences
+	fixTransformer FixTransformer
+	projectKey     tspath.Path
 
 	allowedEndings                   []modulespecifiers.ModuleSpecifierEnding
 	conditions                       *collections.Set[string]
@@ -33,7 +34,7 @@ type View struct {
 }
 
 func NewView(registry *Registry, importingFile *ast.SourceFile, projectKey tspath.Path, program *compiler.Program, preferences modulespecifiers.UserPreferences) *View {
-	return &View{
+	view := &View{
 		registry:      registry,
 		importingFile: importingFile,
 		program:       program,
@@ -45,6 +46,10 @@ func NewView(registry *Registry, importingFile *ast.SourceFile, projectKey tspat
 		),
 		shouldUseUriStyleNodeCoreModules: lsutil.ShouldUseUriStyleNodeCoreModules(importingFile, program),
 	}
+	if autoImportFixTransformerFactory != nil {
+		view.fixTransformer = autoImportFixTransformerFactory(preferences, program, importingFile)
+	}
+	return view
 }
 
 func (v *View) getAllowedEndings() []modulespecifiers.ModuleSpecifierEnding {

@@ -1,0 +1,115 @@
+diff --git a/internal/core/compileroptions.go b/internal/core/compileroptions.go
+index 69ca300aea..2053e6bde8 100644
+--- a/internal/core/compileroptions.go
++++ b/internal/core/compileroptions.go
+@@ -162,7 +162,8 @@ type CompilerOptions struct {
+ 
+ 	// Effect holds the parsed @effect/language-service plugin configuration.
+ 	// This field is populated from the plugins array in tsconfig.json during config parsing.
+-	Effect *etscore.EffectPluginOptions
++	// Incremental build info persists it separately from user compiler options.
++	Effect *etscore.EffectPluginOptions `json:"-"`
+ }
+ 
+ // noCopy may be embedded into structs which must not be copied
+diff --git a/internal/execute/incremental/effect_options_test.go b/internal/execute/incremental/effect_options_test.go
+new file mode 100644
+index 0000000000..0af4535aac
+--- /dev/null
++++ b/internal/execute/incremental/effect_options_test.go
+@@ -0,0 +1,33 @@
++package incremental
++
++import (
++	"testing"
++
++	"github.com/effect-ts/tsgo/etscore"
++	"github.com/microsoft/typescript-go/internal/collections"
++	"github.com/microsoft/typescript-go/internal/core"
++	"github.com/microsoft/typescript-go/internal/json"
++	"gotest.tools/v3/assert"
++)
++
++func TestEffectOptionsSurviveBuildInfoRoundTrip(t *testing.T) {
++	t.Parallel()
++	options := &collections.OrderedMap[string, any]{}
++	options.Set("strict", true)
++	info := &BuildInfo{
++		Options: options,
++		Effect: &etscore.EffectPluginOptions{
++			Diagnostics: true,
++			DiagnosticSeverity: map[string]etscore.Severity{
++				"floatingEffect": etscore.SeverityWarning,
++			},
++		},
++	}
++	encoded, err := json.Marshal(info)
++	assert.NilError(t, err)
++	var restored BuildInfo
++	assert.NilError(t, json.Unmarshal(encoded, &restored))
++	compilerOptions := restored.GetCompilerOptions("")
++	assert.Equal(t, compilerOptions.Strict, core.TSTrue)
++	assert.DeepEqual(t, compilerOptions.Effect, info.Effect)
++}
+diff --git a/internal/tsoptions/decls_test.go b/internal/tsoptions/decls_test.go
+index be00b470b2..7dc432b4e3 100644
+--- a/internal/tsoptions/decls_test.go
++++ b/internal/tsoptions/decls_test.go
+@@ -39,6 +39,13 @@ func TestCompilerOptionsDeclaration(t *testing.T) {
+ 		if !field.IsExported() {
+ 			continue
+ 		}
++		if field.Name == "Effect" {
++			// The plugins declaration supplies derived state, not an Effect flag.
++			if field.Tag.Get("json") != "-" || decls["effect"] != nil {
++				t.Fatal("derived Effect state must not be exposed as a compiler option")
++			}
++			continue
++		}
+ 
+ 		lowerName := strings.ToLower(field.Name)
+ 
+diff --git a/internal/tsoptions/parsinghelpers_test.go b/internal/tsoptions/parsinghelpers_test.go
+index 555a53c745..1863a74493 100644
+--- a/internal/tsoptions/parsinghelpers_test.go
++++ b/internal/tsoptions/parsinghelpers_test.go
+@@ -15,6 +15,18 @@ func TestParseCompilerOptionNoMissingFields(t *testing.T) {
+ 		if !field.IsExported() {
+ 			continue
+ 		}
++		if field.Name == "Effect" {
++			// Plugin state is derived from plugins, not a directly parsed option.
++			if field.Tag.Get("json") != "-" {
++				t.Fatal("derived Effect state must not be serialized as a compiler option")
++			}
++			for _, name := range []string{"Effect", "effect"} {
++				if parseCompilerOptions(name, nil, &core.CompilerOptions{}) {
++					t.Fatalf("derived Effect state must not be parsed from %q", name)
++				}
++			}
++			continue
++		}
+ 
+ 		keyName := field.Name
+ 		// use the JSON key from the tag, if present
+diff --git a/internal/tsoptions/tsconfigparsing.go b/internal/tsoptions/tsconfigparsing.go
+index 0bba6462d1..3a612d16f6 100644
+--- a/internal/tsoptions/tsconfigparsing.go
++++ b/internal/tsoptions/tsconfigparsing.go
+@@ -198,16 +198,6 @@ func parseOwnConfigOfJsonSourceFile(
+ 	var rootCompilerOptions []*ast.PropertyName
+ 	var errors []*ast.Diagnostic
+ 
+-	// If there are parsing errors, return only the first one
+-	if len(sourceFile.Diagnostics()) > 0 {
+-		return &parsedTsconfig{
+-			raw:                &collections.OrderedMap[string, any]{},
+-			options:            compilerOptions,
+-			typeAcquisition:    typeAcquisition,
+-			extendedConfigPath: extendedConfigPath,
+-		}, []*ast.Diagnostic{sourceFile.Diagnostics()[0]}
+-	}
+-
+ 	onPropertySet := func(
+ 		keyText string,
+ 		value any,

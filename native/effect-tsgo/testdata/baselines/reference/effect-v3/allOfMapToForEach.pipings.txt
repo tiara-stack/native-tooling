@@ -1,0 +1,303 @@
+==== /.src/allOfMapToForEach.ts (19 flows) ====
+
+=== Piping Flow ===
+Location: 8:22 - 8:56
+Node: Effect.all(values.map(effectful))
+Node Kind: KindCallExpression
+
+Subject: effectful
+Subject Type: (value: number, index: number) => Effect<string, never, never>
+
+Transformations (2):
+  [0] kind: call
+      callee: values.map
+      args: (constant)
+      outType: Effect<string, never, never>[]
+  [1] kind: call
+      callee: Effect.all
+      args: (constant)
+      outType: Effect<string[], never, never>
+
+=== Piping Flow ===
+Location: 12:26 - 12:58
+Node: allAlias(values.map(effectful))
+Node Kind: KindCallExpression
+
+Subject: effectful
+Subject Type: (value: number, index: number) => Effect<string, never, never>
+
+Transformations (2):
+  [0] kind: call
+      callee: values.map
+      args: (constant)
+      outType: Effect<string, never, never>[]
+  [1] kind: call
+      callee: allAlias
+      args: (constant)
+      outType: Effect<string[], never, never>
+
+=== Piping Flow ===
+Location: 15:39 - 16:68
+Node: values.map((value, index) => Effect.succeed(`${index}:${value}`))
+Node Kind: KindCallExpression
+
+Subject: (value, index) => Effect.succeed(`${index}:${value}`)
+Subject Type: (value: number, index: number) => Effect<string, never, never>
+
+Transformations (1):
+  [0] kind: call
+      callee: values.map
+      args: (constant)
+      outType: Effect<string, never, never>[]
+
+=== Piping Flow ===
+Location: 16:31 - 16:67
+Node: Effect.succeed(`${index}:${value}`)
+Node Kind: KindCallExpression
+
+Subject: `${index}:${value}`
+Subject Type: string
+
+Transformations (1):
+  [0] kind: call
+      callee: Effect.succeed
+      args: (constant)
+      outType: Effect<string, never, never>
+
+=== Piping Flow ===
+Location: 22:30 - 22:64
+Node: Effect.forEach(values, effectful)
+Node Kind: KindCallExpression
+
+Subject: values
+Subject Type: readonly number[]
+
+Transformations (1):
+  [0] kind: dataFirst
+      callee: Effect.forEach
+      args: [effectful]
+      outType: Effect<string[], never, never>
+
+=== Piping Flow ===
+Location: 23:35 - 27:2
+Node: Effect.forEach(\n  values,\n  (value, index) => Effect.succeed(`${index}:${value}`),\n  { concurrency: 2, discard: true }\n)
+Node Kind: KindCallExpression
+
+Subject: values
+Subject Type: readonly number[]
+
+Transformations (1):
+  [0] kind: dataFirst
+      callee: Effect.forEach
+      args: [(value, index) => Effect.succeed(`${index}:${value}`), { concurrency: 2, discard: true }]
+      outType: Effect<void, never, never>
+
+=== Piping Flow ===
+Location: 25:20 - 25:56
+Node: Effect.succeed(`${index}:${value}`)
+Node Kind: KindCallExpression
+
+Subject: `${index}:${value}`
+Subject Type: string
+
+Transformations (1):
+  [0] kind: call
+      callee: Effect.succeed
+      args: (constant)
+      outType: Effect<string, never, never>
+
+=== Piping Flow ===
+Location: 30:34 - 32:2
+Node: Effect.all(\n  values.map<Effect.Effect<string>>((value) => Effect.succeed(String(value)))\n)
+Node Kind: KindCallExpression
+
+Subject: (value) => Effect.succeed(String(value))
+Subject Type: (value: number) => Effect<string, never, never>
+
+Transformations (2):
+  [0] kind: call
+      callee: values.map
+      args: (constant)
+      outType: Effect<string, never, never>[]
+  [1] kind: call
+      callee: Effect.all
+      args: (constant)
+      outType: Effect<string[], never, never>
+
+=== Piping Flow ===
+Location: 31:47 - 31:77
+Node: Effect.succeed(String(value))
+Node Kind: KindCallExpression
+
+Subject: value
+Subject Type: number
+
+Transformations (2):
+  [0] kind: call
+      callee: String
+      args: (constant)
+      outType: string
+  [1] kind: call
+      callee: Effect.succeed
+      args: (constant)
+      outType: Effect<string, never, never>
+
+=== Piping Flow ===
+Location: 35:38 - 35:59
+Node: values.map(effectful)
+Node Kind: KindCallExpression
+
+Subject: effectful
+Subject Type: (value: number, index: number) => Effect<string, never, never>
+
+Transformations (1):
+  [0] kind: call
+      callee: values.map
+      args: (constant)
+      outType: Effect<string, never, never>[]
+
+=== Piping Flow ===
+Location: 37:40 - 37:61
+Node: values.map(effectful)
+Node Kind: KindCallExpression
+
+Subject: effectful
+Subject Type: (value: number, index: number) => Effect<string, never, never>
+
+Transformations (1):
+  [0] kind: call
+      callee: values.map
+      args: (constant)
+      outType: Effect<string, never, never>[]
+
+=== Piping Flow ===
+Location: 44:22 - 44:85
+Node: Effect.all(recordMapper.map((value) => Effect.succeed(value)))
+Node Kind: KindCallExpression
+
+Subject: (value) => Effect.succeed(value)
+Subject Type: (value: number) => Effect<number, never, never>
+
+Transformations (2):
+  [0] kind: call
+      callee: recordMapper.map
+      args: (constant)
+      outType: readonly Effect<number, never, never>[]
+  [1] kind: call
+      callee: Effect.all
+      args: (constant)
+      outType: Effect<number[], never, never>
+
+=== Piping Flow ===
+Location: 44:61 - 44:83
+Node: Effect.succeed(value)
+Node Kind: KindCallExpression
+
+Subject: value
+Subject Type: number
+
+Transformations (1):
+  [0] kind: call
+      callee: Effect.succeed
+      args: (constant)
+      outType: Effect<number, never, never>
+
+=== Piping Flow ===
+Location: 48:27 - 48:72
+Node: Effect.all(values.map((value) => value + 1))
+Node Kind: KindCallExpression
+
+Subject: (value) => value + 1
+Subject Type: (value: number) => number
+
+Transformations (2):
+  [0] kind: call
+      callee: values.map
+      args: (constant)
+      outType: number[]
+  [1] kind: call
+      callee: Effect.all
+      args: (constant)
+      outType: never
+
+=== Piping Flow ===
+Location: 52:28 - 52:68
+Node: pipe(values.map(effectful), Effect.all)
+Node Kind: KindCallExpression
+
+Subject: effectful
+Subject Type: (value: number, index: number) => Effect<string, never, never>
+
+Transformations (2):
+  [0] kind: call
+      callee: values.map
+      args: (constant)
+      outType: Effect<string, never, never>[]
+  [1] kind: pipe
+      callee: Effect.all
+      args: (constant)
+      outType: Effect<string[], never, never>
+
+=== Piping Flow ===
+Location: 53:34 - 53:89
+Node: pipe(values.map(effectful), Effect.all, Effect.asVoid)
+Node Kind: KindCallExpression
+
+Subject: effectful
+Subject Type: (value: number, index: number) => Effect<string, never, never>
+
+Transformations (3):
+  [0] kind: call
+      callee: values.map
+      args: (constant)
+      outType: Effect<string, never, never>[]
+  [1] kind: pipe
+      callee: Effect.all
+      args: (constant)
+      outType: Effect<string[], never, never>
+  [2] kind: pipe
+      callee: Effect.asVoid
+      args: (constant)
+      outType: Effect<void, never, never>
+
+=== Piping Flow ===
+Location: 56:21 - 56:85
+Node: Effect.all([Effect.succeed(1), Effect.succeed("two")] as const)
+Node Kind: KindCallExpression
+
+Subject: [Effect.succeed(1), Effect.succeed("two")] as const
+Subject Type: readonly [Effect<number, never, never>, Effect<string, never, never>]
+
+Transformations (1):
+  [0] kind: call
+      callee: Effect.all
+      args: (constant)
+      outType: Effect<[number, string], never, never>
+
+=== Piping Flow ===
+Location: 56:34 - 56:51
+Node: Effect.succeed(1)
+Node Kind: KindCallExpression
+
+Subject: 1
+Subject Type: 1
+
+Transformations (1):
+  [0] kind: call
+      callee: Effect.succeed
+      args: (constant)
+      outType: Effect<number, never, never>
+
+=== Piping Flow ===
+Location: 56:52 - 56:74
+Node: Effect.succeed("two")
+Node Kind: KindCallExpression
+
+Subject: "two"
+Subject Type: "two"
+
+Transformations (1):
+  [0] kind: call
+      callee: Effect.succeed
+      args: (constant)
+      outType: Effect<string, never, never>

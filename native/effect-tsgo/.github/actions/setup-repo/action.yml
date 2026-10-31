@@ -1,0 +1,183 @@
+name: Setup repo
+description: Install repository toolchains and materialize an upstream component
+
+inputs:
+  component:
+    description: Upstream component to materialize
+    required: false
+    default: typescript
+  version:
+    description: Component version; TypeScript defaults to the configured next tag
+    required: false
+    default: ""
+  materialize:
+    description: Whether to materialize the selected upstream component
+    required: false
+    default: "true"
+  target:
+    description: Platform package target; used to derive native toolchain targets
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v6
+      with:
+        node-version: "24"
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v6
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
+    - name: Resolve upstream component
+      id: upstream-component
+      shell: bash
+      env:
+        COMPONENT: ${{ inputs.component }}
+        TARGET: ${{ inputs.target }}
+        VERSION: ${{ inputs.version }}
+      run: |
+        args=(upstream resolve --component "$COMPONENT")
+        if [ -n "$VERSION" ]; then
+          args+=(--version "$VERSION")
+        fi
+        if [ -n "$TARGET" ]; then
+          args+=(--target "$TARGET")
+        fi
+        pnpm exec repoctl "${args[@]}"
+
+    - name: Setup Rust
+      if: steps.upstream-component.outputs.component == 'oxlint'
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: "1.93.0"
+        components: rustfmt
+
+    - name: Install native build tools
+      if: steps.upstream-component.outputs.component == 'oxlint' && runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install --yes cmake
+
+    - name: Configure Rust build cache
+      if: steps.upstream-component.outputs.component == 'oxlint'
+      shell: bash
+      run: echo "CARGO_TARGET_DIR=${RUNNER_TEMP}/oxlint-target" >> "$GITHUB_ENV"
+
+    - name: Cache Rust build
+      if: steps.upstream-component.outputs.component == 'oxlint' && github.ref == 'refs/heads/main'
+      uses: actions/cache@v6
+      with:
+        path: |
+          ~/.cargo/git
+          ~/.cargo/registry
+          ${{ runner.temp }}/oxlint-target
+        key: rust-build-oxlint-1.93.0-${{ runner.os }}-${{ runner.arch }}-${{ steps.upstream-component.outputs.rust-target }}-${{ hashFiles('_packages/tsgo/upstream.json', '_patches/oxlint/**') }}
+        restore-keys: |
+          rust-build-oxlint-1.93.0-${{ runner.os }}-${{ runner.arch }}-${{ steps.upstream-component.outputs.rust-target }}-
+
+    - name: Restore Rust build cache
+      if: steps.upstream-component.outputs.component == 'oxlint' && github.ref != 'refs/heads/main'
+      uses: actions/cache/restore@v6
+      with:
+        path: |
+          ~/.cargo/git
+          ~/.cargo/registry
+          ${{ runner.temp }}/oxlint-target
+        key: rust-build-oxlint-1.93.0-${{ runner.os }}-${{ runner.arch }}-${{ steps.upstream-component.outputs.rust-target }}-${{ hashFiles('_packages/tsgo/upstream.json', '_patches/oxlint/**') }}
+        restore-keys: |
+          rust-build-oxlint-1.93.0-${{ runner.os }}-${{ runner.arch }}-${{ steps.upstream-component.outputs.rust-target }}-
+
+    - name: Setup Go
+      id: go
+      uses: actions/setup-go@v6
+      with:
+        go-version: "1.27"
+        cache: false
+
+    - name: Resolve Go cache paths
+      id: go-cache
+      shell: bash
+      run: |
+        echo "build=$(go env GOCACHE)" >> "$GITHUB_OUTPUT"
+        echo "modules=$(go env GOMODCACHE)" >> "$GITHUB_OUTPUT"
+
+    # Go caches are keyed by the resolved go-cache identity (the TypeScript
+    # dependency of the component) so oxlint-tsgolint restores the compiler
+    # objects cached by the typescript jobs. Only materialized jobs whose
+    # component owns the cache (go-cache-save) persist it, and only on main;
+    # everything else is restore-only to keep the repository cache under the
+    # 10GB eviction limit.
+    - name: Cache Go modules
+      if: inputs.materialize == 'true' && steps.upstream-component.outputs.go-cache-save == 'true' && github.ref == 'refs/heads/main'
+      uses: actions/cache@v6
+      with:
+        path: ${{ steps.go-cache.outputs.modules }}/cache/download
+        key: go-modules-1.26-${{ steps.upstream-component.outputs.go-cache-component }}-${{ steps.upstream-component.outputs.go-cache-version }}-${{ runner.os }}-${{ hashFiles('**/go.mod', '**/go.sum', '_packages/tsgo/upstream.json', '_patches/**/*.patch') }}
+
+    - name: Restore Go modules
+      if: steps.upstream-component.outputs.go-cache-component != '' && (inputs.materialize != 'true' || steps.upstream-component.outputs.go-cache-save != 'true' || github.ref != 'refs/heads/main')
+      uses: actions/cache/restore@v6
+      with:
+        path: ${{ steps.go-cache.outputs.modules }}/cache/download
+        key: go-modules-1.26-${{ steps.upstream-component.outputs.go-cache-component }}-${{ steps.upstream-component.outputs.go-cache-version }}-${{ runner.os }}-${{ hashFiles('**/go.mod', '**/go.sum', '_packages/tsgo/upstream.json', '_patches/**/*.patch') }}
+
+    - name: Cache Go build
+      if: runner.os == 'Linux' && inputs.materialize == 'true' && steps.upstream-component.outputs.go-cache-save == 'true' && github.ref == 'refs/heads/main'
+      uses: actions/cache@v6
+      with:
+        path: ${{ steps.go-cache.outputs.build }}
+        key: go-build-${{ steps.upstream-component.outputs.go-cache-component }}-${{ steps.upstream-component.outputs.go-cache-version }}-Linux-${{ hashFiles('**/go.mod', '**/go.sum', '_packages/tsgo/upstream.json', '_patches/**/*.patch') }}
+        restore-keys: |
+          go-build-${{ steps.upstream-component.outputs.go-cache-component }}-${{ steps.upstream-component.outputs.go-cache-version }}-Linux-
+
+    - name: Restore Go build cache
+      if: runner.os == 'Linux' && steps.upstream-component.outputs.go-cache-component != '' && (inputs.materialize != 'true' || steps.upstream-component.outputs.go-cache-save != 'true' || github.ref != 'refs/heads/main')
+      uses: actions/cache/restore@v6
+      with:
+        path: ${{ steps.go-cache.outputs.build }}
+        key: go-build-${{ steps.upstream-component.outputs.go-cache-component }}-${{ steps.upstream-component.outputs.go-cache-version }}-Linux-${{ hashFiles('**/go.mod', '**/go.sum', '_packages/tsgo/upstream.json', '_patches/**/*.patch') }}
+        restore-keys: |
+          go-build-${{ steps.upstream-component.outputs.go-cache-component }}-${{ steps.upstream-component.outputs.go-cache-version }}-Linux-
+
+    - name: Configure generated shim cache
+      shell: bash
+      run: echo "TSGO_SHIM_CACHE_DIR=${RUNNER_TEMP}/gen-shims-cache" >> "$GITHUB_ENV"
+
+    - name: Cache generated shims
+      if: github.ref == 'refs/heads/main'
+      uses: actions/cache@v6
+      with:
+        path: ${{ runner.temp }}/gen-shims-cache
+        key: generated-shims-v1-${{ steps.go.outputs.go-version }}-${{ steps.upstream-component.outputs.component }}-${{ steps.upstream-component.outputs.version }}-${{ hashFiles('_tools/gen_shims/**', '_tools/repoctl/src/**', '_packages/tsgo/upstream.json', '_patches/typescript-go/**', '_patches/typescript/**', '_patches/tsgolint/**') }}
+        enableCrossOsArchive: true
+
+    - name: Restore generated shim cache
+      if: github.ref != 'refs/heads/main'
+      uses: actions/cache/restore@v6
+      with:
+        path: ${{ runner.temp }}/gen-shims-cache
+        key: generated-shims-v1-${{ steps.go.outputs.go-version }}-${{ steps.upstream-component.outputs.component }}-${{ steps.upstream-component.outputs.version }}-${{ hashFiles('_tools/gen_shims/**', '_tools/repoctl/src/**', '_packages/tsgo/upstream.json', '_patches/typescript-go/**', '_patches/typescript/**', '_patches/tsgolint/**') }}
+        enableCrossOsArchive: true
+
+    - name: Materialize upstream component
+      if: inputs.materialize == 'true'
+      shell: bash
+      env:
+        COMPONENT: ${{ steps.upstream-component.outputs.component }}
+        VERSION: ${{ steps.upstream-component.outputs.version }}
+      run: pnpm exec repoctl submodules setup --component "$COMPONENT" --version "$VERSION"
+
+    - name: Install Oxlint Rust target
+      if: steps.upstream-component.outputs.component == 'oxlint' && inputs.materialize == 'true'
+      shell: bash
+      working-directory: oxlint
+      env:
+        RUST_TARGET: ${{ steps.upstream-component.outputs.rust-target }}
+      run: rustup target add "$RUST_TARGET"

@@ -219,8 +219,8 @@ This should create an `options.go` file in the same directory as the `schema.jso
 
 ```go
 import (
-   "github.com/effect-ts/tsgo/tsgolint/internal/rule"
-	"github.com/effect-ts/tsgo/tsgolint/internal/utils"
+   "github.com/typescript-eslint/tsgolint/internal/rule"
+	"github.com/typescript-eslint/tsgolint/internal/utils"
 )
 
 var ExampleRule = rule.Rule{

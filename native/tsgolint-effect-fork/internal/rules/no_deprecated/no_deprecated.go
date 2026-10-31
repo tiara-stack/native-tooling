@@ -164,10 +164,6 @@ var NoDeprecatedRule = rule.Rule{
 					return true, reason
 				}
 
-				if symbol.Flags&ast.SymbolFlagsAlias == 0 {
-					break
-				}
-
 				if checker.Checker_getDeclarationOfAliasSymbol(ctx.TypeChecker, symbol) == nil {
 					break
 				}
@@ -333,12 +329,15 @@ var NoDeprecatedRule = rule.Rule{
 				return "", nil, nil, false, ""
 			}
 
-			contextualType := checker.Checker_getContextualType(ctx.TypeChecker, propertyNode.Parent, checker.ContextFlagsNone)
+			contextualType := checker.Checker_getApparentTypeOfContextualType(ctx.TypeChecker, propertyNode.Parent, checker.ContextFlagsNone)
 			if contextualType == nil {
 				return "", nil, nil, false, ""
 			}
 
 			property := checker.Checker_getPropertyOfType(ctx.TypeChecker, contextualType, propertyName)
+			if property == nil || !checker.Checker_isDeprecatedSymbol(ctx.TypeChecker, property) {
+				return propertyName, contextualType, property, false, ""
+			}
 			isDeprecated, reason := getJsDocDeprecation(property)
 			return propertyName, contextualType, property, isDeprecated, reason
 		}
@@ -349,14 +348,16 @@ var NoDeprecatedRule = rule.Rule{
 				return
 			}
 
-			nameType := ctx.TypeChecker.GetTypeAtLocation(name)
-			propertyNameAllowed := slices.ContainsFunc(opts.Allow, func(specifier utils.TypeOrValueSpecifier) bool {
-				return utils.SymbolMatchesSpecifierNameAndSource(property, propertyName, specifier, ctx.Program)
-			})
-			if utils.TypeMatchesSomeSpecifier(contextualType, opts.Allow, ctx.Program) ||
-				utils.TypeMatchesSomeSpecifier(nameType, opts.Allow, ctx.Program) ||
-				propertyNameAllowed {
-				return
+			if len(opts.Allow) > 0 {
+				nameType := ctx.TypeChecker.GetTypeAtLocation(name)
+				propertyNameAllowed := slices.ContainsFunc(opts.Allow, func(specifier utils.TypeOrValueSpecifier) bool {
+					return utils.SymbolMatchesSpecifierNameAndSource(property, propertyName, specifier, ctx.Program)
+				})
+				if utils.TypeMatchesSomeSpecifier(contextualType, opts.Allow, ctx.Program) ||
+					utils.TypeMatchesSomeSpecifier(nameType, opts.Allow, ctx.Program) ||
+					propertyNameAllowed {
+					return
+				}
 			}
 
 			reportedPropertyName := formatPropertyNameForReport(propertyName)
@@ -564,7 +565,7 @@ var NoDeprecatedRule = rule.Rule{
 						// Check shorthand assignment value symbol
 						if propertySymbol != nil && propertySymbol.ValueDeclaration != nil {
 							valueSymbol := checker.Checker_GetShorthandAssignmentValueSymbol(ctx.TypeChecker, propertySymbol.ValueDeclaration)
-							isDeprecated, reason = getJsDocDeprecation(valueSymbol)
+							isDeprecated, reason = searchForDeprecationInAliasesChain(valueSymbol, true)
 							if isDeprecated {
 								return true, reason
 							}
@@ -702,13 +703,15 @@ var NoDeprecatedRule = rule.Rule{
 				return
 			}
 
-			ty := ctx.TypeChecker.GetTypeAtLocation(node)
+			if len(opts.Allow) > 0 {
+				ty := ctx.TypeChecker.GetTypeAtLocation(node)
 
-			// TODO: if type OR value is allowed, skip
+				// TODO: if type OR value is allowed, skip
 
-			if utils.TypeMatchesSomeSpecifier(ty, opts.Allow, ctx.Program) ||
-				utils.ValueMatchesSomeSpecifier(node, opts.Allow, ctx.Program, ty) {
-				return
+				if utils.TypeMatchesSomeSpecifier(ty, opts.Allow, ctx.Program) ||
+					utils.ValueMatchesSomeSpecifier(node, opts.Allow, ctx.Program, ty) {
+					return
+				}
 			}
 
 			name := getReportedNodeName(node)

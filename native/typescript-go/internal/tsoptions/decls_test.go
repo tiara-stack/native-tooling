@@ -39,6 +39,13 @@ func TestCompilerOptionsDeclaration(t *testing.T) {
 		if !field.IsExported() {
 			continue
 		}
+		if field.Name == "Effect" {
+			// The plugins declaration supplies derived state, not an Effect flag.
+			if field.Tag.Get("json") != "-" || decls["effect"] != nil {
+				t.Fatal("derived Effect state must not be exposed as a compiler option")
+			}
+			continue
+		}
 
 		lowerName := strings.ToLower(field.Name)
 

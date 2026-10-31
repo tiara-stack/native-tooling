@@ -1,18 +1,18 @@
 package typeparser
 
 import (
-	"github.com/microsoft/typescript-go/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
 )
 
 // EffectModelClassResult holds the parsed result of a class extending Model.Class
-// from effect/unstable/schema.
+// from effect/schema.
 type EffectModelClassResult struct {
 	ClassName    *ast.Node // The class name identifier
 	SelfTypeNode *ast.Node // The Self type argument node (first type arg of the inner call)
 }
 
 // ExtendsEffectModelClass checks if a class declaration extends Model.Class<Self>(...)({...})
-// from the effect/unstable/schema module.
+// from the effect/schema module.
 // It detects the double-call pattern:
 //
 //	class X extends Model.Class<X>("name")({}) {}

@@ -1,0 +1,287 @@
+{
+  "parent_packet": "review-packets/tia313/context/23-generation-crosswalk.json",
+  "collection": "consumer_slices",
+  "part": 1,
+  "parts": 1,
+  "entries": [
+    {
+      "path": "native/effect-tsgo/go.mod",
+      "mode": "100644",
+      "blob": "ffe3927f7d3e2a2d9c3710064e0abff803fb00df",
+      "sha256": "03888d98312e09576148427f736d36ec10dc19a4133f13127fbd07051c92cd67",
+      "bytes": 14050,
+      "consumer_category": 1,
+      "packet": "review-packets/tia313/context/30-consumer-effect-service.md",
+      "ranges": [
+        [
+          1,
+          45
+        ]
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/go.work",
+      "mode": "100644",
+      "blob": "49ad6359eede1675fe94b7e022c6d3c842e5abc8",
+      "sha256": "60beb9fadd7e681af28f7db8531b98d01d2ced7e6cf939fed78a3bd8c9ed099d",
+      "bytes": 11448,
+      "consumer_category": 1,
+      "packet": "review-packets/tia313/context/30-consumer-effect-service.md",
+      "ranges": [
+        [
+          1,
+          110
+        ]
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/internal/rulerunner/diagnostics.go",
+      "mode": "100644",
+      "blob": "461887a91d6b439e86d872b4b3d37038156b9b0e",
+      "sha256": "17781548b08354f7c8bd39a6969382894a61466ada30dad99228e283c8de77d0",
+      "bytes": 8164,
+      "consumer_category": 1,
+      "packet": "review-packets/tia313/context/30-consumer-effect-service.md",
+      "ranges": [
+        [
+          1,
+          115
+        ]
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/etsdiagnostics/diagnostics.go",
+      "mode": "100644",
+      "blob": "47b56254f901ce12be9e969dfd606a7b6ab7104a",
+      "sha256": "217c0e3294d245b14bdbcd8a294a18d5849695fc796308f4037a821256926b36",
+      "bytes": 14649,
+      "consumer_category": 1,
+      "packet": "review-packets/tia313/context/30-consumer-effect-service.md",
+      "ranges": [
+        [
+          180,
+          207
+        ],
+        [
+          253,
+          280
+        ]
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/etscheckerhooks/init.go",
+      "mode": "100644",
+      "blob": "d3572ac1588e5538d1299ed2dead211fea8ca0c6",
+      "sha256": "fac210848f43fa08fe96b38d5b933cb730929827f4bc1268d2fc7300e561cc3b",
+      "bytes": 1759,
+      "consumer_category": 1,
+      "packet": "review-packets/tia313/context/30-consumer-effect-service.md",
+      "ranges": [
+        [
+          1,
+          45
+        ]
+      ]
+    },
+    {
+      "path": "native/typescript-go/internal/core/compileroptions.go",
+      "mode": "100644",
+      "blob": "2053e6bde8410df3c87d1b3bed9b01d21442744e",
+      "sha256": "44f931dfc954b17a2a693ef2ab0bc5116d98745dab403dd9699b5a2c7f765f1d",
+      "bytes": 27885,
+      "consumer_category": 2,
+      "packet": "review-packets/tia313/context/31-consumer-compiler-config.md",
+      "ranges": [
+        [
+          152,
+          174
+        ]
+      ]
+    },
+    {
+      "path": "native/typescript-go/internal/tsoptions/parsinghelpers.go",
+      "mode": "100644",
+      "blob": "199d0a286cdcde5eb2610bee028725b61a6e02d1",
+      "sha256": "62a58a5b15496b50e6a81720fc4a5ae8ee375c97b851f588814c615c246d46bb",
+      "bytes": 22186,
+      "consumer_category": 2,
+      "packet": "review-packets/tia313/context/31-consumer-compiler-config.md",
+      "ranges": [
+        [
+          468,
+          495
+        ]
+      ]
+    },
+    {
+      "path": "native/typescript-go/internal/execute/incremental/buildInfo.go",
+      "mode": "100644",
+      "blob": "0445636053155766214fdb9715fc20e6cb698474",
+      "sha256": "d9ed5c18288a8b278aa85290ad75e0b07fd97e747c623e5ef65c518d033c531e",
+      "bytes": 21782,
+      "consumer_category": 2,
+      "packet": "review-packets/tia313/context/31-consumer-compiler-config.md",
+      "ranges": [
+        [
+          463,
+          487
+        ],
+        [
+          506,
+          536
+        ]
+      ]
+    },
+    {
+      "path": "native/typescript-go/internal/tsoptions/decls_test.go",
+      "mode": "100644",
+      "blob": "7dc432b4e36879b5084861b8edc6510b583ffbbb",
+      "sha256": "c036a7a770f5596e293d6556933a706ae1681079771bd8c5149cef5a46c31fcf",
+      "bytes": 2078,
+      "consumer_category": 2,
+      "packet": "review-packets/tia313/context/31-consumer-compiler-config.md",
+      "ranges": [
+        [
+          1,
+          80
+        ]
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/internal/effectconfigcheck/compiler_options_test.go",
+      "mode": "100644",
+      "blob": "6fa7d7fe107fa7eaf71edd18d8c5b1cac29b3ed6",
+      "sha256": "64d82f3e21ad0705ed2a848abe18f78d8db544902e3dcd3a4d510a876f45dc5e",
+      "bytes": 2463,
+      "consumer_category": 2,
+      "packet": "review-packets/tia313/context/31-consumer-compiler-config.md",
+      "ranges": [
+        [
+          1,
+          66
+        ]
+      ]
+    },
+    {
+      "path": "native/tsgolint-effect-fork/go.mod",
+      "mode": "100644",
+      "blob": "ca4cb84c353506bff62d2f7a2dc757e6cf3d5e78",
+      "sha256": "7118d114c28809f5d9ebd3b9e409953e41dd3f89f649f060c6c8923b245e3162",
+      "bytes": 12799,
+      "consumer_category": 3,
+      "packet": "review-packets/tia313/context/32-consumer-linter-protocol.md",
+      "ranges": [
+        [
+          1,
+          60
+        ]
+      ]
+    },
+    {
+      "path": "native/tsgolint-effect-fork/internal/effectlint/effectlint.go",
+      "mode": "100644",
+      "blob": "cbc2261dc0b0764e9eb2964070910df12ce91a42",
+      "sha256": "0fddf5a57e689cd6c92448c1e89892a42509a1fb89fecc83733f8cfd8cedf02c",
+      "bytes": 3708,
+      "consumer_category": 3,
+      "packet": "review-packets/tia313/context/32-consumer-linter-protocol.md",
+      "ranges": [
+        [
+          1,
+          124
+        ]
+      ]
+    },
+    {
+      "path": "native/tsgolint-effect-fork/internal/effectlint/public_rules.go",
+      "mode": "100644",
+      "blob": "7cefd4fc792e2d5f29294ee5961fad5149bb5f32",
+      "sha256": "3a6b1f8c8be2c64e6c354cdbfcc8aa9bdd8679f587c36e4bb16d520525e991fe",
+      "bytes": 2199,
+      "consumer_category": 3,
+      "packet": "review-packets/tia313/context/32-consumer-linter-protocol.md",
+      "ranges": [
+        [
+          1,
+          89
+        ]
+      ]
+    },
+    {
+      "path": "native/tsgolint-effect-fork/internal/linter/linter.go",
+      "mode": "100644",
+      "blob": "9f5c156fcad035873f6636a4f13afc488d30fce9",
+      "sha256": "6b6930509dad80d5301e99c490beb977e2285707758b324cb8b23255cc35067d",
+      "bytes": 19348,
+      "consumer_category": 3,
+      "packet": "review-packets/tia313/context/32-consumer-linter-protocol.md",
+      "ranges": [
+        [
+          87,
+          116
+        ],
+        [
+          445,
+          525
+        ],
+        [
+          570,
+          612
+        ]
+      ]
+    },
+    {
+      "path": "scripts/generate-native.mjs",
+      "mode": "100644",
+      "blob": "9e80e2327d82703ae99134ca7f0c206ea258f63d",
+      "sha256": "e850f07da779a640d9a23be72224e05d9902fca1375a56b3f2c1778fea1f0c6f",
+      "bytes": 4500,
+      "consumer_category": 4,
+      "packet": "review-packets/tia313/context/33-consumer-shim-sync.md",
+      "ranges": [
+        [
+          1,
+          119
+        ]
+      ]
+    },
+    {
+      "path": "scripts/test/native-backend.test.mjs",
+      "mode": "100644",
+      "blob": "f9012cd804397f79f3c43ef9a161d283b82f6004",
+      "sha256": "3f808e02fa3c1c5523826261d0f06a3cf23901fce1c733693b573595228e969f",
+      "bytes": 10339,
+      "consumer_category": 5,
+      "packet": "review-packets/tia313/context/34-consumer-smoke.md",
+      "ranges": [
+        [
+          1,
+          40
+        ],
+        [
+          194,
+          274
+        ]
+      ]
+    },
+    {
+      "path": "scripts/headless-smoke.mjs",
+      "mode": "100644",
+      "blob": "6a23dfe57ad2318e89677467da93323740e48b75",
+      "sha256": "61a005629c02c99766baa06cca2e16f27897059ff5bfdb3fc937d0c49712aca1",
+      "bytes": 3383,
+      "consumer_category": 5,
+      "packet": "review-packets/tia313/context/34-consumer-smoke.md",
+      "ranges": [
+        [
+          1,
+          48
+        ],
+        [
+          80,
+          118
+        ]
+      ]
+    }
+  ]
+}

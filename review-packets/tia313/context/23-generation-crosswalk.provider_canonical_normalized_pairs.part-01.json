@@ -1,0 +1,650 @@
+{
+  "parent_packet": "review-packets/tia313/context/23-generation-crosswalk.json",
+  "collection": "provider_canonical_normalized_pairs",
+  "part": 1,
+  "parts": 1,
+  "entries": [
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/api/go.mod",
+      "provider": "native/effect-tsgo/shim/api/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/api/shim.go",
+      "provider": "native/effect-tsgo/shim/api/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ast/go.mod",
+      "provider": "native/effect-tsgo/shim/ast/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ast/helpers.go",
+      "provider": "native/effect-tsgo/shim/ast/helpers.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ast/shim.go",
+      "provider": "native/effect-tsgo/shim/ast/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/astnav/go.mod",
+      "provider": "native/effect-tsgo/shim/astnav/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/astnav/shim.go",
+      "provider": "native/effect-tsgo/shim/astnav/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/bundled/go.mod",
+      "provider": "native/effect-tsgo/shim/bundled/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/bundled/shim.go",
+      "provider": "native/effect-tsgo/shim/bundled/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/checker/compatibility.go",
+      "provider": "native/effect-tsgo/shim/checker/compatibility.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/checker/go.mod",
+      "provider": "native/effect-tsgo/shim/checker/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/checker/shim.go",
+      "provider": "native/effect-tsgo/shim/checker/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/collections/go.mod",
+      "provider": "native/effect-tsgo/shim/collections/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/collections/shim.go",
+      "provider": "native/effect-tsgo/shim/collections/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/compiler/compatibility.go",
+      "provider": "native/effect-tsgo/shim/compiler/compatibility.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/compiler/go.mod",
+      "provider": "native/effect-tsgo/shim/compiler/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/compiler/shim.go",
+      "provider": "native/effect-tsgo/shim/compiler/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/core/go.mod",
+      "provider": "native/effect-tsgo/shim/core/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/core/shim.go",
+      "provider": "native/effect-tsgo/shim/core/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/diagnostics/go.mod",
+      "provider": "native/effect-tsgo/shim/diagnostics/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/diagnostics/shim.go",
+      "provider": "native/effect-tsgo/shim/diagnostics/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/evaluator/go.mod",
+      "provider": "native/effect-tsgo/shim/evaluator/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/evaluator/shim.go",
+      "provider": "native/effect-tsgo/shim/evaluator/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/execute/tsc/go.mod",
+      "provider": "native/effect-tsgo/shim/execute/tsc/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/execute/tsc/shim.go",
+      "provider": "native/effect-tsgo/shim/execute/tsc/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/format/go.mod",
+      "provider": "native/effect-tsgo/shim/format/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/format/shim.go",
+      "provider": "native/effect-tsgo/shim/format/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/fourslash/go.mod",
+      "provider": "native/effect-tsgo/shim/fourslash/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/fourslash/shim.go",
+      "provider": "native/effect-tsgo/shim/fourslash/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/jsnum/go.mod",
+      "provider": "native/effect-tsgo/shim/jsnum/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/jsnum/shim.go",
+      "provider": "native/effect-tsgo/shim/jsnum/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/jsonrpc/go.mod",
+      "provider": "native/effect-tsgo/shim/jsonrpc/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/jsonrpc/shim.go",
+      "provider": "native/effect-tsgo/shim/jsonrpc/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/locale/go.mod",
+      "provider": "native/effect-tsgo/shim/locale/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/locale/shim.go",
+      "provider": "native/effect-tsgo/shim/locale/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ls/go.mod",
+      "provider": "native/effect-tsgo/shim/ls/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ls/shim.go",
+      "provider": "native/effect-tsgo/shim/ls/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ls/autoimport/go.mod",
+      "provider": "native/effect-tsgo/shim/ls/autoimport/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ls/autoimport/shim.go",
+      "provider": "native/effect-tsgo/shim/ls/autoimport/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ls/change/compatibility.go",
+      "provider": "native/effect-tsgo/shim/ls/change/compatibility.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ls/change/go.mod",
+      "provider": "native/effect-tsgo/shim/ls/change/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ls/change/shim.go",
+      "provider": "native/effect-tsgo/shim/ls/change/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ls/lsconv/compatibility.go",
+      "provider": "native/effect-tsgo/shim/ls/lsconv/compatibility.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ls/lsconv/go.mod",
+      "provider": "native/effect-tsgo/shim/ls/lsconv/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ls/lsconv/shim.go",
+      "provider": "native/effect-tsgo/shim/ls/lsconv/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ls/lsutil/go.mod",
+      "provider": "native/effect-tsgo/shim/ls/lsutil/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/ls/lsutil/shim.go",
+      "provider": "native/effect-tsgo/shim/ls/lsutil/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/lsp/go.mod",
+      "provider": "native/effect-tsgo/shim/lsp/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/lsp/shim.go",
+      "provider": "native/effect-tsgo/shim/lsp/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/lsp/lsproto/go.mod",
+      "provider": "native/effect-tsgo/shim/lsp/lsproto/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/lsp/lsproto/shim.go",
+      "provider": "native/effect-tsgo/shim/lsp/lsproto/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/module/go.mod",
+      "provider": "native/effect-tsgo/shim/module/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/module/shim.go",
+      "provider": "native/effect-tsgo/shim/module/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/modulespecifiers/go.mod",
+      "provider": "native/effect-tsgo/shim/modulespecifiers/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/modulespecifiers/shim.go",
+      "provider": "native/effect-tsgo/shim/modulespecifiers/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/nodebuilder/go.mod",
+      "provider": "native/effect-tsgo/shim/nodebuilder/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/nodebuilder/shim.go",
+      "provider": "native/effect-tsgo/shim/nodebuilder/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/packagejson/go.mod",
+      "provider": "native/effect-tsgo/shim/packagejson/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/packagejson/shim.go",
+      "provider": "native/effect-tsgo/shim/packagejson/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/parser/go.mod",
+      "provider": "native/effect-tsgo/shim/parser/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/parser/shim.go",
+      "provider": "native/effect-tsgo/shim/parser/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/printer/go.mod",
+      "provider": "native/effect-tsgo/shim/printer/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/printer/shim.go",
+      "provider": "native/effect-tsgo/shim/printer/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/project/compatibility.go",
+      "provider": "native/effect-tsgo/shim/project/compatibility.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/project/go.mod",
+      "provider": "native/effect-tsgo/shim/project/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/project/shim.go",
+      "provider": "native/effect-tsgo/shim/project/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/project/dirty/go.mod",
+      "provider": "native/effect-tsgo/shim/project/dirty/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/project/dirty/shim.go",
+      "provider": "native/effect-tsgo/shim/project/dirty/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/project/logging/go.mod",
+      "provider": "native/effect-tsgo/shim/project/logging/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/project/logging/shim.go",
+      "provider": "native/effect-tsgo/shim/project/logging/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/repo/go.mod",
+      "provider": "native/effect-tsgo/shim/repo/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/repo/shim.go",
+      "provider": "native/effect-tsgo/shim/repo/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/scanner/go.mod",
+      "provider": "native/effect-tsgo/shim/scanner/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/scanner/shim.go",
+      "provider": "native/effect-tsgo/shim/scanner/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/sourcemap/go.mod",
+      "provider": "native/effect-tsgo/shim/sourcemap/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/sourcemap/shim.go",
+      "provider": "native/effect-tsgo/shim/sourcemap/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/testrunner/go.mod",
+      "provider": "native/effect-tsgo/shim/testrunner/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/testrunner/shim.go",
+      "provider": "native/effect-tsgo/shim/testrunner/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/testutil/go.mod",
+      "provider": "native/effect-tsgo/shim/testutil/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/testutil/shim.go",
+      "provider": "native/effect-tsgo/shim/testutil/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/testutil/baseline/go.mod",
+      "provider": "native/effect-tsgo/shim/testutil/baseline/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/testutil/baseline/shim.go",
+      "provider": "native/effect-tsgo/shim/testutil/baseline/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/testutil/harnessutil/go.mod",
+      "provider": "native/effect-tsgo/shim/testutil/harnessutil/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/testutil/harnessutil/shim.go",
+      "provider": "native/effect-tsgo/shim/testutil/harnessutil/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/testutil/lsptestutil/go.mod",
+      "provider": "native/effect-tsgo/shim/testutil/lsptestutil/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/testutil/lsptestutil/shim.go",
+      "provider": "native/effect-tsgo/shim/testutil/lsptestutil/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/testutil/tsbaseline/go.mod",
+      "provider": "native/effect-tsgo/shim/testutil/tsbaseline/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/testutil/tsbaseline/shim.go",
+      "provider": "native/effect-tsgo/shim/testutil/tsbaseline/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/tracing/go.mod",
+      "provider": "native/effect-tsgo/shim/tracing/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/tracing/shim.go",
+      "provider": "native/effect-tsgo/shim/tracing/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/tsoptions/compatibility.go",
+      "provider": "native/effect-tsgo/shim/tsoptions/compatibility.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/tsoptions/foreach.go",
+      "provider": "native/effect-tsgo/shim/tsoptions/foreach.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/tsoptions/go.mod",
+      "provider": "native/effect-tsgo/shim/tsoptions/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/tsoptions/shim.go",
+      "provider": "native/effect-tsgo/shim/tsoptions/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/tspath/go.mod",
+      "provider": "native/effect-tsgo/shim/tspath/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/tspath/shim.go",
+      "provider": "native/effect-tsgo/shim/tspath/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/vfs/go.mod",
+      "provider": "native/effect-tsgo/shim/vfs/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/vfs/shim.go",
+      "provider": "native/effect-tsgo/shim/vfs/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/vfs/vfsmatch/shim.go",
+      "provider": "native/effect-tsgo/shim/vfs/vfsmatch/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/vfs/cachedvfs/go.mod",
+      "provider": "native/effect-tsgo/shim/vfs/cachedvfs/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/vfs/cachedvfs/shim.go",
+      "provider": "native/effect-tsgo/shim/vfs/cachedvfs/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/vfs/iovfs/go.mod",
+      "provider": "native/effect-tsgo/shim/vfs/iovfs/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/vfs/iovfs/shim.go",
+      "provider": "native/effect-tsgo/shim/vfs/iovfs/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/vfs/osvfs/go.mod",
+      "provider": "native/effect-tsgo/shim/vfs/osvfs/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/vfs/osvfs/shim.go",
+      "provider": "native/effect-tsgo/shim/vfs/osvfs/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/vfs/vfstest/go.mod",
+      "provider": "native/effect-tsgo/shim/vfs/vfstest/go.mod",
+      "reconstruction": "exact generateBackport module template",
+      "reconstruction_equal": true
+    },
+    {
+      "canonical": "native/effect-tsgo/shim/_backport/vfs/vfstest/shim.go",
+      "provider": "native/effect-tsgo/shim/vfs/vfstest/shim.go",
+      "reconstruction": "provider import-path-only rewrite internal/ to shim/, then Go formatting; linkname targets preserved",
+      "reconstruction_equal": true
+    }
+  ]
+}

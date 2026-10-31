@@ -89,7 +89,7 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
         "fixes": [
           {
             "range": {
-              "end": 60,
+              "end": 61,
               "pos": 55,
             },
             "text": "",
@@ -129,7 +129,7 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
         "fixes": [
           {
             "range": {
-              "end": 70,
+              "end": 71,
               "pos": 65,
             },
             "text": "",
@@ -169,7 +169,7 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
         "fixes": [
           {
             "range": {
-              "end": 111,
+              "end": 112,
               "pos": 106,
             },
             "text": "",
@@ -209,10 +209,24 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
         "fixes": [
           {
             "range": {
-              "end": 130,
+              "end": 131,
               "pos": 125,
             },
             "text": "",
+          },
+          {
+            "range": {
+              "end": 131,
+              "pos": 131,
+            },
+            "text": "(",
+          },
+          {
+            "range": {
+              "end": 144,
+              "pos": 144,
+            },
+            "text": ")",
           },
         ],
         "message": {
@@ -249,7 +263,7 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
         "fixes": [
           {
             "range": {
-              "end": 267,
+              "end": 268,
               "pos": 262,
             },
             "text": "",
@@ -474,6 +488,15 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-confusing-void-expression/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Type: undefined",
+        "range": {
+          "end": 255,
+          "pos": 245,
+        },
+      },
+    ],
     "message": {
       "description": "Unnecessary conditional, value is always falsy.",
       "id": "alwaysFalsy",
@@ -487,13 +510,29 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-confusing-void-expression/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Assigned value has type \`error\`.",
+        "range": {
+          "end": 215,
+          "pos": 185,
+        },
+      },
+      {
+        "label": "Target is inferred as \`error\`.",
+        "range": {
+          "end": 182,
+          "pos": 176,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe assignment of an error typed value.",
       "id": "anyAssignment",
     },
     "range": {
-      "end": 215,
-      "pos": 176,
+      "end": 184,
+      "pos": 183,
     },
     "rule": "no-unsafe-assignment",
   },
@@ -527,7 +566,8 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
     "file_path": "fixtures/basic/rules/no-confusing-void-expression/index.ts",
     "kind": 0,
     "message": {
-      "description": "Unexpected any value in conditional. Use a more specific type to ensure type safety.",
+      "description": "Unexpected any value in conditional.",
+      "help": "Use a more specific type to ensure type safety.",
       "id": "conditionErrorAny",
     },
     "range": {
@@ -697,13 +737,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-floating-promises/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<unknown>\`.",
+        "range": {
+          "end": 76,
+          "pos": 69,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 77,
+      "end": 76,
       "pos": 69,
     },
     "rule": "no-floating-promises",
@@ -743,13 +792,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-floating-promises/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<void>\`.",
+        "range": {
+          "end": 165,
+          "pos": 134,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 166,
+      "end": 165,
       "pos": 134,
     },
     "rule": "no-floating-promises",
@@ -789,13 +847,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-floating-promises/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 199,
+          "pos": 168,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 200,
+      "end": 199,
       "pos": 168,
     },
     "rule": "no-floating-promises",
@@ -835,13 +902,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-floating-promises/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 235,
+          "pos": 202,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 236,
+      "end": 235,
       "pos": 202,
     },
     "rule": "no-floating-promises",
@@ -881,13 +957,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-floating-promises/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This array contains Promises and has type \`Promise<number>[]\`.",
+        "range": {
+          "end": 271,
+          "pos": 238,
+        },
+      },
+    ],
     "message": {
       "description": "An array of Promises may be unintentional.",
       "help": "Consider handling the promises' fulfillment or rejection with Promise.all or similar, or explicitly marking the expression as ignored with the \`void\` operator.",
       "id": "floatingPromiseArrayVoid",
     },
     "range": {
-      "end": 272,
+      "end": 271,
       "pos": 238,
     },
     "rule": "no-floating-promises",
@@ -1037,10 +1122,24 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
     "rule": "no-for-in-array",
   },
   {
+    "file_path": "fixtures/basic/rules/no-generated-empty-object-type/index.ts",
+    "kind": 0,
+    "message": {
+      "description": "This type resolves to \`{}\`, the empty object type. This was likely not intentional.",
+      "id": "noGeneratedEmptyObjectType",
+    },
+    "range": {
+      "end": 61,
+      "pos": 43,
+    },
+    "rule": "no-generated-empty-object-type",
+  },
+  {
     "file_path": "fixtures/basic/rules/no-implied-eval/index.ts",
     "kind": 0,
     "message": {
-      "description": "Implied eval. Consider passing a function.",
+      "description": "Implied eval.",
+      "help": "Consider passing a function.",
       "id": "noImpliedEvalError",
     },
     "range": {
@@ -1053,7 +1152,8 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
     "file_path": "fixtures/basic/rules/no-implied-eval/index.ts",
     "kind": 0,
     "message": {
-      "description": "Implied eval. Consider passing a function.",
+      "description": "Implied eval.",
+      "help": "Consider passing a function.",
       "id": "noImpliedEvalError",
     },
     "range": {
@@ -1066,7 +1166,8 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
     "file_path": "fixtures/basic/rules/no-implied-eval/index.ts",
     "kind": 0,
     "message": {
-      "description": "Implied eval. Consider passing a function.",
+      "description": "Implied eval.",
+      "help": "Consider passing a function.",
       "id": "noImpliedEvalError",
     },
     "range": {
@@ -1079,7 +1180,8 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
     "file_path": "fixtures/basic/rules/no-implied-eval/index.ts",
     "kind": 0,
     "message": {
-      "description": "Implied eval. Consider passing a function.",
+      "description": "Implied eval.",
+      "help": "Consider passing a function.",
       "id": "noImpliedEvalError",
     },
     "range": {
@@ -1162,13 +1264,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-misused-spread/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This expression has type \`Promise<number>\`.",
+        "range": {
+          "end": 74,
+          "pos": 67,
+        },
+      },
+    ],
     "message": {
       "description": "Expected a non-Promise value to be spread in an object.",
       "id": "spread",
     },
     "range": {
-      "end": 74,
-      "pos": 67,
+      "end": 67,
+      "pos": 64,
     },
     "rule": "no-misused-promises",
   },
@@ -1527,29 +1638,13 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
       },
     ],
     "kind": 0,
-    "labeled_ranges": [
-      {
-        "label": "This expression already has the type 'string'",
-        "range": {
-          "end": 120,
-          "pos": 117,
-        },
-      },
-      {
-        "label": "Casting it to 'string' is unnecessary",
-        "range": {
-          "end": 130,
-          "pos": 121,
-        },
-      },
-    ],
     "message": {
       "description": "This assertion is unnecessary since it does not change the type of the expression.",
       "id": "unnecessaryAssertion",
     },
     "range": {
       "end": 130,
-      "pos": 121,
+      "pos": 117,
     },
     "rule": "no-unnecessary-type-assertion",
   },
@@ -1565,29 +1660,13 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
       },
     ],
     "kind": 0,
-    "labeled_ranges": [
-      {
-        "label": "This expression already has the type 'string'",
-        "range": {
-          "end": 248,
-          "pos": 237,
-        },
-      },
-      {
-        "label": "Casting it to 'string' is unnecessary",
-        "range": {
-          "end": 258,
-          "pos": 249,
-        },
-      },
-    ],
     "message": {
       "description": "This assertion is unnecessary since it does not change the type of the expression.",
       "id": "unnecessaryAssertion",
     },
     "range": {
       "end": 258,
-      "pos": 249,
+      "pos": 237,
     },
     "rule": "no-unnecessary-type-assertion",
   },
@@ -1603,29 +1682,13 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
       },
     ],
     "kind": 0,
-    "labeled_ranges": [
-      {
-        "label": "This expression already has the type '42'",
-        "range": {
-          "end": 353,
-          "pos": 350,
-        },
-      },
-      {
-        "label": "Casting it to '42' is unnecessary",
-        "range": {
-          "end": 359,
-          "pos": 354,
-        },
-      },
-    ],
     "message": {
       "description": "This assertion is unnecessary since it does not change the type of the expression.",
       "id": "unnecessaryAssertion",
     },
     "range": {
       "end": 359,
-      "pos": 354,
+      "pos": 350,
     },
     "rule": "no-unnecessary-type-assertion",
   },
@@ -1955,26 +2018,60 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-unnecessary-type-parameters/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Original expression has type \`string\`.",
+        "range": {
+          "end": 127,
+          "pos": 122,
+        },
+      },
+      {
+        "label": "Asserted type is \`any\`.",
+        "range": {
+          "end": 134,
+          "pos": 131,
+        },
+      },
+    ],
     "message": {
-      "description": "Unsafe assertion to \`any\` detected: consider using a more specific type to ensure safety.",
+      "description": "Unsafe assertion to \`any\` detected.",
+      "help": "Consider using a more specific type to ensure safety.",
       "id": "unsafeToAnyTypeAssertion",
     },
     "range": {
       "end": 134,
-      "pos": 122,
+      "pos": 128,
     },
     "rule": "no-unsafe-type-assertion",
   },
   {
     "file_path": "fixtures/basic/rules/no-unnecessary-type-parameters/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Original expression has type \`any\`.",
+        "range": {
+          "end": 134,
+          "pos": 122,
+        },
+      },
+      {
+        "label": "Asserted type is \`T\`.",
+        "range": {
+          "end": 139,
+          "pos": 138,
+        },
+      },
+    ],
     "message": {
-      "description": "Unsafe assertion from \`any\` detected: consider using type guards or a safer assertion.",
+      "description": "Unsafe assertion from \`any\` detected.",
+      "help": "Consider using type guards or a safer assertion.",
       "id": "unsafeOfAnyTypeAssertion",
     },
     "range": {
       "end": 139,
-      "pos": 122,
+      "pos": 135,
     },
     "rule": "no-unsafe-type-assertion",
   },
@@ -2016,81 +2113,129 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
       },
     ],
     "kind": 0,
-    "labeled_ranges": [
-      {
-        "label": "This expression already has the type 'any'",
-        "range": {
-          "end": 228,
-          "pos": 220,
-        },
-      },
-      {
-        "label": "Casting it to 'any' is unnecessary",
-        "range": {
-          "end": 235,
-          "pos": 229,
-        },
-      },
-    ],
     "message": {
       "description": "This assertion is unnecessary since it does not change the type of the expression.",
       "id": "unnecessaryAssertion",
     },
     "range": {
       "end": 235,
-      "pos": 229,
+      "pos": 220,
     },
     "rule": "no-unnecessary-type-assertion",
   },
   {
     "file_path": "fixtures/basic/rules/no-unsafe-assignment/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Assigned value has type \`any\`.",
+        "range": {
+          "end": 119,
+          "pos": 111,
+        },
+      },
+      {
+        "label": "Target expects type \`string\`.",
+        "range": {
+          "end": 108,
+          "pos": 102,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe assignment of an any value.",
       "id": "anyAssignment",
     },
     "range": {
-      "end": 119,
-      "pos": 97,
+      "end": 110,
+      "pos": 109,
     },
     "rule": "no-unsafe-assignment",
   },
   {
     "file_path": "fixtures/basic/rules/no-unsafe-assignment/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Assigned value has type \`any\`.",
+        "range": {
+          "end": 174,
+          "pos": 166,
+        },
+      },
+      {
+        "label": "Target expects type \`number\`.",
+        "range": {
+          "end": 163,
+          "pos": 160,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe assignment of an any value.",
       "id": "anyAssignment",
     },
     "range": {
-      "end": 174,
-      "pos": 160,
+      "end": 165,
+      "pos": 164,
     },
     "rule": "no-unsafe-assignment",
   },
   {
     "file_path": "fixtures/basic/rules/no-unsafe-assignment/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Assigned value has type \`any\`.",
+        "range": {
+          "end": 235,
+          "pos": 220,
+        },
+      },
+      {
+        "label": "Target expects type \`any\`.",
+        "range": {
+          "end": 218,
+          "pos": 214,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe assignment of an any value.",
       "id": "anyAssignment",
     },
     "range": {
-      "end": 235,
-      "pos": 214,
+      "end": 219,
+      "pos": 218,
     },
     "rule": "no-unsafe-assignment",
   },
   {
     "file_path": "fixtures/basic/rules/no-unsafe-call/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Assigned value has type \`any\`.",
+        "range": {
+          "end": 180,
+          "pos": 163,
+        },
+      },
+      {
+        "label": "Target is inferred as \`any\`.",
+        "range": {
+          "end": 160,
+          "pos": 154,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe assignment of an any value.",
       "id": "anyAssignment",
     },
     "range": {
-      "end": 180,
-      "pos": 154,
+      "end": 162,
+      "pos": 161,
     },
     "rule": "no-unsafe-assignment",
   },
@@ -2201,13 +2346,29 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-unsafe-enum-comparison/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Type: Status.Open",
+        "range": {
+          "end": 228,
+          "pos": 217,
+        },
+      },
+      {
+        "label": "Type: Color.Red",
+        "range": {
+          "end": 242,
+          "pos": 233,
+        },
+      },
+    ],
     "message": {
       "description": "Unnecessary comparison between literal values.",
       "id": "comparisonBetweenLiteralTypes",
     },
     "range": {
-      "end": 242,
-      "pos": 217,
+      "end": 232,
+      "pos": 229,
     },
     "rule": "no-unnecessary-condition",
   },
@@ -2273,13 +2434,29 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-unsafe-member-access/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Assigned value has type \`any\`.",
+        "range": {
+          "end": 266,
+          "pos": 249,
+        },
+      },
+      {
+        "label": "Target is inferred as \`any\`.",
+        "range": {
+          "end": 246,
+          "pos": 240,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe assignment of an any value.",
       "id": "anyAssignment",
     },
     "range": {
-      "end": 266,
-      "pos": 240,
+      "end": 248,
+      "pos": 247,
     },
     "rule": "no-unsafe-assignment",
   },
@@ -2351,12 +2528,28 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-unsafe-return/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Returned expression has type \`any\`.",
+        "range": {
+          "end": 135,
+          "pos": 127,
+        },
+      },
+      {
+        "label": "Function expects return type \`string\`.",
+        "range": {
+          "end": 115,
+          "pos": 109,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe return of a value of type \`any\`.",
       "id": "unsafeReturn",
     },
     "range": {
-      "end": 136,
+      "end": 126,
       "pos": 120,
     },
     "rule": "no-unsafe-return",
@@ -2364,25 +2557,57 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-unsafe-return/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Returned expression has type \`any\`.",
+        "range": {
+          "end": 197,
+          "pos": 189,
+        },
+      },
+      {
+        "label": "Function expects return type \`number\`.",
+        "range": {
+          "end": 185,
+          "pos": 179,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe return of a value of type \`any\`.",
       "id": "unsafeReturn",
     },
     "range": {
-      "end": 197,
-      "pos": 189,
+      "end": 188,
+      "pos": 186,
     },
     "rule": "no-unsafe-return",
   },
   {
     "file_path": "fixtures/basic/rules/no-unsafe-return/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Returned expression has type \`any\`.",
+        "range": {
+          "end": 290,
+          "pos": 282,
+        },
+      },
+      {
+        "label": "Function expects return type \`{ name: string; age: number; }\`.",
+        "range": {
+          "end": 270,
+          "pos": 241,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe return of a value of type \`any\`.",
       "id": "unsafeReturn",
     },
     "range": {
-      "end": 291,
+      "end": 281,
       "pos": 275,
     },
     "rule": "no-unsafe-return",
@@ -2390,26 +2615,58 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-unsafe-type-assertion/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Assigned value has type \`any\`.",
+        "range": {
+          "end": 120,
+          "pos": 108,
+        },
+      },
+      {
+        "label": "Target is inferred as \`any\`.",
+        "range": {
+          "end": 105,
+          "pos": 102,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe assignment of an any value.",
       "id": "anyAssignment",
     },
     "range": {
-      "end": 120,
-      "pos": 102,
+      "end": 107,
+      "pos": 106,
     },
     "rule": "no-unsafe-assignment",
   },
   {
     "file_path": "fixtures/basic/rules/no-unsafe-type-assertion/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Assigned value has type \`any\`.",
+        "range": {
+          "end": 289,
+          "pos": 277,
+        },
+      },
+      {
+        "label": "Target is inferred as \`any\`.",
+        "range": {
+          "end": 274,
+          "pos": 265,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe assignment of an any value.",
       "id": "anyAssignment",
     },
     "range": {
-      "end": 289,
-      "pos": 265,
+      "end": 276,
+      "pos": 275,
     },
     "rule": "no-unsafe-assignment",
   },
@@ -2429,12 +2686,21 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-unsafe-type-assertion/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Returned expression has type \`any\`.",
+        "range": {
+          "end": 332,
+          "pos": 310,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe return of a value of type \`any\`.",
       "id": "unsafeReturn",
     },
     "range": {
-      "end": 333,
+      "end": 309,
       "pos": 303,
     },
     "rule": "no-unsafe-return",
@@ -2442,52 +2708,120 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/no-unsafe-type-assertion/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Original expression has type \`unknown\`.",
+        "range": {
+          "end": 113,
+          "pos": 108,
+        },
+      },
+      {
+        "label": "Asserted type is \`any\`.",
+        "range": {
+          "end": 120,
+          "pos": 117,
+        },
+      },
+    ],
     "message": {
-      "description": "Unsafe assertion to \`any\` detected: consider using a more specific type to ensure safety.",
+      "description": "Unsafe assertion to \`any\` detected.",
+      "help": "Consider using a more specific type to ensure safety.",
       "id": "unsafeToAnyTypeAssertion",
     },
     "range": {
       "end": 120,
-      "pos": 108,
+      "pos": 114,
     },
     "rule": "no-unsafe-type-assertion",
   },
   {
     "file_path": "fixtures/basic/rules/no-unsafe-type-assertion/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Original expression has type \`unknown\`.",
+        "range": {
+          "end": 165,
+          "pos": 160,
+        },
+      },
+      {
+        "label": "Asserted type is \`any\`.",
+        "range": {
+          "end": 172,
+          "pos": 169,
+        },
+      },
+    ],
     "message": {
-      "description": "Unsafe assertion to \`any\` detected: consider using a more specific type to ensure safety.",
+      "description": "Unsafe assertion to \`any\` detected.",
+      "help": "Consider using a more specific type to ensure safety.",
       "id": "unsafeToAnyTypeAssertion",
     },
     "range": {
       "end": 172,
-      "pos": 160,
+      "pos": 166,
     },
     "rule": "no-unsafe-type-assertion",
   },
   {
     "file_path": "fixtures/basic/rules/no-unsafe-type-assertion/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Original expression has type \`any\`.",
+        "range": {
+          "end": 172,
+          "pos": 160,
+        },
+      },
+      {
+        "label": "Asserted type is \`string\`.",
+        "range": {
+          "end": 182,
+          "pos": 176,
+        },
+      },
+    ],
     "message": {
-      "description": "Unsafe assertion from \`any\` detected: consider using type guards or a safer assertion.",
+      "description": "Unsafe assertion from \`any\` detected.",
+      "help": "Consider using type guards or a safer assertion.",
       "id": "unsafeOfAnyTypeAssertion",
     },
     "range": {
       "end": 182,
-      "pos": 160,
+      "pos": 173,
     },
     "rule": "no-unsafe-type-assertion",
   },
   {
     "file_path": "fixtures/basic/rules/no-unsafe-type-assertion/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Original expression has type \`unknown\`.",
+        "range": {
+          "end": 282,
+          "pos": 277,
+        },
+      },
+      {
+        "label": "Asserted type is \`any\`.",
+        "range": {
+          "end": 289,
+          "pos": 286,
+        },
+      },
+    ],
     "message": {
-      "description": "Unsafe assertion to \`any\` detected: consider using a more specific type to ensure safety.",
+      "description": "Unsafe assertion to \`any\` detected.",
+      "help": "Consider using a more specific type to ensure safety.",
       "id": "unsafeToAnyTypeAssertion",
     },
     "range": {
       "end": 289,
-      "pos": 277,
+      "pos": 283,
     },
     "rule": "no-unsafe-type-assertion",
   },
@@ -2571,7 +2905,7 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
           },
         ],
         "message": {
-          "description": "Remove the default assignment.",
+          "description": "Remove the default value.",
           "id": "removeDefaultAssignment",
         },
       },
@@ -2580,26 +2914,58 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/non-nullable-type-assertion-style/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Original expression has type \`string | null\`.",
+        "range": {
+          "end": 191,
+          "pos": 186,
+        },
+      },
+      {
+        "label": "Asserted type is \`string\`.",
+        "range": {
+          "end": 201,
+          "pos": 195,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe type assertion: type 'string' is more narrow than the original type.",
       "id": "unsafeTypeAssertion",
     },
     "range": {
       "end": 201,
-      "pos": 186,
+      "pos": 192,
     },
     "rule": "no-unsafe-type-assertion",
   },
   {
     "file_path": "fixtures/basic/rules/non-nullable-type-assertion-style/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Original expression has type \`number | undefined\`.",
+        "range": {
+          "end": 266,
+          "pos": 261,
+        },
+      },
+      {
+        "label": "Asserted type is \`number\`.",
+        "range": {
+          "end": 276,
+          "pos": 270,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe type assertion: type 'number' is more narrow than the original type.",
       "id": "unsafeTypeAssertion",
     },
     "range": {
       "end": 276,
-      "pos": 261,
+      "pos": 267,
     },
     "rule": "no-unsafe-type-assertion",
   },
@@ -2782,13 +3148,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/prefer-promise-reject-errors/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 92,
+          "pos": 69,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 93,
+      "end": 92,
       "pos": 69,
     },
     "rule": "no-floating-promises",
@@ -2828,13 +3203,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/prefer-promise-reject-errors/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 138,
+          "pos": 120,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 139,
+      "end": 138,
       "pos": 120,
     },
     "rule": "no-floating-promises",
@@ -2874,13 +3258,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/prefer-promise-reject-errors/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 186,
+          "pos": 166,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 187,
+      "end": 186,
       "pos": 166,
     },
     "rule": "no-floating-promises",
@@ -2920,13 +3313,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/prefer-promise-reject-errors/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 251,
+          "pos": 215,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 252,
+      "end": 251,
       "pos": 215,
     },
     "rule": "no-floating-promises",
@@ -2966,13 +3368,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/prefer-promise-reject-errors/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 305,
+          "pos": 285,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 306,
+      "end": 305,
       "pos": 285,
     },
     "rule": "no-floating-promises",
@@ -3107,7 +3518,8 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
     ],
     "kind": 0,
     "message": {
-      "description": "Member 'value' is never reassigned; mark it as \`readonly\`.",
+      "description": "Member 'value' is never reassigned.",
+      "help": "Mark it as \`readonly\`.",
       "id": "preferReadonly",
     },
     "range": {
@@ -3128,29 +3540,13 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
       },
     ],
     "kind": 0,
-    "labeled_ranges": [
-      {
-        "label": "This expression already has the type 'number'",
-        "range": {
-          "end": 173,
-          "pos": 131,
-        },
-      },
-      {
-        "label": "Casting it to 'number' is unnecessary",
-        "range": {
-          "end": 183,
-          "pos": 174,
-        },
-      },
-    ],
     "message": {
       "description": "This assertion is unnecessary since it does not change the type of the expression.",
       "id": "unnecessaryAssertion",
     },
     "range": {
       "end": 183,
-      "pos": 174,
+      "pos": 131,
     },
     "rule": "no-unnecessary-type-assertion",
   },
@@ -3519,13 +3915,29 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/rules/restrict-plus-operands/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "Assigned value has type \`any\`.",
+        "range": {
+          "end": 16,
+          "pos": 10,
+        },
+      },
+      {
+        "label": "Target is inferred as \`any\`.",
+        "range": {
+          "end": 7,
+          "pos": 4,
+        },
+      },
+    ],
     "message": {
       "description": "Unsafe assignment of an any value.",
       "id": "anyAssignment",
     },
     "range": {
-      "end": 16,
-      "pos": 4,
+      "end": 9,
+      "pos": 8,
     },
     "rule": "no-unsafe-assignment",
   },
@@ -3963,13 +4375,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/a.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<unknown>\`.",
+        "range": {
+          "end": 76,
+          "pos": 69,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 77,
+      "end": 76,
       "pos": 69,
     },
     "rule": "no-floating-promises",
@@ -4009,13 +4430,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/a.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<void>\`.",
+        "range": {
+          "end": 165,
+          "pos": 134,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 166,
+      "end": 165,
       "pos": 134,
     },
     "rule": "no-floating-promises",
@@ -4055,13 +4485,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/a.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 199,
+          "pos": 168,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 200,
+      "end": 199,
       "pos": 168,
     },
     "rule": "no-floating-promises",
@@ -4101,13 +4540,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/a.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 235,
+          "pos": 202,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 236,
+      "end": 235,
       "pos": 202,
     },
     "rule": "no-floating-promises",
@@ -4147,13 +4595,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/a.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This array contains Promises and has type \`Promise<number>[]\`.",
+        "range": {
+          "end": 271,
+          "pos": 238,
+        },
+      },
+    ],
     "message": {
       "description": "An array of Promises may be unintentional.",
       "help": "Consider handling the promises' fulfillment or rejection with Promise.all or similar, or explicitly marking the expression as ignored with the \`void\` operator.",
       "id": "floatingPromiseArrayVoid",
     },
     "range": {
-      "end": 272,
+      "end": 271,
       "pos": 238,
     },
     "rule": "no-floating-promises",
@@ -4277,13 +4734,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/b.mts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<unknown>\`.",
+        "range": {
+          "end": 76,
+          "pos": 69,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 77,
+      "end": 76,
       "pos": 69,
     },
     "rule": "no-floating-promises",
@@ -4323,13 +4789,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/b.mts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<void>\`.",
+        "range": {
+          "end": 165,
+          "pos": 134,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 166,
+      "end": 165,
       "pos": 134,
     },
     "rule": "no-floating-promises",
@@ -4369,13 +4844,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/b.mts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 199,
+          "pos": 168,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 200,
+      "end": 199,
       "pos": 168,
     },
     "rule": "no-floating-promises",
@@ -4415,13 +4899,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/b.mts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 235,
+          "pos": 202,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 236,
+      "end": 235,
       "pos": 202,
     },
     "rule": "no-floating-promises",
@@ -4461,13 +4954,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/b.mts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This array contains Promises and has type \`Promise<number>[]\`.",
+        "range": {
+          "end": 271,
+          "pos": 238,
+        },
+      },
+    ],
     "message": {
       "description": "An array of Promises may be unintentional.",
       "help": "Consider handling the promises' fulfillment or rejection with Promise.all or similar, or explicitly marking the expression as ignored with the \`void\` operator.",
       "id": "floatingPromiseArrayVoid",
     },
     "range": {
-      "end": 272,
+      "end": 271,
       "pos": 238,
     },
     "rule": "no-floating-promises",
@@ -4591,13 +5093,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/c.cts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<unknown>\`.",
+        "range": {
+          "end": 76,
+          "pos": 69,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 77,
+      "end": 76,
       "pos": 69,
     },
     "rule": "no-floating-promises",
@@ -4637,13 +5148,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/c.cts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<void>\`.",
+        "range": {
+          "end": 165,
+          "pos": 134,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 166,
+      "end": 165,
       "pos": 134,
     },
     "rule": "no-floating-promises",
@@ -4683,13 +5203,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/c.cts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 199,
+          "pos": 168,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 200,
+      "end": 199,
       "pos": 168,
     },
     "rule": "no-floating-promises",
@@ -4729,13 +5258,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/c.cts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 235,
+          "pos": 202,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 236,
+      "end": 235,
       "pos": 202,
     },
     "rule": "no-floating-promises",
@@ -4775,13 +5313,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/c.cts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This array contains Promises and has type \`Promise<number>[]\`.",
+        "range": {
+          "end": 271,
+          "pos": 238,
+        },
+      },
+    ],
     "message": {
       "description": "An array of Promises may be unintentional.",
       "help": "Consider handling the promises' fulfillment or rejection with Promise.all or similar, or explicitly marking the expression as ignored with the \`void\` operator.",
       "id": "floatingPromiseArrayVoid",
     },
     "range": {
-      "end": 272,
+      "end": 271,
       "pos": 238,
     },
     "rule": "no-floating-promises",
@@ -4905,13 +5452,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/d.tsx",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<unknown>\`.",
+        "range": {
+          "end": 76,
+          "pos": 69,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 77,
+      "end": 76,
       "pos": 69,
     },
     "rule": "no-floating-promises",
@@ -4951,13 +5507,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/d.tsx",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<void>\`.",
+        "range": {
+          "end": 165,
+          "pos": 134,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 166,
+      "end": 165,
       "pos": 134,
     },
     "rule": "no-floating-promises",
@@ -4997,13 +5562,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/d.tsx",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 199,
+          "pos": 168,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 200,
+      "end": 199,
       "pos": 168,
     },
     "rule": "no-floating-promises",
@@ -5043,13 +5617,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/d.tsx",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<never>\`.",
+        "range": {
+          "end": 235,
+          "pos": 202,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 236,
+      "end": 235,
       "pos": 202,
     },
     "rule": "no-floating-promises",
@@ -5089,13 +5672,22 @@ exports[`TSGoLint E2E Snapshot Tests > should generate consistent diagnostics sn
   {
     "file_path": "fixtures/basic/src/d.tsx",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This array contains Promises and has type \`Promise<number>[]\`.",
+        "range": {
+          "end": 271,
+          "pos": 238,
+        },
+      },
+    ],
     "message": {
       "description": "An array of Promises may be unintentional.",
       "help": "Consider handling the promises' fulfillment or rejection with Promise.all or similar, or explicitly marking the expression as ignored with the \`void\` operator.",
       "id": "floatingPromiseArrayVoid",
     },
     "range": {
-      "end": 272,
+      "end": 271,
       "pos": 238,
     },
     "rule": "no-floating-promises",
@@ -5318,13 +5910,22 @@ exports[`TSGoLint E2E Snapshot Tests > should still report lint rule diagnostics
   {
     "file_path": "fixtures/with-invalid-tsconfig-option-and-lint-errors/index.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<string>\`.",
+        "range": {
+          "end": 50,
+          "pos": 26,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add void operator to ignore.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler, or be explicitly marked as ignored with the \`void\` operator.",
       "id": "floatingVoid",
     },
     "range": {
-      "end": 51,
+      "end": 50,
       "pos": 26,
     },
     "rule": "no-floating-promises",
@@ -5339,14 +5940,23 @@ exports[`TSGoLint E2E Snapshot Tests > supports passing rule config 1`] = `
   {
     "file_path": "fixtures/basic/rules/no-floating-promises/void.ts",
     "kind": 0,
+    "labeled_ranges": [
+      {
+        "label": "This unhandled promise-like value has type \`Promise<string>\`.",
+        "range": {
+          "end": 75,
+          "pos": 59,
+        },
+      },
+    ],
     "message": {
       "description": "Promises must be awaited, add await operator.",
       "help": "The promise must end with a call to .catch, or end with a call to .then with a rejection handler.",
       "id": "floating",
     },
     "range": {
-      "end": 76,
-      "pos": 54,
+      "end": 75,
+      "pos": 59,
     },
     "rule": "no-floating-promises",
   },

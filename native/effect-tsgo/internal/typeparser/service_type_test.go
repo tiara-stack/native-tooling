@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/effect-ts/tsgo/internal/bundledeffect"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
 )
 
 func TestServiceType_V4ServiceShape(t *testing.T) {
@@ -21,14 +21,15 @@ export class UserRepo extends Context.Service<UserRepo, { readonly find: () => s
 `)
 	defer done()
 
-	className, classType := findClassTypeByName(t, c, sf, "UserRepo")
+	_, classType := findClassTypeByName(t, c, sf, "UserRepo")
 	if classType == nil {
 		t.Fatal("expected class type")
 	}
 
-	service := tp.ServiceType(classType, className)
+	service := tp.ServiceType(classType)
 	if service == nil {
 		t.Fatal("expected v4 service type to parse")
+		return
 	}
 	if service.Identifier == nil {
 		t.Fatal("expected service identifier type")
@@ -36,7 +37,7 @@ export class UserRepo extends Context.Service<UserRepo, { readonly find: () => s
 	if service.Shape == nil {
 		t.Fatal("expected service shape type")
 	}
-	if tp.ContextTag(classType, className) != nil {
+	if tp.ContextTag(classType) != nil {
 		t.Fatal("expected v4 service not to parse as Context.Tag")
 	}
 }
@@ -54,14 +55,15 @@ export class Config extends Context.Tag("Config")<Config, { readonly port: numbe
 `)
 	defer done()
 
-	className, classType := findClassTypeByName(t, c, sf, "Config")
+	_, classType := findClassTypeByName(t, c, sf, "Config")
 	if classType == nil {
 		t.Fatal("expected class type")
 	}
 
-	contextTag := tp.ContextTag(classType, className)
+	contextTag := tp.ContextTag(classType)
 	if contextTag == nil {
 		t.Fatal("expected v3 Context.Tag type to parse")
+		return
 	}
 	if contextTag.Identifier == nil {
 		t.Fatal("expected context tag identifier type")
@@ -69,7 +71,7 @@ export class Config extends Context.Tag("Config")<Config, { readonly port: numbe
 	if contextTag.Shape == nil {
 		t.Fatal("expected context tag shape type")
 	}
-	if tp.ServiceType(classType, className) != nil {
+	if tp.ServiceType(classType) != nil {
 		t.Fatal("expected v3 Context.Tag not to parse as a v4 service type")
 	}
 }

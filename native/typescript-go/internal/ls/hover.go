@@ -22,6 +22,18 @@ const (
 	typeFormatFlags   = checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope | checker.TypeFormatFlagsUseInstantiationExpressions
 )
 
+// AfterQuickInfoCallback is invoked after getQuickInfoAndDocumentationForSymbol
+// to allow external packages to enrich hover responses.
+var AfterQuickInfoCallback func(program checker.Program, c *checker.Checker, sf *ast.SourceFile, node *ast.Node, symbol *ast.Symbol, quickInfo string, documentation string, isMarkdown bool) (string, string, *ast.Node)
+
+// RegisterAfterQuickInfoCallback registers a callback to be called after
+// quickInfo and documentation are built for a hover. The callback can
+// rewrite quickInfo and documentation before they are returned.
+// Note: Only one callback can be registered. Subsequent calls will replace the previous callback.
+func RegisterAfterQuickInfoCallback(cb func(program checker.Program, c *checker.Checker, sf *ast.SourceFile, node *ast.Node, symbol *ast.Symbol, quickInfo string, documentation string, isMarkdown bool) (string, string, *ast.Node)) {
+	AfterQuickInfoCallback = cb
+}
+
 func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	contentFormat := lsproto.PreferredMarkupKind(caps.TextDocument.Hover.ContentFormat)
@@ -41,7 +53,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 	rangeNode := getNodeForQuickInfo(node)
-	symbol := getSymbolAtLocationForQuickInfo(c, node)
+	symbol := getSymbolAtLocationForQuickInfo(c, rangeNode)
 
 	// Always create VerbosityContext for hover so that canExpandSymbol can signal
 	// canIncreaseVerbosity even at Level 0. The nodebuilder also detects expandable
@@ -56,6 +68,16 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 	}
 
 	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, vc)
+	// EFFECT HOOK: Allow Effect to enrich hover responses
+	if AfterQuickInfoCallback != nil {
+		isMarkdown := contentFormat == lsproto.MarkupKindMarkdown
+		var hookRangeNode *ast.Node
+		quickInfo, documentation, hookRangeNode = AfterQuickInfoCallback(program, c, file, rangeNode, symbol, quickInfo, documentation, isMarkdown)
+		if hookRangeNode != nil {
+			rangeNode = hookRangeNode
+		}
+	}
+
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}

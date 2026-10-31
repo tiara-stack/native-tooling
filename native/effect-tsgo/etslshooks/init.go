@@ -23,14 +23,14 @@ import (
 	"github.com/effect-ts/tsgo/internal/refactor"
 	"github.com/effect-ts/tsgo/internal/refactors"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/compiler"
-	"github.com/microsoft/typescript-go/shim/core"
-	"github.com/microsoft/typescript-go/shim/ls"
-	"github.com/microsoft/typescript-go/shim/ls/autoimport"
-	"github.com/microsoft/typescript-go/shim/lsp/lsproto"
-	"github.com/microsoft/typescript-go/shim/modulespecifiers"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/compiler"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	"github.com/microsoft/TypeScript/tsc/shim/ls"
+	"github.com/microsoft/TypeScript/tsc/shim/ls/autoimport"
+	"github.com/microsoft/TypeScript/tsc/shim/lsp/lsproto"
+	"github.com/microsoft/TypeScript/tsc/shim/modulespecifiers"
 )
 
 func init() {
@@ -47,7 +47,7 @@ func init() {
 	// Register the Effect completion enrichment callback
 	ls.RegisterAfterCompletionCallback(afterCompletion)
 	// Register the Effect auto-import style transformer factory
-	autoimport.RegisterAutoImportFixTransformer(func(_ modulespecifiers.UserPreferences, program *compiler.Program, importingFile *ast.SourceFile) autoimport.FixTransformer {
+	autoimport.RegisterAutoImportFixTransformer(func(preferences modulespecifiers.UserPreferences, program *compiler.Program, importingFile *ast.SourceFile) autoimport.FixTransformer {
 		var resolvedOptions *etscore.ResolvedEffectPluginOptions
 		if effectConfig := program.Options().Effect; effectConfig != nil {
 			resolvedOptions = pluginoptions.ResolveEffectPluginOptionsForSourceFile(
@@ -57,7 +57,27 @@ func init() {
 				program.UseCaseSensitiveFileNames(),
 			)
 		}
-		return autoimportstyle.NewFixTransformer(resolvedOptions)
+		return autoimportstyle.NewFixTransformer(resolvedOptions, func(export *autoimport.Export) (string, modulespecifiers.ResultKind) {
+			targetFileName := string(export.Target.ModuleID)
+			if targetFile := program.GetSourceFile(targetFileName); targetFile != nil {
+				targetFileName = targetFile.FileName()
+			}
+			specifiers, kind := modulespecifiers.GetModuleSpecifiersForFileWithInfo(
+				importingFile,
+				targetFileName,
+				program.Options(),
+				program,
+				preferences,
+				modulespecifiers.ModuleSpecifierOptions{},
+				true,
+			)
+			for _, specifier := range specifiers {
+				if !strings.Contains(specifier, "/node_modules/") {
+					return specifier, kind
+				}
+			}
+			return "", modulespecifiers.ResultKindNone
+		})
 	})
 }
 
@@ -71,12 +91,6 @@ var effectFixProvider = &ls.CodeFixProvider{
 
 // getEffectCodeActions finds applicable fixables and collects their code actions.
 func getEffectCodeActions(ctx context.Context, fixCtx *ls.CodeFixContext) ([]*ls.CodeAction, error) {
-	// Find all fixables that handle this error code
-	applicable := fixables.ByErrorCode(fixCtx.ErrorCode)
-	if len(applicable) == 0 {
-		return nil, nil
-	}
-
 	var options *etscore.ResolvedEffectPluginOptions
 	if fixCtx.Program != nil {
 		if parsedEffectConfig := fixCtx.Program.Options().Effect; parsedEffectConfig != nil {
@@ -92,20 +106,14 @@ func getEffectCodeActions(ctx context.Context, fixCtx *ls.CodeFixContext) ([]*ls
 
 			if ch != nil {
 				tp := typeparser.NewTypeParser(fixCtx.Program, ch)
-
-				// Create the fixable context that wraps the code-fix request
 				fCtx := fixable.NewContext(ctx, fixCtx, options, ch, tp)
-
-				// Collect actions from all applicable fixables
 				var actions []*ls.CodeAction
-				for _, f := range applicable {
-					results := f.Run(fCtx)
-					for i := range results {
-						action := results[i]
+				for _, provider := range fixables.ByErrorCode(fixCtx.ErrorCode) {
+					for _, result := range provider.Run(fCtx) {
+						action := result
 						actions = append(actions, &action)
 					}
 				}
-
 				return actions, nil
 			}
 		}
@@ -178,19 +186,28 @@ func afterQuickInfo(program checker.Program, c *checker.Checker, sf *ast.SourceF
 		return quickInfo, documentation, nil
 	}
 
-	// Yield* hover: detect yield keyword inside yield* expressions in Effect generator scopes
-	if node.Kind == ast.KindYieldKeyword && node.Parent != nil && node.Parent.Kind == ast.KindYieldExpression {
-		yield := node.Parent.AsYieldExpression()
+	// Yield* hover: normalize positions on yield, *, and the space before the operand.
+	var yieldNode *ast.Node
+	switch node.Kind {
+	case ast.KindYieldExpression:
+		yieldNode = node
+	case ast.KindYieldKeyword, ast.KindAsteriskToken:
+		if node.Parent != nil && node.Parent.Kind == ast.KindYieldExpression {
+			yieldNode = node.Parent
+		}
+	}
+	if yieldNode != nil {
+		yield := yieldNode.AsYieldExpression()
 		if yield.AsteriskToken != nil && yield.Expression != nil {
-			if tp.GetEffectContextFlags(node)&typeparser.EffectContextFlagCanYieldEffect != 0 {
+			if tp.GetEffectContextFlags(yieldNode)&typeparser.EffectContextFlagCanYieldEffect != 0 {
 				t := tp.GetTypeAtLocation(yield.Expression)
 				if t != nil {
-					effect := tp.EffectYieldableType(t, yield.Expression)
+					effect := tp.EffectYieldableType(t)
 					if effect != nil {
 						typeStr := c.TypeToStringEx(t, nil, checker.TypeFormatFlagsNoTruncation, nil)
 						quickInfo = "(yield*) " + typeStr
 						documentation = formatEffectTypeParams(c, effect, "", isMarkdown)
-						return quickInfo, documentation, node.Parent
+						return quickInfo, documentation, yieldNode
 					}
 				}
 			}
@@ -207,12 +224,12 @@ func afterQuickInfo(program checker.Program, c *checker.Checker, sf *ast.SourceF
 	// Layer extends Effect in V4, so this check must come before the Effect check.
 	// Only activate layer hover enrichment when the cursor is on the name of the declaration,
 	// not on arbitrary nodes within the initializer expression.
-	if tp.IsLayerType(t, node) && isDeclarationName(node) {
+	if tp.IsLayerType(t) && isDeclarationName(node) {
 		documentation = formatLayerHover(tp, c, sf, node, t, documentation, isMarkdown, effectConfig)
 		return quickInfo, documentation, nil
 	}
 
-	effect := tp.EffectType(t, node)
+	effect := tp.EffectType(t)
 	if effect == nil {
 		return quickInfo, documentation, nil
 	}
@@ -250,7 +267,7 @@ func formatLayerHover(tp *typeparser.TypeParser, c *checker.Checker, sf *ast.Sou
 
 		if !effectConfig.NoExternal {
 			nestedDiagram = layergraph.FormatNestedLayerGraph(c, fullGraph, sf)
-			outlineGraph := layergraph.ExtractOutlineGraph(c, fullGraph)
+			outlineGraph := layergraph.ExtractOutlineGraph(tp, c, fullGraph)
 			outlineDiagram = layergraph.FormatOutlineGraph(c, outlineGraph, sf)
 		}
 	}
@@ -306,18 +323,6 @@ func formatLayerHover(tp *typeparser.TypeParser, c *checker.Checker, sf *ast.Sou
 	}
 
 	return b.String()
-}
-
-// formatLayerTypeParams formats Layer type parameters (Provides, Error, Requires).
-func formatLayerTypeParams(c *checker.Checker, layer *typeparser.Layer, isMarkdown bool) string {
-	rOutStr := c.TypeToStringEx(layer.ROut, nil, checker.TypeFormatFlagsNoTruncation, nil)
-	eStr := c.TypeToStringEx(layer.E, nil, checker.TypeFormatFlagsNoTruncation, nil)
-	rInStr := c.TypeToStringEx(layer.RIn, nil, checker.TypeFormatFlagsNoTruncation, nil)
-
-	if isMarkdown {
-		return fmt.Sprintf("```ts\n/* Layer Type Parameters */\ntype Provides = %s\ntype Error = %s\ntype Requires = %s\n```\n", rOutStr, eStr, rInStr)
-	}
-	return fmt.Sprintf("Layer Type Parameters:\n  Provides = %s\n  Error = %s\n  Requires = %s\n", rOutStr, eStr, rInStr)
 }
 
 // isDeclarationName checks whether the given node is the name node of a variable or property declaration.
