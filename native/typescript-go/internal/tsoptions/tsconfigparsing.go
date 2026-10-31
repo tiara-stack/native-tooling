@@ -198,16 +198,6 @@ func parseOwnConfigOfJsonSourceFile(
 	var rootCompilerOptions []*ast.PropertyName
 	var errors []*ast.Diagnostic
 
-	// If there are parsing errors, return only the first one
-	if len(sourceFile.Diagnostics()) > 0 {
-		return &parsedTsconfig{
-			raw:                &collections.OrderedMap[string, any]{},
-			options:            compilerOptions,
-			typeAcquisition:    typeAcquisition,
-			extendedConfigPath: extendedConfigPath,
-		}, []*ast.Diagnostic{sourceFile.Diagnostics()[0]}
-	}
-
 	onPropertySet := func(
 		keyText string,
 		value any,

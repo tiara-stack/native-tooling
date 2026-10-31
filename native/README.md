@@ -28,9 +28,13 @@ script invokes this same generation command.
 When refreshing the compiler source, apply the patches in
 `tsgolint-effect-fork/patches` first, then those in
 `effect-tsgo/_patches/typescript-go`, each in filename order. The diagnostics
-patch uses this monorepo's sibling directory layout. Regenerate after applying
-the patches and before building either binary. Keep both the patch inputs and
-generated files in the change.
+patch uses this monorepo's sibling directory layout. Apply the Tiara overlays in
+[`patches/typescript-go`](./patches/typescript-go) last. These overlays preserve
+the original imported patches and restore the native configuration contract:
+Effect plugin state stays internal to compiler options, incremental build info
+retains that state, and JSON syntax diagnostics follow TypeScript 7.0.2.
+Regenerate after applying the patches and before building either binary. Keep
+both the patch inputs and generated files in the change.
 
 The development Effect CLI resolves the compiler at
 `typescript-go/built/local/tsgo`. The Tiara wrappers retain their explicit
