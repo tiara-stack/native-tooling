@@ -6,7 +6,7 @@ Review only how these interfaces support the Tiara custom changes. No stock impo
 
 Mode `100644`, blob `a06a958d267e07c7dedfd8a5bcdf49f217aae775`, SHA256 `60e570659eefb602bdd65c198747ab93b96702a79cb2b78aef3cfc4272b3e6b4`, 120 bytes.
 
-Dependency role: Read full Oxlint fixture config keys and selected rules/preset override: {'extends': ['../../../oxlint-presets/recommended.json'], 'rules': {'effecttsgo/floating-effect': 'off'}}; checked fixture consumer uses public Effect rules and expected override.
+Dependency role: Read full upstream Effect-tsgo Oxlint fixture config keys and selected rules/preset override: {'extends': ['../../../oxlint-presets/recommended.json'], 'rules': {'effecttsgo/floating-effect': 'off'}}; checked upstream effecttsgo/* fixture rules/preset behavior and expected overrides. These upstream fixture IDs are distinct from Tiara's 82 public effect/* IDs; relating them requires namespace/name translation through the existing public bridge, not direct reuse as a Tiara public preset.
 
 Current boundary content is included for its interface/dependency role, without an upstream before/after diff.
 
@@ -23,7 +23,7 @@ Current boundary content is included for its interface/dependency role, without 
 
 Mode `100644`, blob `7621794a03d4bfe3c8fbafd7b1c056da7fc57b04`, SHA256 `178b94235499d164d4e641a5898c0170a37275d8fc5dc743265db637df79aee6`, 62 bytes.
 
-Dependency role: Read full Oxlint fixture config keys and selected rules/preset override: {'extends': ['../../../oxlint-presets/recommended.json']}; checked fixture consumer uses public Effect rules and expected override.
+Dependency role: Read full upstream Effect-tsgo Oxlint fixture config keys and selected rules/preset override: {'extends': ['../../../oxlint-presets/recommended.json']}; checked upstream effecttsgo/* fixture rules/preset behavior and expected overrides. These upstream fixture IDs are distinct from Tiara's 82 public effect/* IDs; relating them requires namespace/name translation through the existing public bridge, not direct reuse as a Tiara public preset.
 
 Current boundary content is included for its interface/dependency role, without an upstream before/after diff.
 
@@ -37,7 +37,7 @@ Current boundary content is included for its interface/dependency role, without 
 
 Mode `100644`, blob `cc1bcca1a27972ac0ec9117dd9fb8a0a7f0411ef`, SHA256 `4f07efb723d979af28549c347ccf6ac3799a0ce7bbba96566763961cb0f31578`, 254 bytes.
 
-Dependency role: Read full Oxlint fixture config keys and selected rules/preset override: {'plugins': ['effecttsgo'], 'categories': {'correctness': 'off'}, 'rules': {'effecttsgo/floating-effect': 'error', 'effecttsgo/missing-star-in-yield-effect-gen': 'error', 'effecttsgo/strict-boolean-expressions': 'error'}}; checked fixture consumer uses public Effect rules and expected override.
+Dependency role: Read full upstream Effect-tsgo Oxlint fixture config keys and selected rules/preset override: {'plugins': ['effecttsgo'], 'categories': {'correctness': 'off'}, 'rules': {'effecttsgo/floating-effect': 'error', 'effecttsgo/missing-star-in-yield-effect-gen': 'error', 'effecttsgo/strict-boolean-expressions': 'error'}}; checked upstream effecttsgo/* fixture rules/preset behavior and expected overrides. These upstream fixture IDs are distinct from Tiara's 82 public effect/* IDs; relating them requires namespace/name translation through the existing public bridge, not direct reuse as a Tiara public preset.
 
 Current boundary content is included for its interface/dependency role, without an upstream before/after diff.
 
