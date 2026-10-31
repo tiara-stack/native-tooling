@@ -189,6 +189,8 @@ Current boundary content is included for its interface/dependency role, without 
 
 Source block 4 representation: `literal-and-json-source-lines-v1`; original language `text`. Decode lines prefixed `@@json-source-line: ` as JSON strings, including their exact line endings. Keep all other lines literal, concatenate in order and review the recovered source.
 
+The rendered block retains the previously reviewed file rendering, whose final newline is LF instead of the canonical file's CRLF. Its decoded identity is 2363 bytes, SHA256 `77871f405c0760450a8db55c8a06aebd3e5b4ff1ede7a2092a1050e5453fde07`. The canonical source identity above and this rendered-block identity are separate; decoding preserves the rendered bytes exactly.
+
 ```text
 @@json-source-line: "# yaml-language-server: $schema=https://golangci-lint.run/jsonschema/golangci.jsonschema.json\r\n"
 @@json-source-line: "\r\n"

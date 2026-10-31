@@ -1,6 +1,6 @@
 # Accepted task decisions
 
-The actual TIA-313 issue description and approved planning resolution are preserved verbatim in `spec-context.json`. The coordinator's live Linear reread confirmed the description and branch unchanged. That document is the originating specification; the following later accepted decisions bound its implementation.
+The actual TIA-313 issue description and approved planning resolution are preserved verbatim in `spec.json`. The coordinator's live Linear reread confirmed the description and branch unchanged. That document is the originating specification; the following later accepted decisions bound its implementation.
 
 - TIA-313 owns the coupled native compiler, patches, generated shims and stable Effect 4.0.1 fixtures, with native TypeScript-Go 7.0.2, Effect-tsgo 0.46.1, and the compatible 7.0.2003-derived Tsgolint source pinned in `native/sources.json`. Root/core consumers retain TypeScript 5.9.3. Ancestor TIA-310 is sequencing context, not additional task scope.
 - Accepted compiler resolution `tia310-20261030-e2166ed7-tia313-compiler-baseline-resolution-r1` authorizes the bounded Tiara compiler compatibility overlay. Preserve plugin parsing, inheritance, validation and incremental state; derived Effect state is not a direct user compiler option and must not leak into generic JSON. Preserve native config diagnostic IDs, counts and ranges, including question-token and unquoted-key cases. Keep original imported patches distinct from the new Tiara overlay. No diagnostic/test suppression or changed source pins.

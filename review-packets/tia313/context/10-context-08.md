@@ -217,6 +217,8 @@ Dependency role: Read ignore patterns for generated/platform artifacts and local
 
 Current boundary content is included for its interface/dependency role, without an upstream before/after diff.
 
+The rendered block retains the previously reviewed file rendering, with the canonical file's final blank-line LF omitted. Its decoded identity is 79 bytes, SHA256 `ffaf3ce55af48d7fbf10fbff723a7d3f37e873765989ebb1879c26910682a65d`. The canonical source identity above and this rendered-block identity are separate; decoding preserves the rendered bytes exactly.
+
 ```text
 /tsgolint
 internal/collections/

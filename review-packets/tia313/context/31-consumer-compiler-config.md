@@ -38,7 +38,9 @@ type noCopy struct{}
 
 Mode `100644`, blob `199d0a286cdcde5eb2610bee028725b61a6e02d1`, SHA256 `62a58a5b15496b50e6a81720fc4a5ae8ee375c97b851f588814c615c246d46bb`, 22186 bytes.
 
-Current source lines 468-495, excerpt SHA256 `1ed9fee44c782be0146eb8f99d9bab5928cec4e467912fa950c27f53b9eb51a6`.
+Canonical source lines 468-495, excerpt SHA256 `1ed9fee44c782be0146eb8f99d9bab5928cec4e467912fa950c27f53b9eb51a6`.
+
+The rendered block retains the previously reviewed selection of canonical source lines 468-495, with the final blank-line LF omitted. Its decoded identity is 805 bytes, SHA256 `945640c8599944eeea274b0d3972fe533f15e65173a7253a85390d90d63d1386`. The canonical source identity above and this rendered-block identity are separate; decoding preserves the rendered bytes exactly.
 
 ```text
 	case "noDtsResolution":
@@ -74,7 +76,9 @@ Current source lines 468-495, excerpt SHA256 `1ed9fee44c782be0146eb8f99d9bab5928
 
 Mode `100644`, blob `0445636053155766214fdb9715fc20e6cb698474`, SHA256 `d9ed5c18288a8b278aa85290ad75e0b07fd97e747c623e5ef65c518d033c531e`, 21782 bytes.
 
-Current source lines 463-487, excerpt SHA256 `674f59f1a540f3cc7307622da7aa7e8ab3aceb96b10edf269e28244b1355af12`.
+Canonical source lines 463-487, excerpt SHA256 `674f59f1a540f3cc7307622da7aa7e8ab3aceb96b10edf269e28244b1355af12`.
+
+The rendered block retains the previously reviewed selection of canonical source lines 463-487, with the final blank-line LF omitted. Its decoded identity is 1885 bytes, SHA256 `48641290e098d55d94a7ac4356f73d33e00391d580c8627bd9e36cbf71fe29f8`. The canonical source identity above and this rendered-block identity are separate; decoding preserves the rendered bytes exactly.
 
 ```text
 type BuildInfo struct {

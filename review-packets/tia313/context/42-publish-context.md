@@ -6,7 +6,9 @@ The nested Vite source manifest is used for local development. The root workspac
 
 Mode `100644`, blob `619852dee8d670326fb699265d21bd34ced96174`, SHA256 `8fd468217630de588f60c8da7e431cbda0ddc9d9403fc37283ba966ab06ecc84`, 1018 bytes.
 
-Current source lines 1-10, excerpt SHA256 `bc0e2d68eb828b3fa8fd63ee86dfd683ae21bda85752035c50a8e8e72c6ee8fe`.
+Canonical source lines 1-10, excerpt SHA256 `bc0e2d68eb828b3fa8fd63ee86dfd683ae21bda85752035c50a8e8e72c6ee8fe`.
+
+The rendered block retains the previously reviewed selection of canonical source lines 1-10, with the final blank-line LF omitted. Its decoded identity is 252 bytes, SHA256 `ca80e6a05f7ddc1e747392063944ec1bcdef4b064e5f022638ba95c523f9b65e`. The canonical source identity above and this rendered-block identity are separate; decoding preserves the rendered bytes exactly.
 
 ```text
 packages:
