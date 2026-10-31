@@ -1,0 +1,1283 @@
+{
+  "parent_packet": "review-packets/tia313/context/23-generation-crosswalk.json",
+  "collection": "outputs",
+  "part": 2,
+  "parts": 5,
+  "entries": [
+    {
+      "path": "native/effect-tsgo/shim/_backport/format/go.mod",
+      "mode": "100644",
+      "blob": "76ab97760e45aff9484c44ca9b655095dbdab61d",
+      "sha256": "c11086819b24d759eb35ad93f7730b28013d7d08d59be5f6bfba751a1b1cb7ec",
+      "bytes": 127,
+      "relative_output": "_backport/format/go.mod",
+      "family": "format",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/format/shim.go",
+      "mode": "100644",
+      "blob": "442a59164173e901fd009448b7caeb5eaadd1fbe",
+      "sha256": "ad6efc1557ff24ac581f67556a8b30beac31caa04f2083d4838d419456a12902",
+      "bytes": 6189,
+      "relative_output": "_backport/format/shim.go",
+      "family": "format",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/format/go.mod",
+      "mode": "100644",
+      "blob": "0c3ad170d1003c8678d536673d68e1981b830acb",
+      "sha256": "17ebc957e2c2d78f661be3d720b5ee58ba4b08052494f9cd0d69bb881436eb20",
+      "bytes": 114,
+      "relative_output": "format/go.mod",
+      "family": "format",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/format/shim.go",
+      "mode": "100644",
+      "blob": "572b10c954409469088c8c5143ede46b352cfebb",
+      "sha256": "5deb9b2cfc953a03a922d46f2c2482fbd5777c0d94767cfd6559bc590a5f5bce",
+      "bytes": 6179,
+      "relative_output": "format/shim.go",
+      "family": "format",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/fourslash/go.mod",
+      "mode": "100644",
+      "blob": "5acb0aafe0bdae3383c367593fb03af312ed9971",
+      "sha256": "445e8c0c48b0663d80719f03aafd3aa00ebcf36d00bed1a0a83d6eb3ddcbe049",
+      "bytes": 133,
+      "relative_output": "_backport/fourslash/go.mod",
+      "family": "fourslash",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/fourslash/shim.go",
+      "mode": "100644",
+      "blob": "c46fd937fc92f6c529084275befb9666fcbc23d0",
+      "sha256": "4a1f10ded807520c518c6a7cdeb43b90187f554f923452fbd46ff584e9dc4a28",
+      "bytes": 3208,
+      "relative_output": "_backport/fourslash/shim.go",
+      "family": "fourslash",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/fourslash/go.mod",
+      "mode": "100644",
+      "blob": "9a7a0b0be5828529ede6456cf2602074fe5fdb11",
+      "sha256": "7cb4e9f5c1654c1b016c86952ff9ed788463267c78b555f1912212f542111e16",
+      "bytes": 117,
+      "relative_output": "fourslash/go.mod",
+      "family": "fourslash",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/fourslash/shim.go",
+      "mode": "100644",
+      "blob": "ad4d6c3556d82b90f5117782305a1426aa3e2f0e",
+      "sha256": "eff15473f374b227a2cf2d77b1d1c2b9baac2202c1815b08fe597b51825850a5",
+      "bytes": 3211,
+      "relative_output": "fourslash/shim.go",
+      "family": "fourslash",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/jsnum/go.mod",
+      "mode": "100644",
+      "blob": "82c344b6eb586c698cf8a0f2a7c3db26c9f9b790",
+      "sha256": "b29494aa35a3fa6c5c21449581c47e204bd76aa3e9d8989da179caa5d86a7940",
+      "bytes": 125,
+      "relative_output": "_backport/jsnum/go.mod",
+      "family": "jsnum",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/jsnum/shim.go",
+      "mode": "100644",
+      "blob": "1b9232c4d67a7bec35a5333a39abf62c110a8a63",
+      "sha256": "e2cec6669066dbbce9c16141c72c2dfed48f462b7128a124c0125a4f2480b6e1",
+      "bytes": 1096,
+      "relative_output": "_backport/jsnum/shim.go",
+      "family": "jsnum",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/jsnum/go.mod",
+      "mode": "100644",
+      "blob": "63d75f02f255b641174da995ea91101d3a9edb68",
+      "sha256": "05cd231b7299e64df80c8ca844818d1495bfbe01a11e633cc4c8b6c6de2eff01",
+      "bytes": 113,
+      "relative_output": "jsnum/go.mod",
+      "family": "jsnum",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/jsnum/shim.go",
+      "mode": "100644",
+      "blob": "2cf1a26a589af4ce6d38c0ae6ca9a1bb3c16e469",
+      "sha256": "f9eded99cb73390bb86f2637b15a46413627653d63d35a89b76f8647a97419f2",
+      "bytes": 1093,
+      "relative_output": "jsnum/shim.go",
+      "family": "jsnum",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/jsonrpc/go.mod",
+      "mode": "100644",
+      "blob": "e23aaa5bb1e2afe0a1e40c565e9f6d12c1e9bb56",
+      "sha256": "782e8d55529fa2a3ec8a1a64f550f758bbfefd5ee0947fd09b3f32bfafb0dd4c",
+      "bytes": 129,
+      "relative_output": "_backport/jsonrpc/go.mod",
+      "family": "jsonrpc",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/jsonrpc/shim.go",
+      "mode": "100644",
+      "blob": "1f74a1e2fa8229ca376bb0fe63a4d593b9158b40",
+      "sha256": "c0985323076cfb2040011776a6781907f206a5cac3e2a336d35d70cb895fdc92",
+      "bytes": 1846,
+      "relative_output": "_backport/jsonrpc/shim.go",
+      "family": "jsonrpc",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/jsonrpc/go.mod",
+      "mode": "100644",
+      "blob": "37a97dc2ac9a2f23a7f66f4244f8cbff4873ede4",
+      "sha256": "2f8654214c036a214e30055f99e76b16f67ad76c34471c47374ca2864b55dfc2",
+      "bytes": 115,
+      "relative_output": "jsonrpc/go.mod",
+      "family": "jsonrpc",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/jsonrpc/shim.go",
+      "mode": "100644",
+      "blob": "84d7aaf65c1622824ed7623b5f68581116c40c5b",
+      "sha256": "fae8812a4fd59b832634cac89f544eae6b04a57969f96392d018aeb69be0b4e5",
+      "bytes": 1842,
+      "relative_output": "jsonrpc/shim.go",
+      "family": "jsonrpc",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-02.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/locale/go.mod",
+      "mode": "100644",
+      "blob": "66a7445104b928b52e932db8c797e0cbb5c79189",
+      "sha256": "c101c7ad4c196e72f0c56b5c395d6b69cda0c28f092962488f3bef74ce926e5e",
+      "bytes": 127,
+      "relative_output": "_backport/locale/go.mod",
+      "family": "locale",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/locale/shim.go",
+      "mode": "100644",
+      "blob": "1e6d529462a8c8767d4e6ac27e1c6d12e2d730cf",
+      "sha256": "d34bf726ff27ed3141b30da7642aa0f91af19e9a8cc00244316ecbae39690bfd",
+      "bytes": 663,
+      "relative_output": "_backport/locale/shim.go",
+      "family": "locale",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/locale/go.mod",
+      "mode": "100644",
+      "blob": "3b6f744977b8e1969b3d0b42249ef446d7f9e80d",
+      "sha256": "1fd6760535780c15a7d62bfc71e44c0017db538526a4c10cdd006728fad2d4f9",
+      "bytes": 114,
+      "relative_output": "locale/go.mod",
+      "family": "locale",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/locale/shim.go",
+      "mode": "100644",
+      "blob": "c76a34c3880082f5cd0abeebed560b6388419ad3",
+      "sha256": "25628440a08b66d62fef430596fc128352e2e4850fec3ee6bc31fd2043789725",
+      "bytes": 664,
+      "relative_output": "locale/shim.go",
+      "family": "locale",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/ls/go.mod",
+      "mode": "100644",
+      "blob": "aa0b301c2514368228a19391c2886cde164d41b0",
+      "sha256": "0238c588435be369821a89c220e6ade202385b5ffcb44364395c13aeb0d749ae",
+      "bytes": 119,
+      "relative_output": "_backport/ls/go.mod",
+      "family": "ls",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/ls/shim.go",
+      "mode": "100644",
+      "blob": "5f0b9168775fab046450d7c6d5a76615e679ca5a",
+      "sha256": "43bc6ef4e65acbc82929d33f7b89f3cd39681981a6071980d72b7acf3263cb71",
+      "bytes": 10767,
+      "relative_output": "_backport/ls/shim.go",
+      "family": "ls",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/ls/go.mod",
+      "mode": "100644",
+      "blob": "a76a0866756feb3f6e5d3107c021aae7c70ba7e1",
+      "sha256": "07320fda50029e41a0564131690bcc472494c6b2d2aeff513e25f59494e7314e",
+      "bytes": 110,
+      "relative_output": "ls/go.mod",
+      "family": "ls",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/ls/shim.go",
+      "mode": "100644",
+      "blob": "e0031e684e4adf356cfb3da4603ffe20f0057bd6",
+      "sha256": "f780fb077567ef113d52ea9d4a0cc4086671ebbb78fcfc9bbafd845a44046bdb",
+      "bytes": 10696,
+      "relative_output": "ls/shim.go",
+      "family": "ls",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/ls/autoimport/go.mod",
+      "mode": "100644",
+      "blob": "fef44af3b5130db52a26bce0b864e87981704c38",
+      "sha256": "f0410640e0d89138948255cad3a8713db21ce8d79f77fea4f15f6adf1cad16ca",
+      "bytes": 141,
+      "relative_output": "_backport/ls/autoimport/go.mod",
+      "family": "ls/autoimport",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/ls/autoimport/shim.go",
+      "mode": "100644",
+      "blob": "39157dccc1091c81a123493583a075f1e989142c",
+      "sha256": "d878fd03bdc7b3962d387cd2c89af3fb7276bed811525999898ee176a77ebe12",
+      "bytes": 4463,
+      "relative_output": "_backport/ls/autoimport/shim.go",
+      "family": "ls/autoimport",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/ls/autoimport/go.mod",
+      "mode": "100644",
+      "blob": "63e2e100e1af2ee72b4c8509165732f9d4d49c65",
+      "sha256": "88129b4dc7620200bf00fc9412f40af45e91bdcf3e53b09aed9be0bf6be977cb",
+      "bytes": 121,
+      "relative_output": "ls/autoimport/go.mod",
+      "family": "ls/autoimport",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/ls/autoimport/shim.go",
+      "mode": "100644",
+      "blob": "696e4d5c51d10f333fa745cc531e3cfa3df72394",
+      "sha256": "8bf6eb795223149088e98ac2154a217447fd87b312ebf0a1eea94417acd9a0d0",
+      "bytes": 4482,
+      "relative_output": "ls/autoimport/shim.go",
+      "family": "ls/autoimport",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/ls/change/compatibility.go",
+      "mode": "100644",
+      "blob": "027e5683d040c00fb41c90193388e6a1392a2dfb",
+      "sha256": "5ba1036860be1cc507766a0452f9e9c2736f1050318d3a8f3cfdadfbee492f14",
+      "bytes": 1348,
+      "relative_output": "_backport/ls/change/compatibility.go",
+      "family": "ls/change",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/ls/change/go.mod",
+      "mode": "100644",
+      "blob": "06bae3f475b97f8dc619955180dfb67718c535a3",
+      "sha256": "7a924facd96fcc051de43d44a5147a914b404b51ec07f9b756753644dcc17f36",
+      "bytes": 133,
+      "relative_output": "_backport/ls/change/go.mod",
+      "family": "ls/change",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/ls/change/shim.go",
+      "mode": "100644",
+      "blob": "3d8df8480efd0bdf0914eb3d110ee8b8c03d5adf",
+      "sha256": "14f3ac07ec33569ebb5d45864d2220e5d9a0f3acd5c1eb1a3f2b459352cbf2dc",
+      "bytes": 1716,
+      "relative_output": "_backport/ls/change/shim.go",
+      "family": "ls/change",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/ls/change/compatibility.go",
+      "mode": "100644",
+      "blob": "e1edfa68519ffb3aec4f0eb6a679583cf6874913",
+      "sha256": "ab80bc1add1b115ab1054af7c1b4d710e2b791d9f9d2650bf71fae5b510367c6",
+      "bytes": 1360,
+      "relative_output": "ls/change/compatibility.go",
+      "family": "ls/change",
+      "category": "O4",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/ls/change/go.mod",
+      "mode": "100644",
+      "blob": "58f12fcb0a141d915e1cd5916692b303de49add5",
+      "sha256": "49be70debaca04a0b96a36bb0e98a93a9fa6299137aa131bb0bbb6b2c754de43",
+      "bytes": 117,
+      "relative_output": "ls/change/go.mod",
+      "family": "ls/change",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/ls/change/shim.go",
+      "mode": "100644",
+      "blob": "d772ff60df8b2e631f4c25d0a5529da6c5d1981f",
+      "sha256": "528773afedcf0dc78c31446c88d905f9552a5de869989f8c02f9974941dfad1e",
+      "bytes": 1731,
+      "relative_output": "ls/change/shim.go",
+      "family": "ls/change",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/ls/lsconv/compatibility.go",
+      "mode": "100644",
+      "blob": "4f3208b9c49eca187bb070b4d59fb81d17a93a4f",
+      "sha256": "c3ec08390e794d8973033b33b0c90383f9484450b7975860efd86ac894dd5de0",
+      "bytes": 342,
+      "relative_output": "_backport/ls/lsconv/compatibility.go",
+      "family": "ls/lsconv",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/ls/lsconv/go.mod",
+      "mode": "100644",
+      "blob": "6d59c7bc73edb3fc3950241f4b926ed504957d6e",
+      "sha256": "61fb5c18be339a919c7e8f9522172b626d6b222ea0af33df3b9c208ce68afbd8",
+      "bytes": 133,
+      "relative_output": "_backport/ls/lsconv/go.mod",
+      "family": "ls/lsconv",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/ls/lsconv/shim.go",
+      "mode": "100644",
+      "blob": "7f195b2534182193e7e14ad1183c4b50efc017b5",
+      "sha256": "895a71e12011bf103097f48b25a9bf494cb4de2cb9b8be2e604539a29541158c",
+      "bytes": 1757,
+      "relative_output": "_backport/ls/lsconv/shim.go",
+      "family": "ls/lsconv",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/ls/lsconv/compatibility.go",
+      "mode": "100644",
+      "blob": "cbef57af2941a3f62b87df18df395177e1859802",
+      "sha256": "444697c6dc600b37f892a6ee4186e67ee7d77b38df506cf816a9a4c248819793",
+      "bytes": 354,
+      "relative_output": "ls/lsconv/compatibility.go",
+      "family": "ls/lsconv",
+      "category": "O4",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/ls/lsconv/go.mod",
+      "mode": "100644",
+      "blob": "d1250178b0bf20783d8d857cf4651b54470d8ed1",
+      "sha256": "3c680dfb594716bb0bf522cb9d1c9419eb949bbfa4517f6c7ecb2d35e37680e3",
+      "bytes": 117,
+      "relative_output": "ls/lsconv/go.mod",
+      "family": "ls/lsconv",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/ls/lsconv/shim.go",
+      "mode": "100644",
+      "blob": "a74ae9a60389861d4e375a75a90f8b9fb453cb7f",
+      "sha256": "09756d40d90b401a59b22ccf3baca09977c30613b8f9d99bb080cf3adf62dc83",
+      "bytes": 1766,
+      "relative_output": "ls/lsconv/shim.go",
+      "family": "ls/lsconv",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/ls/lsutil/go.mod",
+      "mode": "100644",
+      "blob": "b4d0493de6b516831cbae8369a27593f19c9d963",
+      "sha256": "bdcea3bc5e3dc57d6b3114f9b471ed2ee5f669b969d3cbc506f8dda3accf157b",
+      "bytes": 133,
+      "relative_output": "_backport/ls/lsutil/go.mod",
+      "family": "ls/lsutil",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/ls/lsutil/shim.go",
+      "mode": "100644",
+      "blob": "534fef856aca20c765002ddfa038100a98683c31",
+      "sha256": "554c0100fbcc5813bfedb8d3e5f2bda09d9bc706e9f6488e38c799cb71428e98",
+      "bytes": 17457,
+      "relative_output": "_backport/ls/lsutil/shim.go",
+      "family": "ls/lsutil",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/ls/lsutil/go.mod",
+      "mode": "100644",
+      "blob": "d6a12e0fa40b560466d1e4cd98269c7830e27c2f",
+      "sha256": "ffaeeeeb962b4a0466520c8f7b81500498203a20689166cb7c1f4b9418646146",
+      "bytes": 117,
+      "relative_output": "ls/lsutil/go.mod",
+      "family": "ls/lsutil",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/ls/lsutil/shim.go",
+      "mode": "100644",
+      "blob": "efc066432caeea8afcfbaf52386af3ef6665e167",
+      "sha256": "d0514885593788eca95ba388e2a9321b5b2da97332a35101a14ba08c853e648b",
+      "bytes": 17414,
+      "relative_output": "ls/lsutil/shim.go",
+      "family": "ls/lsutil",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/lsp/go.mod",
+      "mode": "100644",
+      "blob": "95c66c8846a13f3ae3c0439519e1f205df56c2ae",
+      "sha256": "0a050edd0743cccbb35160ff675e616786add5981a368b2ae45081c424b087b6",
+      "bytes": 121,
+      "relative_output": "_backport/lsp/go.mod",
+      "family": "lsp",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/lsp/shim.go",
+      "mode": "100644",
+      "blob": "3cb9efcdf15874024ab966e56f8a99df96ef8c66",
+      "sha256": "e7b69c427f953f04570bb9a26931642fb362e2149b7f4e43e64804d311fe88e1",
+      "bytes": 638,
+      "relative_output": "_backport/lsp/shim.go",
+      "family": "lsp",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/lsp/go.mod",
+      "mode": "100644",
+      "blob": "e9a3f219cbc5780303b3911e3a5e02aed87fb904",
+      "sha256": "b20a54647c63ac79929bfcebadaa0fdf5c01e26f2e3164c3acfba6165e228213",
+      "bytes": 111,
+      "relative_output": "lsp/go.mod",
+      "family": "lsp",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/lsp/shim.go",
+      "mode": "100644",
+      "blob": "39de7971d1530a9fd6219e73dabf42351926082d",
+      "sha256": "b64ff69b78c7b4626a36d17286fac5e96d5a4a313ccb5da21d13ebbb38469904",
+      "bytes": 639,
+      "relative_output": "lsp/shim.go",
+      "family": "lsp",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/lsp/lsproto/go.mod",
+      "mode": "100644",
+      "blob": "696df1290fabcf8eed6aac21c27595c6bf74dc30",
+      "sha256": "82f4af94980121ec95d67c3258d832cefd0b5809e8cf6254e0f768672ae4f024",
+      "bytes": 137,
+      "relative_output": "_backport/lsp/lsproto/go.mod",
+      "family": "lsp/lsproto",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/lsp/lsproto/shim.go",
+      "mode": "100644",
+      "blob": "ddf0f79a965d6b4a90cdd56e88e889cf10c95411",
+      "sha256": "ce04e11f3ca1fa46b13826eda4d8b45a6fe1ce67e7b0dfc69d8155d82540384a",
+      "bytes": 86900,
+      "relative_output": "_backport/lsp/lsproto/shim.go",
+      "family": "lsp/lsproto",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/lsp/lsproto/go.mod",
+      "mode": "100644",
+      "blob": "efa075e6d4d89df3226e8036495c2cdaf696964a",
+      "sha256": "0505bf7d1934d03ed5df1afdcc87940f069f555e930241096927c7ec2781676c",
+      "bytes": 119,
+      "relative_output": "lsp/lsproto/go.mod",
+      "family": "lsp/lsproto",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-03.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  ]
+}

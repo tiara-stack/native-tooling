@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "user_steering": "Exclude source updates from both active axes and later reviews. Review mixed-source material only as Tiara deltas against approved pins; consult imported interfaces/provenance only as necessary context.",
+  "source_head": "a7bfe2eb8fb3e7738f2bcc9c459633019a84bfa2",
+  "source_base": "cf6cd57af76949d243446b1bfd577f28b4c13a1a",
+  "review_base": "3f59ff35648901336060b7765898635868ef9f6f",
+  "review_head": "3ec3dd87a27f579f39cba04e481d4bee0063e57c",
+  "chunks": 233,
+  "chunk_reconstruction_exact": true,
+  "patch_sha256": "a4452e02fcb754a9c0d6588a61d3d7126485bdff76fa7e9ed2fbc1a897ef7a4d",
+  "custom_diff_targets": 718,
+  "excluded_imported_source_update_paths": 1926,
+  "excluded_paths_in_actual_diff": 0,
+  "actual_headers_exact_custom_set": true,
+  "custom_pre_post_mode_blob_maps_verified": 718,
+  "actual_after_blobs_verified": 718,
+  "unchanged_imported_contexts_not_in_diff": 103,
+  "context_pre_post_current_blobs_equal": true,
+  "target_classification_counts": {
+    "custom-integration": 14,
+    "generated-or-config-boundary": 234,
+    "mixed-overlay": 462,
+    "custom-removal": 2,
+    "custom-addition": 6
+  },
+  "source_ledger_sha256": "10d1a5aff38d3e630837118211f60da44d77413f008299ee58983886de3cad1d",
+  "upstream_reconstruction_proof": "/opt/data/worktrees/native-tooling/t3-93775d3d/.tmp/tia313/review-scope/overlay-proof.json",
+  "upstream_source_audit": "/opt/data/worktrees/native-tooling/t3-93775d3d/.tmp/tia313/review-scope/source-audit.json",
+  "both_reviewers_acknowledged": true,
+  "axes": [
+    "/root/tia313_implement_recovery_r4/implement_r1_standards",
+    "/root/tia313_implement_recovery_r4/implement_r1_spec"
+  ],
+  "timestamp": "2026-10-31T11:09:31.085952+00:00"
+}

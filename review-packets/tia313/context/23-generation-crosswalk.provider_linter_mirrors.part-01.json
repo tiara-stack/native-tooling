@@ -1,0 +1,233 @@
+{
+  "parent_packet": "review-packets/tia313/context/23-generation-crosswalk.json",
+  "collection": "provider_linter_mirrors",
+  "part": 1,
+  "parts": 1,
+  "entries": [
+    {
+      "provider": "native/effect-tsgo/shim/ast/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/ast/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/ast/helpers.go",
+      "linter": "native/tsgolint-effect-fork/shim/ast/helpers.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/ast/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/ast/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/bundled/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/bundled/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/bundled/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/bundled/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/checker/compatibility.go",
+      "linter": "native/tsgolint-effect-fork/shim/checker/compatibility.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/checker/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/checker/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/checker/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/checker/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/collections/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/collections/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/collections/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/collections/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/compiler/compatibility.go",
+      "linter": "native/tsgolint-effect-fork/shim/compiler/compatibility.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/compiler/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/compiler/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/compiler/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/compiler/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/core/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/core/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/core/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/core/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/diagnostics/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/diagnostics/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/diagnostics/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/diagnostics/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/jsnum/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/jsnum/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/jsnum/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/jsnum/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/lsp/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/lsp/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/lsp/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/lsp/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/lsp/lsproto/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/lsp/lsproto/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/lsp/lsproto/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/lsp/lsproto/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/packagejson/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/packagejson/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/packagejson/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/packagejson/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/parser/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/parser/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/parser/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/parser/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/project/compatibility.go",
+      "linter": "native/tsgolint-effect-fork/shim/project/compatibility.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/project/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/project/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/project/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/project/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/scanner/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/scanner/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/scanner/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/scanner/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/tsoptions/compatibility.go",
+      "linter": "native/tsgolint-effect-fork/shim/tsoptions/compatibility.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/tsoptions/foreach.go",
+      "linter": "native/tsgolint-effect-fork/shim/tsoptions/foreach.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/tsoptions/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/tsoptions/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/tsoptions/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/tsoptions/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/tspath/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/tspath/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/tspath/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/tspath/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/vfs/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/vfs/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/vfs/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/vfs/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/vfs/vfsmatch/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/vfs/vfsmatch/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/vfs/cachedvfs/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/vfs/cachedvfs/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/vfs/cachedvfs/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/vfs/cachedvfs/shim.go",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/vfs/osvfs/go.mod",
+      "linter": "native/tsgolint-effect-fork/shim/vfs/osvfs/go.mod",
+      "byte_equal": true
+    },
+    {
+      "provider": "native/effect-tsgo/shim/vfs/osvfs/shim.go",
+      "linter": "native/tsgolint-effect-fork/shim/vfs/osvfs/shim.go",
+      "byte_equal": true
+    }
+  ]
+}
