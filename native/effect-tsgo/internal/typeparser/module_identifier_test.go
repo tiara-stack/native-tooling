@@ -16,7 +16,7 @@ func parseSource(source string) *ast.SourceFile {
 
 func TestFindModuleIdentifierForPackage_NamespaceImport(t *testing.T) {
 	t.Parallel()
-	source := `import * as Model from "effect/schema"`
+	source := `import * as Model from "effect/unstable/schema"`
 	sf := parseSource(source)
 
 	got := FindModuleIdentifierForPackage(sf, "effect/unstable", "schema")
