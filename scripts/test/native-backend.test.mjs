@@ -89,7 +89,12 @@ test("installed wrapper APIs and commands resolve their optional platform binari
   try {
     for (const wrapper of wrappers) {
       const packageRoot = join(fixture, "packages", wrapper.name);
-      const platformRoot = join(fixture, "node_modules", "@tiara-stack", `${wrapper.name}-linux-x64`);
+      const platformRoot = join(
+        fixture,
+        "node_modules",
+        "@tiara-stack",
+        `${wrapper.name}-linux-x64`,
+      );
       const executableName = wrapper.name === "tsgo-effect" ? "tsgo" : "tsgolint";
       const expected = join(platformRoot, "vendor", executableName);
       mkdirSync(join(packageRoot, "bin"), { recursive: true });
