@@ -1,6 +1,15 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  mkdirSync,
+  mkdtempSync,
+  renameSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import test from "node:test";
@@ -72,6 +81,63 @@ test("source wrappers explain which local build is missing", () => {
     } finally {
       renameSync(saved, binary);
     }
+  }
+});
+
+test("installed wrapper APIs and commands resolve their optional platform binaries", () => {
+  const fixture = mkdtempSync(join(tmpdir(), "tiara-installed-wrappers-"));
+  try {
+    for (const wrapper of wrappers) {
+      const packageRoot = join(fixture, "packages", wrapper.name);
+      const platformRoot = join(fixture, "node_modules", "@tiara-stack", `${wrapper.name}-linux-x64`);
+      const executableName = wrapper.name === "tsgo-effect" ? "tsgo" : "tsgolint";
+      const expected = join(platformRoot, "vendor", executableName);
+      mkdirSync(join(packageRoot, "bin"), { recursive: true });
+      mkdirSync(join(packageRoot, "src"), { recursive: true });
+      mkdirSync(join(platformRoot, "vendor"), { recursive: true });
+      writeFileSync(join(packageRoot, "package.json"), JSON.stringify({ type: "module" }));
+      writeFileSync(
+        join(platformRoot, "package.json"),
+        JSON.stringify({
+          name: `@tiara-stack/${wrapper.name}-linux-x64`,
+          exports: { "./package.json": "./package.json" },
+        }),
+      );
+      copyFileSync(
+        join(root, "packages", wrapper.name, "src", "index.ts"),
+        join(packageRoot, "src", "index.ts"),
+      );
+      copyFileSync(
+        join(root, "packages", wrapper.name, "bin", `${wrapper.name}.mjs`),
+        join(packageRoot, "bin", `${wrapper.name}.mjs`),
+      );
+      symlinkSync(join(root, wrapper.binary), expected);
+      const environment = { ...process.env };
+      delete environment.TIARA_TSGO_EFFECT_PATH;
+      delete environment.TIARA_TSGO_PATH;
+      delete environment.TIARA_TSGOLINT_EFFECT_PATH;
+      const commands = [
+        [join(packageRoot, "bin", `${wrapper.name}.mjs`), "--print-path"],
+        [
+          "--experimental-strip-types",
+          "--input-type=module",
+          "--eval",
+          `import { ${wrapper.api} } from ${JSON.stringify(pathToFileURL(join(packageRoot, "src", "index.ts")).href)}; console.log(${wrapper.api}());`,
+        ],
+      ];
+      for (const command of commands) {
+        const result = spawnSync(process.execPath, command, {
+          cwd: fixture,
+          env: environment,
+          encoding: "utf8",
+        });
+        assert.ifError(result.error);
+        assert.equal(result.status, 0, result.stderr);
+        assert.equal(result.stdout.trim(), expected);
+      }
+    }
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
   }
 });
 

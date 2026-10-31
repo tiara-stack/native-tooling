@@ -1,10 +1,12 @@
 import { existsSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const executableName = process.platform === "win32" ? "tsgolint.exe" : "tsgolint";
 
 const packageRoot = findPackageRoot(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
 
 export const resolveTsgolintEffectPath = (): string => {
   const explicitPath = [process.env.TIARA_TSGOLINT_EFFECT_PATH].find((path): path is string =>
@@ -22,6 +24,7 @@ export const resolveTsgolintEffectPath = (): string => {
   }
 
   const candidates = [
+    resolvePlatformBinary(),
     join(packageRoot, "vendor", `${process.platform}-${process.arch}`, executableName),
     findUp(process.cwd(), join("native", "tsgolint-effect-fork", executableName)),
     findUp(packageRoot, join("native", "tsgolint-effect-fork", executableName)),
@@ -40,6 +43,16 @@ export const resolveTsgolintEffectPath = (): string => {
 
   return binaryPath;
 };
+
+function resolvePlatformBinary(): string | undefined {
+  if (process.platform !== "linux" || process.arch !== "x64") return undefined;
+  try {
+    const manifest = require.resolve("@tiara-stack/tsgolint-effect-linux-x64/package.json");
+    return join(dirname(manifest), "vendor", executableName);
+  } catch {
+    return undefined;
+  }
+}
 
 function findPackageRoot(start: string): string {
   let directory = dirname(start);
