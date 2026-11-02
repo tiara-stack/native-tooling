@@ -1082,5 +1082,18 @@
   "producer_carry": "3drivers/4633inputs/359outputs exact; no rebuild for queue squash. Markdown inputs qualified separately by approved-pin/import and concrete copy mappings."
  },
  "B002": "Original conditional workspace-filter lexical-rewrite concern retained. Owner accepts fixed-approved-input limitation; not repaired or withdrawn. No arbitrary future shell-parser guarantee.",
- "metadata_head": "The eventual docs(review) commit is bound out-of-band; no self-digest or circular metadata epoch."
+ "metadata_head": "The eventual docs(review) commit is bound out-of-band; no self-digest or circular metadata epoch.",
+ "hosted_selection": {
+  "config": {
+   "path": ".review-packets/tia314/hosted-config.yaml",
+   "sha256": "725b44c453fffdd299a1b49623be959e5e451161974ebaf03a1eece92c4988bd"
+  },
+  "request": {
+   "path": ".review-packets/tia314/hosted-request.md",
+   "sha256": "1e9582ef6ca4f96bde85b19423b863b30a2bf6f84ea5d4d3f36cb0330a841b97"
+  },
+  "matching": "Exact positive paths restrict review to 81 packet/control files. Any matching exclusion wins regardless of order. No universal negative or reinclusion assumption. Git sparse-checkout semantics are separate.",
+  "documentation": "https://docs.coderabbit.ai/configuration/path-instructions#how-path-filters-combine",
+  "review_only_config": "inheritance:false; --with-config applies to this review only; omitted settings use defaults and global overrides still apply."
+ }
 }

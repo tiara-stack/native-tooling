@@ -5,7 +5,6 @@
   "inheritance": false,
   "reviews": {
     "path_filters": [
-      "!**",
       ".review-packets/tia314/01-code.json",
       ".review-packets/tia314/02-code.json",
       ".review-packets/tia314/03-code.json",
