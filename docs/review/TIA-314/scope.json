@@ -1,7 +1,7 @@
 {
   "ticket": "TIA-314",
   "implementation_commit": "ce7c7319ac3f52525e80247abac68b38c513a5f3",
-  "base": "27e143d6cf517db2827e5269fae63d688a7a0cb3",
+  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
   "upstream": {
     "repository": "https://github.com/voidzero-dev/vite-plus",
     "commit": "fc287d7b1c0dc008dbc65d1d2b2f51a44e2a5ea4",
@@ -9,15 +9,18 @@
   },
   "policy": "Exclude only unchanged pinned upstream source. Keep Tiara overlays, root package/version/lock/config changes, generated artifacts, generation inputs and affected consumers. Pinned upstream metadata remains provenance context. Review mixed source as Tiara overlays against the pin.",
   "counts": {
-    "raw_changed_paths": 6856,
+    "raw_changed_paths": 6937,
     "authorized_import_exclusions": 6420,
-    "review_target_paths": 436,
+    "review_target_paths": 517,
     "mixed_or_custom_source_paths": 13,
     "skipped_reviewable_paths": 0,
     "reviewed_paths": 0,
-    "pending_review_target_paths": 436
+    "pending_review_target_paths": 517,
+    "source_adaptation_paths": 436,
+    "hosted_metadata_paths": 81,
+    "changed_existing_scope_metadata_paths": 1
   },
-  "review_state": "Original430 targets independently reviewed at af417be1 and bounded436-target re-entry completed at636629628 with a valid documentation package-operand finding. The resulting command repair awaits affected-scope re-entry. This inventory does not certify a current-head whole review pass.",
+  "review_state": "436 source-epoch adaptations retain qualified prior OCR attribution. Delivery preparation changes this scope binding and adds hosted metadata; those new metadata changes await incremental review. This inventory is not a fresh semantic review certificate.",
   "custom_overlay_patch_sha256": "0092edde3a8815aa7d9fcdd9d6e4b88f54c1c9caafe50a213767e0b1c6b112bc",
   "authorized_import_exclusions": [
     {
@@ -40344,50 +40347,368 @@
     {
       "path": "scripts/test/vite-plus-native.test.mjs",
       "mode": "raw diff"
+    },
+    {
+      "path": ".review-packets/tia314/01-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/02-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/03-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/04-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/05-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/06-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/07-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/08-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/09-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/10-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/11-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/12-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/13-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/14-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/15-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/16-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/17-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/18-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/19-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/20-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/21-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/22-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/23-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/24-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/25-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/26-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/27-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/28-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/29-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/30-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/31-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/32-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/33-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/34-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/35-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/36-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/37-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/38-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/39-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/40-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/41-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/42-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/43-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/44-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/45-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/46-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/47-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/48-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/49-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/50-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/51-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/52-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/53-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/54-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/55-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/56-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/57-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/58-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/59-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/60-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/61-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/62-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/63-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/64-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/65-generated-map.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/66-generated-map.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/67-generated-map.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/68-generated-map.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/69-generated-map.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/70-generated-map.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/71-legacy-contract.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/72-legacy-contract.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/73-context.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/74-context.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/75-context.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/76-context.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/README.md",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/index.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/hosted-config.yaml",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/hosted-request.md",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/initial-description.md",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
     }
   ],
   "rebase_proof": {
-    "grant": "tia310-20261030-e2166ed7-tia314-updated-parent-rebase-r3",
-    "parent_branch": "theerapakg/tia-312-rebase-the-custom-oxlint-fork-on-oxlint-1870",
-    "parent_commit": "27e143d6cf517db2827e5269fae63d688a7a0cb3",
-    "pre_rebase_head": "be33ba542849a77a546458680136fe6a2c444d64",
-    "rebased_implementation_head": "e7ea172a484eb20b9dcdd478b44bc7a40a818365",
-    "authorized_exclusion_blobs_and_modes_unchanged": 6420,
-    "authorized_exclusion_base_blobs_and_modes_unchanged": 6420,
-    "parent_native_and_review_packets_unchanged": true,
-    "review_range": "assigned parent to current HEAD",
-    "mixed_source_review": "custom-source.patch against approved Vite+ pin, with required interface context; generated outputs and generator/root changes remain review targets",
-    "affected_consumer_generation": "Rebuilt tsgo-effect and tsgolint-effect from inherited parent source using unchanged local Vite+ 1.0.0 producer; four tracked distribution outputs remain in existing review scope.",
-    "producer_carry_forward": {
-      "build_driver_inputs": 3,
+    "grant": "tia310-20261030-e2166ed7-tia314-compatible-parent-rebase-r4",
+    "parent_branch": "main",
+    "parent_commit": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "prior_assigned_parent": "27e143d6cf517db2827e5269fae63d688a7a0cb3",
+    "pre_rebase_head": "367d4abc1f2363d434549a69f2befa52a5e2cd37",
+    "rebased_source_head_before_metadata": "be98fe07635b1e3b3f59eb0bbe8ad2c414c30570",
+    "graphite_restack": "restack --only; actual ancestry/exact merge-base verified;9own commits patch-equal",
+    "parent_delta": "2inherited Rust-bridge/native-regression source paths plus44inherited review packet bindings",
+    "authorized_import_exclusions_recomputed": 6420,
+    "mixed_custom_overlay_paths_recomputed": 13,
+    "custom_overlay_patch_sha256": "0092edde3a8815aa7d9fcdd9d6e4b88f54c1c9caafe50a213767e0b1c6b112bc",
+    "producer_carry": {
+      "root_driver_inputs": 3,
       "source_inputs": 4633,
-      "source_outputs": 359,
+      "built_outputs": 359,
       "hash_mismatches": 0,
-      "generated_vite_core_cli_and_helper_tree_files": 413,
-      "native_artifact_identity": "unchanged Vite+ CLI and Rolldown bindings; exact accepted TIA-312 compiler/backend/Oxlint copies used for integration checks"
+      "rebuild_required": false
     },
-    "prior_assigned_parent": "bb85296ad5ae029df510b3a3dce7d5ba9e271021",
-    "updated_parent_rebase": {
-      "pre_rebase_head": "9048c1603ef92467c53609aa45a836ee2a4bcf83",
-      "rebased_head_before_accounting_commit": "41b44521dfd89ca5f1550c4829833618ae40e779",
-      "parent_effective_delta": [
-        "patches/oxlint@1.87.0-native-effect.patch",
-        "scripts/test-oxlint-effect.mjs"
-      ],
-      "inherited_review_packet_updates": 44,
-      "producer_generator_runtime_and_native_inputs": "unchanged; exact identities reverified",
-      "prior_check_evidence": ".tmp/TIA-314/rebase-r1/stack-ready.json",
-      "invalidated_checks": "patched npm CLI override negative-path regression; released patch application/package contract"
+    "accepted_native_artifacts": {
+      "Rust_source_producer": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "oxlint": "8a0114fca10417d1768ff8fc8df674b4b0e803e999a9c6e2b93657be5a1a6b15",
+      "tsgo": "5ce0ae1c53df0a1feaa57cf2f2723f8d3156dd63f1b5d43765acbb3efe82afda",
+      "tsgolint": "bf269295deba7173800701d9450d5d22d526fcfccfae627453ca29ec106240bd"
     },
-    "fixture_guard_rebase": {
-      "pre_rebase_head": "9d8ee967e1e1c5af4d6b3325a33e45e469b29cf0",
-      "rebased_source_head": "557e16d09f6dea52f608e71fcb07ad9803682599",
-      "parent_delta": "Only inherited test scratch precondition and44 parent packet bindings",
-      "effective_inputs": "430 own target blobs,25 input payloads and428 output/context hashes unchanged before scope metadata rebind",
-      "checks": "Outside10case regression, syntax and expected actionable inside-checkout precondition guard pass",
-      "presubmit_carry": ".tmp/TIA-314/presubmit-r1/presubmit-ready.json",
-      "rebound_scope": ".tmp/TIA-314/rebase-r3/scope-ready.json"
-    }
+    "fresh_checks": [
+      "staging",
+      "native1.87regression and timing namespace path",
+      "staged runtime/protocol2smoke",
+      "source Vite1.0 TSconfig/Effectwarn-error-off reporting and default repo-local selection",
+      "offline patch/package boundary"
+    ],
+    "Markdown_qualification": "Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.",
+    "OCR_carry": "Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.",
+    "final_main_source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+    "identical_queue_squash_tree": "34d345e35d45df8fc931cfd2aa7312fbe0ae5a99"
   },
   "generated_output_review_policy": {
     "accounting": "Every affected generated output remains a review target or mapped output. Review Tiara transformations, adapters, generator inputs, package boundaries, and affected consumers.",
@@ -40439,5 +40760,143 @@
     "producer_inputs": "Unchanged retained local Vite+1.0 producers; scoped generation only",
     "review_reentry": "A:3 generated docs. B:2 generator/check scripts and shared-transform impact. C:scope metadata only.",
     "prior_scope": "436 reviewed at frozen636 with398 qualified carry and38 reentered; valid package-command finding retained"
+  },
+  "rebase_history": [
+    {
+      "grant": "tia310-20261030-e2166ed7-tia314-updated-parent-rebase-r3",
+      "parent_branch": "theerapakg/tia-312-rebase-the-custom-oxlint-fork-on-oxlint-1870",
+      "parent_commit": "27e143d6cf517db2827e5269fae63d688a7a0cb3",
+      "pre_rebase_head": "be33ba542849a77a546458680136fe6a2c444d64",
+      "rebased_implementation_head": "e7ea172a484eb20b9dcdd478b44bc7a40a818365",
+      "authorized_exclusion_blobs_and_modes_unchanged": 6420,
+      "authorized_exclusion_base_blobs_and_modes_unchanged": 6420,
+      "parent_native_and_review_packets_unchanged": true,
+      "review_range": "assigned parent to current HEAD",
+      "mixed_source_review": "custom-source.patch against approved Vite+ pin, with required interface context; generated outputs and generator/root changes remain review targets",
+      "affected_consumer_generation": "Rebuilt tsgo-effect and tsgolint-effect from inherited parent source using unchanged local Vite+ 1.0.0 producer; four tracked distribution outputs remain in existing review scope.",
+      "producer_carry_forward": {
+        "build_driver_inputs": 3,
+        "source_inputs": 4633,
+        "source_outputs": 359,
+        "hash_mismatches": 0,
+        "generated_vite_core_cli_and_helper_tree_files": 413,
+        "native_artifact_identity": "unchanged Vite+ CLI and Rolldown bindings; exact accepted TIA-312 compiler/backend/Oxlint copies used for integration checks"
+      },
+      "prior_assigned_parent": "bb85296ad5ae029df510b3a3dce7d5ba9e271021",
+      "updated_parent_rebase": {
+        "pre_rebase_head": "9048c1603ef92467c53609aa45a836ee2a4bcf83",
+        "rebased_head_before_accounting_commit": "41b44521dfd89ca5f1550c4829833618ae40e779",
+        "parent_effective_delta": [
+          "patches/oxlint@1.87.0-native-effect.patch",
+          "scripts/test-oxlint-effect.mjs"
+        ],
+        "inherited_review_packet_updates": 44,
+        "producer_generator_runtime_and_native_inputs": "unchanged; exact identities reverified",
+        "prior_check_evidence": ".tmp/TIA-314/rebase-r1/stack-ready.json",
+        "invalidated_checks": "patched npm CLI override negative-path regression; released patch application/package contract"
+      },
+      "fixture_guard_rebase": {
+        "pre_rebase_head": "9d8ee967e1e1c5af4d6b3325a33e45e469b29cf0",
+        "rebased_source_head": "557e16d09f6dea52f608e71fcb07ad9803682599",
+        "parent_delta": "Only inherited test scratch precondition and44 parent packet bindings",
+        "effective_inputs": "430 own target blobs,25 input payloads and428 output/context hashes unchanged before scope metadata rebind",
+        "checks": "Outside10case regression, syntax and expected actionable inside-checkout precondition guard pass",
+        "presubmit_carry": ".tmp/TIA-314/presubmit-r1/presubmit-ready.json",
+        "rebound_scope": ".tmp/TIA-314/rebase-r3/scope-ready.json"
+      }
+    }
+  ],
+  "hosted_delivery": {
+    "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+    "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "source_adaptations": 436,
+    "stock_exclusions": 6420,
+    "packet_metadata_files": 81,
+    "packet_paths": [
+      ".review-packets/tia314/01-code.json",
+      ".review-packets/tia314/02-code.json",
+      ".review-packets/tia314/03-code.json",
+      ".review-packets/tia314/04-code.json",
+      ".review-packets/tia314/05-code.json",
+      ".review-packets/tia314/06-code.json",
+      ".review-packets/tia314/07-code.json",
+      ".review-packets/tia314/08-code.json",
+      ".review-packets/tia314/09-code.json",
+      ".review-packets/tia314/10-code.json",
+      ".review-packets/tia314/11-code.json",
+      ".review-packets/tia314/12-code.json",
+      ".review-packets/tia314/13-code.json",
+      ".review-packets/tia314/14-code.json",
+      ".review-packets/tia314/15-code.json",
+      ".review-packets/tia314/16-code.json",
+      ".review-packets/tia314/17-code.json",
+      ".review-packets/tia314/18-code.json",
+      ".review-packets/tia314/19-code.json",
+      ".review-packets/tia314/20-code.json",
+      ".review-packets/tia314/21-code.json",
+      ".review-packets/tia314/22-code.json",
+      ".review-packets/tia314/23-code.json",
+      ".review-packets/tia314/24-code.json",
+      ".review-packets/tia314/25-code.json",
+      ".review-packets/tia314/26-code.json",
+      ".review-packets/tia314/27-code.json",
+      ".review-packets/tia314/28-code.json",
+      ".review-packets/tia314/29-code.json",
+      ".review-packets/tia314/30-code.json",
+      ".review-packets/tia314/31-code.json",
+      ".review-packets/tia314/32-code.json",
+      ".review-packets/tia314/33-code.json",
+      ".review-packets/tia314/34-code.json",
+      ".review-packets/tia314/35-code.json",
+      ".review-packets/tia314/36-code.json",
+      ".review-packets/tia314/37-code.json",
+      ".review-packets/tia314/38-code.json",
+      ".review-packets/tia314/39-code.json",
+      ".review-packets/tia314/40-code.json",
+      ".review-packets/tia314/41-code.json",
+      ".review-packets/tia314/42-code.json",
+      ".review-packets/tia314/43-code.json",
+      ".review-packets/tia314/44-code.json",
+      ".review-packets/tia314/45-code.json",
+      ".review-packets/tia314/46-code.json",
+      ".review-packets/tia314/47-code.json",
+      ".review-packets/tia314/48-code.json",
+      ".review-packets/tia314/49-code.json",
+      ".review-packets/tia314/50-code.json",
+      ".review-packets/tia314/51-code.json",
+      ".review-packets/tia314/52-code.json",
+      ".review-packets/tia314/53-code.json",
+      ".review-packets/tia314/54-code.json",
+      ".review-packets/tia314/55-code.json",
+      ".review-packets/tia314/56-code.json",
+      ".review-packets/tia314/57-code.json",
+      ".review-packets/tia314/58-code.json",
+      ".review-packets/tia314/59-code.json",
+      ".review-packets/tia314/60-code.json",
+      ".review-packets/tia314/61-code.json",
+      ".review-packets/tia314/62-code.json",
+      ".review-packets/tia314/63-code.json",
+      ".review-packets/tia314/64-code.json",
+      ".review-packets/tia314/65-generated-map.json",
+      ".review-packets/tia314/66-generated-map.json",
+      ".review-packets/tia314/67-generated-map.json",
+      ".review-packets/tia314/68-generated-map.json",
+      ".review-packets/tia314/69-generated-map.json",
+      ".review-packets/tia314/70-generated-map.json",
+      ".review-packets/tia314/71-legacy-contract.json",
+      ".review-packets/tia314/72-legacy-contract.json",
+      ".review-packets/tia314/73-context.json",
+      ".review-packets/tia314/74-context.json",
+      ".review-packets/tia314/75-context.json",
+      ".review-packets/tia314/76-context.json",
+      ".review-packets/tia314/README.md",
+      ".review-packets/tia314/index.json",
+      ".review-packets/tia314/hosted-config.yaml",
+      ".review-packets/tia314/hosted-request.md",
+      ".review-packets/tia314/initial-description.md"
+    ],
+    "encoding": "Existing canonical UTF-8 JSON string arrays, exact target identities and bounded contexts; generated shared transforms plus every mapping; no unchanged stock algorithm audit.",
+    "current_metadata_review_pending": 82,
+    "no_circular_digest": "Packet body hashes are not embedded here. Actual metadata head is bound by the coordinator after commit."
   }
 }
