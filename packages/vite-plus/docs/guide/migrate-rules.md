@@ -6,7 +6,7 @@ Except for [Before You Migrate](#before-you-migrate), which lists steps you take
 
 ## Before You Migrate
 
-1. Run `vp upgrade` so the global CLI has the latest migration rules. A stale local `vite-plus` is not a blocker: when the project's local copy is older, migration delegates to the global CLI.
+1. Run `vp upgrade` so the global CLI has the latest migration rules. A stale local `@tiara-stack/vite-plus` is not a blocker: when the project's local copy is older, migration delegates to the global CLI.
 2. Upgrade the project to Vite 8+ and Vitest 4.1+ when necessary.
 3. Run `vp migrate` from the workspace root. Use `--no-interactive` in automated environments.
 4. Review every changed manifest, package-manager config, source rewrite, and generated lockfile.
@@ -16,7 +16,7 @@ Migration is idempotent: running it again after a successful migration should no
 
 ## Upgrade vs. Full Setup
 
-On a project that already depends on `vite-plus`, `vp migrate` performs an upgrade only: it updates dependencies and package-manager configuration and finalizes imports. It does not touch project setup.
+On a project that already depends on `@tiara-stack/vite-plus`, `vp migrate` performs an upgrade only: it updates dependencies and package-manager configuration and finalizes imports. It does not touch project setup.
 
 - `--full` also runs the setup actions: git hooks, editor config, agent files, ESLint and Prettier migration, framework shims, the tsconfig `baseUrl` fix, and the `.nvmrc`/Volta to `.node-version` conversion.
 - `--hooks`, `--agent`, and `--editor` opt into a single setup action without `--full`.
@@ -100,23 +100,23 @@ What happens to each toolchain dependency, at a glance:
 
 | Dependency                     | What happens                                                                                                                                                                |
 | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `vite-plus`                    | Added where the package is migrated; plain ranges re-pinned to the concrete target, directly or through a catalog.                                                          |
-| `vite`                         | Existing declarations kept and pointed at the core alias. pnpm packages that use only `vite-plus` need no new `vite` entry (see [Vite and Overrides](#vite-and-overrides)). |
-| `vitest`                       | Removed in the common node-mode case because `vite-plus` provides it transitively. Kept or added only when [directly required](#when-vitest-is-directly-required).          |
+| `@tiara-stack/vite-plus`                    | Added where the package is migrated; plain ranges re-pinned to the concrete target, directly or through a catalog.                                                          |
+| `vite`                         | Existing declarations kept and pointed at the core alias. pnpm packages that use only `@tiara-stack/vite-plus` need no new `vite` entry (see [Vite and Overrides](#vite-and-overrides)). |
+| `vitest`                       | Removed in the common node-mode case because `@tiara-stack/vite-plus` provides it transitively. Kept or added only when [directly required](#when-vitest-is-directly-required).          |
 | `@vitest/*`                    | Directly installed lockstep packages aligned to the bundled Vitest version (see [Vitest Ecosystem Packages](#vitest-ecosystem-packages)).                                   |
-| `@voidzero-dev/vite-plus-test` | Removed everywhere: dependencies, overrides, resolutions, and catalog aliases. Imports are rewritten to the current `vite-plus/test*` surface.                              |
+| `@voidzero-dev/vite-plus-test` | Removed everywhere: dependencies, overrides, resolutions, and catalog aliases. Imports are rewritten to the current `@tiara-stack/vite-plus/test*` surface.                              |
 
 ### Version Selection
 
-- `vite-plus` is pinned to the concrete version of the CLI running the migration, never the `latest` dist-tag.
-- The `vite` alias targets `@voidzero-dev/vite-plus-core` from the same Vite+ release.
+- `@tiara-stack/vite-plus` is pinned to the concrete version of the CLI running the migration, never the `latest` dist-tag.
+- The `vite` alias targets `@tiara-stack/vite-plus-core` from the same Vite+ release.
 - A catalog-backed manifest may contain `catalog:` or a named catalog reference. Migration keeps the reference and updates the referenced catalog value to the concrete toolchain target.
 - Deliberate protocol pins are preserved: `workspace:`, `file:`, `link:`, `npm:`, `github:`, Git URLs, and HTTP URLs.
 - Migration reconciles every workspace package, not only the root manifest. Shared overrides and catalogs stay at the workspace root; dependencies that provide a peer belong in each package that needs them.
 
 ### Vite and Overrides
 
-You can use `vite-plus` in a pnpm package without declaring `vite`. The `vite-plus` package includes a `vite` dependency aliased to its core, which provides Vitest's required peer. Migration keeps the workspace override for other Vite consumers but does not add `vite` to a package solely because it uses `vite-plus`.
+You can use `@tiara-stack/vite-plus` in a pnpm package without declaring `vite`. The `@tiara-stack/vite-plus` package includes a `vite` dependency aliased to its core, which provides Vitest's required peer. Migration keeps the workspace override for other Vite consumers but does not add `vite` to a package solely because it uses `@tiara-stack/vite-plus`.
 
 Related rules:
 
@@ -170,21 +170,21 @@ Object-valued nested npm and Bun overrides are preserved: they are user-defined 
 
 ### `vite` Imports
 
-`vite` and `vite/*` imports are rewritten to `vite-plus` **only in config entry files**: `vite.config.*`, `vitest.config.*`, and any config file the migration resolved. Every other file keeps its `vite` imports, for two reasons:
+`vite` and `vite/*` imports are rewritten to `@tiara-stack/vite-plus` **only in config entry files**: `vite.config.*`, `vitest.config.*`, and any config file the migration resolved. Every other file keeps its `vite` imports, for two reasons:
 
-- `vite-plus` is not a guaranteed superset of Vite's exposed surface. It owns only `defineConfig`, `defineProject`, and `lazyPlugins`, so rewriting a pass-through symbol such as `createBuilder` or `loadConfigFromFile` (including in `typeof import('vite')` type positions) can break.
-- An unrewritten `vite` import still resolves through the `@voidzero-dev/vite-plus-core` alias in a Vite+ project.
+- `@tiara-stack/vite-plus` is not a guaranteed superset of Vite's exposed surface. It owns only `defineConfig`, `defineProject`, and `lazyPlugins`, so rewriting a pass-through symbol such as `createBuilder` or `loadConfigFromFile` (including in `typeof import('vite')` type positions) can break.
+- An unrewritten `vite` import still resolves through the `@tiara-stack/vite-plus-core` alias in a Vite+ project.
 
 Plugin packages (an unscoped name starting with `vite-plugin-` or `unplugin-`, or `vite` in `peerDependencies`/`dependencies`) skip the rewrite even in config files. Only the `vite` specifier is in scope for this rule.
 
-`declare module 'vite'` augmentations follow the same rule and are preserved outside config files. Through the core alias they reach the same `@voidzero-dev/vite-plus-core` module whose `UserConfig` types `defineConfig` from `vite-plus`, so they keep working after migration; `vite-plus` itself exports no `UserConfig` symbol, so a rewritten `declare module 'vite-plus'` augmentation would merge with nothing. Extensions aimed at `vite-plus`'s own surface are written against `vite-plus` by hand.
+`declare module 'vite'` augmentations follow the same rule and are preserved outside config files. Through the core alias they reach the same `@tiara-stack/vite-plus-core` module whose `UserConfig` types `defineConfig` from `@tiara-stack/vite-plus`, so they keep working after migration; `@tiara-stack/vite-plus` itself exports no `UserConfig` symbol, so a rewritten `declare module '@tiara-stack/vite-plus'` augmentation would merge with nothing. Extensions aimed at `@tiara-stack/vite-plus`'s own surface are written against `@tiara-stack/vite-plus` by hand.
 
 ### `vitest` and Browser Imports
 
-- Ordinary `vitest` and `vitest/*` imports are rewritten to `vite-plus/test*`.
+- Ordinary `vitest` and `vitest/*` imports are rewritten to `@tiara-stack/vite-plus/test*`.
 - Legacy Playwright and WebdriverIO provider imports are detected before this rewrite so their optional provider dependencies are not lost.
-- Scoped `@vitest/browser*` imports are rewritten to the corresponding `vite-plus/test/browser*` exports, provisioning opt-in providers when needed.
-- Existing `vite-plus/test*` imports are left unchanged.
+- Scoped `@vitest/browser*` imports are rewritten to the corresponding `@tiara-stack/vite-plus/test/browser*` exports, provisioning opt-in providers when needed.
+- Existing `@tiara-stack/vite-plus/test*` imports are left unchanged.
 
 ### Oxlint JS Plugin Imports
 
@@ -192,11 +192,11 @@ Vite+ bundles Oxlint, so the migration removes a standalone `oxlint` dependency.
 
 The migration repoints those imports at Vite+:
 
-- It rewrites `@oxlint/plugins` to `vite-plus/lint/plugins`.
-- It rewrites `oxlint/plugins-dev` to `vite-plus/lint/plugins-dev`.
-- It rewrites `oxlint` to `vite-plus/lint/plugins` when the import names a binding from the authoring API, such as `defineRule`, `definePlugin`, or `Context`. Older Oxlint releases exposed that API from the main entry. It now lives in `@oxlint/plugins`.
+- It rewrites `@oxlint/plugins` to `@tiara-stack/vite-plus/lint/plugins`.
+- It rewrites `oxlint/plugins-dev` to `@tiara-stack/vite-plus/lint/plugins-dev`.
+- It rewrites `oxlint` to `@tiara-stack/vite-plus/lint/plugins` when the import names a binding from the authoring API, such as `defineRule`, `definePlugin`, or `Context`. Older Oxlint releases exposed that API from the main entry. It now lives in `@oxlint/plugins`.
 
-An import through Vite+ always matches the version of Oxlint that Vite+ bundles. You pin no second package. The import also resolves from any package that already depends on `vite-plus`.
+An import through Vite+ always matches the version of Oxlint that Vite+ bundles. You pin no second package. The import also resolves from any package that already depends on `@tiara-stack/vite-plus`.
 
 The migration leaves three forms alone:
 
@@ -267,11 +267,11 @@ Migration converts legacy Node.js version-manager files to `.node-version`, the 
 
 - Dependency references, default and named catalogs, overrides, and `peerDependencyRules` are kept consistent with each other.
 - pnpm accepts the logical default catalog as either top-level `catalog` or `catalogs.default`, but not both. Migration preserves the existing form and never creates the other form beside it.
-- When an existing named catalog already owns `vite-plus`, `vite`, or `vitest`, migration reuses that managed toolchain catalog for newly added dependencies and overrides. It creates a top-level default catalog only when no managed or default catalog can be reused.
+- When an existing named catalog already owns `@tiara-stack/vite-plus`, `vite`, or `vitest`, migration reuses that managed toolchain catalog for newly added dependencies and overrides. It creates a top-level default catalog only when no managed or default catalog can be reused.
 
 **Other rules.**
 
-- Packages that use `vite-plus` without a direct `vite` declaration keep that layout (see [Vite and Overrides](#vite-and-overrides)).
+- Packages that use `@tiara-stack/vite-plus` without a direct `vite` declaration keep that layout (see [Vite and Overrides](#vite-and-overrides)).
 - Unrelated selector-shaped and object-valued overrides are preserved.
 
 ### npm

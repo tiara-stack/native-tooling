@@ -4,7 +4,7 @@ Vite+ bundles Vitest `5.0.1`. Use Node `^22.18.0 || ^24.11.0 || >=26.0.0` for th
 
 ## Before you migrate
 
-Run `vp migrate` from the workspace root before updating dependencies by hand. Keep the original lockfile and installed packages available so the migration can identify the source Vitest version, including the runner inside an older `vite-plus` installation.
+Run `vp migrate` from the workspace root before updating dependencies by hand. Keep the original lockfile and installed packages available so the migration can identify the source Vitest version, including the runner inside an older `@tiara-stack/vite-plus` installation.
 
 Upgrade projects older than Vitest 4 to v4 before running this migration. If the original version cannot be determined, restore and install the original lockfile, then rerun `vp migrate`.
 
@@ -126,24 +126,24 @@ Review calls with benchmark options, imported or reassigned callbacks, callback 
 
 ## Entry points and packages
 
-Use `vite-plus/test` for assertions and supported runner APIs. Keep coverage providers and `@vitest/ui` at the bundled runner's exact version, `5.0.1`. Keep `@vitest/web-worker` aligned when your project uses it.
+Use `@tiara-stack/vite-plus/test` for assertions and supported runner APIs. Keep coverage providers and `@vitest/ui` at the bundled runner's exact version, `5.0.1`. Keep `@vitest/web-worker` aligned when your project uses it.
 
 | v4 import                                | v5 import or action                                                         |
 | ---------------------------------------- | --------------------------------------------------------------------------- |
-| `vitest/coverage`, `vitest/reporters`    | `vite-plus/test/node`                                                       |
-| `vitest/environments`, `vitest/snapshot` | `vite-plus/test/runtime`                                                    |
-| `vitest/mocker`                          | `vite-plus/test/mocker`                                                     |
-| `vitest/runners`, `vitest/suite`         | Review `TestRunner` and its static methods from `vite-plus/test`.           |
-| Root-compatible `@vitest/expect` symbols | `vite-plus/test`; review unsupported helpers.                               |
+| `vitest/coverage`, `vitest/reporters`    | `@tiara-stack/vite-plus/test/node`                                                       |
+| `vitest/environments`, `vitest/snapshot` | `@tiara-stack/vite-plus/test/runtime`                                                    |
+| `vitest/mocker`                          | `@tiara-stack/vite-plus/test/mocker`                                                     |
+| `vitest/runners`, `vitest/suite`         | Review `TestRunner` and its static methods from `@tiara-stack/vite-plus/test`.           |
+| Root-compatible `@vitest/expect` symbols | `@tiara-stack/vite-plus/test`; review unsupported helpers.                               |
 | `@vitest/runner`                         | Migrate supported symbols to the root API and review the remaining imports. |
 | `vitest/internal/module-runner`          | Redesign the integration; no public replacement exists.                     |
 | `@vitest/ws-client`                      | Retain if needed; upstream no longer adds v5 features.                      |
 
-Vite+ 1.0 removes `vite-plus/test/coverage`, `/reporters`, `/environments`, and `/snapshot`. Run `vp migrate` to rewrite these existing Vite+ imports to the same `node` or `runtime` entries shown above. Vite+ retains `vite-plus/test/mocker` for the standalone `@vitest/mocker` API. It does not provide partial runner or expect plugin shims.
+Vite+ 1.0 removes `@tiara-stack/vite-plus/test/coverage`, `/reporters`, `/environments`, and `/snapshot`. Run `vp migrate` to rewrite these existing Vite+ imports to the same `node` or `runtime` entries shown above. Vite+ retains `@tiara-stack/vite-plus/test/mocker` for the standalone `@vitest/mocker` API. It does not provide partial runner or expect plugin shims.
 
 ## Community WebDriverIO provider
 
-Vite+ 1.0 removes the `vite-plus/test/browser-webdriverio` exports. Use `@vitest/browser-webdriverio` and choose a provider version and framework peers that support your tests. The community maintains this package on its own release schedule.
+Vite+ 1.0 removes the `@tiara-stack/vite-plus/test/browser-webdriverio` exports. Use `@vitest/browser-webdriverio` and choose a provider version and framework peers that support your tests. The community maintains this package on its own release schedule.
 
 `vp migrate` changes legacy provider imports to `@vitest/browser-webdriverio` and ensures a provider version of at least `5.0.0`. It adds `^5.0.0` when the provider is missing, upgrades older versions, and narrows ranges that still allow v4. It also updates referenced catalog entries and removes overrides that force an older provider. Versions and ranges already above this minimum stay unchanged. The migration ensures the required `webdriverio` peer is installed without upgrading an existing framework version.
 
@@ -151,7 +151,7 @@ For projects that use this provider, `vp migrate` adds an `@vitest/browser` over
 
 You manage provider upgrades after this migration; Vite+ does not synchronize community releases with Vitest. Existing imports from the community package stay unchanged. For custom dependencies that the migrator cannot verify, resolve the diagnostic before retrying migration. See the [upstream package migration guide](https://vitest.dev/guide/migration/#package-migration).
 
-Legacy Vite+ WebDriverIO `/context` imports move to `vite-plus/test/browser/context`. Keep runtime browser APIs on this shared entry; the community provider's `/context` entry contains types only.
+Legacy Vite+ WebDriverIO `/context` imports move to `@tiara-stack/vite-plus/test/browser/context`. Keep runtime browser APIs on this shared entry; the community provider's `/context` entry contains types only.
 
 The optional peer declaration still follows Vitest's dependency metadata. It does not provide a Vite+ export or synchronize provider releases.
 

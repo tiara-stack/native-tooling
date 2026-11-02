@@ -104,7 +104,7 @@ vp staged
 Define staged-file checks in the `staged` block in `vite.config.ts`:
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   staged: {

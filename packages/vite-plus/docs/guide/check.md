@@ -34,7 +34,7 @@ When run from a workspace package, `vp check` uses the workspace-root `lint` and
 Recommended base `lint` config:
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   lint: {
@@ -51,7 +51,7 @@ export default defineConfig({
 To make `vp check` skip formatting or linting without passing a flag every time, set the [`check`](/config/check) block in `vite.config.ts`. This is handy when a project wants the rest of the toolchain but not, say, formatting:
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   check: {

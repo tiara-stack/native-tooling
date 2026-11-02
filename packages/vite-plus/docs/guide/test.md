@@ -8,13 +8,13 @@ The bundled runner uses Vitest `5.0.1` and requires Node `^22.18.0 || ^24.11.0 |
 
 `vp test` is built on [Vitest](https://vitest.dev/), so you get a Vite-native test runner that reuses your Vite config and plugins, supports Jest-style expectations, snapshots, and coverage, and handles modern ESM, TypeScript, and JSX projects cleanly.
 
-Vitest APIs are available from `vite-plus/test`, so a single `vite-plus` install is enough — you do not need to install `vitest` directly:
+Vitest APIs are available from `@tiara-stack/vite-plus/test`, so a single `@tiara-stack/vite-plus` install is enough — you do not need to install `vitest` directly:
 
 ```ts [src/example.test.ts]
-import { describe, expect, it, vi } from 'vite-plus/test';
+import { describe, expect, it, vi } from '@tiara-stack/vite-plus/test';
 ```
 
-For the browser mode subpaths (`vite-plus/test/browser*`), see [Migrating Vitest](/guide/migrate#vitest).
+For the browser mode subpaths (`@tiara-stack/vite-plus/test/browser*`), see [Migrating Vitest](/guide/migrate#vitest).
 
 ::: info
 `vp test` always runs the built-in Vitest command. If your project also has a `test` script in `package.json`, run `vp run test` when you want to run that script instead. See [Built-in Commands vs Scripts](/guide/run#built-in-commands-vs-scripts).
@@ -37,7 +37,7 @@ Unlike Vitest on its own, `vp test` does not stay in watch mode by default. Use 
 Put test configuration directly in the `test` block in `vite.config.ts` so all your configuration stays in one place. We do not recommend using `vitest.config.ts` with Vite+.
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   test: {

@@ -22,7 +22,7 @@ Vite Task starts with file system tracking for any command. A cache-reporting to
 File system tracking applies to every cache-enabled task. If you omit [`cache.input`](/config/run#cache-input), Vite Task tracks the files a command reads while it runs:
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   run: {
@@ -120,7 +120,7 @@ For a standard Vite build, you do not need to add these entries yourself because
 You only need to define the task with `vp build`:
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   run: {

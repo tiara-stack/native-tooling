@@ -78,7 +78,7 @@ CMD ["node", "dist/server.js"]
 The deployed image contains only Node.js plus your app and production dependencies, and matches `.node-version` exactly. It is much smaller than the default `node:*` image; see the distroless tip below for the smallest result.
 
 ::: warning Prune production dependencies in a separate stage
-Install production dependencies in their own `deps` stage as shown. Running `vp install --prod` after a full `vp install` in the same stage does not remove the already-installed devDependencies, so the `vite-plus` toolchain would be copied into the runtime image. If your server bundle is fully self-contained (no un-bundled runtime dependencies), you can skip copying `node_modules` entirely.
+Install production dependencies in their own `deps` stage as shown. Running `vp install --prod` after a full `vp install` in the same stage does not remove the already-installed devDependencies, so the `@tiara-stack/vite-plus` toolchain would be copied into the runtime image. If your server bundle is fully self-contained (no un-bundled runtime dependencies), you can skip copying `node_modules` entirely.
 :::
 
 ::: tip Smaller still

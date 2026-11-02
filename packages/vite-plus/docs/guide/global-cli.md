@@ -46,7 +46,7 @@ onUnmounted(() => {
 
 # Global CLI
 
-The global CLI is a standalone `vp` binary for machine-level runtime and package management. It includes a Vite+ toolchain, does not require Node.js to be installed first, and can be used without adding `vite-plus` to a project.
+The global CLI is a standalone `vp` binary for machine-level runtime and package management. It includes a Vite+ toolchain, does not require Node.js to be installed first, and can be used without adding `@tiara-stack/vite-plus` to a project.
 
 Choose the global CLI when you want one command available across projects for any combination of:
 
@@ -379,20 +379,20 @@ vp run build         # Run a package.json script or configured task
 vp dlx create-vite   # Download and run a package binary
 ```
 
-You do not need a local `vite-plus` dependency to run existing `package.json` scripts. Add the [project-local CLI](/guide/local-cli) when you want the frontend toolchain version recorded in the project's manifest and lockfile.
+You do not need a local `@tiara-stack/vite-plus` dependency to run existing `package.json` scripts. Add the [project-local CLI](/guide/local-cli) when you want the frontend toolchain version recorded in the project's manifest and lockfile.
 
 ## Use Both CLIs Together
 
-The global CLI and the project-local `vite-plus` package work together. You keep using the same `vp` command, while each project can choose its own toolchain version.
+The global CLI and the project-local `@tiara-stack/vite-plus` package work together. You keep using the same `vp` command, while each project can choose its own toolchain version.
 
 For development commands such as `vp dev`, `vp build`, `vp test`, and `vp run`, the global CLI delegates to the project's installed version when available:
 
 | Current project                     | Toolchain used by `vp`            |
 | ----------------------------------- | --------------------------------- |
-| Has `vite-plus` installed locally   | The project's installed toolchain |
-| Does not have `vite-plus` installed | The globally installed toolchain  |
+| Has `@tiara-stack/vite-plus` installed locally   | The project's installed toolchain |
+| Does not have `@tiara-stack/vite-plus` installed | The globally installed toolchain  |
 
-In a monorepo, the local installation can be shared at the workspace root. You do not need to install `vite-plus` separately in every package.
+In a monorepo, the local installation can be shared at the workspace root. You do not need to install `@tiara-stack/vite-plus` separately in every package.
 
 For example, if a project has Vite+ version A installed and your global installation is version B, `vp build` uses version A's toolchain. Upgrading the global installation does not change that project's installed toolchain.
 

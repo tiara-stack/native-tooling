@@ -87,7 +87,7 @@ $ node compile-legacy-app.js ✗ cache miss: 'legacy/index.js' modified, executi
 Vite Task [automatically tracks](/guide/automatic-data-tracking) what each task needs for caching. You can define tasks directly in `vite.config.ts` to enable caching by default or control which files and environment variables affect cache behavior.
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   run: {
@@ -133,7 +133,7 @@ dependsOn: [
 Use the object form when you need to reference all tasks with a given name from the current package's dependencies:
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   run: {

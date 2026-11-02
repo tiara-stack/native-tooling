@@ -9,15 +9,15 @@
   },
   "policy": "Exclude only unchanged pinned upstream source. Keep Tiara overlays, root package/version/lock/config changes, generated artifacts, generation inputs and affected consumers. Pinned upstream metadata remains provenance context. Review mixed source as Tiara overlays against the pin.",
   "counts": {
-    "raw_changed_paths": 6850,
+    "raw_changed_paths": 6856,
     "authorized_import_exclusions": 6420,
-    "review_target_paths": 430,
+    "review_target_paths": 436,
     "mixed_or_custom_source_paths": 13,
     "skipped_reviewable_paths": 0,
     "reviewed_paths": 0,
-    "pending_review_target_paths": 430
+    "pending_review_target_paths": 436
   },
-  "review_state": "Prepared against exact27e143d6 assigned parent; semantic review pending separate quota.",
+  "review_state": "Original430 targets independently reviewed at frozen af417be1; generator/docs repair adds6 targets and awaits bounded affected-scope re-entry. This inventory does not certify a current-head whole review pass.",
   "custom_overlay_patch_sha256": "0092edde3a8815aa7d9fcdd9d6e4b88f54c1c9caafe50a213767e0b1c6b112bc",
   "authorized_import_exclusions": [
     {
@@ -40062,6 +40062,24 @@
       "mode": "raw diff"
     },
     {
+      "path": "packages/vite-plus/docs/config/build.md",
+      "mode": "raw diff",
+      "generated_from": "scripts/sync-vite-plus.mjs",
+      "review_basis": "scoped documentation module-specifier transformation"
+    },
+    {
+      "path": "packages/vite-plus/docs/config/check.md",
+      "mode": "raw diff",
+      "generated_from": "scripts/sync-vite-plus.mjs",
+      "review_basis": "scoped documentation module-specifier transformation"
+    },
+    {
+      "path": "packages/vite-plus/docs/config/create.md",
+      "mode": "raw diff",
+      "generated_from": "scripts/sync-vite-plus.mjs",
+      "review_basis": "scoped documentation module-specifier transformation"
+    },
+    {
       "path": "packages/vite-plus/docs/config/fmt.md",
       "mode": "raw diff"
     },
@@ -40074,12 +40092,24 @@
       "mode": "raw diff"
     },
     {
+      "path": "packages/vite-plus/docs/config/pack.md",
+      "mode": "raw diff",
+      "generated_from": "scripts/sync-vite-plus.mjs",
+      "review_basis": "scoped documentation module-specifier transformation"
+    },
+    {
       "path": "packages/vite-plus/docs/config/run.md",
       "mode": "raw diff"
     },
     {
       "path": "packages/vite-plus/docs/config/staged.md",
       "mode": "raw diff"
+    },
+    {
+      "path": "packages/vite-plus/docs/config/test.md",
+      "mode": "raw diff",
+      "generated_from": "scripts/sync-vite-plus.mjs",
+      "review_basis": "scoped documentation module-specifier transformation"
     },
     {
       "path": "packages/vite-plus/docs/guide/automatic-data-tracking.md",
@@ -40168,6 +40198,12 @@
     {
       "path": "packages/vite-plus/docs/guide/monorepo.md",
       "mode": "raw diff"
+    },
+    {
+      "path": "packages/vite-plus/docs/guide/pack.md",
+      "mode": "raw diff",
+      "generated_from": "scripts/sync-vite-plus.mjs",
+      "review_basis": "scoped documentation module-specifier transformation"
     },
     {
       "path": "packages/vite-plus/docs/guide/run.md",
@@ -40372,5 +40408,20 @@
     "unchanged_producers": "All Vite+/core build drivers/source inputs/outputs and native binaries retain their accepted identities; no producer rebuild.",
     "review_policy": "Review helper import/metadata rewrites and normalization once, with every affected source/distribution mapping checked. Upstream helper algorithms and embedded stock bundles remain context.",
     "reviewer_state": "No reviewer or model invoked; prepared for ordered quota grants."
+  },
+  "documentation_repair": {
+    "finding": "TIA314-A-001",
+    "change": "Include Markdown in the existing scoped-specifier transformation and reject documented unscoped Vite+ imports in the package contract check.",
+    "generated_docs_changed": 35,
+    "new_generated_doc_targets": [
+      "packages/vite-plus/docs/config/build.md",
+      "packages/vite-plus/docs/config/check.md",
+      "packages/vite-plus/docs/config/create.md",
+      "packages/vite-plus/docs/config/pack.md",
+      "packages/vite-plus/docs/config/test.md",
+      "packages/vite-plus/docs/guide/pack.md"
+    ],
+    "producer_inputs": "Unchanged local Vite+1.0 producer; regenerate scoped artifacts only",
+    "review_reentry": "A:35 changed docs plus A002 legacy-matcher disposition. B:2 generator/check scripts. C:scope metadata only."
   }
 }

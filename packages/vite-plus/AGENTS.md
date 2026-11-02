@@ -14,7 +14,7 @@ Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.de
 
 Run `vp toolchain` to show versions and relationships in the active Vite+
 release. Add a tool name to select part of the graph. For example, run
-`vp toolchain vite`. Use `--global` to ignore the local `vite-plus` package. Use
+`vp toolchain vite`. Use `--global` to ignore the local `@tiara-stack/vite-plus` package. Use
 `vp why <package>` to show the package-manager dependency graph.
 
 ## Review Checklist

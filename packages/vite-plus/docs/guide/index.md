@@ -2,7 +2,7 @@
 
 Vite+ is the unified toolchain and entry point for web development.
 
-It brings together [Vite](https://vite.dev/), [Vitest](https://vitest.dev/), [Oxlint](https://oxc.rs/docs/guide/usage/linter.html), [Oxfmt](https://oxc.rs/docs/guide/usage/formatter.html), [Rolldown](https://rolldown.rs/), [tsdown](https://tsdown.dev/), and [Vite Task](https://github.com/voidzero-dev/vite-task) in a single [`vite-plus` package](/guide/local-cli) for a blazing fast frontend toolchain.
+It brings together [Vite](https://vite.dev/), [Vitest](https://vitest.dev/), [Oxlint](https://oxc.rs/docs/guide/usage/linter.html), [Oxfmt](https://oxc.rs/docs/guide/usage/formatter.html), [Rolldown](https://rolldown.rs/), [tsdown](https://tsdown.dev/), and [Vite Task](https://github.com/voidzero-dev/vite-task) in a single [`@tiara-stack/vite-plus` package](/guide/local-cli) for a blazing fast frontend toolchain.
 
 Vite+ also ships a [global `vp` CLI](/guide/global-cli) that manages Node.js and package managers and makes Vite+ easier to use across projects. You can use either CLI independently, but we recommend [using them together](/guide/global-cli#use-both-clis-together).
 

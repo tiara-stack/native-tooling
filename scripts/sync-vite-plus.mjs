@@ -141,7 +141,7 @@ async function rewriteTree(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const path = join(directory, entry.name);
     if (entry.isDirectory()) await rewriteTree(path);
-    else if (/\.(?:[cm]?js|[cm]?ts|json)$/.test(entry.name)) {
+    else if (/\.(?:[cm]?js|[cm]?ts|json|md)$/.test(entry.name)) {
       const text = await readFile(path, "utf8");
       await writeFile(
         path,

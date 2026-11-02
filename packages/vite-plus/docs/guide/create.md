@@ -133,7 +133,7 @@ Local generators are declared in [`create.templates`](/config/create#create-temp
 `vp create vite:generator` registers the generator for you, adding an entry to `create.templates` in the root `vite.config.ts`:
 
 ```ts
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   create: {
@@ -300,7 +300,7 @@ Relative `./...` paths resolve against the enclosing `@org/create` package root 
 Commit this in `vite.config.ts` at the project root:
 
 ```ts
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   create: { defaultTemplate: '@your-org' },

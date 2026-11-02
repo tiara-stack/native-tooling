@@ -17,7 +17,7 @@ Use `-c <path>` or `--config <path>` with `vp lint` or `vp fmt` to select anothe
 Use `lint.overrides` for Oxlint rules that only apply to some packages:
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   lint: {
@@ -70,7 +70,7 @@ When a `lint.overrides` entry sets `plugins`, that list will be merged with the 
 Use `fmt.overrides` for file or package-specific Oxfmt options. Formatter overrides put their settings under `options`:
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   fmt: {
@@ -99,7 +99,7 @@ export default defineConfig({
 You can split configuration across your repository and compose them using JavaScript imports. Export JavaScript objects from nearby files or packages, import them in the root config, and merge them into the matching override.
 
 ```ts [tooling/lint/react.ts]
-import type { OxlintOverride } from 'vite-plus/lint';
+import type { OxlintOverride } from '@tiara-stack/vite-plus/lint';
 
 export const reactLint = {
   plugins: ['typescript', 'react'],
@@ -110,7 +110,7 @@ export const reactLint = {
 ```
 
 ```ts [tooling/lint/node.ts]
-import type { OxlintOverride } from 'vite-plus/lint';
+import type { OxlintOverride } from '@tiara-stack/vite-plus/lint';
 
 export const nodeLint = {
   env: {
@@ -123,7 +123,7 @@ export const nodeLint = {
 ```
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 import { nodeLint } from './tooling/lint/node';
 import { reactLint } from './tooling/lint/react';
@@ -238,7 +238,7 @@ note: vp dev: using ./apps/web (defaultPackage in vite.config.ts)
   ➜  Local:   http://localhost:5173/
 ```
 
-This is the right choice for framework monorepos that are not JavaScript workspaces, such as a Laravel or Rails app with a `frontend/` directory: there is no package list to resolve, so `defaultPackage` points vp straight at the app. Because vp reads it without executing the config, it works even when `vite-plus` is installed only inside that subdirectory.
+This is the right choice for framework monorepos that are not JavaScript workspaces, such as a Laravel or Rails app with a `frontend/` directory: there is no package list to resolve, so `defaultPackage` points vp straight at the app. Because vp reads it without executing the config, it works even when `@tiara-stack/vite-plus` is installed only inside that subdirectory.
 
 An object form maps commands individually, so `vp pack` can target a library while `vp dev` targets an app; a command absent from the object falls through to the resolution above:
 

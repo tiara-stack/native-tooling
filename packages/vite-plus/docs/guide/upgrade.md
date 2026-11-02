@@ -1,13 +1,13 @@
 # Upgrading Vite+
 
-Use `vp upgrade` to update the global `vp` binary. To update the local `vite-plus` package in a project, see [Update Vite+](/guide/upgrade-project).
+Use `vp upgrade` to update the global `vp` binary. To update the local `@tiara-stack/vite-plus` package in a project, see [Update Vite+](/guide/upgrade-project).
 
 ## Overview
 
 There are two parts to upgrading Vite+:
 
 - The global `vp` command installed on your machine
-- The [local `vite-plus` package](/guide/upgrade-project) used by an individual project
+- The [local `@tiara-stack/vite-plus` package](/guide/upgrade-project) used by an individual project
 
 You can upgrade both of them independently.
 
@@ -22,13 +22,13 @@ vp toolchain vite rolldown oxc
 vp toolchain --json
 ```
 
-The command uses the local `vite-plus` package when the project has one. Use `--global` to show the release for the global `vp` command:
+The command uses the local `@tiara-stack/vite-plus` package when the project has one. Use `--global` to show the release for the global `vp` command:
 
 ```bash
 vp toolchain --global
 ```
 
-`vp why <package>` shows the dependency graph from the package manager. It cannot show code bundled into `@voidzero-dev/vite-plus-core`. It also cannot show engines compiled into Vite+. Use `vp toolchain` to show those versions and relationships.
+`vp why <package>` shows the dependency graph from the package manager. It cannot show code bundled into `@tiara-stack/vite-plus-core`. It also cannot show engines compiled into Vite+. Use `vp toolchain` to show those versions and relationships.
 
 ## Global `vp`
 
@@ -97,7 +97,7 @@ Some Vite+ pull requests publish temporary packages for testing before an npm re
 
 Each commit on an eligible pull request is published to the [registry bridge](https://registry-bridge.viteplus.dev/). The bridge serves these builds as ordinary npm versions of the form `0.0.0-commit.<sha>` and proxies every other package to the npm registry. That means you install a preview with normal version specs instead of mutable URLs, and the same versions resolve in CI.
 
-Both `vite-plus` and `@voidzero-dev/vite-plus-core` publish under the same `0.0.0-commit.<sha>` version. Each pull request carries a comment listing the exact version for its latest commit, along with ready-to-copy install steps.
+Both `@tiara-stack/vite-plus` and `@tiara-stack/vite-plus-core` publish under the same `0.0.0-commit.<sha>` version. Each pull request carries a comment listing the exact version for its latest commit, along with ready-to-copy install steps.
 
 You can find preview builds in pull requests that automatically update upstream dependencies. For examples, search the merged pull requests for [upstream dependency updates](https://github.com/voidzero-dev/vite-plus/pulls?q=is%3Apr+is%3Amerged+upgrade+upstream+dependencies).
 
@@ -121,6 +121,6 @@ Remove-Item Env:\VP_PR_VERSION
 
 The installer uses the registry bridge to resolve the ref to a `0.0.0-commit.<sha>` build. It installs this build like other versions. Run `vp toolchain --global` to show the active build and tool versions. After testing, run `vp upgrade --force` to restore the published release. You can also run the installer without `VP_PR_VERSION`.
 
-### Local `vite-plus` Preview
+### Local `@tiara-stack/vite-plus` Preview
 
 To use the same preview in a project, follow [Update Vite+](/guide/upgrade-project#preview-builds).

@@ -89,6 +89,7 @@ for (const marker of [
 ]) {
   assert.ok(code.includes(marker), `generated CLI lost ${marker}`);
 }
+await checkDocumentation(packageRoot);
 const internal = await readFile(
   join(root, "packages/effect-vitest/src/internal/internal.ts"),
   "utf8",
@@ -101,4 +102,20 @@ console.log(
 
 function exportPaths(value) {
   return typeof value === "string" ? [value] : Object.values(value ?? {}).flatMap(exportPaths);
+}
+
+async function checkDocumentation(directory) {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    if (entry.name === "node_modules" || entry.name === "binding" || entry.name === "dist")
+      continue;
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) await checkDocumentation(path);
+    else if (entry.name.endsWith(".md")) {
+      assert.doesNotMatch(
+        await readFile(path, "utf8"),
+        /(?:from\s*|(?:import|require)\s*\(\s*|import\s*)["']vite-plus(?=\/|["'])/,
+        `Generated documentation imports an unscoped Vite+ package: ${path}`,
+      );
+    }
+  }
 }

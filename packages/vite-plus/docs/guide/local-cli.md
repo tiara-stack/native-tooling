@@ -1,6 +1,6 @@
 # Project-local CLI
 
-Different from [global `vp` cli](/guide/global-cli), the `vite-plus` is a npm package which contains the project-local `vp` CLI and the integrated frontend toolchain. Install it as a development dependency when you want the toolchain version recorded in the project's manifest and lockfile, or when you do not want to install the standalone global CLI.
+Different from [global `vp` cli](/guide/global-cli), the `@tiara-stack/vite-plus` is a npm package which contains the project-local `vp` CLI and the integrated frontend toolchain. Install it as a development dependency when you want the toolchain version recorded in the project's manifest and lockfile, or when you do not want to install the standalone global CLI.
 
 The local package includes Vite, Rolldown, Vitest, Oxlint, Oxfmt, tsdown, the Vite+ task runner, and package-manager commands. It requires an existing Node.js runtime and package manager.
 
@@ -45,26 +45,26 @@ If you are manually migrating a project to Vite+, install these dev dependencies
 vp install -D vite-plus
 ```
 
-You need to add overrides to your package manager so that other packages resolve the Vite+ versions: alias `vite` to `@voidzero-dev/vite-plus-core`, and pin `vitest` to the version Vite+ bundles (run `vp --version`) so the whole project shares a single Vitest copy with `vp test`. Without the `vitest` pin, a dependency or workspace package can pull a different Vitest than the bundled runner, splitting Vitest's internals (mocks, `expect`, runner state):
+You need to add overrides to your package manager so that other packages resolve the Vite+ versions: alias `vite` to `@tiara-stack/vite-plus-core`, and pin `vitest` to the version Vite+ bundles (run `vp --version`) so the whole project shares a single Vitest copy with `vp test`. Without the `vitest` pin, a dependency or workspace package can pull a different Vitest than the bundled runner, splitting Vitest's internals (mocks, `expect`, runner state):
 
 ::: code-group
 
 ```yaml [pnpm-workspace.yaml]
 overrides:
-  vite: npm:@voidzero-dev/vite-plus-core@latest
+  vite: npm:@tiara-stack/vite-plus-core@latest
   vitest: 5.0.1
 ```
 
 ```json [npm / Bun package.json]
 "overrides": {
-  "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+  "vite": "npm:@tiara-stack/vite-plus-core@latest",
   "vitest": "5.0.1"
 }
 ```
 
 ```json [Yarn package.json]
 "resolutions": {
-  "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+  "vite": "npm:@tiara-stack/vite-plus-core@latest",
   "vitest": "5.0.1"
 }
 ```
@@ -73,18 +73,18 @@ overrides:
 
 ::: details Why are these settings needed?
 
-Dependencies and plugins can import `vite` or `vitest` directly, even when your own code imports from `vite-plus`. These overrides align their dependencies with the toolchain Vite+ uses:
+Dependencies and plugins can import `vite` or `vitest` directly, even when your own code imports from `@tiara-stack/vite-plus`. These overrides align their dependencies with the toolchain Vite+ uses:
 
 - The `vite` alias directs those imports to Vite+'s core package. Separate Vite instances can break runtime identity checks: [issue #1391](https://github.com/voidzero-dev/vite-plus/issues/1391) reported TanStack Start returning 404s because an `instanceof` check crossed two copies. [PR #2617](https://github.com/voidzero-dev/vite-plus/pull/2617) addresses the CLI side by sharing Vite through the same alias.
 - The exact `vitest` pin keeps dependencies and `vp test` on the same Vitest version, avoiding separate mocks, `expect` instances, and runner state. [PR #2365](https://github.com/voidzero-dev/vite-plus/pull/2365) documents this requirement for manual installation.
 
-Keep the core alias aligned with your installed `vite-plus` version and update the Vitest pin to match its bundled version when upgrading. [Issue #2356](https://github.com/voidzero-dev/vite-plus/issues/2356) describes how dependency bots can update these packages independently and leave incompatible versions installed together.
+Keep the core alias aligned with your installed `@tiara-stack/vite-plus` version and update the Vitest pin to match its bundled version when upgrading. [Issue #2356](https://github.com/voidzero-dev/vite-plus/issues/2356) describes how dependency bots can update these packages independently and leave incompatible versions installed together.
 
 :::
 
 ## Best Practices
 
-We recommend using the [global CLI](/guide/global-cli) together with the project-local CLI. The global CLI makes `vp` available directly in your terminal and delegates development commands such as `vp dev`, `vp build`, and `vp test` to the project's installed `vite-plus` package. This gives you convenient access to the toolchain while keeping its version controlled by the project. You can also use only the project-local CLI if you prefer.
+We recommend using the [global CLI](/guide/global-cli) together with the project-local CLI. The global CLI makes `vp` available directly in your terminal and delegates development commands such as `vp dev`, `vp build`, and `vp test` to the project's installed `@tiara-stack/vite-plus` package. This gives you convenient access to the toolchain while keeping its version controlled by the project. You can also use only the project-local CLI if you prefer.
 
 For open-source projects or any project with collaborators, we recommend adding `package.json` scripts that call `vp`, whether you use both CLIs or only the project-local CLI. Inside scripts, `vp` resolves automatically from `node_modules/.bin`:
 
@@ -118,6 +118,6 @@ The local package cannot manage the machine-level Vite+ installation. The `vp en
 
 ## Add the Global CLI Later
 
-You can install the global CLI at any time without changing the project's dependency. Commands such as `vp dev`, `vp build`, and `vp test` will continue to use the project's installed `vite-plus` version.
+You can install the global CLI at any time without changing the project's dependency. Commands such as `vp dev`, `vp build`, and `vp test` will continue to use the project's installed `@tiara-stack/vite-plus` version.
 
 See [Use Both CLIs Together](/guide/global-cli#use-both-clis-together) for the selection rules.

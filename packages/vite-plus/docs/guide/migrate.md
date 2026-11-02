@@ -151,15 +151,15 @@ View and copy this prompt into your coding agent to upgrade an existing Vite+ 0.
 
 ### Vitest
 
-Vitest is automatically migrated through `vp migrate`. `vite-plus` re-exports upstream `vitest@5.0.1` under `vite-plus/test*`, so for node-mode tests a single `vite-plus` install is enough — you no longer need to install `vitest` directly.
+Vitest is automatically migrated through `vp migrate`. `@tiara-stack/vite-plus` re-exports upstream `vitest@5.0.1` under `@tiara-stack/vite-plus/test*`, so for node-mode tests a single `@tiara-stack/vite-plus` install is enough — you no longer need to install `vitest` directly.
 
-For browser mode, you can use the base browser runtime (`@vitest/browser`) and Preview provider (`@vitest/browser-preview`) included in `vite-plus`. To use Playwright or WebDriverIO, you also need the opt-in provider (`@vitest/browser-playwright` or `@vitest/browser-webdriverio`) and its framework peer (`playwright` or `webdriverio`).
+For browser mode, you can use the base browser runtime (`@vitest/browser`) and Preview provider (`@vitest/browser-preview`) included in `@tiara-stack/vite-plus`. To use Playwright or WebDriverIO, you also need the opt-in provider (`@vitest/browser-playwright` or `@vitest/browser-webdriverio`) and its framework peer (`playwright` or `webdriverio`).
 
-`vp migrate` adds the Playwright provider at the bundled Vitest version and ensures its framework peer. You can import it from `vite-plus/test/browser-playwright`.
+`vp migrate` adds the Playwright provider at the bundled Vitest version and ensures its framework peer. You can import it from `@tiara-stack/vite-plus/test/browser-playwright`.
 
 For WebDriverIO, import from the community-maintained `@vitest/browser-webdriverio`. Migration restores legacy Vite+ provider imports, ensures a provider version of at least `5.0.0`, and adds an `@vitest/browser` override that matches the bundled runner. Manage later provider upgrades and framework peers yourself. See [Community WebDriverIO provider](./vitest-v5.md#community-webdriverio-provider).
 
-If you are migrating manually, update all the imports to `vite-plus/test*` instead:
+If you are migrating manually, update all the imports to `@tiara-stack/vite-plus/test*` instead:
 
 ```ts
 // before
@@ -170,14 +170,14 @@ import { playwright } from '@vitest/browser-playwright';
 const { page } = await import('@vitest/browser/context');
 
 // after
-import { defineConfig } from 'vite-plus';
-import { describe, expect, it, vi } from 'vite-plus/test';
-import { playwright } from 'vite-plus/test/browser-playwright';
+import { defineConfig } from '@tiara-stack/vite-plus';
+import { describe, expect, it, vi } from '@tiara-stack/vite-plus/test';
+import { playwright } from '@tiara-stack/vite-plus/test/browser-playwright';
 
-const { page } = await import('vite-plus/test/browser/context');
+const { page } = await import('@tiara-stack/vite-plus/test/browser/context');
 ```
 
-`declare module 'vitest'` / `declare module '@vitest/browser*'` augmentations are intentionally **not** rewritten — `vite-plus/test*` is a thin re-export of upstream `vitest*`, so type augmentations have to target the upstream module identity to merge correctly. Leave those `declare module` statements pointing at `'vitest'` / `'@vitest/browser*'`.
+`declare module 'vitest'` / `declare module '@vitest/browser*'` augmentations are intentionally **not** rewritten — `@tiara-stack/vite-plus/test*` is a thin re-export of upstream `vitest*`, so type augmentations have to target the upstream module identity to merge correctly. Leave those `declare module` statements pointing at `'vitest'` / `'@vitest/browser*'`.
 
 ### tsdown
 
@@ -205,7 +205,7 @@ export default defineConfig({
 ```
 
 ```ts [vite.config.ts] {4-8}
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   pack: {
@@ -225,7 +225,7 @@ Vite+ replaces lint-staged with its own `staged` block in `vite.config.ts`. Only
 Move your lint-staged rules into the `staged` block:
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   staged: {

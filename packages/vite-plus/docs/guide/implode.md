@@ -1,6 +1,6 @@
 # Removing Vite+
 
-Use `vp implode` to remove the Vite+-managed [global `vp` installation](/guide/global-cli) and related user data from your machine. It does not remove `vite-plus` dependencies from projects or packages owned by Homebrew.
+Use `vp implode` to remove the Vite+-managed [global `vp` installation](/guide/global-cli) and related user data from your machine. It does not remove `@tiara-stack/vite-plus` dependencies from projects or packages owned by Homebrew.
 
 ## Overview
 

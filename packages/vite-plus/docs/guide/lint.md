@@ -29,7 +29,7 @@ An explicit `vp lint -c <path>` or `vp lint --config <path>` selects another con
 For the upstream rule set, options, and compatibility details, see the [Oxlint docs](https://oxc.rs/docs/guide/usage/linter.html).
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   lint: {
@@ -59,10 +59,10 @@ JS Plugins also enable [writing your own custom rules](https://oxc.rs/docs/guide
 
 ### Writing Your Own Rules
 
-Import the plugin authoring API from `vite-plus/lint/plugins`:
+Import the plugin authoring API from `@tiara-stack/vite-plus/lint/plugins`:
 
 ```js [lint/my-plugin.js]
-import { definePlugin, defineRule } from 'vite-plus/lint/plugins';
+import { definePlugin, defineRule } from '@tiara-stack/vite-plus/lint/plugins';
 
 const noFoo = defineRule({
   meta: { messages: { noFoo: 'Do not name things "foo".' } },
@@ -86,7 +86,7 @@ export default definePlugin({
 Register it under `lint.jsPlugins` and enable its rules:
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   lint: {
@@ -98,10 +98,10 @@ export default defineConfig({
 });
 ```
 
-For rule tests, `RuleTester` is available from `vite-plus/lint/plugins-dev`.
+For rule tests, `RuleTester` is available from `@tiara-stack/vite-plus/lint/plugins-dev`.
 
 Both entrypoints re-export the copy that ships with Vite+. The API therefore always matches the bundled Oxlint.
 
 Use them instead of adding `@oxlint/plugins` or `oxlint` as a direct dependency. A separately pinned copy can drift from the linter that loads your plugin. It also does not resolve from a plugin file under pnpm's strict layout, unless every package that holds a plugin declares it.
 
-`vp migrate` rewrites existing `oxlint` and `@oxlint/plugins` imports for you. See [Oxlint JS Plugin Imports](/guide/migrate-rules#oxlint-js-plugin-imports). The `vite-plus/prefer-vite-plus-imports` rule reports any that come back.
+`vp migrate` rewrites existing `oxlint` and `@oxlint/plugins` imports for you. See [Oxlint JS Plugin Imports](/guide/migrate-rules#oxlint-js-plugin-imports). The `@tiara-stack/vite-plus/prefer-vite-plus-imports` rule reports any that come back.

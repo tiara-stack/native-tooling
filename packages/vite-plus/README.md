@@ -46,7 +46,7 @@ irm https://viteplus.dev/install.ps1 | iex
 Vite+ can be configured using a single `vite.config.ts` at the root of your project:
 
 ```ts
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   // Standard Vite configuration for dev/build/preview.
@@ -198,11 +198,11 @@ If you are manually migrating a project to Vite+, install these dev dependencies
 vp install -D vite-plus
 ```
 
-Add package-manager overrides so that other packages use the Vite+ versions. Alias `vite` to `@voidzero-dev/vite-plus-core`. Pin `vitest` to the version from `vp toolchain vitest`. The project and `vp test` then use the same Vitest copy. Without the pin, a dependency or workspace package can install a different Vitest version. The two versions can use separate mocks, `expect` functions, and runner states:
+Add package-manager overrides so that other packages use the Vite+ versions. Alias `vite` to `@tiara-stack/vite-plus-core`. Pin `vitest` to the version from `vp toolchain vitest`. The project and `vp test` then use the same Vitest copy. Without the pin, a dependency or workspace package can install a different Vitest version. The two versions can use separate mocks, `expect` functions, and runner states:
 
 ```json
 "overrides": {
-  "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+  "vite": "npm:@tiara-stack/vite-plus-core@latest",
   "vitest": "5.0.1"
 }
 ```
@@ -211,7 +211,7 @@ If you are using `pnpm`, add this to your `pnpm-workspace.yaml`:
 
 ```yaml
 overrides:
-  vite: npm:@voidzero-dev/vite-plus-core@latest
+  vite: npm:@tiara-stack/vite-plus-core@latest
   vitest: 5.0.1
 ```
 
@@ -219,7 +219,7 @@ Or, if you are using Yarn:
 
 ```json
 "resolutions": {
-  "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+  "vite": "npm:@tiara-stack/vite-plus-core@latest",
   "vitest": "5.0.1"
 }
 ```

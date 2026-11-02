@@ -4,7 +4,7 @@ You can configure Vite Task under the `run` field in `vite.config.ts`. Check out
 
 <!-- prettier-ignore -->
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   run: {
