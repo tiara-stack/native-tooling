@@ -11,19 +11,19 @@ For most of use cases, we recommend to use Vite+ cli to install in a project or 
 ::: code-group
 
 ```bash [pnpm]
-pnpm dlx --package=vite-plus vp create
+pnpm dlx --package=@tiara-stack/vite-plus vp create
 ```
 
 ```bash [npm]
-npx --package=vite-plus vp create
+npx --package=@tiara-stack/vite-plus vp create
 ```
 
 ```bash [Yarn]
-yarn dlx --package vite-plus vp create
+yarn dlx --package @tiara-stack/vite-plus vp create
 ```
 
 ```bash [Bun]
-bunx --package vite-plus vp create
+bunx --package @tiara-stack/vite-plus vp create
 ```
 
 :::
@@ -42,7 +42,7 @@ The documentation uses bare `vp` commands for readability. Without the global CL
 If you are manually migrating a project to Vite+, install these dev dependencies first:
 
 ```bash
-vp install -D vite-plus
+vp install -D @tiara-stack/vite-plus
 ```
 
 You need to add overrides to your package manager so that other packages resolve the Vite+ versions: alias `vite` to `@tiara-stack/vite-plus-core`, and pin `vitest` to the version Vite+ bundles (run `vp --version`) so the whole project shares a single Vitest copy with `vp test`. Without the `vitest` pin, a dependency or workspace package can pull a different Vitest than the bundled runner, splitting Vitest's internals (mocks, `expect`, runner state):

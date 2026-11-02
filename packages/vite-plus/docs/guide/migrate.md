@@ -100,11 +100,11 @@ Use an existing Node.js runtime that satisfies `^22.18.0 || ^24.11.0 || >=26.0.0
 ::: code-group
 
 ```bash [pnpm]
-pnpm dlx --package=vite-plus@1.0.0 vp migrate --no-interactive
+pnpm dlx --package=@tiara-stack/vite-plus@1.0.0 vp migrate --no-interactive
 ```
 
 ```bash [npm]
-npx --package=vite-plus@1.0.0 vp migrate --no-interactive
+npx --package=@tiara-stack/vite-plus@1.0.0 vp migrate --no-interactive
 ```
 
 :::

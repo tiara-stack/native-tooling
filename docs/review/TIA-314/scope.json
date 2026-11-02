@@ -17,7 +17,7 @@
     "reviewed_paths": 0,
     "pending_review_target_paths": 436
   },
-  "review_state": "Original430 targets independently reviewed at frozen af417be1; generator/docs repair adds6 targets and awaits bounded affected-scope re-entry. This inventory does not certify a current-head whole review pass.",
+  "review_state": "Original430 targets independently reviewed at af417be1 and bounded436-target re-entry completed at636629628 with a valid documentation package-operand finding. The resulting command repair awaits affected-scope re-entry. This inventory does not certify a current-head whole review pass.",
   "custom_overlay_patch_sha256": "0092edde3a8815aa7d9fcdd9d6e4b88f54c1c9caafe50a213767e0b1c6b112bc",
   "authorized_import_exclusions": [
     {
@@ -40423,5 +40423,21 @@
     ],
     "producer_inputs": "Unchanged local Vite+1.0 producer; regenerate scoped artifacts only",
     "review_reentry": "A:35 changed docs plus A002 legacy-matcher disposition. B:2 generator/check scripts. C:scope metadata only."
+  },
+  "command_documentation_repair": {
+    "findings": [
+      "TIA314-A-003",
+      "TIA314-B-001"
+    ],
+    "change": "Scope project-local vp install operands and --package arguments while preserving versions; independently reject unscoped documentation package operands.",
+    "generated_doc_paths": [
+      "packages/vite-plus/README.md",
+      "packages/vite-plus/docs/guide/local-cli.md",
+      "packages/vite-plus/docs/guide/migrate.md"
+    ],
+    "unscoped_command_occurrences": 8,
+    "producer_inputs": "Unchanged retained local Vite+1.0 producers; scoped generation only",
+    "review_reentry": "A:3 generated docs. B:2 generator/check scripts and shared-transform impact. C:scope metadata only.",
+    "prior_scope": "436 reviewed at frozen636 with398 qualified carry and38 reentered; valid package-command finding retained"
   }
 }

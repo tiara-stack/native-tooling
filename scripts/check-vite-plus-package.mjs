@@ -111,11 +111,31 @@ async function checkDocumentation(directory) {
     const path = join(directory, entry.name);
     if (entry.isDirectory()) await checkDocumentation(path);
     else if (entry.name.endsWith(".md")) {
+      const text = await readFile(path, "utf8");
       assert.doesNotMatch(
-        await readFile(path, "utf8"),
+        text,
         /(?:from\s*|(?:import|require)\s*\(\s*|import\s*)["']vite-plus(?=\/|["'])/,
         `Generated documentation imports an unscoped Vite+ package: ${path}`,
       );
+      for (const [index, line] of text.split(/\r?\n/).entries()) {
+        const tokens = line
+          .trim()
+          .split(/\s+/)
+          .map((token) => token.replace(/["'`]/g, ""));
+        const localInstall = tokens[0] === "vp" && tokens[1] === "install";
+        for (const [argument, token] of tokens.entries()) {
+          const specifier = token.startsWith("--package=")
+            ? token.slice("--package=".length)
+            : tokens[argument - 1] === "--package" || (localInstall && argument > 1)
+              ? token
+              : "";
+          assert.doesNotMatch(
+            specifier,
+            /^vite-plus(?:@|$)/,
+            `Generated documentation selects an unscoped Vite+ package: ${path}:${index + 1}`,
+          );
+        }
+      }
     }
   }
 }

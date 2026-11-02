@@ -195,7 +195,7 @@ See [Automatic Version Updates](https://viteplus.dev/guide/ci#automatic-version-
 If you are manually migrating a project to Vite+, install these dev dependencies first:
 
 ```bash
-vp install -D vite-plus
+vp install -D @tiara-stack/vite-plus
 ```
 
 Add package-manager overrides so that other packages use the Vite+ versions. Alias `vite` to `@tiara-stack/vite-plus-core`. Pin `vitest` to the version from `vp toolchain vitest`. The project and `vp test` then use the same Vitest copy. Without the pin, a dependency or workspace package can install a different Vitest version. The two versions can use separate mocks, `expect` functions, and runner states:

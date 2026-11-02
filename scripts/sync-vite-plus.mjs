@@ -142,13 +142,20 @@ async function rewriteTree(directory) {
     const path = join(directory, entry.name);
     if (entry.isDirectory()) await rewriteTree(path);
     else if (/\.(?:[cm]?js|[cm]?ts|json|md)$/.test(entry.name)) {
-      const text = await readFile(path, "utf8");
-      await writeFile(
-        path,
-        text
-          .replaceAll("@voidzero-dev/vite-plus-core", "@tiara-stack/vite-plus-core")
-          .replace(/(["'`])vite-plus(?=\/|["'`])/g, "$1@tiara-stack/vite-plus"),
-      );
+      let text = (await readFile(path, "utf8"))
+        .replaceAll("@voidzero-dev/vite-plus-core", "@tiara-stack/vite-plus-core")
+        .replace(/(["'`])vite-plus(?=\/|["'`])/g, "$1@tiara-stack/vite-plus");
+      if (entry.name.endsWith(".md")) {
+        text = text
+          .replace(
+            /(--package(?:=|[ \t]+)["'`]?)vite-plus(?=@|[ \t"'`]|$)/gm,
+            "$1@tiara-stack/vite-plus",
+          )
+          .replace(/^[ \t]*vp install(?:[ \t]+[^\r\n]*)?$/gm, (command) =>
+            command.replace(/([ \t]["'`]?)vite-plus(?=@|[ \t"'`]|$)/g, "$1@tiara-stack/vite-plus"),
+          );
+      }
+      await writeFile(path, text);
     }
   }
 }
