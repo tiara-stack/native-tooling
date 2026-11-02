@@ -1,7 +1,7 @@
 {
   "ticket": "TIA-314",
-  "implementation_commit": "e5299c70dcaa6f835083fb0d51bf1fb78dca4c7c",
-  "base": "bb85296ad5ae029df510b3a3dce7d5ba9e271021",
+  "implementation_commit": "ce7c7319ac3f52525e80247abac68b38c513a5f3",
+  "base": "27e143d6cf517db2827e5269fae63d688a7a0cb3",
   "upstream": {
     "repository": "https://github.com/voidzero-dev/vite-plus",
     "commit": "fc287d7b1c0dc008dbc65d1d2b2f51a44e2a5ea4",
@@ -17,7 +17,7 @@
     "reviewed_paths": 0,
     "pending_review_target_paths": 430
   },
-  "review_state": "Prepared against updated assigned TIA-312 parent; no reviewer invoked in implementation or rebase phases.",
+  "review_state": "Prepared against exact27e143d6 assigned parent; semantic review pending separate quota.",
   "custom_overlay_patch_sha256": "0092edde3a8815aa7d9fcdd9d6e4b88f54c1c9caafe50a213767e0b1c6b112bc",
   "authorized_import_exclusions": [
     {
@@ -40311,9 +40311,9 @@
     }
   ],
   "rebase_proof": {
-    "grant": "tia310-20261030-e2166ed7-tia314-updated-parent-rebase-r2",
+    "grant": "tia310-20261030-e2166ed7-tia314-updated-parent-rebase-r3",
     "parent_branch": "theerapakg/tia-312-rebase-the-custom-oxlint-fork-on-oxlint-1870",
-    "parent_commit": "bb85296ad5ae029df510b3a3dce7d5ba9e271021",
+    "parent_commit": "27e143d6cf517db2827e5269fae63d688a7a0cb3",
     "pre_rebase_head": "be33ba542849a77a546458680136fe6a2c444d64",
     "rebased_implementation_head": "e7ea172a484eb20b9dcdd478b44bc7a40a818365",
     "authorized_exclusion_blobs_and_modes_unchanged": 6420,
@@ -40330,7 +40330,7 @@
       "generated_vite_core_cli_and_helper_tree_files": 413,
       "native_artifact_identity": "unchanged Vite+ CLI and Rolldown bindings; exact accepted TIA-312 compiler/backend/Oxlint copies used for integration checks"
     },
-    "prior_assigned_parent": "6918683dd17ce79d6aefeadc9c87637c9f4c4b67",
+    "prior_assigned_parent": "bb85296ad5ae029df510b3a3dce7d5ba9e271021",
     "updated_parent_rebase": {
       "pre_rebase_head": "9048c1603ef92467c53609aa45a836ee2a4bcf83",
       "rebased_head_before_accounting_commit": "41b44521dfd89ca5f1550c4829833618ae40e779",
@@ -40342,6 +40342,15 @@
       "producer_generator_runtime_and_native_inputs": "unchanged; exact identities reverified",
       "prior_check_evidence": ".tmp/TIA-314/rebase-r1/stack-ready.json",
       "invalidated_checks": "patched npm CLI override negative-path regression; released patch application/package contract"
+    },
+    "fixture_guard_rebase": {
+      "pre_rebase_head": "9d8ee967e1e1c5af4d6b3325a33e45e469b29cf0",
+      "rebased_source_head": "557e16d09f6dea52f608e71fcb07ad9803682599",
+      "parent_delta": "Only inherited test scratch precondition and44 parent packet bindings",
+      "effective_inputs": "430 own target blobs,25 input payloads and428 output/context hashes unchanged before scope metadata rebind",
+      "checks": "Outside10case regression, syntax and expected actionable inside-checkout precondition guard pass",
+      "presubmit_carry": ".tmp/TIA-314/presubmit-r1/presubmit-ready.json",
+      "rebound_scope": ".tmp/TIA-314/rebase-r3/scope-ready.json"
     }
   },
   "generated_output_review_policy": {
