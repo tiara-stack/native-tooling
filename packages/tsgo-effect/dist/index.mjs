@@ -1,13 +1,22 @@
+import { createRequire } from "node:module";
 import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 //#region src/index.ts
 const executableName = process.platform === "win32" ? "tsgo.exe" : "tsgo";
 const packageRoot = findPackageRoot(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
 const resolveTsgoEffectPath = () => {
+	const explicitPath = [process.env.TIARA_TSGO_EFFECT_PATH, process.env.TIARA_TSGO_PATH].find((path) => Boolean(path && existsSync(path)));
+	if (explicitPath) return explicitPath;
+	const sourceRoot = resolve(packageRoot, "../..");
+	if (existsSync(join(sourceRoot, "native", "typescript-go", "go.mod"))) {
+		const sourceBinary = join(sourceRoot, "native", "typescript-go", "built", "local", executableName);
+		if (existsSync(sourceBinary)) return sourceBinary;
+		throw new Error("Repository-local tsgo-effect is not built. Run pnpm native:build:tsgo.");
+	}
 	const binaryPath = [
-		process.env.TIARA_TSGO_EFFECT_PATH,
-		process.env.TIARA_TSGO_PATH,
+		resolvePlatformBinary(),
 		join(packageRoot, "vendor", `${process.platform}-${process.arch}`, executableName),
 		findUp(process.cwd(), join("native", "typescript-go", "built", "local", executableName)),
 		findUp(packageRoot, join("native", "typescript-go", "built", "local", executableName))
@@ -19,6 +28,15 @@ const resolveTsgoEffectPath = () => {
 	].join(" "));
 	return binaryPath;
 };
+function resolvePlatformBinary() {
+	if (process.platform !== "linux" || process.arch !== "x64") return void 0;
+	try {
+		const manifest = require.resolve("@tiara-stack/tsgo-effect-linux-x64/package.json");
+		return join(dirname(manifest), "vendor", executableName);
+	} catch {
+		return;
+	}
+}
 function findPackageRoot(start) {
 	let directory = dirname(start);
 	while (true) {
