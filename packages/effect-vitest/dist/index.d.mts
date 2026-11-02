@@ -61,9 +61,9 @@ export declare namespace Vitest {
      *
      * @since 4.0.0
      */
-    prop: <const Arbs extends Arbitraries, A, E>(name: string, arbitraries: Arbs, self: TestFunction<A, E, R, [{ [K in keyof Arbs]: ArbitraryValue<Arbs[K]>; }, V.TestContext]>, timeout?: number | V.TestOptions & {
+    prop: <const Arbs extends Arbitraries, A, E>(name: string, arbitraries: Arbs, self: TestFunction<A, E, R, [{ [K in keyof Arbs]: ArbitraryValue<Arbs[K]>; }, V.TestContext]>, timeout?: number | (V.TestOptions & {
       arbitrary?: Arbitrary.CheckOptions;
-    }) => void;
+    })) => void;
   }
   /**
    * @since 4.0.0
@@ -94,9 +94,9 @@ export declare namespace Vitest {
      *
      * @since 4.0.0
      */
-    readonly prop: <const Arbs extends Arbitraries>(name: string, arbitraries: Arbs, self: (properties: { [K in keyof Arbs]: ArbitraryValue<Arbs[K]>; }, ctx: V.TestContext) => void, timeout?: number | V.TestOptions & {
+    readonly prop: <const Arbs extends Arbitraries>(name: string, arbitraries: Arbs, self: (properties: { [K in keyof Arbs]: ArbitraryValue<Arbs[K]>; }, ctx: V.TestContext) => void, timeout?: number | (V.TestOptions & {
       arbitrary?: Arbitrary.CheckOptions;
-    }) => void;
+    })) => void;
   }
   /**
    * @since 4.0.0

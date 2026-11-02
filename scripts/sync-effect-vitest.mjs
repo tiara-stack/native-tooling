@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = dirname(fileURLToPath(new URL("../package.json", import.meta.url)));
 const upstream = join(root, "packages/effect-smol-fork/packages/vitest");
@@ -97,14 +98,23 @@ pkg.peerDependencies = {
 };
 pkg.peerDependenciesMeta = { ...pkg.peerDependenciesMeta, vitest: { optional: true } };
 
-await rm(join(target, "src"), { force: true, recursive: true });
-for (const [relative, source] of sources) {
-  await mkdir(dirname(join(target, "src", relative)), { recursive: true });
-  await writeFile(join(target, "src", relative), source);
+// Normalize the scoped rewrites with the selected workspace formatter before
+// replacing retained files, so a missing formatter or parse error is harmless.
+const require = createRequire(
+  join(root, "packages/vite-plus-effect-fork/packages/cli/package.json"),
+);
+const { format } = await import(pathToFileURL(require.resolve("oxfmt")).href);
+async function formatOutput(path, source) {
+  const result = await format(path, source);
+  if (result.errors.length)
+    throw new Error(
+      `Unable to format Effect helper ${path}: ${result.errors.map((error) => error.message).join("; ")}`,
+    );
+  return result.code;
 }
-await writeFile(join(target, "LICENSE"), license);
-await writeFile(join(target, "package.json"), `${JSON.stringify(pkg, null, 2)}\n`);
-await writeFile(
+for (const [relative, source] of sources)
+  sources.set(relative, await formatOutput(join(target, "src", relative), source));
+const formattedReadme = await formatOutput(
   join(target, "README.md"),
   readme
     .replaceAll("@effect/vitest", "@tiara-stack/effect-vitest")
@@ -121,6 +131,15 @@ await writeFile(
       "Install the Vite+ runner and Effect helper as dev dependencies:",
     ),
 );
+
+await rm(join(target, "src"), { force: true, recursive: true });
+for (const [relative, source] of sources) {
+  await mkdir(dirname(join(target, "src", relative)), { recursive: true });
+  await writeFile(join(target, "src", relative), source);
+}
+await writeFile(join(target, "LICENSE"), license);
+await writeFile(join(target, "package.json"), `${JSON.stringify(pkg, null, 2)}\n`);
+await writeFile(join(target, "README.md"), formattedReadme);
 
 console.log(
   `Synced Effect ${upstreamPackage.version} helper for Vite+ ${vitePackage.version} / Vitest ${runnerVersion}`,

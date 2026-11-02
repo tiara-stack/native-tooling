@@ -39162,7 +39162,7 @@
     },
     {
       "path": "packages/vite-plus-effect-fork/packages/cli/package.json",
-      "base_sha256": "68032d7c9636cb5e15e78c44d5c4f199a41ac598cd7e079ee7becba198428f2d",
+      "base_sha256": "cb95960acc5bde9d63eb6b482d7719de52002356e5d2a3d4e5df9eb843c1653c",
       "pin_sha256": "24ec873bffc302ab7c5674cc76f125518ab93cc2521a2efa2e8c354b36a97683",
       "head_sha256": "92bf6b9db21a0f099373999aaf8157a15a0c08e991099e9be27e14b360c6d0dc",
       "mode": "Tiara overlay against approved pin"
@@ -39232,7 +39232,7 @@
     },
     {
       "path": "packages/vite-plus-effect-fork/pnpm-lock.yaml",
-      "base_sha256": "d1a8e65754793167055f5333e6e1f95eceef8ca20a29104251a19b9411accb11",
+      "base_sha256": "5988457b9d100d0b575b90a4455b5753279118294bfa886361a57a7f3748cfd8",
       "pin_sha256": "bf4e7fbf78dead5ad57a0b05f103599ede7be6a7cf77f8a89ddc574c637216f6",
       "head_sha256": "75a7fd7fab36b82176535ad71b07f7f486d4a359bf22dab4075ed18fba59032c",
       "mode": "Tiara overlay against approved pin"
@@ -40353,6 +40353,15 @@
       "packages/vite-plus-core/SOURCE.json",
       "docs/review/TIA-314/custom-source.patch"
     ],
-    "carried_generation_evidence": ".tmp/TIA-314/native-r4-generation.json; rebase identity audit in .tmp/TIA-314/rebase-r1/generated-identity.json"
+    "carried_generation_evidence": "Unchanged Vite+/core mappings: .tmp/TIA-314/native-r4-generation.json. Refreshed helper and complete current/deleted output mappings: .tmp/TIA-314/presubmit-r1/reviewer-inputs.json."
+  },
+  "presubmit_proof": {
+    "starting_head": "96d4f91f590104d0fc96b774f6e19a09500221a9",
+    "parent": "bb85296ad5ae029df510b3a3dce7d5ba9e271021",
+    "helper_normalization": "Use the pinned source-workspace Oxfmt API before any retained helper write; formatter lookup/late parse failures preserve the retained helper.",
+    "helper_generation": "Two normalized generations match; rebuild helper distributions and verify final root suite, TS5.9, formatting, lint, strict packed helper/runtime and package boundary.",
+    "unchanged_producers": "All Vite+/core build drivers/source inputs/outputs and native binaries retain their accepted identities; no producer rebuild.",
+    "review_policy": "Review helper import/metadata rewrites and normalization once, with every affected source/distribution mapping checked. Upstream helper algorithms and embedded stock bundles remain context.",
+    "reviewer_state": "No reviewer or model invoked; prepared for ordered quota grants."
   }
 }

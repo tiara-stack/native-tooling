@@ -52,6 +52,14 @@ function fixture(runner) {
     'export { assert } from "vitest";\n',
   );
   write("packages/effect-smol-fork/packages/vitest/LICENSE", "MIT\n");
+  write(
+    "packages/vite-plus-effect-fork/packages/cli/node_modules/oxfmt/package.json",
+    JSON.stringify({ type: "module", exports: "./index.mjs" }),
+  );
+  write(
+    "packages/vite-plus-effect-fork/packages/cli/node_modules/oxfmt/index.mjs",
+    "export async function format(_path, code) { return { code, errors: [] }; }\n",
+  );
   copyFileSync(upstreamReadme, join(root, "packages/effect-smol-fork/packages/vitest/README.md"));
   write("packages/effect-vitest/src/index.ts", "existing helper\n");
   write("packages/effect-vitest/LICENSE", "existing license\n");
@@ -190,6 +198,39 @@ for (const missing of [
         readFileSync(join(root, "packages/effect-vitest/package.json"), "utf8"),
       );
       assert.equal(pkg.peerDependencies["@tiara-stack/vite-plus"], "^0.2.2");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+}
+
+for (const failure of ["missing formatter", "formatter error"]) {
+  test(`sync preserves the retained helper on ${failure}`, () => {
+    const root = fixture("5.0.1");
+    try {
+      const formatter = join(
+        root,
+        "packages/vite-plus-effect-fork/packages/cli/node_modules/oxfmt",
+      );
+      if (failure === "missing formatter") rmSync(formatter, { recursive: true });
+      else
+        writeFileSync(
+          join(formatter, "index.mjs"),
+          "export async function format(path, code) { return { code, errors: path.endsWith('utils.ts') ? [{ message: 'formatting failed' }] : [] }; }\n",
+        );
+      const result = spawnSync(process.execPath, ["scripts/sync-effect-vitest.mjs"], {
+        cwd: root,
+        encoding: "utf8",
+        env: { ...process.env, NODE_PATH: "" },
+      });
+      assert.notEqual(result.status, 0);
+      assert.match(result.stderr, failure === "missing formatter" ? /oxfmt/ : /formatting failed/);
+      for (const [path, expected] of [
+        ["src/index.ts", "existing helper\n"],
+        ["LICENSE", "existing license\n"],
+        ["README.md", "existing readme\n"],
+      ])
+        assert.equal(readFileSync(join(root, "packages/effect-vitest", path), "utf8"), expected);
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
