@@ -8,7 +8,8 @@ use oxc_ast::{
 };
 use oxc_diagnostics::OxcDiagnostic;
 use oxc_macros::declare_oxc_lint;
-use oxc_span::{CompactStr, GetSpan, Span};
+use oxc_span::{GetSpan, Span};
+use oxc_str::CompactStr;
 
 use crate::{
     AstNode,
@@ -81,11 +82,13 @@ declare_oxc_lint!(
     jsx_a11y,
     correctness,
     config = NoStaticElementInteractionsConfig,
+    version = "1.37.0",
+    short_description = "Enforces that static HTML elements with event handlers must have appropriate ARIA roles.",
 );
 
 impl Rule for NoStaticElementInteractions {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
@@ -149,9 +152,7 @@ impl Rule for NoStaticElementInteractions {
         match role_value {
             JSXAttributeValue::StringLiteral(role) => {
                 let role_str = role.value.as_str().cow_to_lowercase();
-                let roles: Vec<&str> = role_str.split_whitespace().collect();
-
-                if let Some(first_role) = roles.first() {
+                if let Some(first_role) = role_str.split_whitespace().next() {
                     if is_interactive_role(first_role) {
                         return;
                     }
@@ -160,10 +161,8 @@ impl Rule for NoStaticElementInteractions {
                     }
                 }
             }
-            JSXAttributeValue::ExpressionContainer(_) => {
-                if self.allow_expression_values {
-                    return;
-                }
+            JSXAttributeValue::ExpressionContainer(_) if self.allow_expression_values => {
+                return;
             }
             _ => {}
         }

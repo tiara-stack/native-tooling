@@ -166,6 +166,8 @@ fn format_gitlab(diagnostics: &mut Vec<Error>, repo_path_prefix: Option<&Path>) 
 mod test {
     use std::path::{Path, PathBuf};
 
+    use cow_utils::CowUtils;
+
     use oxc_diagnostics::{
         Error, NamedSource, OxcDiagnostic,
         reporter::{DiagnosticReporter, DiagnosticResult},
@@ -201,7 +203,13 @@ mod test {
         assert!(value["fingerprint"].is_string()); // value is different on different architectures
         assert_eq!(value["severity"], "major");
         let location = value["location"].as_object().unwrap();
-        assert_eq!(location["path"], "apps/oxlint/test.ts");
+        let cwd = std::env::current_dir().unwrap();
+        let git_root = find_git_root_from(&cwd).unwrap();
+        let expected_path = cwd.strip_prefix(git_root).unwrap().join("test.ts");
+        assert_eq!(
+            location["path"],
+            expected_path.to_string_lossy().cow_replace('\\', "/").as_ref()
+        );
         let lines = location["lines"].as_object().unwrap();
         assert_eq!(lines["begin"], 1);
         assert_eq!(lines["end"], 1);

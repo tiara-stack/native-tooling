@@ -3,15 +3,17 @@
 //! Code adapted from
 //! * [esbuild](https://github.com/evanw/esbuild/blob/v0.24.0/internal/js_printer/js_printer.go)
 
+#[cfg(not(feature = "sourcemap"))]
+use std::marker::PhantomData;
 use std::{borrow::Cow, cmp, slice};
-
-use cow_utils::CowUtils;
 
 use oxc_ast::ast::*;
 use oxc_data_structures::{code_buffer::CodeBuffer, stack::Stack};
+use oxc_ecmascript::with_number_literal;
 use oxc_index::IndexVec;
 use oxc_semantic::Scoping;
-use oxc_span::{CompactStr, GetSpan, Span};
+use oxc_span::{GetSpan, SourceType, Span};
+use oxc_str::CompactStr;
 use oxc_syntax::{
     class::ClassId,
     identifier::{is_identifier_part, is_identifier_part_ascii},
@@ -21,6 +23,7 @@ use oxc_syntax::{
 use rustc_hash::FxHashMap;
 
 mod binary_expr_visitor;
+mod cjs_module_lexer;
 mod comment;
 mod context;
 mod r#gen;
@@ -46,7 +49,7 @@ pub use oxc_data_structures::code_buffer::IndentChar;
 
 /// Output from [`Codegen::build`]
 #[non_exhaustive]
-pub struct CodegenReturn {
+pub struct CodegenReturn<'a> {
     /// The generated source code.
     pub code: String,
 
@@ -54,7 +57,10 @@ pub struct CodegenReturn {
     ///
     /// You must set [`CodegenOptions::source_map_path`] for this to be [`Some`].
     #[cfg(feature = "sourcemap")]
-    pub map: Option<oxc_sourcemap::SourceMap>,
+    pub map: Option<oxc_sourcemap::SourceMap<'a>>,
+
+    #[cfg(not(feature = "sourcemap"))]
+    _source_map_lifetime: PhantomData<&'a ()>,
 
     /// All the legal comments returned from [LegalComment::Linked] or [LegalComment::External].
     pub legal_comments: Vec<Comment>,
@@ -73,7 +79,7 @@ pub struct CodegenReturn {
 /// let allocator = Allocator::default();
 /// let source = "const a = 1 + 2;";
 /// let parsed = Parser::new(&allocator, source, SourceType::mjs()).parse();
-/// assert!(parsed.errors.is_empty());
+/// assert!(parsed.diagnostics.is_empty());
 ///
 /// let js = Codegen::new().build(&parsed.program);
 /// assert_eq!(js.code, "const a = 1 + 2;\n");
@@ -94,7 +100,9 @@ pub struct Codegen<'a> {
 
     // states
     prev_op_end: usize,
-    prev_reg_exp_end: usize,
+    /// Output position after a regex or escaped identifier that requires a separating space
+    /// before a following identifier, even if its last byte is not an identifier character.
+    need_space_before_identifier: usize,
     need_space_before_dot: usize,
     print_next_indent_as_space: bool,
     binary_expr_stack: Stack<BinaryExpressionVisitor<'a>>,
@@ -121,9 +129,41 @@ pub struct Codegen<'a> {
 
     // Builders
     comments: CommentsMap,
+    has_property_key_annotations: bool,
+
+    /// Pure / no-side-effects annotation comments keyed by `attached_to`,
+    /// so the emission site can recover verbatim source text instead of a
+    /// canonicalised literal (rolldown#9408). The emission site falls back
+    /// to the canonical literal when (a) no comment is stashed, (b) the
+    /// stashed comment's kind doesn't match the emission site (mixed
+    /// `@__PURE__` and `@__NO_SIDE_EFFECTS__` on the same `attached_to`),
+    /// (c) the comment is a line comment but the site can't break the line,
+    /// or (d) source text isn't available.
+    annotation_comments: FxHashMap<u32, Comment>,
+
+    /// Sorted, deduped `attached_to` keys for comments that must survive a
+    /// removed anchor. Lets `print_orphan_comments_before` flush via
+    /// `partition_point` + `drain`.
+    orphan_comment_keys: Vec<u32>,
 
     #[cfg(feature = "sourcemap")]
     sourcemap_builder: Option<SourcemapBuilder<'a>>,
+}
+
+/// How [`Codegen::print_non_ascii_escaped`] escapes a non-ASCII character, by the grammar
+/// of the text being printed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum NonAsciiEscape {
+    /// An IdentifierName.
+    Identifier,
+    /// A regular expression's pattern source (raw text; an escaping backslash is consumed;
+    /// astral characters become a surrogate pair, valid with or without the `u`/`v` flags).
+    RegExp,
+    /// An untagged template literal quasi (raw text; an escaping backslash is consumed, an
+    /// LS/PS line continuation is respelled with LF, `</script` is escaped).
+    TemplateRaw,
+    /// A directive's raw string text (as `TemplateRaw`, without the `</script` handling).
+    Directive,
 }
 
 impl Default for Codegen<'_> {
@@ -165,7 +205,7 @@ impl<'a> Codegen<'a> {
             class_stack: Stack::with_capacity(4),
             next_class_id: ClassId::from_usize(0),
             prev_op_end: 0,
-            prev_reg_exp_end: 0,
+            need_space_before_identifier: 0,
             prev_op: None,
             start_of_stmt: 0,
             start_of_arrow_expr: 0,
@@ -174,6 +214,9 @@ impl<'a> Codegen<'a> {
             indent: 0,
             quote: Quote::Double,
             comments: CommentsMap::default(),
+            has_property_key_annotations: false,
+            annotation_comments: FxHashMap::default(),
+            orphan_comment_keys: Vec::new(),
             #[cfg(feature = "sourcemap")]
             sourcemap_builder: None,
         }
@@ -192,6 +235,13 @@ impl<'a> Codegen<'a> {
     #[must_use]
     pub fn with_source_text(mut self, source_text: &'a str) -> Self {
         self.source_text = Some(source_text);
+        self
+    }
+
+    /// Sets the source type for code fragments printed without a [`Program`].
+    #[must_use]
+    pub fn with_source_type(mut self, source_type: SourceType) -> Self {
+        self.is_jsx = source_type.is_jsx();
         self
     }
 
@@ -221,7 +271,7 @@ impl<'a> Codegen<'a> {
     ///
     /// A source map will be generated if [`CodegenOptions::source_map_path`] is set.
     #[must_use]
-    pub fn build(mut self, program: &Program<'a>) -> CodegenReturn {
+    pub fn build(mut self, program: &Program<'a>) -> CodegenReturn<'a> {
         self.quote = if self.options.single_quote { Quote::Single } else { Quote::Double };
         self.source_text = Some(program.source_text);
         self.indent = self.options.initial_indent;
@@ -240,6 +290,8 @@ impl<'a> Codegen<'a> {
             code,
             #[cfg(feature = "sourcemap")]
             map,
+            #[cfg(not(feature = "sourcemap"))]
+            _source_map_lifetime: PhantomData,
             legal_comments,
         }
     }
@@ -272,6 +324,194 @@ impl<'a> Codegen<'a> {
         self.code.print_str(s);
     }
 
+    /// Print an identifier name (binding, reference, label, private name, property key),
+    /// `\u`-escaping non-ASCII characters when [CodegenOptions::ascii_only] is set.
+    #[inline]
+    pub fn print_name(&mut self, s: &str) {
+        if !self.options.ascii_only || s.is_ascii() {
+            self.code.print_str(s);
+        } else {
+            self.print_non_ascii_escaped(s, NonAsciiEscape::Identifier);
+            self.need_space_before_identifier = self.code.len();
+        }
+    }
+
+    /// Print `s`, replacing every non-ASCII character with an escape sequence according to
+    /// `mode` (see [NonAsciiEscape]). ASCII runs are copied through unchanged, except that
+    /// `</script` is escaped in [NonAsciiEscape::TemplateRaw] mode like everywhere else
+    /// template text is printed.
+    #[cold]
+    pub(crate) fn print_non_ascii_escaped(&mut self, s: &str, mode: NonAsciiEscape) {
+        let raw = mode != NonAsciiEscape::Identifier;
+        let mut start = 0;
+        for (i, ch) in s.char_indices() {
+            if ch.is_ascii() {
+                continue;
+            }
+            // In raw text (regex source, template raw) the character may itself be the
+            // target of a backslash: an identity escape `\é` in a non-`u` regex, a
+            // NonEscapeCharacter `\é` or a LineContinuation `\<LS>` in a template. Emitting
+            // `\uXXXX` after that backslash would produce `\\uXXXX` — an escaped backslash
+            // followed by literal text — so the backslash is consumed here instead: `\é` and
+            // `\u00E9` mean the same in both grammars.
+            let mut end = i;
+            let mut escaped = false;
+            if raw {
+                let backslashes =
+                    s.as_bytes()[start..i].iter().rev().take_while(|&&b| b == b'\\').count();
+                escaped = backslashes % 2 == 1;
+                if escaped {
+                    end = i - 1;
+                }
+            }
+            if start < end {
+                if mode == NonAsciiEscape::TemplateRaw {
+                    self.print_str_escaping_script_close_tag(&s[start..end]);
+                } else {
+                    self.code.print_str(&s[start..end]);
+                }
+            }
+            start = i + ch.len_utf8();
+            // A LineContinuation (`\` + LS/PS) stays a LineContinuation, spelled with LF: it
+            // contributes nothing to the cooked value either way, and keeping a continuation in
+            // place means the surrounding characters still lex the same (`$\<LS>{`, `\0\<LS>1`).
+            let line_continuation = escaped
+                && matches!(mode, NonAsciiEscape::TemplateRaw | NonAsciiEscape::Directive)
+                && matches!(ch, '\u{2028}' | '\u{2029}');
+            if line_continuation {
+                self.print_str("\\\n");
+                continue;
+            }
+            match mode {
+                NonAsciiEscape::RegExp => self.print_unicode_escape_utf16(ch),
+                NonAsciiEscape::Identifier
+                | NonAsciiEscape::TemplateRaw
+                | NonAsciiEscape::Directive => self.print_unicode_escape(ch),
+            }
+        }
+        if start < s.len() {
+            if mode == NonAsciiEscape::TemplateRaw {
+                self.print_str_escaping_script_close_tag(&s[start..]);
+            } else {
+                self.code.print_str(&s[start..]);
+            }
+        }
+    }
+
+    /// Print `ch` as `\uXXXX`, or as `\u{X…}` above the BMP (ES2015 code point escape:
+    /// valid in string literals, template literals and identifier names).
+    #[inline]
+    pub(crate) fn print_unicode_escape(&mut self, ch: char) {
+        if let Ok(unit) = u16::try_from(ch as u32) {
+            self.print_u16_escape(unit);
+        } else {
+            self.print_code_point_escape(ch as u32);
+        }
+    }
+
+    /// Print `ch` as `\uXXXX`, or as an escaped UTF-16 surrogate pair above the BMP. Used in
+    /// regular expression source, where `\u{…}` requires the `u`/`v` flag. Surrogate pair
+    /// escapes preserve the original character's matching behavior under the pattern's flags.
+    #[inline]
+    fn print_unicode_escape_utf16(&mut self, ch: char) {
+        let mut units = [0u16; 2];
+        for unit in ch.encode_utf16(&mut units) {
+            self.print_u16_escape(*unit);
+        }
+    }
+
+    #[inline]
+    fn print_code_point_escape(&mut self, cp: u32) {
+        const HEX: &[u8; 16] = b"0123456789ABCDEF";
+        self.print_str("\\u{");
+        let mut started = false;
+        for shift in (0..8).rev() {
+            let nibble = (cp >> (shift * 4)) & 0xF;
+            if nibble != 0 || started || shift == 0 {
+                started = true;
+                self.print_ascii_byte(HEX[nibble as usize]);
+            }
+        }
+        self.print_ascii_byte(b'}');
+    }
+
+    #[inline]
+    fn print_u16_escape(&mut self, unit: u16) {
+        const HEX: &[u8; 16] = b"0123456789ABCDEF";
+        let bytes = [
+            b'\\',
+            b'u',
+            HEX[(unit >> 12) as usize & 0xF],
+            HEX[(unit >> 8) as usize & 0xF],
+            HEX[(unit >> 4) as usize & 0xF],
+            HEX[unit as usize & 0xF],
+        ];
+        // SAFETY: all 6 bytes are ASCII
+        unsafe { self.code.print_bytes_unchecked(&bytes) };
+    }
+
+    /// Print a template literal quasi's raw text, removing redundant dollar escapes when minifying
+    /// untagged templates. Only untagged templates are escaped under
+    /// [CodegenOptions::ascii_only]: a tag function (e.g. `String.raw`) can observe the raw
+    /// text, which escaping would change.
+    #[inline]
+    pub(crate) fn print_template_quasi_raw(&mut self, raw: &str, tagged: bool) {
+        let mut start = 0;
+        if self.options.minify && !tagged {
+            let bytes = raw.as_bytes();
+            for (index, _) in raw.match_indices("\\$") {
+                // Keep escapes which prevent interpolation.
+                if bytes.get(index + 2) == Some(&b'{') {
+                    continue;
+                }
+
+                // Keep backslashes which are themselves escaped.
+                let preceding_backslashes =
+                    bytes[..index].iter().rev().take_while(|&&b| b == b'\\').count();
+                if preceding_backslashes % 2 != 0 {
+                    continue;
+                }
+
+                // The preserved chunk ends with an even backslash run, and the next starts
+                // with `$`, so printing them separately preserves escape handling.
+                self.print_template_quasi_raw_chunk(&raw[start..index], tagged);
+                start = index + 1;
+            }
+        }
+        self.print_template_quasi_raw_chunk(&raw[start..], tagged);
+    }
+
+    #[inline]
+    fn print_template_quasi_raw_chunk(&mut self, raw: &str, tagged: bool) {
+        if !self.options.ascii_only || tagged || raw.is_ascii() {
+            self.print_str_escaping_script_close_tag(raw);
+        } else {
+            self.print_non_ascii_escaped(raw, NonAsciiEscape::TemplateRaw);
+        }
+    }
+
+    /// Print a directive's raw string text, escaping non-ASCII characters under
+    /// [CodegenOptions::ascii_only].
+    #[inline]
+    pub(crate) fn print_directive_raw(&mut self, raw: &str) {
+        if !self.options.ascii_only || raw.is_ascii() {
+            self.code.print_str(raw);
+        } else {
+            self.print_non_ascii_escaped(raw, NonAsciiEscape::Directive);
+        }
+    }
+
+    /// Print a regular expression's pattern source, escaping non-ASCII characters under
+    /// [CodegenOptions::ascii_only].
+    #[inline]
+    pub(crate) fn print_regex_pattern(&mut self, pattern: &str) {
+        if !self.options.ascii_only || pattern.is_ascii() {
+            self.code.print_str(pattern);
+        } else {
+            self.print_non_ascii_escaped(pattern, NonAsciiEscape::RegExp);
+        }
+    }
+
     /// Push str into the buffer, escaping `</script` to `<\/script`.
     #[inline]
     pub fn print_str_escaping_script_close_tag(&mut self, s: &str) {
@@ -297,7 +537,7 @@ impl<'a> Codegen<'a> {
             loop {
                 // SAFETY: `ptr` is always less than or equal to `last_ptr`.
                 // `last_ptr` is within bounds of `bytes`, so safe to read a byte at `ptr`.
-                let byte = unsafe { *ptr.as_ref().unwrap_unchecked() };
+                let byte = unsafe { *ptr.as_ref_unchecked() };
                 if byte == b'<' {
                     // SAFETY: `ptr <= last_ptr`, and `last_ptr` points to no later than
                     // 8 bytes before end of string, so safe to read 8 bytes from `ptr`
@@ -332,11 +572,8 @@ impl<'a> Codegen<'a> {
         };
 
         // Search string in chunks of 16 bytes
-        let mut chunks = bytes.chunks_exact(16);
-        for (chunk_index, chunk) in chunks.by_ref().enumerate() {
-            #[expect(clippy::missing_panics_doc, reason = "infallible")]
-            let chunk: &[u8; 16] = chunk.try_into().unwrap();
-
+        let (chunks, last_chunk) = bytes.as_chunks::<16>();
+        for (chunk_index, chunk) in chunks.iter().enumerate() {
             // Compiler vectorizes this loop to a few SIMD ops
             let mut contains_lt = false;
             for &byte in chunk {
@@ -368,7 +605,6 @@ impl<'a> Codegen<'a> {
 
         // Search last chunk byte-by-byte.
         // Skip this if less than 8 bytes remaining, because less than 8 bytes can't contain `</script`.
-        let last_chunk = chunks.remainder();
         if last_chunk.len() >= 8 {
             let ptr = last_chunk.as_ptr();
             // SAFETY: `last_chunk.len() >= 8`, so `- 8` cannot wrap.
@@ -390,14 +626,21 @@ impl<'a> Codegen<'a> {
     pub fn print_expression(&mut self, expr: &Expression<'_>) {
         expr.print_expr(self, Precedence::Lowest, Context::empty());
     }
+
+    /// Print a string as a JavaScript string literal.
+    pub fn print_string(&mut self, s: &str) {
+        self.print_string_impl(s, false, false);
+    }
 }
 
 // Private APIs
 impl<'a> Codegen<'a> {
+    #[inline]
     fn code(&self) -> &CodeBuffer {
         &self.code
     }
 
+    #[inline]
     fn code_len(&self) -> usize {
         self.code().len()
     }
@@ -440,7 +683,7 @@ impl<'a> Codegen<'a> {
     fn print_space_before_identifier(&mut self) {
         let Some(byte) = self.last_byte() else { return };
 
-        if self.prev_reg_exp_end != self.code.len() {
+        if self.need_space_before_identifier != self.code.len() {
             let is_identifier = if byte.is_ascii() {
                 // Fast path for ASCII (very common case)
                 is_identifier_part_ascii(byte as char)
@@ -492,12 +735,12 @@ impl<'a> Codegen<'a> {
     }
 
     #[inline]
-    fn current_class_ids(&self) -> impl Iterator<Item = ClassId> {
+    fn current_class_ids(&self) -> impl ExactSizeIterator<Item = ClassId> {
         self.class_stack.iter().rev().copied()
     }
 
     #[inline]
-    fn wrap<F: FnMut(&mut Self)>(&mut self, wrap: bool, mut f: F) {
+    fn wrap<F: FnOnce(&mut Self)>(&mut self, wrap: bool, f: F) {
         if wrap {
             self.print_ascii_byte(b'(');
         }
@@ -512,12 +755,33 @@ impl<'a> Codegen<'a> {
         if self.options.minify {
             return;
         }
-        if self.print_next_indent_as_space {
-            self.print_hard_space();
-            self.print_next_indent_as_space = false;
+        if self.consume_pending_indent_space() {
             return;
         }
         self.code.print_indent(self.indent as usize);
+    }
+
+    /// Comment-printing and inline-statement-body emission set
+    /// `print_next_indent_as_space` so the *next* emit becomes a single
+    /// space instead of indent — keeping `/* … */ stmt` glued together
+    /// and `if (x) bar()` on one line. Returns `true` when a space was
+    /// emitted, so callers that *also* want to print indent can skip it.
+    #[inline]
+    fn consume_pending_indent_space(&mut self) -> bool {
+        if self.print_next_indent_as_space {
+            self.print_soft_space();
+            self.print_next_indent_as_space = false;
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Drop the pending-indent-as-space flag without emitting anything. Used
+    /// after manual comment handling that already produced the right spacing.
+    #[inline]
+    fn clear_pending_indent_space(&mut self) {
+        self.print_next_indent_as_space = false;
     }
 
     #[inline]
@@ -564,6 +828,7 @@ impl<'a> Codegen<'a> {
             self.dedent();
             self.print_indent();
         }
+        self.add_source_mapping_end(span);
         self.print_ascii_byte(b'}');
     }
 
@@ -574,13 +839,14 @@ impl<'a> Codegen<'a> {
         self.indent();
     }
 
-    fn print_block_end(&mut self, _span: Span) {
+    fn print_block_end(&mut self, span: Span) {
         self.dedent();
         self.print_indent();
+        self.add_source_mapping_end(span);
         self.print_ascii_byte(b'}');
     }
 
-    fn print_body(&mut self, stmt: &Statement<'_>, need_space: bool, ctx: Context) {
+    fn print_body(&mut self, stmt: &Statement<'_>, ctx: Context) {
         match stmt {
             Statement::BlockStatement(stmt) => {
                 self.print_soft_space();
@@ -592,9 +858,10 @@ impl<'a> Codegen<'a> {
                 self.print_soft_newline();
             }
             stmt => {
-                if need_space && self.options.minify {
-                    self.print_hard_space();
-                }
+                // The statement's first token inserts a hard space itself (via
+                // `print_space_before_identifier`) when it would merge with a preceding
+                // identifier char (e.g. `else`), so `else{...}`/`else++x`/`else[0]` stay
+                // tight while `else x` keeps its space.
                 self.print_next_indent_as_space = true;
                 stmt.print(self, ctx);
             }
@@ -602,52 +869,85 @@ impl<'a> Codegen<'a> {
     }
 
     fn print_block_statement(&mut self, stmt: &BlockStatement<'_>, ctx: Context) {
-        self.print_curly_braces(stmt.span, stmt.body.is_empty(), |p| {
-            for stmt in &stmt.body {
-                p.print_semicolon_if_needed();
-                stmt.print(p, ctx);
-            }
+        let single_line = stmt.body.is_empty() && !self.has_orphan_comments_before(stmt.span.end);
+        self.print_curly_braces(stmt.span, single_line, |p| {
+            p.print_stmts_with_orphan_flush(&stmt.body, stmt.span.end, ctx);
         });
         self.needs_semicolon = false;
+    }
+
+    /// Print `stmts`, flushing orphan comments before each and at `scope_end`.
+    fn print_stmts_with_orphan_flush(
+        &mut self,
+        stmts: &[Statement<'_>],
+        scope_end: u32,
+        ctx: Context,
+    ) {
+        for stmt in stmts {
+            self.print_orphan_comments_before(stmt.span().start);
+            self.print_semicolon_if_needed();
+            stmt.print(self, ctx);
+        }
+        self.print_orphan_comments_before(scope_end);
     }
 
     fn print_directives_and_statements(
         &mut self,
         directives: &[Directive<'_>],
         stmts: &[Statement<'_>],
+        scope_end: u32,
         ctx: Context,
     ) {
         for directive in directives {
             directive.print(self, ctx);
         }
+
         let Some((first, rest)) = stmts.split_first() else {
+            self.print_orphan_comments_before(scope_end);
             return;
         };
 
-        // Ensure first string literal is not a directive.
-        let mut first_needs_parens = false;
-        if directives.is_empty()
-            && !self.options.minify
-            && let Statement::ExpressionStatement(s) = first
-        {
-            let s = s.expression.without_parentheses();
-            if matches!(s, Expression::StringLiteral(_)) {
-                first_needs_parens = true;
-                self.print_ascii_byte(b'(');
-                s.print_expr(self, Precedence::Lowest, ctx);
-                self.print_ascii_byte(b')');
-                self.print_semicolon_after_statement();
-            }
-        }
+        self.print_orphan_comments_before(first.span().start);
 
-        if !first_needs_parens {
+        // If first statement is a string literal, wrap it in parentheses, to prevent it being parsed as a directive.
+        // Only a parenthesized string expression can reach here (a bare one would have been parsed as a directive),
+        // so the parentheses have to be printed back.
+        //
+        // Need to do this regardless of whether or any real directives precede it or not.
+        // Parentheses must be retained for any of:
+        // * `("use strict");`
+        // * `"use asm"; ("use strict");`
+        // * `"use server"; "use asm"; ("use strict");`
+        //
+        // The same hazard exists in minify mode.
+        // Usually strings are printed as template literals, which are not parsed as directives.
+        // But if the string contains a backtick or `${`, it's printed with `"` or `'` quotes,
+        // which *would* be re-parsed as a directive.
+        // So in minify mode, we force printing as a template literal, regardless of the string's content.
+        // In almost all cases, this is shorter than wrapping in parentheses.
+        if let Statement::ExpressionStatement(stmt) = first
+            && let expr = stmt.expression.without_parentheses()
+            && let Expression::StringLiteral(string) = expr
+        {
+            // Mirror `ExpressionStatement`'s printer, which this path stands in for
+            self.print_comments_at(stmt.span.start);
+            if self.indent > 0 || self.print_next_indent_as_space {
+                self.print_indent();
+                self.add_source_mapping(stmt.span);
+            }
+            if self.options.minify {
+                self.print_string_literal_as_template(string);
+            } else {
+                self.print_ascii_byte(b'(');
+                self.print_string_literal(string, /* allow_backtick */ true);
+                self.print_ascii_byte(b')');
+            }
+            self.print_semicolon_after_statement();
+        } else {
             first.print(self, ctx);
         }
 
-        for stmt in rest {
-            self.print_semicolon_if_needed();
-            stmt.print(self, ctx);
-        }
+        self.print_stmts_with_orphan_flush(rest, scope_end, ctx);
     }
 
     #[inline]
@@ -698,8 +998,10 @@ impl<'a> Codegen<'a> {
         } else {
             self.print_list(arguments, ctx);
         }
-        self.print_ascii_byte(b')');
+        // End mapping at the gen position OF `)`, not past it. Matches
+        // esbuild/Babel and avoids shadowing the next AST node's start.
         self.add_source_mapping_end(span);
+        self.print_ascii_byte(b')');
     }
 
     fn print_list_with_comments(&mut self, items: &[Argument<'_>], ctx: Context) {
@@ -725,6 +1027,16 @@ impl<'a> Codegen<'a> {
         }
     }
 
+    /// A component reference in JSX position (`<Foo/>`, `<Foo.Bar/>`). JSX names have no escape
+    /// syntax, so — unlike [`IdentifierReference`] elsewhere — the (possibly renamed) name is
+    /// printed verbatim even under `ascii_only`.
+    fn print_jsx_identifier_reference(&mut self, ident: &IdentifierReference<'_>) {
+        let name = self.get_identifier_reference_name(ident);
+        self.add_source_mapping_for_name(ident.span, name);
+        self.print_str(name);
+    }
+
+    #[inline]
     fn get_identifier_reference_name(&self, reference: &IdentifierReference<'a>) -> &'a str {
         if let Some(scoping) = &self.scoping
             && let Some(reference_id) = reference.reference_id.get()
@@ -736,6 +1048,7 @@ impl<'a> Codegen<'a> {
         reference.name.as_str()
     }
 
+    #[inline]
     fn get_binding_identifier_name(&self, ident: &BindingIdentifier<'a>) -> &'a str {
         if let Some(scoping) = &self.scoping
             && let Some(symbol_id) = ident.symbol_id.get()
@@ -757,133 +1070,53 @@ impl<'a> Codegen<'a> {
         // "x + + y" => "x+ +y"
         // "x ++ + y" => "x+++y"
         // "x + ++ y" => "x+ ++y"
-        // "-- >" => "-- >"
         // "< ! --" => "<! --"
+        // Note: `a-- > b` does not need a space (`a-->b` is `(a--) > b`); `-->` is
+        // only an HTML close comment at the start of a line, and a postfix `--`
+        // always has an operand before it.
         let bin_op_add = Operator::Binary(BinaryOperator::Addition);
         let bin_op_sub = Operator::Binary(BinaryOperator::Subtraction);
         let un_op_pos = Operator::Unary(UnaryOperator::UnaryPlus);
         let un_op_pre_inc = Operator::Update(UpdateOperator::Increment);
         let un_op_neg = Operator::Unary(UnaryOperator::UnaryNegation);
         let un_op_pre_dec = Operator::Update(UpdateOperator::Decrement);
-        let un_op_post_dec = Operator::Update(UpdateOperator::Decrement);
-        let bin_op_gt = Operator::Binary(BinaryOperator::GreaterThan);
         let un_op_not = Operator::Unary(UnaryOperator::LogicalNot);
         if ((prev == bin_op_add || prev == un_op_pos)
             && (next == bin_op_add || next == un_op_pos || next == un_op_pre_inc))
             || ((prev == bin_op_sub || prev == un_op_neg)
                 && (next == bin_op_sub || next == un_op_neg || next == un_op_pre_dec))
-            || (prev == un_op_post_dec && next == bin_op_gt)
             || (prev == un_op_not
                 && next == un_op_pre_dec
                 // `prev == UnaryOperator::LogicalNot` which means last byte is ASCII,
                 // and therefore previous character is 1 byte from end of buffer
                 && self.code.peek_nth_byte_back(1) == Some(b'<'))
+            // `a! == b`: keep the non-null `!` from gluing to `=` as `!=`/`!==`.
+            || (prev == un_op_not
+                && matches!(
+                    next,
+                    Operator::Binary(BinaryOperator::Equality | BinaryOperator::StrictEquality)
+                ))
         {
             self.print_hard_space();
         }
     }
 
     fn print_non_negative_float(&mut self, num: f64) {
-        // Inline the buffer here to avoid heap allocation on `buffer.format(*self).to_string()`.
-        let mut buffer = dragonbox_ecma::Buffer::new();
-        if num < 1000.0 && num.fract() == 0.0 {
-            self.print_str(buffer.format(num));
-            self.need_space_before_dot = self.code_len();
-        } else {
-            self.print_minified_number(num, &mut buffer);
-        }
+        with_number_literal(num, |literal| {
+            self.print_str(literal);
+            if !literal.bytes().any(|b| matches!(b, b'.' | b'e' | b'x')) {
+                self.need_space_before_dot = self.code_len();
+            }
+        });
     }
 
     fn print_decorators(&mut self, decorators: &[Decorator<'_>], ctx: Context) {
         for decorator in decorators {
             decorator.print(self, ctx);
-            self.print_hard_space();
-        }
-    }
-
-    // Optimized version of `get_minified_number` from terser
-    // https://github.com/terser/terser/blob/c5315c3fd6321d6b2e076af35a70ef532f498505/lib/output.js#L2418
-    // Instead of building all candidates and finding the shortest, we track the shortest as we go
-    // and use self.print_str directly instead of returning intermediate strings
-    #[expect(clippy::cast_possible_truncation, clippy::cast_sign_loss, clippy::cast_possible_wrap)]
-    fn print_minified_number(&mut self, num: f64, buffer: &mut dragonbox_ecma::Buffer) {
-        if num < 1000.0 && num.fract() == 0.0 {
-            self.print_str(buffer.format(num));
-            self.need_space_before_dot = self.code_len();
-            return;
-        }
-
-        let mut s = buffer.format(num);
-
-        if s.starts_with("0.") {
-            s = &s[1..];
-        }
-
-        let mut best_candidate = s.cow_replacen("e+", "e", 1);
-        let mut is_hex = false;
-
-        // Track the best candidate found so far
-        if num.fract() == 0.0 {
-            // For integers, check hex format and other optimizations
-            let hex_candidate = format!("0x{:x}", num as u128);
-            if hex_candidate.len() < best_candidate.len() {
-                is_hex = true;
-                best_candidate = hex_candidate.into();
-            }
-        }
-        // Check for scientific notation optimizations for numbers starting with ".0"
-        else if best_candidate.starts_with(".0") {
-            // Skip the first '0' since we know it's there from the starts_with check
-            if let Some(i) = best_candidate.bytes().skip(2).position(|c| c != b'0') {
-                let len = i + 2; // `+2` to include the dot and first zero.
-                let digits = &best_candidate[len..];
-                let exp = digits.len() + len - 1;
-                let exp_str_len = itoa::Buffer::new().format(exp).len();
-                // Calculate expected length: digits + 'e-' + exp_length
-                let expected_len = digits.len() + 2 + exp_str_len;
-                if expected_len < best_candidate.len() {
-                    best_candidate = format!("{digits}e-{exp}").into();
-                    debug_assert_eq!(best_candidate.len(), expected_len);
-                }
-            }
-        }
-
-        // Check for numbers ending with zeros (but not hex numbers)
-        // The `!is_hex` check is necessary to prevent hex numbers like `0x8000000000000000`
-        // from being incorrectly converted to scientific notation
-        if !is_hex
-            && best_candidate.ends_with('0')
-            && let Some(len) = best_candidate.bytes().rev().position(|c| c != b'0')
-        {
-            let base = &best_candidate[0..best_candidate.len() - len];
-            let exp_str_len = itoa::Buffer::new().format(len).len();
-            // Calculate expected length: base + 'e' + len
-            let expected_len = base.len() + 1 + exp_str_len;
-            if expected_len < best_candidate.len() {
-                best_candidate = format!("{base}e{len}").into();
-                debug_assert_eq!(best_candidate.len(), expected_len);
-            }
-        }
-
-        // Check for scientific notation optimization: `1.2e101` -> `12e100`
-        if let Some((integer, point, exponent)) = best_candidate
-            .split_once('.')
-            .and_then(|(a, b)| b.split_once('e').map(|e| (a, e.0, e.1)))
-        {
-            let new_expr = exponent.parse::<isize>().unwrap() - point.len() as isize;
-            let new_exp_str_len = itoa::Buffer::new().format(new_expr).len();
-            // Calculate expected length: integer + point + 'e' + new_exp_str_len
-            let expected_len = integer.len() + point.len() + 1 + new_exp_str_len;
-            if expected_len < best_candidate.len() {
-                best_candidate = format!("{integer}{point}e{new_expr}").into();
-                debug_assert_eq!(best_candidate.len(), expected_len);
-            }
-        }
-
-        // Print the best candidate and update need_space_before_dot
-        self.print_str(&best_candidate);
-        if !best_candidate.bytes().any(|b| matches!(b, b'.' | b'e' | b'x')) {
-            self.need_space_before_dot = self.code_len();
+            // Only separate from the following token when the decorator ends in an
+            // identifier char (`@dec class`); `@dec() class` can be `@dec()class`.
+            self.print_soft_space();
+            self.print_space_before_identifier();
         }
     }
 
@@ -906,17 +1139,16 @@ impl<'a> Codegen<'a> {
         if let Some(sourcemap_builder) = self.sourcemap_builder.as_mut()
             && !span.is_empty()
         {
-            // Validate that span.end is within source content bounds.
-            // When oxc_codegen adds punctuation (semicolons, newlines) that don't exist in the
-            // original source, span.end may be at or beyond the source content length.
-            // We should not create sourcemap tokens for such positions as they would be invalid.
+            // Map the last source character in the span, not its exclusive end.
+            // Skip the mapping if the emitted closing delimiter has no corresponding source byte.
+            let end = span.end - 1;
             if let Some(source_text) = self.source_text {
                 #[expect(clippy::cast_possible_truncation)]
-                if span.end >= source_text.len() as u32 {
+                if end >= source_text.len() as u32 {
                     return;
                 }
             }
-            sourcemap_builder.add_source_mapping(self.code.as_bytes(), span.end, None);
+            sourcemap_builder.add_source_mapping(self.code.as_bytes(), end, None);
         }
     }
 
@@ -924,6 +1156,44 @@ impl<'a> Codegen<'a> {
     #[inline]
     #[expect(clippy::needless_pass_by_ref_mut, clippy::unused_self)]
     fn add_source_mapping_end(&mut self, _span: Span) {}
+
+    /// A postfix operand ending in `)` or `]` (a call or index result) leaves no
+    /// trailing identifier for a source-map consumer to anchor on, so the chain
+    /// punctuation after it (`.`/`[`/`(`/`` ` ``) would be unmapped and V8 would
+    /// resolve the stack frame one column too far left — the off-by-one in
+    /// `f(a)(b)` and `expect(x).resolves`. Map that punctuation back to the
+    /// operand's `span.end`. Called from `print_expr`, mirroring how Babel and TSC
+    /// give every node a trailing end-mapping. Synthesized nodes whose `span.end`
+    /// has no source byte are skipped.
+    #[cfg(feature = "sourcemap")]
+    #[inline]
+    fn add_source_mapping_after_postfix(&mut self, span: Span, precedence: Precedence) {
+        #[inline(never)]
+        fn add_mapping(
+            sourcemap_builder: &mut SourcemapBuilder<'_>,
+            output: &[u8],
+            source_text: Option<&str>,
+            span: Span,
+        ) {
+            if !span.is_empty()
+                && matches!(output.last(), Some(b')' | b']'))
+                && source_text.is_none_or(|src| (span.end as usize) < src.len())
+            {
+                sourcemap_builder.add_source_mapping(output, span.end, None);
+            }
+        }
+
+        if precedence == Precedence::Postfix
+            && let Some(sourcemap_builder) = self.sourcemap_builder.as_mut()
+        {
+            add_mapping(sourcemap_builder, self.code.as_bytes(), self.source_text, span);
+        }
+    }
+
+    #[cfg(not(feature = "sourcemap"))]
+    #[inline]
+    #[expect(clippy::needless_pass_by_ref_mut, clippy::unused_self)]
+    fn add_source_mapping_after_postfix(&mut self, _span: Span, _precedence: Precedence) {}
 
     #[cfg(feature = "sourcemap")]
     fn add_source_mapping_for_name(&mut self, span: Span, name: &str) {
@@ -938,4 +1208,19 @@ impl<'a> Codegen<'a> {
     #[inline]
     #[expect(clippy::needless_pass_by_ref_mut, clippy::unused_self)]
     fn add_source_mapping_for_name(&mut self, _span: Span, _name: &str) {}
+
+    /// Add a mapping for a private identifier, printed as `#` followed by `name`.
+    #[cfg(feature = "sourcemap")]
+    fn add_source_mapping_for_private_name(&mut self, span: Span, name: &str) {
+        if let Some(sourcemap_builder) = self.sourcemap_builder.as_mut()
+            && !span.is_empty()
+        {
+            sourcemap_builder.add_source_mapping_for_private_name(self.code.as_bytes(), span, name);
+        }
+    }
+
+    #[cfg(not(feature = "sourcemap"))]
+    #[inline]
+    #[expect(clippy::needless_pass_by_ref_mut, clippy::unused_self)]
+    fn add_source_mapping_for_private_name(&mut self, _span: Span, _name: &str) {}
 }

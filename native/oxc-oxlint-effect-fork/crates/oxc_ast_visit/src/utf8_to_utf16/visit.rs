@@ -18,7 +18,16 @@ impl Utf8ToUtf16Converter<'_> {
         // Span of `FormalParameters` itself does not appear in ESTree AST,
         // and its span includes `TSThisParameter` in types like `Function`,
         // which is converted before `FormalParameters`. So skip converting span.
-        walk_mut::walk_formal_parameters(self, params);
+        self.visit_formal_parameter_list(&mut params.items);
+        if let Some(rest) = &mut params.rest {
+            self.convert_offset(&mut rest.span.start);
+            self.visit_decorators(&mut rest.decorators);
+            self.visit_binding_rest_element(&mut rest.rest);
+            if let Some(type_annotation) = &mut rest.type_annotation {
+                self.visit_ts_type_annotation(type_annotation);
+            }
+            self.convert_offset(&mut rest.span.end);
+        }
     }
 
     pub(crate) fn convert_object_property(&mut self, prop: &mut ObjectProperty<'_>) {
@@ -37,22 +46,6 @@ impl Utf8ToUtf16Converter<'_> {
         }
 
         self.convert_offset(&mut prop.span.end);
-    }
-
-    pub(crate) fn convert_binding_rest_element(
-        &mut self,
-        rest_element: &mut BindingRestElement<'_>,
-    ) {
-        self.convert_offset(&mut rest_element.span.start);
-        match &mut rest_element.argument {
-            BindingPattern::BindingIdentifier(ident) => self.visit_binding_identifier(ident),
-            BindingPattern::ObjectPattern(pattern) => self.visit_object_pattern(pattern),
-            BindingPattern::ArrayPattern(pattern) => self.visit_array_pattern(pattern),
-            BindingPattern::AssignmentPattern(pattern) => {
-                self.visit_assignment_pattern(pattern);
-            }
-        }
-        self.convert_offset(&mut rest_element.span.end);
     }
 
     pub(crate) fn convert_binding_property(&mut self, prop: &mut BindingProperty<'_>) {
@@ -94,16 +87,13 @@ impl Utf8ToUtf16Converter<'_> {
         self.convert_offset(&mut prop.span.end);
     }
 
-    pub(crate) fn convert_export_named_declaration(
-        &mut self,
-        decl: &mut ExportNamedDeclaration<'_>,
-    ) {
+    pub(crate) fn convert_export_declaration(&mut self, decl: &mut ExportDeclaration<'_>) {
         // Special case logic for `@dec export class C {}`
-        if let Some(Declaration::ClassDeclaration(class)) = &mut decl.declaration {
+        if let Declaration::ClassDeclaration(class) = &mut decl.declaration {
             self.convert_exported_class(class, &mut decl.span);
         } else {
             self.convert_offset(&mut decl.span.start);
-            walk_mut::walk_export_named_declaration(self, decl);
+            walk_mut::walk_export_declaration(self, decl);
             self.convert_offset(&mut decl.span.end);
         }
     }
@@ -122,7 +112,7 @@ impl Utf8ToUtf16Converter<'_> {
         }
     }
 
-    /// Visit `ExportNamedDeclaration` or `ExportDefaultDeclaration` containing a `Class`.
+    /// Visit `ExportDeclaration` or `ExportDefaultDeclaration` containing a `Class`.
     /// e.g. `export class C {}`, `export default class {}`
     ///
     /// These need special handing because decorators before the `export` keyword
@@ -160,11 +150,11 @@ impl Utf8ToUtf16Converter<'_> {
         if let Some(type_parameters) = &mut class.type_parameters {
             self.visit_ts_type_parameter_declaration(type_parameters);
         }
-        if let Some(super_class) = &mut class.super_class {
-            self.visit_expression(super_class);
-        }
-        if let Some(super_type_arguments) = &mut class.super_type_arguments {
-            self.visit_ts_type_parameter_instantiation(super_type_arguments);
+        if let Some(heritage) = &mut class.heritage {
+            self.visit_expression(&mut heritage.expression);
+            if let Some(type_arguments) = &mut heritage.type_arguments {
+                self.visit_ts_type_parameter_instantiation(type_arguments);
+            }
         }
         self.visit_ts_class_implements_list(&mut class.implements);
         self.visit_class_body(&mut class.body);

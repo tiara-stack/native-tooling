@@ -2,7 +2,7 @@ use oxc_ast::{
     AstKind,
     ast::{
         AssignmentOperator, AssignmentTarget, BindingPattern, Expression, FormalParameter,
-        LogicalOperator, Statement,
+        LogicalOperator, MethodDefinitionKind, PropertyKind, Statement,
     },
 };
 use oxc_diagnostics::OxcDiagnostic;
@@ -61,26 +61,48 @@ declare_oxc_lint!(
     PreferDefaultParameters,
     unicorn,
     style,
-    pending,
+    suggestion,
+    version = "1.33.0",
+    short_description = "Prefer default parameters over reassignment.",
 );
 
 impl Rule for PreferDefaultParameters {
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
         match node.kind() {
             AstKind::AssignmentExpression(assign_expr) => {
-                if assign_expr.operator != AssignmentOperator::Assign {
-                    return;
-                }
                 if let AssignmentTarget::AssignmentTargetIdentifier(left_ident) = &assign_expr.left
                 {
-                    check_expression(
-                        ctx,
-                        node,
-                        &left_ident.name,
-                        &assign_expr.right,
-                        true,
-                        assign_expr.span,
-                    );
+                    let statement_span = ctx
+                        .nodes()
+                        .parent_node(node.id())
+                        .kind()
+                        .as_expression_statement()
+                        .map(|stmt| stmt.span);
+                    match assign_expr.operator {
+                        AssignmentOperator::Assign => {
+                            check_expression(
+                                ctx,
+                                node,
+                                &left_ident.name,
+                                &assign_expr.right,
+                                true,
+                                assign_expr.span,
+                                statement_span,
+                            );
+                        }
+                        AssignmentOperator::LogicalOr | AssignmentOperator::LogicalNullish => {
+                            check_logical_assignment(
+                                ctx,
+                                node,
+                                &left_ident.name,
+                                left_ident.span,
+                                &assign_expr.right,
+                                assign_expr.span,
+                                statement_span,
+                            );
+                        }
+                        _ => {}
+                    }
                 }
             }
             AstKind::VariableDeclaration(var_decl) => {
@@ -92,12 +114,46 @@ impl Rule for PreferDefaultParameters {
                     return;
                 };
                 if let BindingPattern::BindingIdentifier(left_ident) = &declarator.id {
-                    check_expression(ctx, node, &left_ident.name, init, false, var_decl.span);
+                    check_expression(
+                        ctx,
+                        node,
+                        &left_ident.name,
+                        init,
+                        false,
+                        var_decl.span,
+                        Some(var_decl.span),
+                    );
                 }
             }
             _ => {}
         }
     }
+}
+
+fn check_logical_assignment<'a>(
+    ctx: &LintContext<'a>,
+    node: &AstNode<'a>,
+    left_name: &str,
+    left_span: Span,
+    right: &Expression<'a>,
+    stmt_span: Span,
+    statement_span: Option<Span>,
+) {
+    if !right.get_inner_expression().is_literal() {
+        return;
+    }
+    check_parameter_default(
+        ctx,
+        node,
+        left_name,
+        left_name,
+        ctx.source_range(right.span()),
+        true,
+        stmt_span,
+        statement_span,
+        Some(left_span),
+        true,
+    );
 }
 
 fn check_expression<'a>(
@@ -107,6 +163,7 @@ fn check_expression<'a>(
     right: &Expression<'a>,
     is_assignment: bool,
     stmt_span: Span,
+    statement_span: Option<Span>,
 ) {
     let Expression::LogicalExpression(logical_expr) = right.without_parentheses() else {
         return;
@@ -121,7 +178,6 @@ fn check_expression<'a>(
     };
 
     let param_name = param_ident.name.as_str();
-
     if !logical_expr.right.get_inner_expression().is_literal() {
         return;
     }
@@ -130,14 +186,44 @@ fn check_expression<'a>(
         return;
     }
 
+    check_parameter_default(
+        ctx,
+        node,
+        param_name,
+        left_name,
+        ctx.source_range(logical_expr.right.span()),
+        is_assignment,
+        stmt_span,
+        statement_span,
+        Some(param_ident.span),
+        false,
+    );
+}
+
+fn check_parameter_default<'a>(
+    ctx: &LintContext<'a>,
+    node: &AstNode<'a>,
+    param_name: &str,
+    left_name: &str,
+    default_value_text: &str,
+    is_assignment: bool,
+    stmt_span: Span,
+    statement_span: Option<Span>,
+    param_ident_span: Option<Span>,
+    logical_assignment: bool,
+) {
     let Some((function_id, function_body_id)) = find_enclosing_function(ctx, node) else {
         return;
     };
 
     let function_node = ctx.nodes().get_node(function_id);
-    let params = match function_node.kind() {
-        AstKind::Function(func) => &func.params,
-        AstKind::ArrowFunctionExpression(arrow) => &arrow.params,
+    if is_setter_function(ctx, function_id) {
+        return;
+    }
+
+    let (params, is_arrow_function) = match function_node.kind() {
+        AstKind::Function(func) => (&func.params, false),
+        AstKind::ArrowFunctionExpression(arrow) => (&arrow.params, true),
         _ => return,
     };
 
@@ -163,15 +249,107 @@ fn check_expression<'a>(
         return;
     }
 
-    if is_assignment {
-        if !check_no_extra_references_assignment(ctx, param_ident.span, param) {
+    let Some(read_span) = param_ident_span else {
+        return;
+    };
+    if logical_assignment {
+        if !check_logical_assignment_is_first_reference(ctx, read_span, param) {
             return;
         }
-    } else if !check_no_extra_references(ctx, param_ident.span, param) {
+    } else if is_assignment {
+        if !check_no_extra_references_assignment(ctx, read_span, param) {
+            return;
+        }
+    } else if !check_no_extra_references(ctx, read_span, param) {
         return;
     }
 
-    ctx.diagnostic(prefer_default_parameters_diagnostic(stmt_span, param_name));
+    let Some(BindingPattern::BindingIdentifier(binding_ident)) =
+        params.items.get(param_index).map(|param| &param.pattern)
+    else {
+        ctx.diagnostic(prefer_default_parameters_diagnostic(stmt_span, param_name));
+        return;
+    };
+
+    let Some(statement_span) = statement_span else {
+        ctx.diagnostic(prefer_default_parameters_diagnostic(stmt_span, param_name));
+        return;
+    };
+
+    let new_param_name = if is_assignment { param_name } else { left_name };
+    let (mut new_param_text, mut replace_span) =
+        if let Some(type_annotation) = &param.type_annotation {
+            (
+                format!(
+                    "{new_param_name}{} = {default_value_text}",
+                    ctx.source_range(type_annotation.span)
+                ),
+                Span::new(binding_ident.span.start, type_annotation.span.end),
+            )
+        } else if param.optional {
+            (
+                format!("{new_param_name} = {default_value_text}"),
+                Span::new(binding_ident.span.start, param.span.end),
+            )
+        } else {
+            (format!("{new_param_name} = {default_value_text}"), binding_ident.span)
+        };
+
+    if is_arrow_function
+        && params.items.len() == 1
+        && params.rest.is_none()
+        && !ctx.source_range(params.span).trim_start().starts_with('(')
+    {
+        // e.g. `const foo = bar => {}`
+        new_param_text = format!("({new_param_text})");
+        replace_span = params.span;
+    }
+
+    let delete_span = expand_statement_delete_span(ctx.source_text(), statement_span);
+
+    ctx.diagnostic_with_suggestion(
+        prefer_default_parameters_diagnostic(stmt_span, param_name),
+        |fixer| {
+            let fixer = fixer.for_multifix();
+            let mut fix = fixer.new_fix_with_capacity(2);
+            fix.push(fixer.replace(replace_span, new_param_text));
+            fix.push(fixer.delete_range(delete_span));
+            fix.with_message("Prefer default parameters over reassignment.")
+        },
+    );
+}
+
+#[expect(clippy::cast_possible_truncation)]
+fn expand_statement_delete_span(source_text: &str, statement_span: Span) -> Span {
+    let mut start = statement_span.start as usize;
+    let mut end = statement_span.end as usize;
+    let bytes = source_text.as_bytes();
+
+    let mut candidate_start = start;
+    while candidate_start > 0 {
+        let ch = bytes[candidate_start - 1];
+        if matches!(ch, b' ' | b'\t') {
+            candidate_start -= 1;
+            continue;
+        }
+        if matches!(ch, b'\n' | b'\r') {
+            start = candidate_start;
+        }
+        break;
+    }
+
+    if end < bytes.len() && bytes[end] == b' ' {
+        end += 1;
+    }
+
+    let rest = bytes.get(end..).unwrap_or(&[]);
+    if rest.starts_with(b"\r\n") {
+        end += 2;
+    } else if rest.starts_with(b"\r") || rest.starts_with(b"\n") {
+        end += 1;
+    }
+
+    Span::new(start as u32, end as u32)
 }
 
 fn find_enclosing_function<'a>(
@@ -193,6 +371,14 @@ fn find_enclosing_function<'a>(
         Some((current.id(), function_body_id))
     } else {
         None
+    }
+}
+
+fn is_setter_function(ctx: &LintContext, function_id: NodeId) -> bool {
+    match ctx.nodes().parent_kind(function_id) {
+        AstKind::MethodDefinition(method) => method.kind == MethodDefinitionKind::Set,
+        AstKind::ObjectProperty(property) => property.kind == PropertyKind::Set,
+        _ => false,
     }
 }
 
@@ -289,18 +475,13 @@ fn check_no_extra_references<'a>(
         return false;
     };
 
-    let Some(symbol_id) = binding_ident.symbol_id.get() else {
+    let symbol_id = binding_ident.symbol_id();
+
+    let [reference_id] = ctx.scoping().get_resolved_reference_ids(symbol_id) else {
         return false;
     };
 
-    let references: Vec<_> = ctx.scoping().get_resolved_references(symbol_id).collect();
-
-    if references.len() != 1 {
-        return false;
-    }
-
-    let reference = &references[0];
-    ctx.semantic().reference_span(reference) == param_ident_span
+    ctx.semantic().reference_span(ctx.scoping().get_reference(*reference_id)) == param_ident_span
 }
 
 fn check_no_extra_references_assignment<'a>(
@@ -312,9 +493,7 @@ fn check_no_extra_references_assignment<'a>(
         return false;
     };
 
-    let Some(symbol_id) = binding_ident.symbol_id.get() else {
-        return false;
-    };
+    let symbol_id = binding_ident.symbol_id();
 
     let (has_matching_read, writes) = ctx.scoping().get_resolved_references(symbol_id).fold(
         (false, 0usize),
@@ -329,6 +508,23 @@ fn check_no_extra_references_assignment<'a>(
     );
 
     writes == 1 && has_matching_read
+}
+
+fn check_logical_assignment_is_first_reference<'a>(
+    ctx: &LintContext<'a>,
+    param_ident_span: Span,
+    param: &FormalParameter<'a>,
+) -> bool {
+    let BindingPattern::BindingIdentifier(binding_ident) = &param.pattern else {
+        return false;
+    };
+
+    let symbol_id = binding_ident.symbol_id();
+    let Some(reference_id) = ctx.scoping().get_resolved_reference_ids(symbol_id).first() else {
+        return false;
+    };
+
+    ctx.semantic().reference_span(ctx.scoping().get_reference(*reference_id)) == param_ident_span
 }
 
 #[test]
@@ -490,6 +686,21 @@ fn test() {
                 import('foo');
                 foo = foo || 123;
             }",
+        "class Foo {
+                set value(value: string) {
+                    value = value ?? '';
+                }
+            }",
+        "const foo = {
+                set value(value) {
+                    value = value ?? '';
+                }
+            };",
+        r"function example(value) {
+    const before = value;
+    value ||= false;
+    return before;
+}",
     ];
 
     let fail = vec![
@@ -612,10 +823,22 @@ fn test() {
     const bar = function() {};
     foo = foo || 123;
 }",
+        r"function example(value) {
+    value ??= false;
+    return value;
+}",
+        r"function example(value) {
+    value ||= false;
+    return value;
+}",
+        r"function example(value) {
+    value ||= false;
+    value = true;
+    return value;
+}",
     ];
 
-    // TODO: Implement autofix and use these tests.
-    let _fix = vec![
+    let fix = vec![
         (
             r"function abc(foo) {
     foo = foo || 123;
@@ -776,7 +999,7 @@ fn test() {
     foo = foo || 'bar'; bar(); baz();
 }",
             r"function abc(foo = 'bar') {
-    bar(); baz();
+bar(); baz();
 }",
         ),
         (
@@ -787,8 +1010,7 @@ fn test() {
     }
 }",
             r"function abc(foo = 'bar') {
-    function def(bar) {
-        bar = bar || 'foo';
+    function def(bar = 'foo') {
     }
 }",
         ),
@@ -807,8 +1029,7 @@ fn test() {
     foo += 'bar';
     function def(bar = 'foo') {
     }
-    function ghi(baz) {
-        const bay = baz || 'bar';
+    function ghi(bay = 'bar') {
     }
     foo = foo || 'bar';
 }",
@@ -825,8 +1046,7 @@ fn test() {
             r"foo = {
     abc(foo = 123) {
     },
-    def(foo) {
-        foo = foo || 123;
+    def(foo = 123) {
     }
 };",
         ),
@@ -842,8 +1062,7 @@ fn test() {
             r"class Foo {
     abc(foo = 123) {
     }
-    def(foo) {
-        foo = foo || 123;
+    def(foo = 123) {
     }
 }",
         ),
@@ -880,8 +1099,70 @@ fn test() {
     const bar = function() {};
 }",
         ),
+        (
+            r"function example(value) {
+    value ??= false;
+    return value;
+}",
+            r"function example(value = false) {
+    return value;
+}",
+        ),
+        (
+            r"function example(value) {
+    value ||= false;
+    return value;
+}",
+            r"function example(value = false) {
+    return value;
+}",
+        ),
+        (
+            r"function example(value) {
+    value ||= false;
+    value = true;
+    return value;
+}",
+            r"function example(value = false) {
+    value = true;
+    return value;
+}",
+        ),
+        (
+            r"function abc(foo: number) {
+    foo = foo || 123;
+}",
+            r"function abc(foo: number = 123) {
+}",
+        ),
+        (
+            r"function abc(foo: number) {
+    const bar = foo || 123;
+}",
+            r"function abc(bar: number = 123) {
+}",
+        ),
+        (
+            r"function abc(foo?: number) {
+    const bar = foo || 123;
+}",
+            r"function abc(bar: number = 123) {
+}",
+        ),
+        (
+            r"class Foo {
+    constructor(private foo?) {
+        foo = foo || 123;
+    }
+}",
+            r"class Foo {
+    constructor(private foo = 123) {
+    }
+}",
+        ),
     ];
 
     Tester::new(PreferDefaultParameters::NAME, PreferDefaultParameters::PLUGIN, pass, fail)
+        .expect_fix(fix)
         .test_and_snapshot();
 }

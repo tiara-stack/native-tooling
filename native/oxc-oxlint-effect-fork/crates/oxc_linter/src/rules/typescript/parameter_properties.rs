@@ -12,7 +12,8 @@ use oxc_ast::{
 };
 use oxc_diagnostics::OxcDiagnostic;
 use oxc_macros::declare_oxc_lint;
-use oxc_span::{GetSpan, Span, Str};
+use oxc_span::{GetSpan, Span};
+use oxc_str::Str;
 
 use crate::{
     AstNode,
@@ -123,11 +124,13 @@ declare_oxc_lint!(
     typescript,
     style,
     config = ParameterPropertiesConfig,
+    version = "1.48.0",
+    short_description = "Requires or disallows parameter properties in class constructors.",
 );
 
 impl Rule for ParameterProperties {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {

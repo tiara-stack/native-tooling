@@ -4,12 +4,15 @@ use bitflags::bitflags;
 use schemars::{JsonSchema, r#gen::SchemaGenerator, schema::Schema};
 use serde::{Deserialize, Serialize, de::Deserializer, ser::Serializer};
 
-/// Normalizes plugin names by stripping common ESLint plugin prefixes and suffixes.
+/// Normalizes plugin names by stripping common plugin prefixes and suffixes.
 ///
-/// This handles the various naming conventions used in the ESLint ecosystem:
+/// This handles the various naming conventions used in the ESLint and Oxlint plugin ecosystems:
 /// - `eslint-plugin-foo` → `foo`
+/// - `oxlint-plugin-foo` → `foo`
 /// - `@scope/eslint-plugin` → `@scope`
 /// - `@scope/eslint-plugin-foo` → `@scope/foo`
+/// - `@scope/oxlint-plugin` → `@scope`
+/// - `@scope/oxlint-plugin-foo` → `@scope/foo`
 ///
 /// This logic is replicated on JS side in `normalizePluginName` in `apps/oxlint/src-js/plugins/load.ts`.
 /// The 2 implementations must be kept in sync.
@@ -20,38 +23,62 @@ use serde::{Deserialize, Serialize, de::Deserializer, ser::Serializer};
 /// use oxc_linter::normalize_plugin_name;
 ///
 /// assert_eq!(normalize_plugin_name("eslint-plugin-react"), "react");
+/// assert_eq!(normalize_plugin_name("oxlint-plugin-react"), "react");
 /// assert_eq!(normalize_plugin_name("@typescript-eslint/eslint-plugin"), "@typescript-eslint");
 /// assert_eq!(normalize_plugin_name("@foo/eslint-plugin-bar"), "@foo/bar");
 /// ```
 pub fn normalize_plugin_name(plugin_name: &str) -> Cow<'_, str> {
+    const PLUGIN_PREFIXES: [&str; 2] = ["eslint-plugin", "oxlint-plugin"];
+
     // Handle scoped packages (@scope/...)
     if let Some((scope, rest)) = plugin_name.split_once('/') {
-        // Check if it's @scope/eslint-plugin or @scope/eslint-plugin-something
-        if rest == "eslint-plugin" {
+        for prefix in PLUGIN_PREFIXES {
             // @foo/eslint-plugin -> @foo
-            return Cow::Borrowed(scope);
-        } else if let Some(suffix) = rest.strip_prefix("eslint-plugin-") {
+            // @foo/oxlint-plugin -> @foo
+            if rest == prefix {
+                return Cow::Borrowed(scope);
+            }
             // @foo/eslint-plugin-bar -> @foo/bar
-            return Cow::Owned(format!("{scope}/{suffix}"));
+            // @foo/oxlint-plugin-bar -> @foo/bar
+            if let Some(suffix) = rest.strip_prefix(prefix).and_then(|rest| rest.strip_prefix('-'))
+            {
+                return Cow::Owned(format!("{scope}/{suffix}"));
+            }
         }
     }
 
     // Handle non-scoped packages
-    if let Some(suffix) = plugin_name.strip_prefix("eslint-plugin-") {
-        // eslint-plugin-foo -> foo
-        return Cow::Borrowed(suffix);
+    for prefix in PLUGIN_PREFIXES {
+        if let Some(suffix) =
+            plugin_name.strip_prefix(prefix).and_then(|rest| rest.strip_prefix('-'))
+        {
+            // eslint-plugin-foo -> foo
+            // oxlint-plugin-foo -> foo
+            return Cow::Borrowed(suffix);
+        }
     }
 
     // No normalization needed
     Cow::Borrowed(plugin_name)
 }
 
+/// Gets the canonical display name for a plugin from its internal short name.
+#[inline]
+pub fn plugin_display_name(plugin_name: &str) -> &str {
+    match plugin_name {
+        "jsx_a11y" => "jsx-a11y",
+        "react_perf" => "react-perf",
+        "nextjs" => "next",
+        _ => plugin_name,
+    }
+}
+
 /// Checks if the given plugin name is valid.
 ///
 /// Returns `true` if the given plugin name is already in its normalized form.
 ///
-/// Returns `false` if it starts with `eslint-plugin-`, or is of the form `@scope/eslint-plugin`
-/// or `@scope/eslint-plugin-something`.
+/// Returns `false` if it starts with `eslint-plugin-`/`oxlint-plugin-`, or is of the form
+/// `@scope/eslint-plugin`, `@scope/oxlint-plugin`, or a prefixed scoped plugin name.
 pub fn is_normal_plugin_name(plugin_name: &str) -> bool {
     let normalized = normalize_plugin_name(plugin_name);
     match normalized {
@@ -137,7 +164,7 @@ impl TryFrom<&str> for LintPlugins {
     type Error = ();
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
-        // Normalize plugin name first to handle eslint-plugin-* naming
+        // Normalize plugin name first to handle eslint-plugin-* and oxlint-plugin-* naming
         let normalized = normalize_plugin_name(value);
         let value = normalized.as_ref();
 
@@ -154,7 +181,8 @@ impl TryFrom<&str> for LintPlugins {
             "jsdoc" => Ok(LintPlugins::JSDOC),
             "jest" => Ok(LintPlugins::JEST),
             "vitest" => Ok(LintPlugins::VITEST),
-            "jsx-a11y" | "jsx_a11y" => Ok(LintPlugins::JSX_A11Y),
+            // jsx-a11y-x has the same rules but better maintained
+            "jsx-a11y" | "jsx_a11y" | "jsx-a11y-x" | "jsx_a11y-x" => Ok(LintPlugins::JSX_A11Y),
             "nextjs" => Ok(LintPlugins::NEXTJS),
             "react-perf" | "react_perf" => Ok(LintPlugins::REACT_PERF),
             "promise" => Ok(LintPlugins::PROMISE),
@@ -258,6 +286,7 @@ impl JsonSchema for LintPlugins {
             Promise,
             Node,
             Vue,
+            Effect,
         }
 
         let enum_schema = r#gen.subschema_for::<LintPluginOptionsSchema>();
@@ -290,7 +319,10 @@ mod tests {
     #[test]
     fn test_plugins_default() {
         let default = LintPlugins::default();
-        assert_eq!(default, LintPlugins::UNICORN | LintPlugins::TYPESCRIPT | LintPlugins::OXC);
+        assert_eq!(
+            default,
+            LintPlugins::UNICORN | LintPlugins::TYPESCRIPT | LintPlugins::OXC | LintPlugins::EFFECT
+        );
         assert!(!default.contains(LintPlugins::REACT));
     }
 
@@ -307,6 +339,26 @@ mod tests {
         assert_eq!(<&'static str>::from(LintPlugins::REACT), "react");
         assert_eq!(<&'static str>::from(LintPlugins::JEST), "jest");
         assert_eq!(<&'static str>::from(LintPlugins::ESLINT), "");
+    }
+
+    #[test]
+    fn test_plugin_schema_covers_all_plugins() {
+        let schema = schemars::schema_for!(LintPlugins);
+        let schema_names = schema
+            .definitions
+            .values()
+            .filter_map(|schema| match schema {
+                Schema::Object(schema) => schema.enum_values.as_ref(),
+                Schema::Bool(_) => None,
+            })
+            .flatten()
+            .filter_map(serde_json::Value::as_str)
+            .collect::<Vec<_>>();
+
+        for plugin in LintPlugins::all().iter() {
+            let name = <&'static str>::from(plugin);
+            assert!(schema_names.contains(&name), "Schema omits supported plugin {name}");
+        }
     }
 
     #[test]
@@ -347,15 +399,23 @@ mod tests {
 
     #[test]
     fn test_plugin_normalization() {
-        // Test eslint-plugin- prefix normalization
+        // Test eslint-plugin- and oxlint-plugin- prefix normalization
         assert_eq!(LintPlugins::try_from("eslint-plugin-react"), Ok(LintPlugins::REACT));
         assert_eq!(LintPlugins::try_from("eslint-plugin-unicorn"), Ok(LintPlugins::UNICORN));
         assert_eq!(LintPlugins::try_from("eslint-plugin-import"), Ok(LintPlugins::IMPORT));
         assert_eq!(LintPlugins::try_from("eslint-plugin-jest"), Ok(LintPlugins::JEST));
+        assert_eq!(LintPlugins::try_from("oxlint-plugin-react"), Ok(LintPlugins::REACT));
+        assert_eq!(LintPlugins::try_from("oxlint-plugin-unicorn"), Ok(LintPlugins::UNICORN));
+        assert_eq!(LintPlugins::try_from("oxlint-plugin-import"), Ok(LintPlugins::IMPORT));
+        assert_eq!(LintPlugins::try_from("oxlint-plugin-jest"), Ok(LintPlugins::JEST));
 
-        // Test @scope/eslint-plugin normalization
+        // Test @scope/eslint-plugin and @scope/oxlint-plugin normalization
         assert_eq!(
             LintPlugins::try_from("@typescript-eslint/eslint-plugin"),
+            Ok(LintPlugins::TYPESCRIPT)
+        );
+        assert_eq!(
+            LintPlugins::try_from("@typescript-eslint/oxlint-plugin"),
             Ok(LintPlugins::TYPESCRIPT)
         );
 
@@ -372,19 +432,38 @@ mod tests {
     fn test_normalize_plugin_name() {
         use super::normalize_plugin_name;
 
-        // Test eslint-plugin- prefix stripping
+        // Test eslint-plugin- and oxlint-plugin- prefix stripping
         assert_eq!(normalize_plugin_name("eslint-plugin-foo"), "foo");
         assert_eq!(normalize_plugin_name("eslint-plugin-react"), "react");
+        assert_eq!(normalize_plugin_name("oxlint-plugin-foo"), "foo");
+        assert_eq!(normalize_plugin_name("oxlint-plugin-react"), "react");
 
-        // Test @scope/eslint-plugin suffix stripping
+        // Test @scope/eslint-plugin and @scope/oxlint-plugin suffix stripping
         assert_eq!(normalize_plugin_name("@foo/eslint-plugin"), "@foo");
         assert_eq!(normalize_plugin_name("@bar/eslint-plugin"), "@bar");
+        assert_eq!(normalize_plugin_name("@foo/oxlint-plugin"), "@foo");
+        assert_eq!(normalize_plugin_name("@bar/oxlint-plugin"), "@bar");
 
-        // Test @scope/eslint-plugin-name normalization
+        // Test @scope/eslint-plugin-name and @scope/oxlint-plugin-name normalization
         assert_eq!(normalize_plugin_name("@foo/eslint-plugin-bar"), "@foo/bar");
+        assert_eq!(normalize_plugin_name("@foo/oxlint-plugin-bar"), "@foo/bar");
 
         // Test no change for already normalized names
         assert_eq!(normalize_plugin_name("react"), "react");
         assert_eq!(normalize_plugin_name("@typescript-eslint"), "@typescript-eslint");
+    }
+
+    #[test]
+    fn test_is_normal_plugin_name() {
+        use super::is_normal_plugin_name;
+
+        assert!(is_normal_plugin_name("foo"));
+        assert!(is_normal_plugin_name("@scope/foo"));
+        assert!(!is_normal_plugin_name("eslint-plugin-foo"));
+        assert!(!is_normal_plugin_name("oxlint-plugin-foo"));
+        assert!(!is_normal_plugin_name("@scope/eslint-plugin"));
+        assert!(!is_normal_plugin_name("@scope/oxlint-plugin"));
+        assert!(!is_normal_plugin_name("@scope/eslint-plugin-foo"));
+        assert!(!is_normal_plugin_name("@scope/oxlint-plugin-foo"));
     }
 }

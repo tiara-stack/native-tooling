@@ -5,7 +5,7 @@
 ;
 [subrepo]
 	remote = https://github.com/oxc-project/oxc
-	branch = main
-	commit = 
+	branch = oxlint_v1.87.0
+	commit = 2bd08ebe8f36fcf1954a675ffdeb4c6d0129f609
 	method = merge
 	cmdver = 0.4.9

@@ -1,14 +1,17 @@
 use std::borrow::Cow;
 
+use itertools::Itertools;
+use schemars::JsonSchema;
+use serde::Deserialize;
+
 use oxc_ast::{
     AstKind,
     ast::{JSXChild, JSXElement},
 };
 use oxc_diagnostics::OxcDiagnostic;
 use oxc_macros::declare_oxc_lint;
-use oxc_span::{CompactStr, Span};
-use schemars::JsonSchema;
-use serde::Deserialize;
+use oxc_span::Span;
+use oxc_str::CompactStr;
 
 use crate::{
     AstNode,
@@ -93,11 +96,13 @@ declare_oxc_lint!(
     jsx_a11y,
     restriction,
     config = AnchorAmbiguousTextConfig,
+    version = "0.13.2",
+    short_description = "Inspects anchor link text for the use of ambiguous words.",
 );
 
 impl Rule for AnchorAmbiguousText {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
@@ -146,9 +151,7 @@ fn normalize_str(text: &str) -> CompactStr {
     });
 
     if normalized_str.contains(char::is_whitespace) {
-        let parts: Vec<String> =
-            normalized_str.split_whitespace().map(std::string::ToString::to_string).collect();
-        return CompactStr::from(parts.join(" "));
+        return CompactStr::from(normalized_str.split_whitespace().join(" "));
     }
 
     CompactStr::from(normalized_str)

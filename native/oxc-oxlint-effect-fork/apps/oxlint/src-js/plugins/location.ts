@@ -163,11 +163,14 @@ export function getLineColumnFromOffset(offset: number): LineColumn {
   // This is also the 1-indexed line number of the line containing `offset`.
   // e.g. if `offset` is on the 3rd line, `low` = 3, and `lineStartIndices[2]` is that line's start.
   // `do...while` is safe because `lineStartIndices` always has at least one entry, so `low < high` at start of loop.
+  //
+  // Note: Source text is limited to 1 GiB max, so offsets cannot exceed 2^30.
+  // This makes it safe to use `>> 1` for division by 2 below (which is faster than `>>> 1`).
   let low = 0,
     high = lineStartIndices.length,
     mid: number;
   do {
-    mid = (low + high) >>> 1;
+    mid = (low + high) >> 1;
     if (offset < lineStartIndices[mid]) {
       high = mid;
     } else {
@@ -192,10 +195,10 @@ export function getOffsetFromLineColumn(loc: LineColumn): number {
   if (loc !== null && typeof loc === "object") {
     const { line, column } = loc;
     if (
-      typeof line === "number" &&
-      typeof column === "number" &&
-      (line | 0) === line &&
-      (column | 0) === column
+      typeof line === "number"
+      && typeof column === "number"
+      && (line | 0) === line
+      && (column | 0) === column
     ) {
       // Build `lines` and `lineStartIndices` tables if they haven't been already.
       // This also decodes `sourceText` if it wasn't already.
@@ -206,8 +209,8 @@ export function getOffsetFromLineColumn(loc: LineColumn): number {
       const linesCount = lineStartIndices.length;
       if (line <= 0 || line > linesCount) {
         throw new RangeError(
-          `Line number out of range (line ${line} requested). ` +
-            `Line numbers should be 1-based, and less than or equal to number of lines in file (${linesCount}).`,
+          `Line number out of range (line ${line} requested). `
+            + `Line numbers should be 1-based, and less than or equal to number of lines in file (${linesCount}).`,
         );
       }
       if (column < 0) throw new RangeError(`Invalid column number (column ${column} requested).`);
@@ -235,8 +238,8 @@ export function getOffsetFromLineColumn(loc: LineColumn): number {
       }
 
       throw new RangeError(
-        `Column number out of range (column ${column} requested, ` +
-          `but the length of line ${line} is ${nextLineOffset - lineOffset}).`,
+        `Column number out of range (column ${column} requested, `
+          + `but the length of line ${line} is ${nextLineOffset - lineOffset}).`,
       );
     }
   }
@@ -350,11 +353,14 @@ export function computeLoc(start: number, end: number): Location {
   // This is also the 1-indexed line number of the line containing `start`.
   // e.g. if `start` is on the 3rd line, `line` = 3, and `lineStartIndices[2]` is that line's start.
   // `do...while` is safe because `lineStartIndices` always has at least one entry, so `line < high` at start of loop.
+  //
+  // Note: Source text is limited to 1 GiB max, so number of lines cannot exceed 2^30.
+  // This makes it safe to use `>> 1` for division by 2 below (which is faster than `>>> 1`).
   let line = 0,
     high = linesLen,
     mid: number;
   do {
-    mid = (line + high) >>> 1;
+    mid = (line + high) >> 1;
     if (start < lineStartIndices[mid]) {
       high = mid;
     } else {
@@ -387,7 +393,7 @@ export function computeLoc(start: number, end: number): Location {
     line++;
     high = linesLen;
     while (line < high) {
-      mid = (line + high) >>> 1;
+      mid = (line + high) >> 1;
       if (end < lineStartIndices[mid]) {
         high = mid;
       } else {

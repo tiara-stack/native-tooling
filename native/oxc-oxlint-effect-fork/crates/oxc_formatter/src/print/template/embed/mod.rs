@@ -3,30 +3,97 @@ mod graphql;
 mod html;
 mod markdown;
 
-use oxc_allocator::Allocator;
+use oxc_allocator::{Allocator, ArenaStringBuilder, ArenaVec};
 use oxc_ast::ast::*;
+use oxc_formatter_core::{FormatElement, format_element::TextWidth, map_text_in_ir};
+use oxc_span::GetSpan;
 
 use crate::{
-    IndentWidth,
     ast_nodes::{AstNode, AstNodes},
-    formatter::{FormatElement, Formatter, format_element::TextWidth, prelude::*},
+    formatter::prelude::*,
 };
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum EmbedLanguage {
+    Css,
+    Graphql,
+    Html,
+    Markdown,
+}
+
+fn tagged_template_language(tagged: &TaggedTemplateExpression<'_>) -> Option<EmbedLanguage> {
+    match get_tag_name(&tagged.tag)? {
+        "css" | "styled" => Some(EmbedLanguage::Css),
+        "gql" | "graphql" => Some(EmbedLanguage::Graphql),
+        "html" => Some(EmbedLanguage::Html),
+        // Markdown never supports `${}` (Prettier doesn't either)
+        "md" | "markdown" if tagged.quasi.is_no_substitution_template() => {
+            Some(EmbedLanguage::Markdown)
+        }
+        _ => None,
+    }
+}
+
+fn is_graphql_callee(callee: &Expression<'_>) -> bool {
+    matches!(callee, Expression::Identifier(id) if id.name == "graphql")
+}
+
+/// The language of a `/* HTML */` or `/* GraphQL */` comment right before the template.
+fn template_comment_language(
+    template: &TemplateLiteral<'_>,
+    f: &JsFormatter<'_, '_>,
+) -> Option<EmbedLanguage> {
+    let start = template.span.start;
+    let comment = f.comments().all_comments_before(start).last()?;
+    let source_text = f.source_text();
+    // Nothing but whitespace in between, unlike `const html /* HTML */ = \`...\``
+    if !comment.is_block()
+        || !source_text.all_bytes_match(comment.span.end, start, |b| b.is_ascii_whitespace())
+    {
+        return None;
+    }
+    match source_text.text_for(&comment.content_span()) {
+        " HTML " => Some(EmbedLanguage::Html),
+        " GraphQL " => Some(EmbedLanguage::Graphql),
+        _ => None,
+    }
+}
+
+/// Try to format a template literal with the embedded formatter if supported.
+/// Returns `true` if formatting was performed, `false` if not applicable.
+pub(super) fn try_format_template_literal<'a>(
+    template: &AstNode<'a, TemplateLiteral<'a>>,
+    f: &mut JsFormatter<'_, 'a>,
+) -> bool {
+    // Without a dispatcher (`embeddedLanguageFormatting: off`), embeds print verbatim
+    f.session().has_dispatcher()
+        && (
+            // Angular `@Component({ template, styles })`
+            try_format_angular_component(template, f)
+            // styled-jsx: <style jsx>{`...`}</style> or <div css={`...`} />
+            || try_format_css_template(template, f)
+            // graphql(`...`) function call
+            || try_format_graphql_call(template, f)
+            // Language comment: /* HTML */ `...` or /* GraphQL */ `...`
+            || try_format_comment_embedded(template, f)
+        )
+}
 
 /// Try to format a tagged template with the embedded formatter if supported.
 /// Returns `true` if formatting was performed, `false` if not applicable.
 pub(super) fn try_format_embedded_template<'a>(
     tagged: &AstNode<'a, TaggedTemplateExpression<'a>>,
-    f: &mut Formatter<'_, 'a>,
+    f: &mut JsFormatter<'_, 'a>,
 ) -> bool {
-    match get_tag_name(&tagged.tag) {
-        Some("css" | "styled") => css::format_css_doc(tagged.quasi(), f),
-        Some("gql" | "graphql") => graphql::format_graphql_doc(tagged.quasi(), f),
-        Some("html") => html::format_html_doc(tagged.quasi(), f, false),
-        // Markdown never supports `${}` (Prettier doesn't either)
-        Some("md" | "markdown") if tagged.quasi.is_no_substitution_template() => {
-            markdown::try_embed_markdown(tagged, f)
-        }
-        _ => false,
+    if !f.session().has_dispatcher() {
+        return false;
+    }
+    match tagged_template_language(tagged) {
+        Some(EmbedLanguage::Css) => css::format_css_doc(tagged.quasi(), f),
+        Some(EmbedLanguage::Graphql) => graphql::format_graphql_doc(tagged.quasi(), f),
+        Some(EmbedLanguage::Html) => html::format_html_doc(tagged.quasi(), f, false),
+        Some(EmbedLanguage::Markdown) => markdown::try_embed_markdown(tagged, f),
+        None => false,
     }
 }
 
@@ -41,19 +108,73 @@ fn get_tag_name<'a>(expr: &'a Expression<'a>) -> Option<&'a str> {
     }
 }
 
+/// Whether `expr` is a template targeted by embedded formatting, and if so, whether it hugs its parent
+/// (a sole call argument ``foo(css`...`)``, an arrow body ``() => css`...` ``).
+///
+/// Decided from the AST alone (the same tag, callee and comment classifiers as the `try_format_*` sites),
+/// not from whether formatting succeeds,
+/// so the surrounding layout does not depend on the content being valid.
+///
+/// - `None`: not a target, or no dispatcher is installed (`embeddedLanguageFormatting: off`),
+///   the caller keeps the rule for verbatim templates
+/// - `Some(false)`: a line break between the tag and the quasi,
+///   or HTML without both leading and trailing whitespace (whitespace-sensitive)
+/// - `Some(true)`: otherwise
+pub fn embed_hug(
+    expr: &Expression<'_>,
+    call: Option<&CallExpression<'_>>,
+    f: &JsFormatter<'_, '_>,
+) -> Option<bool> {
+    if !f.session().has_dispatcher() {
+        return None;
+    }
+
+    let (language, template) = match expr {
+        Expression::TaggedTemplateExpression(tagged) => {
+            let language = tagged_template_language(tagged)?;
+            // A line comment between the tag and the quasi already breaks the line: ``html // c\n`...` ``
+            if f.source_text()
+                .contains_newline_between(tagged.tag.span().end, tagged.quasi.span.start)
+            {
+                return Some(false);
+            }
+            (language, &tagged.quasi)
+        }
+        Expression::TemplateLiteral(template) => {
+            let language = if call.is_some_and(|call| is_graphql_callee(&call.callee)) {
+                EmbedLanguage::Graphql
+            } else {
+                template_comment_language(template, f)?
+            };
+            (language, template.as_ref())
+        }
+        _ => return None,
+    };
+
+    if language != EmbedLanguage::Html || f.options().html_whitespace_sensitivity_ignore {
+        return Some(true);
+    }
+    let has_leading_ws = template
+        .quasis
+        .first()
+        .and_then(|q| q.value.cooked.as_ref())
+        .is_some_and(|s| s.starts_with(|c: char| c.is_ascii_whitespace()));
+    let has_trailing_ws = template
+        .quasis
+        .last()
+        .and_then(|q| q.value.cooked.as_ref())
+        .is_some_and(|s| s.ends_with(|c: char| c.is_ascii_whitespace()));
+    Some(has_leading_ws && has_trailing_ws)
+}
+
 /// Try to format a template literal inside a `graphql()` function call.
 /// Returns `true` if formatting was performed, `false` if not applicable.
-///
-/// NOTE: when this fires for a single-argument call,
-/// `arguments.rs` also applies a "hugging" layout (`graphql(`…`)` with no trailing comma).
-/// See `is_graphql_call_with_single_template_arg()` in `arguments.rs`.
-pub(super) fn try_format_graphql_call<'a>(
+fn try_format_graphql_call<'a>(
     template: &AstNode<'a, TemplateLiteral<'a>>,
-    f: &mut Formatter<'_, 'a>,
+    f: &mut JsFormatter<'_, 'a>,
 ) -> bool {
     let AstNodes::CallExpression(call) = template.parent() else { return false };
-    let Expression::Identifier(ident) = &call.callee else { return false };
-    if ident.name.as_str() != "graphql" {
+    if !is_graphql_callee(&call.callee) {
         return false;
     }
     graphql::format_graphql_doc(template, f)
@@ -65,41 +186,22 @@ pub(super) fn try_format_graphql_call<'a>(
 /// Supported languages:
 /// - HTML
 /// - GraphQL
-pub(super) fn try_format_comment_embedded<'a>(
+fn try_format_comment_embedded<'a>(
     template: &AstNode<'a, TemplateLiteral<'a>>,
-    f: &mut Formatter<'_, 'a>,
+    f: &mut JsFormatter<'_, 'a>,
 ) -> bool {
-    // By the time `TemplateLiteral::write()` runs, parent nodes have already printed
-    // leading comments via the cursor-based system. So `/* HTML */` is the last printed comment.
-    let Some(comment) = f.context().comments().printed_comments().last() else {
-        return false;
-    };
-    if !comment.is_block() || comment.span.end > template.span.start {
-        return false;
-    }
-
-    // Ensure there's nothing but whitespace between the comment and the template literal.
-    // This prevents matching `const html /* HTML */ = \`...\`` where `=` is between them.
-    if !f
-        .source_text()
-        .all_bytes_match(comment.span.end, template.span.start, |b| b.is_ascii_whitespace())
-    {
-        return false;
-    }
-
-    let text = f.source_text().text_for(&comment.content_span());
-    match text {
-        " HTML " => html::format_html_doc(template, f, false),
-        " GraphQL " => graphql::format_graphql_doc(template, f),
+    match template_comment_language(template, f) {
+        Some(EmbedLanguage::Html) => html::format_html_doc(template, f, false),
+        Some(EmbedLanguage::Graphql) => graphql::format_graphql_doc(template, f),
         _ => false,
     }
 }
 
 /// Try to format a template literal inside css prop or styled-jsx with the embedded formatter.
 /// Returns `true` if formatting was attempted, `false` if not applicable.
-pub(super) fn try_format_css_template<'a>(
+fn try_format_css_template<'a>(
     template_literal: &AstNode<'a, TemplateLiteral<'a>>,
-    f: &mut Formatter<'_, 'a>,
+    f: &mut JsFormatter<'_, 'a>,
 ) -> bool {
     if !is_in_css_jsx(template_literal) {
         return false;
@@ -138,9 +240,9 @@ fn is_in_css_jsx<'a>(node: &AstNode<'a, TemplateLiteral<'a>>) -> bool {
 
 /// Try to format a template literal inside Angular @Component's template/styles property.
 /// Returns `true` if formatting was performed, `false` if not applicable.
-pub(super) fn try_format_angular_component<'a>(
+fn try_format_angular_component<'a>(
     template_literal: &AstNode<'a, TemplateLiteral<'a>>,
-    f: &mut Formatter<'_, 'a>,
+    f: &mut JsFormatter<'_, 'a>,
 ) -> bool {
     match get_angular_component_property(template_literal) {
         Some("template") => html::format_html_doc(template_literal, f, true),
@@ -197,7 +299,7 @@ fn get_angular_component_property<'a>(node: &AstNode<'a, TemplateLiteral<'a>>) -
 /// `[literal, index_str, literal, index_str, ...]`
 ///
 /// Handles both:
-/// - CSS: `@prettier-placeholder-{N}-id`
+/// - CSS: `` `PLACEHOLDER-{N}` ``
 /// - HTML: `PRETTIER_HTML_PLACEHOLDER_{N}_{C}_IN_JS`
 ///
 /// The optional `_{digits}` counter group between index and suffix is skipped when present,
@@ -264,39 +366,160 @@ fn split_on_placeholders<'a>(text: &'a str, prefix: &str, suffix: &str) -> Vec<&
     result
 }
 
-/// Emit text with newlines converted to literal line breaks (`replaceEndOfLine()` equivalent).
-///
-/// Uses [`write_literalline`] instead of `hard_line_break()` to avoid adding indentation.
-///
-/// The external formatter has already computed proper indentation in the text content,
-/// so we must not add extra indent from the surrounding `block_indent`.
-fn write_text_with_line_breaks<'a>(
-    f: &mut Formatter<'_, 'a>,
-    text: &str,
-    allocator: &'a Allocator,
-    indent_width: IndentWidth,
-) {
-    let mut first = true;
-    // Splitting on `\n` is safe because `Doc` only contains normalized linebreaks.
-    for line in text.split('\n') {
-        if !first {
-            write_literalline(f, allocator);
-        }
-        first = false;
-        if !line.is_empty() {
-            let arena_text = allocator.alloc_str(line);
-            let width = TextWidth::from_text(arena_text, indent_width);
-            f.write_element(FormatElement::Text { text: arena_text, width });
-        }
-    }
+// ---
+
+/// Re-escape template-literal characters (`` ` ``, `${`, `\`) in every `Text` element of an embedded IR.
+/// The IR is re-inserted into a JS template literal built from `.cooked` values,
+/// so these characters need escaping.
+fn escape_template_chars_in_ir<'a>(
+    ir: &[FormatElement<'a>],
+    f: &JsFormatter<'_, 'a>,
+) -> ArenaVec<'a, FormatElement<'a>> {
+    escape_text_in_ir(ir, f, escape_template_chars)
 }
 
-/// Emit Prettier's `literalline` equivalent,
-/// which newline that preserves indentation from the source.
-fn write_literalline<'a>(f: &mut Formatter<'_, 'a>, allocator: &'a Allocator) {
-    f.write_element(FormatElement::Text {
-        text: allocator.alloc_str("\n"),
-        width: TextWidth::multiline(0),
-    });
-    f.write_element(FormatElement::ExpandParent);
+/// Re-escape backticks in `Text` elements of an embedded IR using Prettier's "raw" escape rule.
+/// Used by markdown-in-JS, which uses `.raw` quasi values.
+fn escape_backticks_raw_in_ir<'a>(
+    ir: &[FormatElement<'a>],
+    f: &JsFormatter<'_, 'a>,
+) -> ArenaVec<'a, FormatElement<'a>> {
+    escape_text_in_ir(ir, f, escape_backticks_raw)
+}
+
+fn escape_text_in_ir<'a>(
+    ir: &[FormatElement<'a>],
+    f: &JsFormatter<'_, 'a>,
+    escape: fn(&'a str, &'a Allocator) -> Option<&'a str>,
+) -> ArenaVec<'a, FormatElement<'a>> {
+    let allocator = f.allocator();
+    let indent_width = f.options().indent_width;
+    map_text_in_ir(ir, allocator, &mut |text, out| {
+        let Some(text) = escape(text, allocator) else { return false };
+        out.push(FormatElement::Text { text, width: TextWidth::from_text(text, indent_width) });
+        true
+    })
+}
+
+/// Escape characters that would break template literal syntax.
+///
+/// Equivalent to Prettier's `uncookTemplateElementValue`:
+/// `cookedValue.replaceAll(/([\\`]|\$\{)/gu, String.raw`\$1`);`
+///
+/// Returns `None` when no escape is needed.
+fn escape_template_chars<'a>(s: &'a str, allocator: &'a Allocator) -> Option<&'a str> {
+    // All escape targets (`\`, `` ` ``, `${`) are single-byte ASCII;
+    // UTF-8 continuation bytes never match, so byte scans/copies are safe.
+    let bytes = s.as_bytes();
+    let first = bytes.iter().enumerate().position(|(i, &b)| {
+        b == b'\\' || b == b'`' || (b == b'$' && bytes.get(i + 1) == Some(&b'{'))
+    })?;
+
+    let mut result = ArenaStringBuilder::with_capacity_in(bytes.len(), allocator);
+    result.push_str(&s[..first]);
+
+    let mut run_start = first;
+    let mut i = first;
+    while i < bytes.len() {
+        let b = bytes[i];
+        if b == b'\\' || b == b'`' {
+            result.push_str(&s[run_start..i]);
+            result.push('\\');
+            result.push(b as char);
+            i += 1;
+            run_start = i;
+        } else if b == b'$' && bytes.get(i + 1) == Some(&b'{') {
+            result.push_str(&s[run_start..i]);
+            result.push_str("\\${");
+            i += 2;
+            run_start = i;
+        } else {
+            i += 1;
+        }
+    }
+    result.push_str(&s[run_start..]);
+
+    Some(result.into_str())
+}
+
+/// Escape backticks in raw mode for markdown-in-JS template literals.
+///
+/// Equivalent to Prettier's `escapeTemplateCharacters(doc, /* raw */ true)`:
+/// <https://github.com/prettier/prettier/blob/90983f40dce5e20beea4e5618b5e0426a6a7f4f0/src/language-js/print/template-literal.js#L277-L287>
+/// `str.replaceAll(/(\\*)`/g, "$1$1\\`")`
+///
+/// For each backtick, doubles the preceding backslashes and adds `\` before the backtick:
+/// - `` ` `` → `` \` ``
+/// - `` \` `` → `` \\\` ``
+/// - `` \\` `` → `` \\\\\` ``
+///
+/// Returns `None` when no escape is needed.
+fn escape_backticks_raw<'a>(s: &'a str, allocator: &'a Allocator) -> Option<&'a str> {
+    // `` ` `` and `\` are ASCII; UTF-8 continuation bytes never match,
+    // so the byte walk is safe and avoids per-char decode.
+    let bytes = s.as_bytes();
+    if !bytes.contains(&b'`') {
+        return None;
+    }
+    let mut result = ArenaStringBuilder::with_capacity_in(bytes.len() + 1, allocator);
+    let mut run_start = 0;
+    let mut bs_count: usize = 0;
+    for (i, &b) in bytes.iter().enumerate() {
+        if b == b'\\' {
+            bs_count += 1;
+        } else if b == b'`' {
+            // Emit the run up to (but not including) the backtick;
+            // this already contains the original `bs_count` backslashes.
+            // Then emit `bs_count` MORE backslashes to double them,
+            // plus the `\` that escapes the backtick itself.
+            result.push_str(&s[run_start..i]);
+            for _ in 0..bs_count {
+                result.push('\\');
+            }
+            result.push_str("\\`");
+            bs_count = 0;
+            run_start = i + 1;
+        } else {
+            bs_count = 0;
+        }
+    }
+    result.push_str(&s[run_start..]);
+    Some(result.into_str())
+}
+
+/// Count placeholder occurrences matching `{prefix}{digits}(_{digits})?{suffix}`.
+///
+/// The optional `_{digits}` middle group lets this serve both:
+/// - CSS sentinel `` `PLACEHOLDER-{N}` `` (no counter)
+/// - HTML sentinel `PRETTIER_HTML_PLACEHOLDER_{N}_{C}_IN_JS` (with counter)
+///
+/// Mirrors the grammar that [`split_on_placeholders`] uses for substitution.
+fn count_placeholders(text: &str, prefix: &str, suffix: &str) -> usize {
+    let mut count = 0;
+    let mut rest = text;
+    while let Some(start) = rest.find(prefix) {
+        let after_prefix = &rest[start + prefix.len()..];
+        let digit_end =
+            after_prefix.bytes().position(|b| !b.is_ascii_digit()).unwrap_or(after_prefix.len());
+        if digit_end > 0 {
+            let mut after_digits = &after_prefix[digit_end..];
+            // Skip optional `_{digits}` counter (HTML).
+            if let Some(after_underscore) = after_digits.strip_prefix('_') {
+                let counter_end = after_underscore
+                    .bytes()
+                    .position(|b| !b.is_ascii_digit())
+                    .unwrap_or(after_underscore.len());
+                if counter_end > 0 {
+                    after_digits = &after_underscore[counter_end..];
+                }
+            }
+            if let Some(tail) = after_digits.strip_prefix(suffix) {
+                count += 1;
+                rest = tail;
+                continue;
+            }
+        }
+        rest = &rest[start + prefix.len()..];
+    }
+    count
 }

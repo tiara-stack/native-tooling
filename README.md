@@ -32,6 +32,11 @@ pnpm native:stage
 pnpm native:smoke
 ```
 
+The custom Oxlint source is pinned to 1.87.0. Build it with Rust 1.99.0
+and run `pnpm native:test:oxlint` to check the existing Effect rules through
+the local CLI. See [the fork notes](native/oxc-oxlint-effect-fork/TIARA.md)
+for the source commit and integration details.
+
 `@tiara-stack/effect-vitest` is generated from
 `packages/effect-smol-fork/packages/vitest` with Vitest imports rewritten to
 Vite+ test exports. After pulling the Effect source fork, run:

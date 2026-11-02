@@ -1,31 +1,32 @@
 //! Code related to navigating `Token`s from the lexer
 
-use oxc_allocator::Vec;
+use oxc_allocator::{ArenaBox, ArenaVec};
 use oxc_ast::ast::{BindingRestElement, RegExpFlags};
-use oxc_diagnostics::OxcDiagnostic;
 use oxc_span::{GetSpan, Span};
 
 use crate::{
-    Context, ParserConfig as Config, ParserImpl, diagnostics,
+    Context, ParserConfig as Config, ParserImpl,
+    diagnostics::{self, ParserDiagnostic},
     error_handler::FatalError,
-    lexer::{Kind, LexerCheckpoint, LexerContext, Token},
+    lexer::{Kind, LexerCheckpoint, Token, cold_branch},
 };
 
-#[derive(Clone)]
 pub struct ParserCheckpoint<'a> {
     lexer: LexerCheckpoint<'a>,
     cur_token: Token,
-    prev_span_end: u32,
+    prev_token_end: u32,
     errors_pos: usize,
-    fatal_error: Option<FatalError>,
+    fatal_error: Option<FatalError<'a>>,
 }
 
 impl<'a, C: Config> ParserImpl<'a, C> {
+    /// Get current token's span start.
     #[inline]
-    pub(crate) fn start_span(&self) -> u32 {
+    pub(crate) fn cur_start(&self) -> u32 {
         self.token.start()
     }
 
+    /// Create a [`Span`] from provided `start` to end of previous token.
     #[inline]
     pub(crate) fn end_span(&self, start: u32) -> Span {
         Span::new(start, self.prev_token_end)
@@ -143,9 +144,14 @@ impl<'a, C: Config> ParserImpl<'a, C> {
         if self.eat(Kind::Semicolon) || self.can_insert_semicolon() {
             /* no op */
         } else {
-            let span = Span::empty(self.prev_token_end);
-            let error = diagnostics::auto_semicolon_insertion(span);
-            self.set_fatal_error(error);
+            // ASI failure is a syntax error (cold). Build the diagnostic out of line so the
+            // ~232-byte `OxcDiagnostic` buffer does not inflate `asi`'s stack frame on the
+            // common (valid) path.
+            cold_branch(|| {
+                let span = Span::empty(self.prev_token_end);
+                let error = diagnostics::auto_semicolon_insertion(span);
+                self.set_fatal_error(error);
+            });
         }
     }
 
@@ -219,12 +225,10 @@ impl<'a, C: Config> ParserImpl<'a, C> {
         self.advance_for_jsx_child();
     }
 
-    /// Expect the next next token to be a `JsxString` or any other token
-    /// # Errors
-    pub(crate) fn expect_jsx_attribute_value(&mut self, kind: Kind) {
-        self.lexer.set_context(LexerContext::JsxAttributeValue);
-        self.expect(kind);
-        self.lexer.set_context(LexerContext::Regular);
+    /// Move to the next token, lexing it as a JSX attribute value.
+    pub(crate) fn advance_for_jsx_attribute_value(&mut self) {
+        self.prev_token_end = self.token.end();
+        self.token = self.lexer.next_jsx_attribute_value();
     }
 
     /// Tell lexer to read a regex
@@ -236,15 +240,23 @@ impl<'a, C: Config> ParserImpl<'a, C> {
 
     /// Tell lexer to read a template substitution tail
     pub(crate) fn re_lex_template_substitution_tail(&mut self) {
+        if self.fatal_error.is_some() {
+            return;
+        }
         if self.at(Kind::RCurly) {
             self.token = self.lexer.next_template_substitution_tail();
         }
     }
 
-    /// Tell lexer to continue reading jsx identifier if the lexer character position is at `-` for `<component-name>`
-    pub(crate) fn continue_lex_jsx_identifier(&mut self) {
+    /// Tell lexer to continue reading jsx identifier if the lexer character position is at `-` for `<component-name>`.
+    ///
+    /// Returns `true` if was continued.
+    pub(crate) fn continue_lex_jsx_identifier(&mut self) -> bool {
         if let Some(token) = self.lexer.continue_lex_jsx_identifier(self.token.start()) {
             self.token = token;
+            true
+        } else {
+            false
         }
     }
 
@@ -298,7 +310,7 @@ impl<'a, C: Config> ParserImpl<'a, C> {
         ParserCheckpoint {
             lexer: self.lexer.checkpoint(),
             cur_token: self.token,
-            prev_span_end: self.prev_token_end,
+            prev_token_end: self.prev_token_end,
             errors_pos: self.errors.len(),
             fatal_error: self.fatal_error.take(),
         }
@@ -308,37 +320,21 @@ impl<'a, C: Config> ParserImpl<'a, C> {
         ParserCheckpoint {
             lexer: self.lexer.checkpoint_with_error_recovery(),
             cur_token: self.token,
-            prev_span_end: self.prev_token_end,
+            prev_token_end: self.prev_token_end,
             errors_pos: self.errors.len(),
             fatal_error: self.fatal_error.take(),
         }
     }
 
     pub(crate) fn rewind(&mut self, checkpoint: ParserCheckpoint<'a>) {
-        let ParserCheckpoint { lexer, cur_token, prev_span_end, errors_pos, fatal_error } =
+        let ParserCheckpoint { lexer, cur_token, prev_token_end, errors_pos, fatal_error } =
             checkpoint;
 
         self.lexer.rewind(lexer);
         self.token = cur_token;
-        self.prev_token_end = prev_span_end;
+        self.prev_token_end = prev_token_end;
         self.errors.truncate(errors_pos);
         self.fatal_error = fatal_error;
-    }
-
-    pub(crate) fn try_parse<T>(
-        &mut self,
-        func: impl FnOnce(&mut ParserImpl<'a, C>) -> T,
-    ) -> Option<T> {
-        let checkpoint = self.checkpoint_with_error_recovery();
-        let ctx = self.ctx;
-        let node = func(self);
-        if self.fatal_error.is_none() {
-            Some(node)
-        } else {
-            self.ctx = ctx;
-            self.rewind(checkpoint);
-            None
-        }
     }
 
     pub(crate) fn lookahead<U>(&mut self, predicate: impl Fn(&mut ParserImpl<'a, C>) -> U) -> U {
@@ -387,13 +383,33 @@ impl<'a, C: Config> ParserImpl<'a, C> {
         result
     }
 
-    pub(crate) fn parse_normal_list<F, T>(&mut self, open: Kind, close: Kind, f: F) -> Vec<'a, T>
+    pub(crate) fn parse_normal_list<F, T>(
+        &mut self,
+        open: Kind,
+        close: Kind,
+        f: F,
+    ) -> ArenaVec<'a, T>
     where
-        F: Fn(&mut Self) -> T,
+        F: FnMut(&mut Self) -> T,
     {
         let opening_span = self.cur_token().span();
         self.expect(open);
-        let mut list = self.ast.vec();
+        let mut list = ArenaVec::new_in(self);
+        self.parse_normal_list_into(&mut list, close, f);
+        self.expect_closing(close, opening_span);
+        list
+    }
+
+    #[expect(clippy::inline_always)]
+    #[inline(always)]
+    fn parse_normal_list_into<F, T>(
+        &mut self,
+        list: &mut ArenaVec<'a, T>,
+        close: Kind,
+        mut parse_element: F,
+    ) where
+        F: FnMut(&mut Self) -> T,
+    {
         loop {
             let kind = self.cur_kind();
             if kind == close
@@ -402,10 +418,9 @@ impl<'a, C: Config> ParserImpl<'a, C> {
             {
                 break;
             }
-            list.push(f(self));
+            let element = parse_element(self);
+            list.push(element);
         }
-        self.expect_closing(close, opening_span);
-        list
     }
 
     pub(crate) fn parse_normal_list_breakable<F, T>(
@@ -413,25 +428,38 @@ impl<'a, C: Config> ParserImpl<'a, C> {
         open: Kind,
         close: Kind,
         f: F,
-    ) -> Vec<'a, T>
+    ) -> ArenaVec<'a, T>
     where
         F: Fn(&mut Self) -> Option<T>,
     {
         let opening_span = self.cur_token().span();
         self.expect(open);
-        let mut list = self.ast.vec();
+        let mut list = ArenaVec::new_in(self);
+        self.parse_normal_list_breakable_into(&mut list, close, f);
+        self.expect_closing(close, opening_span);
+        list
+    }
+
+    #[expect(clippy::inline_always)]
+    #[inline(always)]
+    fn parse_normal_list_breakable_into<F, T>(
+        &mut self,
+        list: &mut ArenaVec<'a, T>,
+        close: Kind,
+        parse_element: F,
+    ) where
+        F: Fn(&mut Self) -> Option<T>,
+    {
         loop {
             if self.at(close) || self.has_fatal_error() {
                 break;
             }
-            if let Some(e) = f(self) {
-                list.push(e);
+            if let Some(element) = parse_element(self) {
+                list.push(element);
             } else {
                 break;
             }
         }
-        self.expect_closing(close, opening_span);
-        list
     }
 
     pub(crate) fn parse_delimited_list<F, T>(
@@ -439,55 +467,31 @@ impl<'a, C: Config> ParserImpl<'a, C> {
         close: Kind,
         separator: Kind,
         opening_span: Span,
-        mut f: F,
-    ) -> (Vec<'a, T>, Option<u32>)
+        parse_element: F,
+    ) -> (ArenaVec<'a, T>, Option<u32>)
     where
         F: FnMut(&mut Self) -> T,
     {
-        let mut list = self.ast.vec();
-        // Cache cur_kind() to avoid redundant calls in compound checks
-        let kind = self.cur_kind();
-        if kind == close
-            || matches!(kind, Kind::Eof | Kind::Undetermined)
-            || self.fatal_error.is_some()
-        {
-            return (list, None);
-        }
-        list.push(f(self));
-        loop {
-            let kind = self.cur_kind();
-            if kind == close
-                || matches!(kind, Kind::Eof | Kind::Undetermined)
-                || self.fatal_error.is_some()
-            {
-                return (list, None);
-            }
-            if !self.at(separator) {
-                self.set_fatal_error(diagnostics::expect_closing_or_separator(
-                    close.to_str(),
-                    separator.to_str(),
-                    kind.to_str(),
-                    self.cur_token().span(),
-                    opening_span,
-                ));
-                return (list, None);
-            }
-            self.advance(separator);
-            if self.cur_kind() == close {
-                let trailing_separator = self.prev_token_end - 1;
-                return (list, Some(trailing_separator));
-            }
-            list.push(f(self));
-        }
+        let mut list = ArenaVec::new_in(self);
+        let trailing_separator = self.parse_delimited_list_into(
+            &mut list,
+            close,
+            separator,
+            opening_span,
+            parse_element,
+        );
+        (list, trailing_separator)
     }
 
+    #[expect(clippy::inline_always)]
+    #[inline(always)]
     pub(crate) fn parse_delimited_list_into<F, T>(
         &mut self,
-        list: &mut Vec<'a, T>,
+        list: &mut ArenaVec<'a, T>,
         close: Kind,
         separator: Kind,
         opening_span: Span,
-        mut f: F,
+        mut parse_element: F,
     ) -> Option<u32>
     where
         F: FnMut(&mut Self) -> T,
@@ -500,7 +504,8 @@ impl<'a, C: Config> ParserImpl<'a, C> {
         {
             return None;
         }
-        list.push(f(self));
+        let element = parse_element(self);
+        list.push(element);
         loop {
             let kind = self.cur_kind();
             if kind == close
@@ -509,7 +514,7 @@ impl<'a, C: Config> ParserImpl<'a, C> {
             {
                 return None;
             }
-            if !self.at(separator) {
+            if kind != separator {
                 self.set_fatal_error(diagnostics::expect_closing_or_separator(
                     close.to_str(),
                     separator.to_str(),
@@ -520,11 +525,16 @@ impl<'a, C: Config> ParserImpl<'a, C> {
                 return None;
             }
             self.advance(separator);
-            if self.cur_kind() == close {
+            let kind = self.cur_kind();
+            if kind == close {
                 let trailing_separator = self.prev_token_end - 1;
                 return Some(trailing_separator);
             }
-            list.push(f(self));
+            if matches!(kind, Kind::Eof | Kind::Undetermined) {
+                return None;
+            }
+            let element = parse_element(self);
+            list.push(element);
         }
     }
 
@@ -535,14 +545,41 @@ impl<'a, C: Config> ParserImpl<'a, C> {
         parse_element: E,
         parse_rest: R,
         rest_last_diagnostic: D,
-    ) -> (Vec<'a, A>, Option<BindingRestElement<'a>>)
+    ) -> (ArenaVec<'a, A>, Option<ArenaBox<'a, BindingRestElement<'a>>>)
     where
         E: Fn(&mut Self) -> A,
-        R: Fn(&mut Self) -> BindingRestElement<'a>,
-        D: Fn(Span) -> OxcDiagnostic,
+        R: Fn(&mut Self) -> ArenaBox<'a, BindingRestElement<'a>>,
+        D: Fn(Span) -> ParserDiagnostic<'a>,
     {
-        let mut list = self.ast.vec();
-        let mut rest: Option<BindingRestElement<'a>> = None;
+        let mut list = ArenaVec::new_in(self);
+        let rest = self.parse_delimited_list_with_rest_into(
+            &mut list,
+            close,
+            opening_span,
+            parse_element,
+            parse_rest,
+            rest_last_diagnostic,
+        );
+        (list, rest)
+    }
+
+    #[expect(clippy::inline_always)]
+    #[inline(always)]
+    fn parse_delimited_list_with_rest_into<E, A, R, D>(
+        &mut self,
+        list: &mut ArenaVec<'a, A>,
+        close: Kind,
+        opening_span: Span,
+        parse_element: E,
+        parse_rest: R,
+        rest_last_diagnostic: D,
+    ) -> Option<ArenaBox<'a, BindingRestElement<'a>>>
+    where
+        E: Fn(&mut Self) -> A,
+        R: Fn(&mut Self) -> ArenaBox<'a, BindingRestElement<'a>>,
+        D: Fn(Span) -> ParserDiagnostic<'a>,
+    {
+        let mut rest: Option<ArenaBox<'a, BindingRestElement<'a>>> = None;
         let mut first = true;
         loop {
             let kind = self.cur_kind();
@@ -576,6 +613,9 @@ impl<'a, C: Config> ParserImpl<'a, C> {
                     }
                     break;
                 }
+                if matches!(kind, Kind::Eof | Kind::Undetermined) {
+                    break;
+                }
             }
 
             if let Some(r) = &rest {
@@ -588,10 +628,11 @@ impl<'a, C: Config> ParserImpl<'a, C> {
             if kind == Kind::Dot3 {
                 rest.replace(parse_rest(self));
             } else {
-                list.push(parse_element(self));
+                let element = parse_element(self);
+                list.push(element);
             }
         }
 
-        (list, rest)
+        rest
     }
 }

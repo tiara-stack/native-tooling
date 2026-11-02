@@ -1,0 +1,821 @@
+{
+  "format": "tia312-review-packet-v1",
+  "kind": "map",
+  "group": "targets",
+  "product_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+  "records": [
+    {
+      "id": "T090",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/redundant_schema_tag_identifier.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/redundant_schema_tag_identifier.rs",
+        "mode": "100644",
+        "blob_oid": "e5fb008e902fb002ba24e85c22301edd6509257a",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "ca6bdcad5cdfabef783d1a30bbf4f668e27bcde4eb2b71f0c96f507ea99c5e9a",
+      "canonical_patch_bytes": 1031,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-03.json",
+          "record_index": 20,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "ca6bdcad5cdfabef783d1a30bbf4f668e27bcde4eb2b71f0c96f507ea99c5e9a"
+        }
+      ]
+    },
+    {
+      "id": "T091",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/return_effect_in_gen.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/return_effect_in_gen.rs",
+        "mode": "100644",
+        "blob_oid": "2e881659bb02adfe63a598e2c19525ee4c8c0589",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "6b74bc96751c968d8523340b1ac28bd6727f9d3eb39d7fec1721ac28ba6eaba8",
+      "canonical_patch_bytes": 954,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 0,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "6b74bc96751c968d8523340b1ac28bd6727f9d3eb39d7fec1721ac28ba6eaba8"
+        }
+      ]
+    },
+    {
+      "id": "T092",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/run_effect_inside_effect.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/run_effect_inside_effect.rs",
+        "mode": "100644",
+        "blob_oid": "1cf97037ab32a72e28b2222b38deab737d3f9eb0",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "974cb58c341858228ce6f1dabba6171e0b36afeeb50ee609ff07b397080968d3",
+      "canonical_patch_bytes": 982,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 1,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "974cb58c341858228ce6f1dabba6171e0b36afeeb50ee609ff07b397080968d3"
+        }
+      ]
+    },
+    {
+      "id": "T093",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/schema_number.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/schema_number.rs",
+        "mode": "100644",
+        "blob_oid": "9d25421091aebb4e470af2ef9ca80bb754e8b2bb",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "02f67dbff846afa3e8bb1fe94181011fc3295a042f0c7a362ad7cc79dbeb377c",
+      "canonical_patch_bytes": 913,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 2,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "02f67dbff846afa3e8bb1fe94181011fc3295a042f0c7a362ad7cc79dbeb377c"
+        }
+      ]
+    },
+    {
+      "id": "T094",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/schema_struct_with_tag.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/schema_struct_with_tag.rs",
+        "mode": "100644",
+        "blob_oid": "6009198f576dc5cc28ec96ba2600b89463d8d42c",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "46ee16bbb95983ff7464d5f1a2b6663fe6fad50534e5b4e606af33275693952b",
+      "canonical_patch_bytes": 968,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 3,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "46ee16bbb95983ff7464d5f1a2b6663fe6fad50534e5b4e606af33275693952b"
+        }
+      ]
+    },
+    {
+      "id": "T095",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/schema_sync_in_effect.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/schema_sync_in_effect.rs",
+        "mode": "100644",
+        "blob_oid": "07aec52bb13ce94cdfc1ef8f4579a49d75707b9a",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "ffb0850cf854fa6b8eb72a24d32c371fae0d15488bddfeeebe75bd8f59713ae0",
+      "canonical_patch_bytes": 961,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 4,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "ffb0850cf854fa6b8eb72a24d32c371fae0d15488bddfeeebe75bd8f59713ae0"
+        }
+      ]
+    },
+    {
+      "id": "T096",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/schema_union_of_literals.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/schema_union_of_literals.rs",
+        "mode": "100644",
+        "blob_oid": "e6cdcfe0f03c1f039a598d8ebcb9c017c05725f6",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "497ad9407549296775a22bb97777d3098f35e56f4e65a80303ca569b9eae9805",
+      "canonical_patch_bytes": 982,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 5,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "497ad9407549296775a22bb97777d3098f35e56f4e65a80303ca569b9eae9805"
+        }
+      ]
+    },
+    {
+      "id": "T097",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/scope_in_layer_effect.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/scope_in_layer_effect.rs",
+        "mode": "100644",
+        "blob_oid": "2f14a646d821c30940c57055c27175dabc28d3f1",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "5f1abc748112a0d54558de49ca41b9b44067beeba5a1f440b7953578a2faf122",
+      "canonical_patch_bytes": 961,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 6,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "5f1abc748112a0d54558de49ca41b9b44067beeba5a1f440b7953578a2faf122"
+        }
+      ]
+    },
+    {
+      "id": "T098",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/service_not_as_class.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/service_not_as_class.rs",
+        "mode": "100644",
+        "blob_oid": "4a045ea05f295669f270051e2022ba88d810a0c9",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "ab84c6ca8437f3399f9063a73c8c50809474e0acf2c384acfcfd1947828a81da",
+      "canonical_patch_bytes": 954,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 7,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "ab84c6ca8437f3399f9063a73c8c50809474e0acf2c384acfcfd1947828a81da"
+        }
+      ]
+    },
+    {
+      "id": "T099",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/strict_boolean_expressions.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/strict_boolean_expressions.rs",
+        "mode": "100644",
+        "blob_oid": "ea8c35ed710f43822844df7f2ec9f7995d260759",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "98555fea005078101985955116850af8d1bac42b3b26ab00e304fc4671443304",
+      "canonical_patch_bytes": 1000,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 8,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "98555fea005078101985955116850af8d1bac42b3b26ab00e304fc4671443304"
+        }
+      ]
+    },
+    {
+      "id": "T100",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/strict_effect_provide.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/strict_effect_provide.rs",
+        "mode": "100644",
+        "blob_oid": "c05737bf65c34cc130c5794a63c8c14626973028",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "ebc1a1b702c5bafae93640a1d3df39549d5985250e31340787d5229346e59de9",
+      "canonical_patch_bytes": 965,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 9,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "ebc1a1b702c5bafae93640a1d3df39549d5985250e31340787d5229346e59de9"
+        }
+      ]
+    },
+    {
+      "id": "T101",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/try_catch_in_effect_gen.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/try_catch_in_effect_gen.rs",
+        "mode": "100644",
+        "blob_oid": "fac5191fc4394536c59347707b6ce2aaac8799ad",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "8a88f21599f1aebc079c63096be7c84fa815682f0e77757e39a69cee90e5eafc",
+      "canonical_patch_bytes": 971,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 10,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "8a88f21599f1aebc079c63096be7c84fa815682f0e77757e39a69cee90e5eafc"
+        }
+      ]
+    },
+    {
+      "id": "T102",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unknown_in_effect_catch.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unknown_in_effect_catch.rs",
+        "mode": "100644",
+        "blob_oid": "19ede83206b95873b9fa05f0a2f1d76d230cb7e3",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "f4b0ca6723ba3aca99012dfa422f7aca6159502e6f2c6933dccfe0bd284a06bf",
+      "canonical_patch_bytes": 975,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 11,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "f4b0ca6723ba3aca99012dfa422f7aca6159502e6f2c6933dccfe0bd284a06bf"
+        }
+      ]
+    },
+    {
+      "id": "T103",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_arrow_block.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_arrow_block.rs",
+        "mode": "100644",
+        "blob_oid": "cb27a43c522d725139c42a5576ad948da177fb65",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "d0a4a0182dab093dafba892a41d0c6c62efc509076f2c311dc613c0f28783700",
+      "canonical_patch_bytes": 979,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 12,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "d0a4a0182dab093dafba892a41d0c6c62efc509076f2c311dc613c0f28783700"
+        }
+      ]
+    },
+    {
+      "id": "T104",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_effect_gen.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_effect_gen.rs",
+        "mode": "100644",
+        "blob_oid": "a65f6e70eabdebdf956fb9cd989550ecb1a6802e",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "37c11e73536e4f4c93dd59dbb6b40be980ce616a6aad69cebba6ae691f95acae",
+      "canonical_patch_bytes": 972,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 13,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "37c11e73536e4f4c93dd59dbb6b40be980ce616a6aad69cebba6ae691f95acae"
+        }
+      ]
+    },
+    {
+      "id": "T105",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_fail_yieldable_error.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_fail_yieldable_error.rs",
+        "mode": "100644",
+        "blob_oid": "53eb199590ec0eb5b719547651af838bc1aa9382",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "64b7415f83da5aa7460c1eb6bcd3838ffae444ff8c6921f8ccb64b597b31a537",
+      "canonical_patch_bytes": 1038,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 14,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "64b7415f83da5aa7460c1eb6bcd3838ffae444ff8c6921f8ccb64b597b31a537"
+        }
+      ]
+    },
+    {
+      "id": "T106",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_pipe.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_pipe.rs",
+        "mode": "100644",
+        "blob_oid": "3d370a3b18a40622373a10d612e493337998ef1a",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "d28636b87f1d85584ec7e4ae98533b704cf642bc7f28c8d671eb5f8707fb8a91",
+      "canonical_patch_bytes": 934,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 15,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "d28636b87f1d85584ec7e4ae98533b704cf642bc7f28c8d671eb5f8707fb8a91"
+        }
+      ]
+    },
+    {
+      "id": "T107",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_pipe_chain.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_pipe_chain.rs",
+        "mode": "100644",
+        "blob_oid": "8bf331f84428b4ef18ef64afbd1ad15ce07eeeb9",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "54ed113b3b18ec6cc549acf54ed0c2849fd0fa0104b0975354d94db6c131cbb1",
+      "canonical_patch_bytes": 972,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 16,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "54ed113b3b18ec6cc549acf54ed0c2849fd0fa0104b0975354d94db6c131cbb1"
+        }
+      ]
+    },
+    {
+      "id": "T108",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_typeof_type.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_typeof_type.rs",
+        "mode": "100644",
+        "blob_oid": "4cd161cdce94d5518401f4c453273d7dbf994fd3",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "8a5c807298d8628ae3ea3246961b9bae5f39370ffc75a351d40ae254732aea47",
+      "canonical_patch_bytes": 979,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 17,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "8a5c807298d8628ae3ea3246961b9bae5f39370ffc75a351d40ae254732aea47"
+        }
+      ]
+    },
+    {
+      "id": "T109",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unsafe_effect_type_assertion.rs",
+      "before": null,
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unsafe_effect_type_assertion.rs",
+        "mode": "100644",
+        "blob_oid": "6a42c418b502f14c3d4ae9db199b0f0c7b6f944d",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "612f9ceaf4314da6dd8595f0951adb0f3c9ae051fb6cada844f32dcd5cfb9317",
+      "canonical_patch_bytes": 1010,
+      "canonical_hunks": 1,
+      "canonical_line_count": 29,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-markers-04.json",
+          "record_index": 18,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 29,
+          "sha256": "612f9ceaf4314da6dd8595f0951adb0f3c9ae051fb6cada844f32dcd5cfb9317"
+        }
+      ]
+    },
+    {
+      "id": "T110",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/table.rs",
+      "before": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/table.rs",
+        "mode": "100644",
+        "blob_oid": "39c23940a89bed43060df32a0d0f45ad952dad96",
+        "origin": "approved Oxlint 1.87.0 pin"
+      },
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/table.rs",
+        "mode": "100644",
+        "blob_oid": "f8297606caf0b52bba022c38cbd376f97ecb9cfb",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "7495978f8aa79987d910c7da268e3e35fae2b68e7cab8f7847900b92255a8fe9",
+      "canonical_patch_bytes": 726,
+      "canonical_hunks": 1,
+      "canonical_line_count": 13,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-bridge-config-01.json",
+          "record_index": 4,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 13,
+          "sha256": "7495978f8aa79987d910c7da268e3e35fae2b68e7cab8f7847900b92255a8fe9"
+        }
+      ]
+    },
+    {
+      "id": "T111",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/tsgolint.rs",
+      "before": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/tsgolint.rs",
+        "mode": "100644",
+        "blob_oid": "423ce97a674bbbc8fa46a6c77cc7d3edb068c695",
+        "origin": "approved Oxlint 1.87.0 pin"
+      },
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/tsgolint.rs",
+        "mode": "100644",
+        "blob_oid": "cd8eb963ef77e7a69b431ac0c3f83043ea93a1bc",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "aea2678d404ebac47e071544e1ff8578000204ad7d130b1bca0ef099aff55b51",
+      "canonical_patch_bytes": 9646,
+      "canonical_hunks": 13,
+      "canonical_line_count": 201,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-bridge-config-01.json",
+          "record_index": 5,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 201,
+          "sha256": "aea2678d404ebac47e071544e1ff8578000204ad7d130b1bca0ef099aff55b51"
+        }
+      ]
+    },
+    {
+      "id": "T117",
+      "path": "native/oxc-oxlint-effect-fork/npm/oxlint/configuration_schema.json",
+      "before": {
+        "path": "native/oxc-oxlint-effect-fork/npm/oxlint/configuration_schema.json",
+        "mode": "100644",
+        "blob_oid": "ed687bdff8962f6edec37b98fa9e46bde111583e",
+        "origin": "approved Oxlint 1.87.0 pin"
+      },
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/npm/oxlint/configuration_schema.json",
+        "mode": "100644",
+        "blob_oid": "cab16bc1e2f1fc607fa11af615704107cdf05d61",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "5c755b2501f0bc87b69b5c52ca884d79812c628024a6cc8f1577d26af1d078b3",
+      "canonical_patch_bytes": 9129,
+      "canonical_hunks": 2,
+      "canonical_line_count": 267,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-schemas-01.json",
+          "record_index": 0,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 267,
+          "sha256": "5c755b2501f0bc87b69b5c52ca884d79812c628024a6cc8f1577d26af1d078b3"
+        }
+      ]
+    },
+    {
+      "id": "T118",
+      "path": "native/oxc-oxlint-effect-fork/tasks/website_linter/src/snapshots/schema_markdown.snap",
+      "before": {
+        "path": "native/oxc-oxlint-effect-fork/tasks/website_linter/src/snapshots/schema_markdown.snap",
+        "mode": "100644",
+        "blob_oid": "a9123d0245334dcbc0c7d27120a098e63cd0ef80",
+        "origin": "approved Oxlint 1.87.0 pin"
+      },
+      "after": {
+        "path": "native/oxc-oxlint-effect-fork/tasks/website_linter/src/snapshots/schema_markdown.snap",
+        "mode": "100644",
+        "blob_oid": "dccbe8b7bd70ce2d4eb6104168454df24e62e7b4",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "6341961413c9d08e6c3764aa181057c7602415b9c54c61945c537abab5056327",
+      "canonical_patch_bytes": 1340,
+      "canonical_hunks": 2,
+      "canonical_line_count": 22,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-schemas-01.json",
+          "record_index": 1,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 22,
+          "sha256": "6341961413c9d08e6c3764aa181057c7602415b9c54c61945c537abab5056327"
+        }
+      ]
+    },
+    {
+      "id": "T112",
+      "path": "package.json",
+      "before": {
+        "path": "package.json",
+        "mode": "100644",
+        "blob_oid": "8da68e307ac28fb32d58b1dcba8250a9a8192d59",
+        "origin": "assigned stack parent"
+      },
+      "after": {
+        "path": "package.json",
+        "mode": "100644",
+        "blob_oid": "f6d7045b479c1a6c9dc33b02a8ffb5828a2153a0",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "5cf51a33d21b8beb74ef971beeca79d352089288415bc4d933e162be353e21de",
+      "canonical_patch_bytes": 1256,
+      "canonical_hunks": 1,
+      "canonical_line_count": 14,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-integration-tests-02.json",
+          "record_index": 2,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 14,
+          "sha256": "5cf51a33d21b8beb74ef971beeca79d352089288415bc4d933e162be353e21de"
+        }
+      ]
+    },
+    {
+      "id": "T113",
+      "path": "patches/oxlint@1.58.0-native-effect.patch",
+      "before": {
+        "path": "patches/oxlint@1.58.0-native-effect.patch",
+        "mode": "100644",
+        "blob_oid": "b0ed7d5f8544edb3d929b491bf8546bd6ac23307",
+        "origin": "assigned stack parent"
+      },
+      "after": null,
+      "canonical_patch_sha256": "8bbb4090e0a2b133e02e41be9909de03434e7cffcd2b25c2b4dd45e8c945b844",
+      "canonical_patch_bytes": 3767,
+      "canonical_hunks": 1,
+      "canonical_line_count": 118,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-handoff-01.json",
+          "record_index": 0,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 118,
+          "sha256": "8bbb4090e0a2b133e02e41be9909de03434e7cffcd2b25c2b4dd45e8c945b844"
+        }
+      ]
+    },
+    {
+      "id": "T114",
+      "path": "patches/oxlint@1.87.0-native-effect.patch",
+      "before": null,
+      "after": {
+        "path": "patches/oxlint@1.87.0-native-effect.patch",
+        "mode": "100644",
+        "blob_oid": "c5f1e6720d852991fe745a78fcef5728bf3c1267",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "1dcf90bcab7f1c5492061426b2e400c95ae33a1058df21ec5c4b71a08494943b",
+      "canonical_patch_bytes": 4786,
+      "canonical_hunks": 1,
+      "canonical_line_count": 142,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-handoff-01.json",
+          "record_index": 1,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 142,
+          "sha256": "1dcf90bcab7f1c5492061426b2e400c95ae33a1058df21ec5c4b71a08494943b"
+        }
+      ]
+    },
+    {
+      "id": "T115",
+      "path": "scripts/check-patches.mjs",
+      "before": {
+        "path": "scripts/check-patches.mjs",
+        "mode": "100644",
+        "blob_oid": "c3c36958ead02df16d19048242d0c4ee464ba3f4",
+        "origin": "assigned stack parent"
+      },
+      "after": {
+        "path": "scripts/check-patches.mjs",
+        "mode": "100644",
+        "blob_oid": "4d6454a151cb502ccb08038c9837bbfdf8b20be1",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "6c1b8c2da4e749464806930ce7ac3241a2df7b367a25806cfd8695dea508a11f",
+      "canonical_patch_bytes": 444,
+      "canonical_hunks": 1,
+      "canonical_line_count": 15,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-handoff-01.json",
+          "record_index": 2,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 15,
+          "sha256": "6c1b8c2da4e749464806930ce7ac3241a2df7b367a25806cfd8695dea508a11f"
+        }
+      ]
+    },
+    {
+      "id": "T116",
+      "path": "scripts/test-oxlint-effect.mjs",
+      "before": null,
+      "after": {
+        "path": "scripts/test-oxlint-effect.mjs",
+        "mode": "100644",
+        "blob_oid": "44a66bda683a6d2cc1e0bdb3649632d694b1b14a",
+        "origin": "product epoch"
+      },
+      "canonical_patch_sha256": "f3d808da54bc6c96c039a4a2cad7c87fd1aac4cf0c4bd57a25396c8ca9a414ce",
+      "canonical_patch_bytes": 16910,
+      "canonical_hunks": 1,
+      "canonical_line_count": 434,
+      "fragment_count": 1,
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/code-handoff-01.json",
+          "record_index": 3,
+          "part": 1,
+          "parts": 1,
+          "canonical_line_start": 1,
+          "canonical_line_end": 434,
+          "sha256": "f3d808da54bc6c96c039a4a2cad7c87fd1aac4cf0c4bd57a25396c8ca9a414ce"
+        }
+      ]
+    }
+  ]
+}

@@ -36,10 +36,12 @@ oxc = { workspace = true, features = [
 ] }
 oxc_compat = { workspace = true }
 oxc_formatter = { workspace = true }
+oxc_formatter_core = { workspace = true }
 oxc_linter = { workspace = true }
 oxc_napi = { workspace = true }
 oxc_transformer_plugins = { workspace = true }
 
+lazy-regex = { workspace = true }
 napi = { workspace = true, features = ["async"] }
 napi-derive = { workspace = true }
 rustc-hash = { workspace = true }

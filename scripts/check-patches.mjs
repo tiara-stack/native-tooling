@@ -12,8 +12,8 @@ const cases = [
   },
   {
     packageName: "oxlint",
-    version: "1.58.0",
-    patch: join(root, "patches", "oxlint@1.58.0-native-effect.patch"),
+    version: "1.87.0",
+    patch: join(root, "patches", "oxlint@1.87.0-native-effect.patch"),
   },
 ];
 

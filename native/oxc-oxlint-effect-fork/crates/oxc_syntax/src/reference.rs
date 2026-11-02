@@ -3,16 +3,16 @@ use oxc_index::define_nonmax_u32_index_type;
 #[cfg(feature = "serialize")]
 use serde::Serialize;
 
-use oxc_allocator::{Allocator, CloneIn};
+use oxc_allocator::{Allocator, CloneIn, CloneInSemanticIds};
 
-use crate::{node::NodeId, scope::ScopeId, symbol::SymbolId};
+use crate::{node::NodeId, scope::ScopeId, semantic_id::SemanticId, symbol::SymbolId};
 
 use oxc_ast_macros::ast;
 
 define_nonmax_u32_index_type! {
     #[ast]
     #[builder(default)]
-    #[clone_in(default)]
+    #[clone_in(semantic_id)]
     #[content_eq(skip)]
     #[estree(skip)]
     pub struct ReferenceId;
@@ -21,17 +21,14 @@ define_nonmax_u32_index_type! {
 impl<'alloc> CloneIn<'alloc> for ReferenceId {
     type Cloned = Self;
 
-    fn clone_in(&self, _: &'alloc Allocator) -> Self {
-        // `clone_in` should never reach this, because `CloneIn` skips reference_id field
-        unreachable!();
-    }
-
     #[expect(clippy::inline_always)]
-    #[inline(always)]
-    fn clone_in_with_semantic_ids(&self, _: &'alloc Allocator) -> Self {
-        *self
+    #[inline(always)] // Because this method only delegates
+    fn clone_in_impl(&self, with_semantic_ids: CloneInSemanticIds, _: &'alloc Allocator) -> Self {
+        self.clone_id(with_semantic_ids)
     }
 }
+
+impl SemanticId for ReferenceId {}
 
 bitflags! {
     /// Describes how a symbol is being referenced in the AST.
@@ -117,6 +114,17 @@ bitflags! {
         /// a type parameter that might shadow it, since type parameters cannot
         /// have member access.
         const Namespace = 1 << 4;
+        /// The identifier is read as the object of a member expression in a
+        /// property modification context. For example, `A` in `A.foo = 1`,
+        /// `A.foo += 1`, `++A.foo`, `delete A.foo`, or `for (A.foo in obj)`.
+        ///
+        /// This flag is always combined with [`Read`] (since the identifier is
+        /// read to access the property). It helps the minifier and linter
+        /// determine if a symbol's only reads are property-modification targets,
+        /// enabling dead code elimination and unused variable detection.
+        ///
+        /// [`Read`]: ReferenceFlags::Read
+        const MemberWriteTarget = 1 << 5;
         /// The symbol being referenced is a value.
         ///
         /// Note that this does not necessarily indicate the reference is used
@@ -164,13 +172,21 @@ impl ReferenceFlags {
     /// The identifier is only written to. It is not read from in this reference.
     #[inline]
     pub const fn is_write_only(self) -> bool {
-        !self.contains(Self::Read)
+        self.intersects(Self::Write) && !self.contains(Self::Read)
     }
 
     /// The identifier is both read from and written to, e.g `a += 1`.
     #[inline]
     pub fn is_read_write(self) -> bool {
         self.contains(Self::Read | Self::Write)
+    }
+
+    /// The identifier is read as the object of a member expression
+    /// in a property modification context (e.g., `A` in `A.foo = 1`,
+    /// `A.foo += 1`, `++A.foo`, `delete A.foo`, or `for (A.foo in obj)`).
+    #[inline]
+    pub const fn is_member_write_target(self) -> bool {
+        self.intersects(Self::MemberWriteTarget)
     }
 
     /// Checks if the reference is a value being used in a type context.
@@ -205,7 +221,11 @@ impl ReferenceFlags {
 impl<'alloc> CloneIn<'alloc> for ReferenceFlags {
     type Cloned = Self;
 
-    fn clone_in(&self, _: &'alloc oxc_allocator::Allocator) -> Self::Cloned {
+    fn clone_in_impl(
+        &self,
+        _with_semantic_ids: CloneInSemanticIds,
+        _: &'alloc oxc_allocator::Allocator,
+    ) -> Self::Cloned {
         *self
     }
 }
@@ -241,7 +261,7 @@ pub struct Reference {
     symbol_id: Option<SymbolId>,
     /// The scope in which this reference occurs.
     scope_id: ScopeId,
-    /// Describes how this referenced is used by other AST nodes. References can
+    /// Describes how this reference is used by other AST nodes. References can
     /// be reads, writes, or both.
     flags: ReferenceFlags,
 }

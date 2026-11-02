@@ -1,5 +1,5 @@
 use oxc_diagnostics::Result;
-use oxc_span::Str;
+use oxc_str::Str;
 
 use crate::parser::reader::{
     Options,
@@ -75,6 +75,15 @@ impl<'a> Reader<'a> {
         (self.index, self.offset)
     }
 
+    /// Return the cooked code points consumed since `checkpoint`.
+    pub fn code_points_since(&self, checkpoint: (usize, u32)) -> &[CodePoint] {
+        &self.units[checkpoint.0..self.index]
+    }
+
+    pub fn remaining_code_points(&self) -> &[CodePoint] {
+        &self.units[self.index..]
+    }
+
     pub fn rewind(&mut self, checkpoint: (usize, u32)) {
         self.index = checkpoint.0;
         self.offset = checkpoint.1;
@@ -98,6 +107,14 @@ impl<'a> Reader<'a> {
 
     pub fn peek2(&self) -> Option<u32> {
         self.peek_nth(1)
+    }
+
+    /// Returns `true` if any code point in the whole pattern equals `ch`.
+    ///
+    /// Scans the already-decoded units, so it neither allocates nor re-decodes.
+    /// Used to cheaply check whether a character (e.g. `(`) is present at all.
+    pub fn contains(&self, ch: char) -> bool {
+        self.units.iter().any(|unit| unit.value == ch as u32)
     }
 
     /// Returns the escape kind of the current code point.

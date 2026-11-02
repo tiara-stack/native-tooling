@@ -68,8 +68,8 @@ fn test_with_ctx_and_functions_option(
 ) {
     let allocator = Allocator::default();
     let ret = Parser::new(&allocator, source_text, SourceType::mjs()).parse();
-    assert!(!ret.panicked, "{source_text}");
-    assert!(ret.errors.is_empty(), "{source_text}");
+    assert!(!ret.fatal_error, "{source_text}");
+    assert!(ret.diagnostics.is_empty(), "{source_text}");
 
     let Some(Statement::ExpressionStatement(stmt)) = &ret.program.body.first() else {
         panic!("should have a expression statement body: {source_text}");

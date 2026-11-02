@@ -24,31 +24,33 @@ jobs:
     runs-on: namespace-profile-linux-x64-default
     steps:
       - name: Checkout
-        uses: taiki-e/checkout-action@83ed61bfbe2b8abbb3c66e8b65b1335484c70009 # v1.4.1
+        uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1.4.2
 
       - name: Clone submodules
         uses: ./.github/actions/clone-submodules
 
-      - uses: namespacelabs/nscloud-cache-action@a90bb5d4b27522ce881c6e98eebd7d7e6d1653f9 # v1.4.2
+      - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
         with:
           path: /home/runner/.rustup
           cache: rust
 
-      - uses: oxc-project/setup-node@4c26e7cb3605b6bdef5450dacd02c434b10fd8ba # v1.2.0
+      - uses: oxc-project/setup-node@f46a72f95efdc55273fcd042d61c84e723b2892c # v1.4.1
 
       - run: rustup component add llvm-tools-preview
-      - uses: taiki-e/install-action@fd0f63e180a477d7434580b6d80817978b9ff2b8 # v2.70.1
+      - uses: taiki-e/install-action@83ac0ad63c0167e6f06796fab0fce28db1bf3db0 # v2.87.22
         with:
           tool: cargo-llvm-cov
 
       - name: Run
         env:
-          # Increase stack size to 10MB, avoid `oxc_formatter` from stack overflowing when printing long assignment expressions.
+          # Increase stack size to 100MiB, avoid `oxc_formatter` from stack overflowing when printing long assignment expressions.
           RUST_MIN_STACK: 104857600
+          # Limit concurrent compiler processes to avoid exhausting the 8GiB runner.
+          CARGO_BUILD_JOBS: 2
         run: cargo codecov --lcov --output-path lcov.info
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           if-no-files-found: error
           name: codecov
@@ -65,7 +67,7 @@ jobs:
     steps:
       - name: Checkout
         if: env.CODECOV_TOKEN
-        uses: taiki-e/checkout-action@83ed61bfbe2b8abbb3c66e8b65b1335484c70009 # v1.4.1
+        uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1.4.2
 
       - name: Download coverage file
         if: env.CODECOV_TOKEN
@@ -75,7 +77,7 @@ jobs:
 
       - name: Upload to codecov.io
         if: env.CODECOV_TOKEN
-        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true

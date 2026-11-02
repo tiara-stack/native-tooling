@@ -16,7 +16,8 @@ declare_oxc_lint!(
     LazyPromiseInEffectSync(tsgolint),
     effect,
     correctness,
-    none
+    none,
+    version = "1.58.0",
 );
 
 impl Rule for LazyPromiseInEffectSync {}

@@ -14,9 +14,9 @@ use crate::{AstNode, context::LintContext, rule::Rule, utils::is_same_expression
 
 fn prefer_for_of_diagnostic(span: Span) -> OxcDiagnostic {
     OxcDiagnostic::warn(
-        "Expected a `for-of` loop instead of a `for` loop with this simple iteration.",
+        "Expected a `for...of` loop instead of a `for` loop with this simple iteration.",
     )
-    .with_help("Consider using a for-of loop for this simple iteration.")
+    .with_help("Consider using a `for...of` loop for this simple iteration.")
     .with_label(span)
 }
 
@@ -26,12 +26,12 @@ pub struct PreferForOf;
 declare_oxc_lint!(
     /// ### What it does
     ///
-    /// Enforces the use of for-of loop instead of a for loop with a simple iteration.
+    /// Enforces the use of a `for...of` loop instead of a `for` loop with simple iteration.
     ///
     /// ### Why is this bad?
     ///
-    /// Using a for loop with a simple iteration over an array can be replaced with a more concise
-    /// and readable for-of loop. For-of loops are easier to read and less error-prone, as they
+    /// Using a `for` loop with a simple iteration over an array can be replaced with a more concise
+    /// and readable `for...of` loop. `for...of` loops are easier to read and less error-prone, as they
     /// eliminate the need for an index variable and manual array access.
     ///
     /// ### Examples
@@ -52,7 +52,9 @@ declare_oxc_lint!(
     PreferForOf,
     typescript,
     style,
-    pending
+    pending,
+    version = "0.2.16",
+    short_description = "Enforces the use of a `for...of` loop instead of a `for` loop with simple iteration.",
 );
 
 trait ExpressionExt {
@@ -78,10 +80,7 @@ impl ExpressionExt for Expression<'_> {
                 }
 
                 match expr.operator {
-                    AssignmentOperator::Addition => {
-                        matches!(&expr.right, Expression::NumericLiteral(lit)
-                            if (lit.value - 1f64).abs() < f64::EPSILON)
-                    }
+                    AssignmentOperator::Addition => expr.right.is_number_value(1.0),
                     AssignmentOperator::Assign => {
                         let Expression::BinaryExpression(bin_expr) = &expr.right else {
                             return false;
@@ -92,9 +91,9 @@ impl ExpressionExt for Expression<'_> {
                         }
 
                         match (&bin_expr.left, &bin_expr.right) {
-                            (Expression::Identifier(id), Expression::NumericLiteral(lit))
-                            | (Expression::NumericLiteral(lit), Expression::Identifier(id)) => {
-                                id.name == var_name && (lit.value - 1f64).abs() < f64::EPSILON
+                            (Expression::Identifier(id), number)
+                            | (number, Expression::Identifier(id)) => {
+                                id.name == var_name && number.is_number_value(1.0)
                             }
                             _ => false,
                         }
@@ -145,7 +144,7 @@ impl Rule for PreferForOf {
             return;
         }
 
-        let (array_name, array_expr) = {
+        let array_expr = {
             let Some(mem_expr) = test_expr.right.as_member_expression() else {
                 return;
             };
@@ -155,18 +154,13 @@ impl Rule for PreferForOf {
             }
 
             let array_expr = mem_expr.object();
-            let array_name = match mem_expr.object() {
-                Expression::Identifier(id) => id.name.as_str(),
-                expr @ match_member_expression!(Expression) => {
-                    match expr.to_member_expression().static_property_name() {
-                        Some(array_name) => array_name,
-                        None => return,
-                    }
-                }
-                _ => return,
-            };
+            if !matches!(array_expr, Expression::Identifier(_))
+                && !matches!(array_expr, match_member_expression!(Expression))
+            {
+                return;
+            }
 
-            (array_name, array_expr)
+            array_expr
         };
 
         let Some(update_expr) = &for_stmt.update else {
@@ -178,11 +172,16 @@ impl Rule for PreferForOf {
 
         let nodes = ctx.nodes();
         let body_span = for_stmt.body.span();
+        let array_span = array_expr.span();
 
         if ctx.semantic().symbol_references(var_symbol_id).any(|reference| {
             let ref_id = reference.node_id();
 
             let symbol_span = nodes.get_node(ref_id).kind().span();
+            // A for-of loop evaluates its collection only once, so it cannot depend on the index.
+            if array_span.contains_inclusive(symbol_span) {
+                return true;
+            }
             if !body_span.contains_inclusive(symbol_span) {
                 return false;
             }
@@ -196,7 +195,7 @@ impl Rule for PreferForOf {
             }
 
             // Check if arr[i] usage prevents for-of conversion
-            if prevents_for_of_array_access(parent, grand_parent, array_name, nodes) {
+            if prevents_for_of_array_access(parent, grand_parent, nodes) {
                 return true;
             }
 
@@ -228,21 +227,8 @@ fn prevents_for_of_conversion_direct_usage(grand_parent: &AstNode, parent: &AstN
 fn prevents_for_of_array_access(
     parent: &AstNode,
     grand_parent: &AstNode,
-    array_name: &str,
     nodes: &oxc_semantic::AstNodes,
 ) -> bool {
-    let Some(mem_expr) = parent.kind().as_member_expression_kind() else {
-        return false;
-    };
-
-    let Expression::Identifier(id) = mem_expr.object() else {
-        return false;
-    };
-
-    if id.name.as_str() != array_name {
-        return false;
-    }
-
     // Check for direct assignment: arr[i] = value
     if let AstKind::AssignmentExpression(assign_expr) = grand_parent.kind()
         && assign_expr.left.span() == parent.span()
@@ -380,6 +366,20 @@ fn test() {
          for (let i = 0; i < obj1.a.b.length; i++) {
              console.log(obj2.a.b[i]); // Different object
          }",
+        "for (let i = 0; i < this.values[key].length; i++) { console.log(this.values[other][i]); }",
+        "for (let i = 0; i < this.values[key].length; i++) { console.log(other.values[key][i]); }",
+        "for (let i = 0; i < this.values[key].length; i++) { console.log(i); }",
+        "for (let i = 0; i < this.values[key].length; i++) { this.values[key][i] = 0; }",
+        "for (let i = 0; i < this.values[key].length; i++) { this.values[key][i]++; }",
+        "for (let i = 0; i < this.values[key].length; i++) { delete this.values[key][i]; }",
+        "for (let i = 0; i < this.values[key].length; i++) { [this.values[key][i]] = [0]; }",
+        "for (let i = 0; i < this.values[key].length; i++) { [...this.values[key][i]] = []; }",
+        "class Example { #values = []; print(key) { for (let i = 0; i < this[key].length; i++) { console.log(this.#values[i]); } } }",
+        "class Example { #values = []; print(key) { for (let i = 0; i < this.#values.length; i++) { console.log(this[key][i]); } } }",
+        "class Example { #values = []; #other = []; print() { for (let i = 0; i < this.#values.length; i++) { console.log(this.#other[i]); } } }",
+        "for (let i = 0; i < arrays[i].length; i++) {}",
+        "for (let i = 0; i < arrays[i + 1].length; i++) { console.log('item'); }",
+        "for (let i = 0; i < arrays[i].values.length; i++) {}",
     ];
 
     let fail = vec![
@@ -420,6 +420,18 @@ fn test() {
          for (let i = 0; i < obj.a.b.length; i++) {
              console.log(obj.a.b[i]); // Same nested array
          }",
+        "class Example {
+            private readonly values: Record<string, number[]> = {};
+
+            print(key: string) {
+                for (let index = 0; index < this.values[key].length; index++) {
+                    console.log(this.values[key][index]);
+                }
+            }
+        }",
+        "for (let i = 0; i < values[key].length; i++) { console.log(values[key][i]); }",
+        "for (let i = 0; i < this.values[key].length; i++) { [obj[this.values[key][i]]] = [0]; }",
+        "class Example { #values = []; print() { for (let i = 0; i < this.#values.length; i++) { console.log(this.#values[i]); } } }",
     ];
 
     Tester::new(PreferForOf::NAME, PreferForOf::PLUGIN, pass, fail).test_and_snapshot();

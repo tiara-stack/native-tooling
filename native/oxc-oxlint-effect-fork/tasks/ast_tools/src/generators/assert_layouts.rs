@@ -12,31 +12,30 @@ use std::{
 };
 
 use itertools::Itertools;
-use phf_codegen::Map as PhfMapGen;
 use proc_macro2::TokenStream;
 use quote::quote;
 use rustc_hash::FxHashMap;
-use syn::{Expr, Ident, parse_str};
+use syn::Ident;
 
 use crate::{
     AST_MACROS_CRATE_PATH, Codegen, Generator,
     output::{Output, output_path},
     schema::{
         Def, Discriminant, EnumDef, FieldDef, PointerKind, PrimitiveDef, Schema, StructDef,
-        TypeDef, TypeId, Visibility,
+        StructOrEnum, TypeDef, TypeId, Visibility,
         extensions::layout::{GetLayout, GetOffset, Layout, Niche, Offset, PlatformLayout},
     },
-    utils::{format_cow, number_lit},
+    utils::{format_cow, generate_phf_map, number_lit},
 };
 
 use super::define_generator;
 
 /// Generator for memory layout assertions.
-pub struct AssertLayouts;
+pub struct AssertLayoutsGenerator;
 
-define_generator!(AssertLayouts);
+define_generator!(AssertLayoutsGenerator);
 
-impl Generator for AssertLayouts {
+impl Generator for AssertLayoutsGenerator {
     /// Calculate layouts of all types.
     fn prepare(&self, schema: &mut Schema, _codegen: &Codegen) {
         LayoutCalculator::calculate(schema);
@@ -63,7 +62,7 @@ impl LayoutCalculator<'_> {
     fn calculate(schema: &mut Schema) {
         let span_type_id = schema.type_names["Span"];
         let node_id_cell_type_id =
-            schema.type_by_name("NodeId").as_primitive().unwrap().containers.cell_id.unwrap();
+            schema.type_by_name("NodeId").as_struct().unwrap().containers.cell_id.unwrap();
 
         let mut calculator = LayoutCalculator { schema, span_type_id, node_id_cell_type_id };
 
@@ -226,7 +225,7 @@ impl<'s> StructState<'s> {
             layout.size = next_offset;
 
             // Get highest alignment next field can have
-            *current_align = next_offset & next_offset.wrapping_neg();
+            *current_align = next_offset.isolate_lowest_one();
         }
 
         // Return offset of this field
@@ -596,8 +595,6 @@ impl LayoutCalculator<'_> {
                 layout_64: PlatformLayout::from_size_align(0, 8),
                 layout_32: PlatformLayout::from_size_align(0, 4),
             },
-            // `NodeId` is a `NonMaxU32` wrapper with a niche for max value
-            "NodeId" => Layout::from_size_align_niche(4, 4, Niche::new(0, 4, 1, 0)),
             name => panic!("Unknown primitive type: {name}"),
         }
     }
@@ -607,7 +604,7 @@ impl LayoutCalculator<'_> {
 fn generate_assertions(schema: &Schema) -> Vec<Output> {
     let mut assertions = FxHashMap::default();
 
-    for type_def in &schema.types {
+    for type_def in schema.structs_and_enums() {
         generate_layout_assertions(type_def, &mut assertions, schema);
     }
 
@@ -628,18 +625,17 @@ fn generate_assertions(schema: &Schema) -> Vec<Output> {
 
 /// Generate layout assertions for a type.
 fn generate_layout_assertions<'s>(
-    type_def: &TypeDef,
+    type_def: StructOrEnum<'s>,
     assertions: &mut FxHashMap<&'s str, (/* 64 bit */ TokenStream, /* 32 bit */ TokenStream)>,
     schema: &'s Schema,
 ) {
     match type_def {
-        TypeDef::Struct(struct_def) => {
+        StructOrEnum::Struct(struct_def) => {
             generate_layout_assertions_for_struct(struct_def, assertions, schema);
         }
-        TypeDef::Enum(enum_def) => {
+        StructOrEnum::Enum(enum_def) => {
             generate_layout_assertions_for_enum(enum_def, assertions, schema);
         }
-        _ => {}
     }
 }
 
@@ -694,7 +690,7 @@ fn generate_layout_assertions_for_struct<'s>(
 
     // Sort fields in memory layout order
     let mut fields = struct_def.fields.iter().collect_vec();
-    fields.sort_by(|f1, f2| f1.offset.layout_index.cmp(&f2.offset.layout_index));
+    fields.sort_by_key(|f1| f1.offset.layout_index);
 
     let (assertions_64, assertions_32) =
         assertions.entry(struct_def.file(schema).krate()).or_default();
@@ -748,7 +744,7 @@ fn template(krate: &str, assertions_64: &TokenStream, assertions_32: &TokenStrea
             use nonmax::NonMaxU32;
 
             ///@@line_break
-            use crate::{comment_node::*, module_record::*, number::*, operator::*, reference::*, scope::*, symbol::*};
+            use crate::{module_record::*, node::*, number::*, operator::*, reference::*, scope::*, symbol::*};
         },
         "napi/parser" => quote! {
             use crate::raw_transfer_types::*;
@@ -796,10 +792,7 @@ fn template(krate: &str, assertions_64: &TokenStream, assertions_32: &TokenStrea
 ///
 /// `#[ast]` macro will re-order struct fields in order we provide here.
 fn generate_struct_details(schema: &Schema) -> Output {
-    let mut map = PhfMapGen::new();
-    for type_def in &schema.types {
-        let TypeDef::Struct(struct_def) = type_def else { continue };
-
+    let map = generate_phf_map(schema.structs().map(|struct_def| {
         // Get layout indexes of fields in source order.
         // If struct as written already has fields in layout order, then no-reordering is required,
         // in which case output `None`.
@@ -821,11 +814,30 @@ fn generate_struct_details(schema: &Schema) -> Output {
             quote!(None)
         };
 
-        let details = quote!( StructDetails { field_order: #field_order } );
+        let is_node = struct_def.kind.has_kind;
 
-        map.entry(struct_def.name(), details.to_string());
-    }
-    let map = parse_str::<Expr>(&map.build().to_string()).unwrap();
+        // Struct can be `#[repr(transparent)]` if it has at most 1 field with non-zero size or non-trivial alignment.
+        // Zero-sized fields (e.g. `PhantomData`) don't affect layout, so don't count them.
+        let mut is_transparent = true;
+        let mut seen_non_trivial_field = false;
+
+        for field in &struct_def.fields {
+            let layout64 = field.type_def(schema).layout_64();
+            if layout64.size > 0 || layout64.align > 1 {
+                if seen_non_trivial_field {
+                    is_transparent = false;
+                    break;
+                }
+                seen_non_trivial_field = true;
+            }
+        }
+
+        let details = quote! {
+            StructDetails { field_order: #field_order, is_node: #is_node, is_transparent: #is_transparent }
+        };
+
+        (struct_def.name(), details)
+    }));
 
     let code = quote! {
         use crate::ast::StructDetails;

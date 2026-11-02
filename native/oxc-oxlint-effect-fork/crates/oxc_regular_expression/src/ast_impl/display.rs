@@ -74,6 +74,9 @@ impl Display for BoundaryAssertionKind {
             Self::End => "$",
             Self::Boundary => r"\b",
             Self::NegativeBoundary => r"\B",
+            Self::StartBuffer => r"\A",
+            Self::EndBuffer => r"\z",
+            Self::EndBufferOptionalNewline => r"\Z",
         };
         f.write_str(s)
     }
@@ -105,12 +108,12 @@ impl Display for Quantifier<'_> {
             (0, None) => f.write_str("*")?,
             (1, None) => f.write_str("+")?,
             (0, Some(1)) => f.write_str("?")?,
-            (min, Some(max)) if min == max => write!(f, "{{{min}}}",)?,
+            (min, Some(max)) if min == max => write!(f, "{{{min}}}")?,
             (min, Some(max)) => {
-                write!(f, "{{{min},{max}}}",)?;
+                write!(f, "{{{min},{max}}}")?;
             }
             (min, None) => {
-                write!(f, "{{{min},}}",)?;
+                write!(f, "{{{min},}}")?;
             }
         }
 
@@ -244,7 +247,7 @@ impl Display for CapturingGroup<'_> {
         if let Some(name) = &self.name {
             write!(f, "?<{name}>")?;
         }
-        write!(f, "{})", &self.body)
+        write!(f, "{})", self.body)
     }
 }
 
@@ -533,6 +536,10 @@ mod test {
         (r"/(?im-s:.)/u", None),
         (r"/(?m-is:.)/v", None),
         (r"/(?smi:.)/v", Some(r"/(?ims:.)/v")),
+        // Buffer boundaries
+        (r"/\A\z\Z/", None),
+        (r"/\A\z\Z/u", None),
+        (r"/\A\z\Z/v", None),
     ];
 
     #[test]

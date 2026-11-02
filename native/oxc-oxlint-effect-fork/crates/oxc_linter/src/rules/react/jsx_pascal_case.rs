@@ -2,7 +2,8 @@ use fast_glob::glob_match;
 use oxc_ast::{AstKind, ast::JSXElementName};
 use oxc_diagnostics::OxcDiagnostic;
 use oxc_macros::declare_oxc_lint;
-use oxc_span::{CompactStr, Span};
+use oxc_span::Span;
+use oxc_str::CompactStr;
 use schemars::JsonSchema;
 use serde::Deserialize;
 
@@ -107,11 +108,13 @@ declare_oxc_lint!(
     react,
     style,
     config = JsxPascalCaseConfig,
+    version = "1.19.0",
+    short_description = "Enforce PascalCase for user-defined JSX components.",
 );
 
 impl Rule for JsxPascalCase {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
@@ -142,13 +145,14 @@ impl Rule for JsxPascalCase {
             return;
         }
 
-        let check_names: Vec<&str> = if is_namespaced_name {
-            name.split(':').collect()
+        let separator = if is_namespaced_name {
+            Some(':')
         } else if is_member_expression {
-            name.split('.').collect()
+            Some('.')
         } else {
-            vec![name]
+            None
         };
+        let check_names = name.split(|ch| Some(ch) == separator);
 
         for split_name in check_names {
             if split_name.len() == 1 {

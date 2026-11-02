@@ -8,8 +8,8 @@ use oxc_span::SourceType;
 fn test(source: &str, pure_functions: &[&str], expected: bool) {
     let allocator = Allocator::default();
     let ret = Parser::new(&allocator, source, SourceType::mjs()).parse();
-    assert!(!ret.panicked, "{source}");
-    assert!(ret.errors.is_empty(), "{source}");
+    assert!(!ret.fatal_error, "{source}");
+    assert!(ret.diagnostics.is_empty(), "{source}");
 
     let Some(Statement::ExpressionStatement(stmt)) = ret.program.body.first() else {
         panic!("should have an expression statement body: {source}");

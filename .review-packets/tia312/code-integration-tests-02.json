@@ -1,0 +1,161 @@
+{
+  "format": "tia312-review-packet-v1",
+  "kind": "code",
+  "group": "integration-tests",
+  "product_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+  "records": [
+    {
+      "target": {
+        "id": "T020",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check.json@oxlint.snap",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check.json@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "63b4644a116d46effe2a4f2c8fbc89fea76e50db",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check.json@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "49bf3c659e48db89a7b6e45b96a2f673234c45f8",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "125b9eccf8e1554cfff4ee986f09b25c9fd4341b242f8d2ef042762a31c92f9c",
+        "canonical_patch_bytes": 885,
+        "canonical_hunks": 1,
+        "canonical_line_count": 13,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 13,
+        "sha256": "125b9eccf8e1554cfff4ee986f09b25c9fd4341b242f8d2ef042762a31c92f9c"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check.json@oxlint.snap b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check.json@oxlint.snap\n",
+        "index 63b4644a11..49bf3c659e 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check.json@oxlint.snap\t\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check.json@oxlint.snap\t\n",
+        "@@ -30,7 +30,7 @@ working directory: fixtures/cli/tsgolint_type_error\n",
+        "    `----\n",
+        " \n",
+        " Found 2 warnings and 1 error.\n",
+        "-Finished in <variable>ms on 2 files with 111 rules using 1 threads.\n",
+        "+Finished in <variable>ms on 2 files with 193 rules using 1 threads.\n",
+        " ----------\n",
+        " CLI result: LintFoundErrors\n",
+        " ----------\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T021",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/tester.rs",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/tester.rs",
+          "mode": "100644",
+          "blob_oid": "78cb4889241d2d1df2e1cbb5b3626478f636f7d6",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/tester.rs",
+          "mode": "100644",
+          "blob_oid": "3aa8e75042c2efed154c5c046eb975daa48b9903",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "d4a4ea366b6f0ed4b14bb0d29f942d38f91ffd8476c269a808c00c2e2c0d7ca7",
+        "canonical_patch_bytes": 1494,
+        "canonical_hunks": 1,
+        "canonical_line_count": 30,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 30,
+        "sha256": "d4a4ea366b6f0ed4b14bb0d29f942d38f91ffd8476c269a808c00c2e2c0d7ca7"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/tester.rs b/native/oxc-oxlint-effect-fork/apps/oxlint/src/tester.rs\n",
+        "index 78cb488924..3aa8e75042 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/tester.rs\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/tester.rs\n",
+        "@@ -151,6 +151,25 @@ impl Tester {\n",
+        "         let cwd_string = cwd_string.cow_replace('\\\\', \"/\").to_string(); // for windows\n",
+        "         let output_string = output_string.cow_replace(&cwd_string, \"<cwd>\");\n",
+        " \n",
+        "+        // GitLab paths are relative to the enclosing repository, which can contain this fork.\n",
+        "+        let output_string = if multiple_args\n",
+        "+            .iter()\n",
+        "+            .flat_map(|args| args.iter())\n",
+        "+            .any(|arg| *arg == \"--format=gitlab\" || *arg == \"gitlab\")\n",
+        "+        {\n",
+        "+            let git_root = current_cwd\n",
+        "+                .ancestors()\n",
+        "+                .find(|path| path.join(\".git\").exists())\n",
+        "+                .expect(\"snapshot tests must run inside a Git repository\");\n",
+        "+            let prefix = current_cwd.strip_prefix(git_root).unwrap();\n",
+        "+            let prefix = prefix.to_string_lossy().cow_replace('\\\\', \"/\").into_owned();\n",
+        "+            output_string\n",
+        "+                .cow_replace(&format!(\"\\\"path\\\": \\\"{prefix}/\"), \"\\\"path\\\": \\\"apps/oxlint/\")\n",
+        "+                .into_owned()\n",
+        "+        } else {\n",
+        "+            output_string.into_owned()\n",
+        "+        };\n",
+        "+\n",
+        "         let full_args_list =\n",
+        "             multiple_args.iter().map(|args| args.join(\" \")).collect::<Vec<String>>().join(\" \");\n",
+        " \n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T112",
+        "path": "package.json",
+        "before": {
+          "path": "package.json",
+          "mode": "100644",
+          "blob_oid": "8da68e307ac28fb32d58b1dcba8250a9a8192d59",
+          "origin": "assigned stack parent"
+        },
+        "after": {
+          "path": "package.json",
+          "mode": "100644",
+          "blob_oid": "f6d7045b479c1a6c9dc33b02a8ffb5828a2153a0",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "5cf51a33d21b8beb74ef971beeca79d352089288415bc4d933e162be353e21de",
+        "canonical_patch_bytes": 1256,
+        "canonical_hunks": 1,
+        "canonical_line_count": 14,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 14,
+        "sha256": "5cf51a33d21b8beb74ef971beeca79d352089288415bc4d933e162be353e21de"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/package.json b/package.json\n",
+        "index 8da68e307a..f6d7045b47 100644\n",
+        "--- a/package.json\n",
+        "+++ b/package.json\n",
+        "@@ -17,7 +17,8 @@\n",
+        "     \"native:build\": \"pnpm native:build:tsgo && pnpm native:build:tsgolint && pnpm native:build:oxlint\",\n",
+        "     \"native:build:tsgo\": \"cd native/typescript-go && mkdir -p built/local && GOCACHE=${GOCACHE:-/tmp/go-build-cache} GOTMPDIR=${GOTMPDIR:-/tmp} go build -o built/local/tsgo ./cmd/tsgo\",\n",
+        "     \"native:build:tsgolint\": \"cd native/tsgolint-effect-fork && GOWORK=off GOCACHE=${GOCACHE:-/tmp/go-build-cache} GOTMPDIR=${GOTMPDIR:-/tmp} go build -o tsgolint ./cmd/tsgolint\",\n",
+        "-    \"native:build:oxlint\": \"cd native/oxc-oxlint-effect-fork && PATH=\\\"$HOME/.cargo/bin:/opt/data/dev-home/.cargo/bin:$PATH\\\" cargo build -p oxlint --release --features allocator\",\n",
+        "+    \"native:build:oxlint\": \"cd native/oxc-oxlint-effect-fork && cargo build -p oxlint --release --features allocator --locked\",\n",
+        "+    \"native:test:oxlint\": \"node scripts/test-oxlint-effect.mjs\",\n",
+        "     \"native:stage\": \"node scripts/stage-local-binaries.mjs\",\n",
+        "     \"native:smoke\": \"node scripts/headless-smoke.mjs\",\n",
+        "     \"publish:stage\": \"pnpm build && pnpm native:stage && vp pm stage publish -r --filter './packages/*' --access public --provenance -- --no-git-checks\",\n"
+      ]
+    }
+  ]
+}

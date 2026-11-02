@@ -1,3 +1,4 @@
+use oxc_allocator::ArenaBox;
 use oxc_ast::{
     AstKind,
     ast::{
@@ -12,7 +13,12 @@ use oxc_span::{GetSpan, Span};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::{AstNode, context::LintContext, fixer::RuleFixer, rule::Rule};
+use crate::{
+    AstNode,
+    context::LintContext,
+    fixer::RuleFixer,
+    rule::{DefaultRuleConfig, Rule},
+};
 
 fn consistent_generic_constructors_diagnostic_prefer_annotation(span: Span) -> OxcDiagnostic {
     OxcDiagnostic::warn(
@@ -30,19 +36,8 @@ fn consistent_generic_constructors_diagnostic_prefer_constructor(span: Span) -> 
     .with_label(span)
 }
 
-#[derive(Debug, Default, Clone)]
-pub struct ConsistentGenericConstructors(Box<ConsistentGenericConstructorsConfig>);
-
 #[derive(Debug, Default, Clone, Serialize, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase", default)]
-pub struct ConsistentGenericConstructorsConfig {
-    /// Specifies where the generic type should be specified.
-    ///
-    /// Possible values:
-    /// - `"constructor"` (default): Type arguments that only appear on the type annotation are disallowed.
-    /// - `"type-annotation"`: Type arguments that only appear on the constructor are disallowed.
-    option: PreferGenericType,
-}
+pub struct ConsistentGenericConstructors(PreferGenericType);
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "kebab-case")]
@@ -52,18 +47,6 @@ enum PreferGenericType {
     Constructor,
     /// Type arguments that only appear on the constructor are disallowed.
     TypeAnnotation,
-}
-
-impl TryFrom<&str> for PreferGenericType {
-    type Error = &'static str;
-
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        match value {
-            "constructor" => Ok(Self::Constructor),
-            "type-annotation" => Ok(Self::TypeAnnotation),
-            _ => Err("Invalid value"),
-        }
-    }
 }
 
 declare_oxc_lint!(
@@ -94,7 +77,9 @@ declare_oxc_lint!(
     typescript,
     style,
     fix,
-    config = ConsistentGenericConstructorsConfig
+    config = PreferGenericType,
+    version = "0.14.0",
+    short_description = "Enforce specifying generic type arguments on type annotation or constructor name of a constructor call.",
 );
 
 impl Rule for ConsistentGenericConstructors {
@@ -125,13 +110,7 @@ impl Rule for ConsistentGenericConstructors {
     }
 
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        Ok(Self(Box::new(ConsistentGenericConstructorsConfig {
-            option: value
-                .get(0)
-                .and_then(|v| v.as_str())
-                .and_then(|s| PreferGenericType::try_from(s).ok())
-                .unwrap_or_default(),
-        })))
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn should_run(&self, ctx: &crate::rules::ContextHost) -> bool {
@@ -143,7 +122,7 @@ impl ConsistentGenericConstructors {
     fn check<'a>(
         &self,
         node: &AstNode<'a>,
-        type_annotation: Option<&oxc_allocator::Box<'a, TSTypeAnnotation<'a>>>,
+        type_annotation: Option<&ArenaBox<'a, TSTypeAnnotation<'a>>>,
         init: Option<&Expression<'a>>,
         ctx: &LintContext<'a>,
     ) {
@@ -160,20 +139,18 @@ impl ConsistentGenericConstructors {
             return;
         }
         if let Some(type_annotation) = type_annotation {
-            if let TSType::TSTypeReference(type_annotation) = &type_annotation.type_annotation {
-                if let TSTypeName::IdentifierReference(ident) = &type_annotation.type_name {
-                    if ident.name != identifier.name {
-                        return;
-                    }
-                } else {
-                    return;
-                }
-            } else {
+            let TSType::TSTypeReference(type_annotation) = &type_annotation.type_annotation else {
+                return;
+            };
+            let TSTypeName::IdentifierReference(ident) = &type_annotation.type_name else {
+                return;
+            };
+            if ident.name != identifier.name {
                 return;
             }
         }
 
-        if matches!(self.0.option, PreferGenericType::TypeAnnotation) {
+        if matches!(self.0, PreferGenericType::TypeAnnotation) {
             if type_annotation.is_none()
                 && let Some(type_arguments) = &new_expression.type_arguments
             {
@@ -251,20 +228,13 @@ impl ConsistentGenericConstructors {
         let type_name_start = type_ref.type_name.span().start;
         let type_name_end = type_ref.type_name.span().end;
 
-        // Comments before type name (between colon and type name)
-        let comments_before: String = ctx
+        // Preserve comment order while building the replacement directly.
+        let new_type_args: String = ctx
             .comments_range((colon_pos + 1)..type_name_start)
+            .chain(ctx.comments_range(type_name_end..type_params.span.start))
             .map(|c| c.span.source_text(source_text))
+            .chain(std::iter::once(type_params_text))
             .collect();
-
-        // Comments between type name and type arguments
-        let comments_between: String = ctx
-            .comments_range(type_name_end..type_params.span.start)
-            .map(|c| c.span.source_text(source_text))
-            .collect();
-
-        // Build the new type arguments string to insert after constructor callee
-        let new_type_args = format!("{comments_before}{comments_between}{type_params_text}");
 
         // Delete from before any whitespace preceding the colon to the end of the type annotation
         // This ensures we don't leave extra whitespace when removing ` : Type`
@@ -416,8 +386,8 @@ impl ConsistentGenericConstructors {
                 if prop_def.computed {
                     // Find the closing bracket after the key
                     let key_end = prop_def.key.span().end;
-                    // find_next_token_from returns offset from key_end, add 1 for position after ']'
-                    ctx.find_next_token_from(key_end, "]").map(|offset| key_end + offset + 1)
+                    ctx.find_next_token_within(key_end, prop_def.span.end, "]")
+                        .map(|offset| key_end + offset + 1)
                 } else {
                     // Insert after the property key
                     Some(prop_def.key.span().end)
@@ -426,7 +396,8 @@ impl ConsistentGenericConstructors {
             AstKind::AccessorProperty(accessor) => {
                 if accessor.computed {
                     let key_end = accessor.key.span().end;
-                    ctx.find_next_token_from(key_end, "]").map(|offset| key_end + offset + 1)
+                    ctx.find_next_token_within(key_end, accessor.span.end, "]")
+                        .map(|offset| key_end + offset + 1)
                 } else {
                     Some(accessor.key.span().end)
                 }

@@ -4,6 +4,49 @@ All notable changes to this package will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0).
 
+## [0.153.0] - 2026-10-05
+
+### 🐛 Bug Fixes
+
+- 8f61129 regex: Decode escaped capturing group names (#27156) (camc314)
+
+## [0.152.0] - 2026-09-28
+
+### 🚀 Features
+
+- 52ae63f regular_expression: Support buffer boundary assertions (#27048) (Boshen)
+
+## [0.148.0] - 2026-08-31
+
+### 🐛 Bug Fixes
+
+- 9b51658 regular_expression: Allow oversized decimal escape for Annex B (#26070) (leaysgur)
+- c8de4df regular_expression: Reject oversized backreferences (#26055) (camc314)
+
+## [0.141.0] - 2026-07-20
+
+### ⚡ Performance
+
+- ba65790 semantic, allocator: Branchless `clone_in` for semantic IDs (#24564) (overlookmotel)
+
+## [0.138.0] - 2026-06-29
+
+### ⚡ Performance
+
+- c5eef8b regular_expression: Skip capturing-group pre-parse when pattern has no `(` (#23908) (Lawrence Lin)
+
+## [0.132.0] - 2026-05-18
+
+### ⚡ Performance
+
+- 98be95c regular_expression: Track regex flags via bitflags (#22427) (Boshen)
+
+## [0.125.0] - 2026-04-13
+
+### 💥 BREAKING CHANGES
+
+- 382958a span: [**BREAKING**] Remove re-exports of string types from `oxc_span` crate (#21246) (overlookmotel)
+
 ## [0.114.0] - 2026-02-16
 
 ### 🚀 Features

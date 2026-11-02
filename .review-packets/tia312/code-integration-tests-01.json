@@ -1,0 +1,963 @@
+{
+  "format": "tia312-review-packet-v1",
+  "kind": "code",
+  "group": "integration-tests",
+  "product_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+  "records": [
+    {
+      "target": {
+        "id": "T001",
+        "path": ".github/workflows/ci.yml",
+        "before": {
+          "path": ".github/workflows/ci.yml",
+          "mode": "100644",
+          "blob_oid": "4dfbd9db1a14ecd03f435153c427c5d8f440ab12",
+          "origin": "assigned stack parent"
+        },
+        "after": {
+          "path": ".github/workflows/ci.yml",
+          "mode": "100644",
+          "blob_oid": "6c16287b5344e9cf9cb9cc25fcca5b8397068105",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "90d061b57cca38925ebfd9bb06c031f3c02266fbd78b3dde0c4166bace6c8302",
+        "canonical_patch_bytes": 483,
+        "canonical_hunks": 1,
+        "canonical_line_count": 14,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 14,
+        "sha256": "90d061b57cca38925ebfd9bb06c031f3c02266fbd78b3dde0c4166bace6c8302"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml\n",
+        "index 4dfbd9db1a..6c16287b53 100644\n",
+        "--- a/.github/workflows/ci.yml\n",
+        "+++ b/.github/workflows/ci.yml\n",
+        "@@ -115,6 +115,9 @@ jobs:\n",
+        "       - name: Verify native compiler and diagnostic protocol\n",
+        "         run: vp run -w native:test:backend\n",
+        " \n",
+        "+      - name: Verify Effect rules through the native Oxlint CLI\n",
+        "+        run: vp run -w native:test:oxlint\n",
+        "+\n",
+        "       - name: Stage native binaries\n",
+        "         run: vp run -w native:stage\n",
+        " \n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T002",
+        "path": "README.md",
+        "before": {
+          "path": "README.md",
+          "mode": "100644",
+          "blob_oid": "d7560cae96eced4cac4e323215f4de3ced3aba32",
+          "origin": "assigned stack parent"
+        },
+        "after": {
+          "path": "README.md",
+          "mode": "100644",
+          "blob_oid": "c9c02bbfc503ed3575edd07b29249c2e9125711a",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "bb3f36fb8fa58c17d90887f0a3ce7789b972889a6467a8e119ee9d183cc61ff4",
+        "canonical_patch_bytes": 634,
+        "canonical_hunks": 1,
+        "canonical_line_count": 16,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 16,
+        "sha256": "bb3f36fb8fa58c17d90887f0a3ce7789b972889a6467a8e119ee9d183cc61ff4"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/README.md b/README.md\n",
+        "index d7560cae96..c9c02bbfc5 100644\n",
+        "--- a/README.md\n",
+        "+++ b/README.md\n",
+        "@@ -32,6 +32,11 @@ pnpm native:stage\n",
+        " pnpm native:smoke\n",
+        " ```\n",
+        " \n",
+        "+The custom Oxlint source is pinned to 1.87.0. Build it with Rust 1.99.0\n",
+        "+and run `pnpm native:test:oxlint` to check the existing Effect rules through\n",
+        "+the local CLI. See [the fork notes](native/oxc-oxlint-effect-fork/TIARA.md)\n",
+        "+for the source commit and integration details.\n",
+        "+\n",
+        " `@tiara-stack/effect-vitest` is generated from\n",
+        " `packages/effect-smol-fork/packages/vitest` with Vitest imports rewritten to\n",
+        " Vite+ test exports. After pulling the Effect source fork, run:\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T003",
+        "path": "native/oxc-oxlint-effect-fork/.gitrepo",
+        "before": null,
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/.gitrepo",
+          "mode": "100644",
+          "blob_oid": "2cdb81a5423c42be6d02b148e32a7aa8f57ff9ba",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "9cb773f31da05b4d77fd690c139dbb3df67877180c6a3e1c66cf974a59260e05",
+        "canonical_patch_bytes": 599,
+        "canonical_hunks": 1,
+        "canonical_line_count": 17,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 17,
+        "sha256": "9cb773f31da05b4d77fd690c139dbb3df67877180c6a3e1c66cf974a59260e05"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/.gitrepo b/native/oxc-oxlint-effect-fork/.gitrepo\n",
+        "new file mode 100644\n",
+        "index 0000000000..2cdb81a542\n",
+        "--- /dev/null\n",
+        "+++ b/native/oxc-oxlint-effect-fork/.gitrepo\n",
+        "@@ -0,0 +1,11 @@\n",
+        "+; DO NOT EDIT (unless you know what you are doing)\n",
+        "+;\n",
+        "+; This subdirectory is a git \"subrepo\", and this file is maintained by the\n",
+        "+; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme\n",
+        "+;\n",
+        "+[subrepo]\n",
+        "+\tremote = https://github.com/oxc-project/oxc\n",
+        "+\tbranch = oxlint_v1.87.0\n",
+        "+\tcommit = 2bd08ebe8f36fcf1954a675ffdeb4c6d0129f609\n",
+        "+\tmethod = merge\n",
+        "+\tcmdver = 0.4.9\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T004",
+        "path": "native/oxc-oxlint-effect-fork/TIARA.md",
+        "before": null,
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/TIARA.md",
+          "mode": "100644",
+          "blob_oid": "ae0df5dbbcbd2a437f4220c362712088b4924c0e",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "55a80aae1a4bdb7f019f40977dc3712c5991dfe9200715220e23492e76e1ab79",
+        "canonical_patch_bytes": 2617,
+        "canonical_hunks": 1,
+        "canonical_line_count": 56,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 56,
+        "sha256": "55a80aae1a4bdb7f019f40977dc3712c5991dfe9200715220e23492e76e1ab79"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/TIARA.md b/native/oxc-oxlint-effect-fork/TIARA.md\n",
+        "new file mode 100644\n",
+        "index 0000000000..ae0df5dbbc\n",
+        "--- /dev/null\n",
+        "+++ b/native/oxc-oxlint-effect-fork/TIARA.md\n",
+        "@@ -0,0 +1,50 @@\n",
+        "+# Tiara Oxlint fork\n",
+        "+\n",
+        "+The source baseline is Oxlint 1.87.0, upstream commit\n",
+        "+[`2bd08ebe8f36fcf1954a675ffdeb4c6d0129f609`](https://github.com/oxc-project/oxc/commit/2bd08ebe8f36fcf1954a675ffdeb4c6d0129f609).\n",
+        "+The Rust toolchain is 1.99.0, as pinned by upstream. `.gitrepo` records the\n",
+        "+release tag and commit.\n",
+        "+\n",
+        "+Tiara carries 82 Effect marker rules from its Oxlint 1.58.0 fork. Their\n",
+        "+public `effect/*` names, categories, and default severities are retained.\n",
+        "+The markers now include the introduction-version metadata required by\n",
+        "+Oxlint 1.87.0. They delegate semantic analysis to the repo's tsgolint fork\n",
+        "+through headless protocol version 2.\n",
+        "+\n",
+        "+The custom integration consists of:\n",
+        "+\n",
+        "+- The Effect plugin and marker modules in `crates/oxc_linter/src`.\n",
+        "+- Translation between public kebab-case names and the backend's snake_case\n",
+        "+  names for requests, severity lookup, diagnostics, and disable comments.\n",
+        "+- Effect defaults in the terminal and JSON rule lists.\n",
+        "+- Repo-local backend discovery after an explicit `OXLINT_TSGOLINT_PATH`\n",
+        "+  override and before package or global binaries. A checkout with no local\n",
+        "+  tsgolint build reports the build command instead of selecting another binary.\n",
+        "+\n",
+        "+Regenerate the rule enum and runners with `cargo lintgen` after changing\n",
+        "+the marker modules. Do not edit their generated files by hand.\n",
+        "+\n",
+        "+From the monorepo root, build and exercise the source binaries with:\n",
+        "+\n",
+        "+```sh\n",
+        "+pnpm install --frozen-lockfile\n",
+        "+pnpm native:build:tsgolint\n",
+        "+pnpm native:build:oxlint\n",
+        "+pnpm native:test:oxlint\n",
+        "+pnpm native:smoke\n",
+        "+```\n",
+        "+\n",
+        "+`native:test:oxlint` runs the release CLI against a framed protocol fixture\n",
+        "+for every marker. It checks rule names, severities, disabled rules, source\n",
+        "+locations, disable comments, TypeScript rule reporting, and backend selection.\n",
+        "+It also runs a real Effect diagnostic through the local tsgolint binary.\n",
+        "+\n",
+        "+The consumer patch in `patches/oxlint@1.87.0-native-effect.patch` targets\n",
+        "+the matching npm CLI and retains the Vite lint-config handoff. Its source\n",
+        "+checkout path selects the local Oxlint build before installed wrappers.\n",
+        "+`pnpm check:patches` checks application to the released npm artifact.\n",
+        "+\n",
+        "+This port does not add the 34 later Effect markers or implement new Effect\n",
+        "+fixes and suggestions. Those changes belong to TIA-316. Oxlint 1.87.0 is\n",
+        "+the approved custom port; it is not an upstream-certified pairing with\n",
+        "+Effect-tsgo 0.46.1.\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T005",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/lint.rs",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/lint.rs",
+          "mode": "100644",
+          "blob_oid": "be9ae3e6bc25bc74659edffb89cec5dccc1076ea",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/lint.rs",
+          "mode": "100644",
+          "blob_oid": "49698d52e81ab296f0003e15a25143d27de1b381",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "635c7e5e43da7e0d3ce10da0469003a7347ac3e3c97b25f55ce3a5647053129a",
+        "canonical_patch_bytes": 1800,
+        "canonical_hunks": 2,
+        "canonical_line_count": 40,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 40,
+        "sha256": "635c7e5e43da7e0d3ce10da0469003a7347ac3e3c97b25f55ce3a5647053129a"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/lint.rs b/native/oxc-oxlint-effect-fork/apps/oxlint/src/lint.rs\n",
+        "index be9ae3e6bc..49698d52e8 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/lint.rs\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/lint.rs\n",
+        "@@ -764,7 +764,9 @@ fn render_config_builder_error(\n",
+        " mod test {\n",
+        "     use std::fs;\n",
+        " \n",
+        "-    use crate::{DEFAULT_OXLINTRC_NAME, tester::Tester};\n",
+        "+    use cow_utils::CowUtils;\n",
+        "+\n",
+        "+    use crate::{DEFAULT_OXLINTRC_NAME, cli::CliRunResult, tester::Tester};\n",
+        "     use oxc_linter::rules::RULES;\n",
+        " \n",
+        "     fn markdown_rule_row<'a>(output: &'a str, plugin: &str, name: &str) -> Vec<&'a str> {\n",
+        "@@ -2083,8 +2085,22 @@ export { redundant };\n",
+        " \n",
+        "     #[test]\n",
+        "     fn test_no_js_runtime() {\n",
+        "-        let args = &[];\n",
+        "-        Tester::new().with_cwd(\"fixtures/cli/no_js_runtime\".into()).test_and_snapshot(args);\n",
+        "+        let (output, result) =\n",
+        "+            Tester::new().with_cwd(\"fixtures/cli/no_js_runtime\".into()).test_output(&[]);\n",
+        "+        assert!(matches!(result, CliRunResult::InvalidOptionConfig));\n",
+        "+\n",
+        "+        // The absolute config path can wrap the message differently in a nested checkout.\n",
+        "+        let output = output.cow_replace(\"\\n  | \", \" \");\n",
+        "+        assert!(output.contains(\"Failed to parse oxlint configuration file.\"));\n",
+        "+        let config_path =\n",
+        "+            std::env::current_dir().unwrap().join(\"fixtures/cli/no_js_runtime/oxlint.config.ts\");\n",
+        "+        assert!(output.contains(&format!(\n",
+        "+            \"JavaScript/TypeScript config file ({}) found but JS runtime not available.\",\n",
+        "+            config_path.to_string_lossy().cow_replace('\\\\', \"/\")\n",
+        "+        )));\n",
+        "+        assert!(output.contains(\n",
+        "+            \"Run oxlint via the npm package, or use JSON config files (.oxlintrc.json or .oxlintrc.jsonc).\"\n",
+        "+        ));\n",
+        "     }\n",
+        " }\n",
+        " \n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T006",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/lsp/tester.rs",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/lsp/tester.rs",
+          "mode": "100644",
+          "blob_oid": "7ebf5da4dcc50d895f91c16a95eae947bcf8397a",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/lsp/tester.rs",
+          "mode": "100644",
+          "blob_oid": "be7914bc8ddae458279b311a6e844712a9733323",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "0814445e60571c88512290f976c15f5e06d246efa077e003a0d0203d5094725f",
+        "canonical_patch_bytes": 1273,
+        "canonical_hunks": 1,
+        "canonical_line_count": 25,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 25,
+        "sha256": "0814445e60571c88512290f976c15f5e06d246efa077e003a0d0203d5094725f"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/lsp/tester.rs b/native/oxc-oxlint-effect-fork/apps/oxlint/src/lsp/tester.rs\n",
+        "index 7ebf5da4dc..be7914bc8d 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/lsp/tester.rs\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/lsp/tester.rs\n",
+        "@@ -40,11 +40,15 @@ fn get_snapshot_from_diagnostic_result(diagnostic_result: &[(Uri, Vec<Diagnostic\n",
+        " }\n",
+        " \n",
+        " fn get_snapshot_safe_uri(uri: &Uri) -> String {\n",
+        "-    let mut safe_uri = uri.to_string();\n",
+        "-    let start = safe_uri.find(\"file://\").expect(\"file:// protocol not found in URI\");\n",
+        "-    let end = safe_uri.find(\"oxlint\").expect(\"oxlint not found in URI\");\n",
+        "-    safe_uri.replace_range(start + \"file://\".len()..end + \"oxlint\".len(), \"<variable>\");\n",
+        "-    safe_uri\n",
+        "+    let crate_uri = file_path_to_uri(std::env::current_dir().expect(\"could not get current dir\"))\n",
+        "+        .expect(\"failed to convert crate directory to URI\")\n",
+        "+        .to_string();\n",
+        "+    let relative_uri = uri\n",
+        "+        .as_str()\n",
+        "+        .strip_prefix(&crate_uri)\n",
+        "+        .filter(|relative| relative.starts_with('/'))\n",
+        "+        .expect(\"snapshot URI must be inside the oxlint crate\");\n",
+        "+    format!(\"file://<variable>{relative_uri}\")\n",
+        " }\n",
+        " \n",
+        " fn get_snapshot_from_diagnostic(diagnostic: &Diagnostic) -> String {\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T007",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/gitlab.rs",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/gitlab.rs",
+          "mode": "100644",
+          "blob_oid": "b5d3d7ce12c6b7f527d9b2f18cf7f147202f1f7d",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/gitlab.rs",
+          "mode": "100644",
+          "blob_oid": "7f78a51615a7b08fe2cbb854c5ffb81adc896a73",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "42bded348800d40bf20d474b6770cb19f4b9e66646dc2ecab52f452ed36f42b4",
+        "canonical_patch_bytes": 1451,
+        "canonical_hunks": 2,
+        "canonical_line_count": 28,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 28,
+        "sha256": "42bded348800d40bf20d474b6770cb19f4b9e66646dc2ecab52f452ed36f42b4"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/gitlab.rs b/native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/gitlab.rs\n",
+        "index b5d3d7ce12..7f78a51615 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/gitlab.rs\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/gitlab.rs\n",
+        "@@ -166,6 +166,8 @@ fn format_gitlab(diagnostics: &mut Vec<Error>, repo_path_prefix: Option<&Path>)\n",
+        " mod test {\n",
+        "     use std::path::{Path, PathBuf};\n",
+        " \n",
+        "+    use cow_utils::CowUtils;\n",
+        "+\n",
+        "     use oxc_diagnostics::{\n",
+        "         Error, NamedSource, OxcDiagnostic,\n",
+        "         reporter::{DiagnosticReporter, DiagnosticResult},\n",
+        "@@ -201,7 +203,13 @@ mod test {\n",
+        "         assert!(value[\"fingerprint\"].is_string()); // value is different on different architectures\n",
+        "         assert_eq!(value[\"severity\"], \"major\");\n",
+        "         let location = value[\"location\"].as_object().unwrap();\n",
+        "-        assert_eq!(location[\"path\"], \"apps/oxlint/test.ts\");\n",
+        "+        let cwd = std::env::current_dir().unwrap();\n",
+        "+        let git_root = find_git_root_from(&cwd).unwrap();\n",
+        "+        let expected_path = cwd.strip_prefix(git_root).unwrap().join(\"test.ts\");\n",
+        "+        assert_eq!(\n",
+        "+            location[\"path\"],\n",
+        "+            expected_path.to_string_lossy().cow_replace('\\\\', \"/\").as_ref()\n",
+        "+        );\n",
+        "         let lines = location[\"lines\"].as_object().unwrap();\n",
+        "         assert_eq!(lines[\"begin\"], 1);\n",
+        "         assert_eq!(lines[\"end\"], 1);\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T008",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/json.rs",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/json.rs",
+          "mode": "100644",
+          "blob_oid": "8a4d88ec424c933630ee7d278f54ab3bb944b6aa",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/json.rs",
+          "mode": "100644",
+          "blob_oid": "66d4729f9c8c90923c373cabf8e52cbbd18b29e1",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "d434c39694556b31c252414474063ea6420d12ecb57d9768214eb7b67f0202f8",
+        "canonical_patch_bytes": 809,
+        "canonical_hunks": 1,
+        "canonical_line_count": 13,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 13,
+        "sha256": "d434c39694556b31c252414474063ea6420d12ecb57d9768214eb7b67f0202f8"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/json.rs b/native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/json.rs\n",
+        "index 8a4d88ec42..66d4729f9c 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/json.rs\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/output_formatter/json.rs\n",
+        "@@ -34,7 +34,7 @@ impl InternalFormatter for JsonOutputFormatter {\n",
+        "         }\n",
+        " \n",
+        "         // Determine which rules are turned on by default (same logic as RuleTable)\n",
+        "-        let default_plugin_names = [\"eslint\", \"unicorn\", \"typescript\", \"oxc\"];\n",
+        "+        let default_plugin_names = [\"eslint\", \"unicorn\", \"typescript\", \"oxc\", \"effect\"];\n",
+        "         let default_rules: FxHashSet<(&'static str, &'static str)> = RULES\n",
+        "             .iter()\n",
+        "             .filter(|rule| {\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T009",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/_-c fixtures__cli__print_config__ban_rules__eslintrc.json -A all -D eqeqeq --print-config@oxlint.snap",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/_-c fixtures__cli__print_config__ban_rules__eslintrc.json -A all -D eqeqeq --print-config@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "7811bb76b0097cd5f3a8c594bd40f3a8c03af36c",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/_-c fixtures__cli__print_config__ban_rules__eslintrc.json -A all -D eqeqeq --print-config@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "1530fc0a4fa82d16a84cff440def6607ae452310",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "d2d0211e790422395eaa0965752a816a88e22410009629180d9d703d691e6030",
+        "canonical_patch_bytes": 861,
+        "canonical_hunks": 1,
+        "canonical_line_count": 14,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 14,
+        "sha256": "d2d0211e790422395eaa0965752a816a88e22410009629180d9d703d691e6030"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/_-c fixtures__cli__print_config__ban_rules__eslintrc.json -A all -D eqeqeq --print-config@oxlint.snap b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/_-c fixtures__cli__print_config__ban_rules__eslintrc.json -A all -D eqeqeq --print-config@oxlint.snap\n",
+        "index 7811bb76b0..1530fc0a4f 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/_-c fixtures__cli__print_config__ban_rules__eslintrc.json -A all -D eqeqeq --print-config@oxlint.snap\t\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/_-c fixtures__cli__print_config__ban_rules__eslintrc.json -A all -D eqeqeq --print-config@oxlint.snap\t\n",
+        "@@ -9,7 +9,8 @@ working directory:\n",
+        "   \"plugins\": [\n",
+        "     \"unicorn\",\n",
+        "     \"typescript\",\n",
+        "-    \"oxc\"\n",
+        "+    \"oxc\",\n",
+        "+    \"effect\"\n",
+        "   ],\n",
+        "   \"categories\": {},\n",
+        "   \"rules\": {\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T010",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures_-A all --print-config@oxlint.snap",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures_-A all --print-config@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "bae780d8ce4a741ef271e08b695bc253bbb904ed",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures_-A all --print-config@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "b960a1ad6cd7dc1ac207c31fbb382cfed4ee642e",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "0a8017733f782354ece84e40d9f2f7d9f14b16ddd399577099c5456b9bca6c17",
+        "canonical_patch_bytes": 636,
+        "canonical_hunks": 1,
+        "canonical_line_count": 14,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 14,
+        "sha256": "0a8017733f782354ece84e40d9f2f7d9f14b16ddd399577099c5456b9bca6c17"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures_-A all --print-config@oxlint.snap b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures_-A all --print-config@oxlint.snap\n",
+        "index bae780d8ce..b960a1ad6c 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures_-A all --print-config@oxlint.snap\t\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures_-A all --print-config@oxlint.snap\t\n",
+        "@@ -9,7 +9,8 @@ working directory: fixtures\n",
+        "   \"plugins\": [\n",
+        "     \"unicorn\",\n",
+        "     \"typescript\",\n",
+        "-    \"oxc\"\n",
+        "+    \"oxc\",\n",
+        "+    \"effect\"\n",
+        "   ],\n",
+        "   \"categories\": {},\n",
+        "   \"rules\": {},\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T011",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__no_js_runtime_@oxlint.snap",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__no_js_runtime_@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "53f3e3e3fd264434141b3be102c789212561d27e",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": null,
+        "canonical_patch_sha256": "1cdc83682740df2845fde88b2876e2686c8a7cc610c5c52bb0bd88774cc18205",
+        "canonical_patch_bytes": 865,
+        "canonical_hunks": 1,
+        "canonical_line_count": 21,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 21,
+        "sha256": "1cdc83682740df2845fde88b2876e2686c8a7cc610c5c52bb0bd88774cc18205"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__no_js_runtime_@oxlint.snap b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__no_js_runtime_@oxlint.snap\n",
+        "deleted file mode 100644\n",
+        "index 53f3e3e3fd..0000000000\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__no_js_runtime_@oxlint.snap\n",
+        "+++ /dev/null\n",
+        "@@ -1,15 +0,0 @@\n",
+        "----\n",
+        "-source: apps/oxlint/src/tester.rs\n",
+        "----\n",
+        "-########## \n",
+        "-arguments: \n",
+        "-working directory: fixtures/cli/no_js_runtime\n",
+        "-----------\n",
+        "-Failed to parse oxlint configuration file.\n",
+        "-\n",
+        "-  x JavaScript/TypeScript config file (<cwd>/fixtures/cli/no_js_runtime/oxlint.config.ts) found but JS runtime not available.\n",
+        "-  help: Run oxlint via the npm package, or use JSON config files (.oxlintrc.json or .oxlintrc.jsonc).\n",
+        "-\n",
+        "-----------\n",
+        "-CLI result: InvalidOptionConfig\n",
+        "-----------\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T012",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_--type-aware -c config-type-aware-false.json no-floating-promises.ts@oxlint.snap",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_--type-aware -c config-type-aware-false.json no-floating-promises.ts@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "05b7ee7afb1c58504be40f1d362c41d062911666",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_--type-aware -c config-type-aware-false.json no-floating-promises.ts@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "0dce825524898cac9075feb738bced4dc2f26473",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "de76e8c73e44811550462ff654ab0bb0b4c77d88e885ffc62572757ad6d68eb7",
+        "canonical_patch_bytes": 1044,
+        "canonical_hunks": 1,
+        "canonical_line_count": 13,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 13,
+        "sha256": "de76e8c73e44811550462ff654ab0bb0b4c77d88e885ffc62572757ad6d68eb7"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_--type-aware -c config-type-aware-false.json no-floating-promises.ts@oxlint.snap b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_--type-aware -c config-type-aware-false.json no-floating-promises.ts@oxlint.snap\n",
+        "index 05b7ee7afb..0dce825524 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_--type-aware -c config-type-aware-false.json no-floating-promises.ts@oxlint.snap\t\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_--type-aware -c config-type-aware-false.json no-floating-promises.ts@oxlint.snap\t\n",
+        "@@ -26,7 +26,7 @@ working directory: fixtures/cli/tsgolint\n",
+        "   help: Consider using this expression or removing it\n",
+        " \n",
+        " Found 1 warning and 1 error.\n",
+        "-Finished in <variable>ms on 1 file with 111 rules using 1 threads.\n",
+        "+Finished in <variable>ms on 1 file with 193 rules using 1 threads.\n",
+        " ----------\n",
+        " CLI result: LintFoundErrors\n",
+        " ----------\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T013",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_-c config-type-aware-with-overrides.json no-floating-promises.ts@oxlint.snap",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_-c config-type-aware-with-overrides.json no-floating-promises.ts@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "26e94cd58b91bef1a188781be42a869393fd44f5",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_-c config-type-aware-with-overrides.json no-floating-promises.ts@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "0c6559a44f6b393388f285ba90162abc741ceb71",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "0be69be6e4ceb9e6e1c3902771c0f26eae0f2d9f392bf80dca785ab51152dd67",
+        "canonical_patch_bytes": 1028,
+        "canonical_hunks": 1,
+        "canonical_line_count": 13,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 13,
+        "sha256": "0be69be6e4ceb9e6e1c3902771c0f26eae0f2d9f392bf80dca785ab51152dd67"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_-c config-type-aware-with-overrides.json no-floating-promises.ts@oxlint.snap b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_-c config-type-aware-with-overrides.json no-floating-promises.ts@oxlint.snap\n",
+        "index 26e94cd58b..0c6559a44f 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_-c config-type-aware-with-overrides.json no-floating-promises.ts@oxlint.snap\t\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_-c config-type-aware-with-overrides.json no-floating-promises.ts@oxlint.snap\t\n",
+        "@@ -26,7 +26,7 @@ working directory: fixtures/cli/tsgolint\n",
+        "   help: Consider using this expression or removing it\n",
+        " \n",
+        " Found 1 warning and 1 error.\n",
+        "-Finished in <variable>ms on 1 file with 111 rules using 1 threads.\n",
+        "+Finished in <variable>ms on 1 file with 193 rules using 1 threads.\n",
+        " ----------\n",
+        " CLI result: LintFoundErrors\n",
+        " ----------\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T014",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_config_error_--type-aware@oxlint.snap",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_config_error_--type-aware@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "1b798c1d7c6d1745e03bf710af6524ae1f50d18b",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_config_error_--type-aware@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "2ecea5e3f7425b17debcd5a20b804470e671bff1",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "6f745d258e53749818fa48e05ff2fd31d5a5d3c102fc057d9618993dc27061f2",
+        "canonical_patch_bytes": 915,
+        "canonical_hunks": 1,
+        "canonical_line_count": 13,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 13,
+        "sha256": "6f745d258e53749818fa48e05ff2fd31d5a5d3c102fc057d9618993dc27061f2"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_config_error_--type-aware@oxlint.snap b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_config_error_--type-aware@oxlint.snap\n",
+        "index 1b798c1d7c..2ecea5e3f7 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_config_error_--type-aware@oxlint.snap\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_config_error_--type-aware@oxlint.snap\n",
+        "@@ -17,7 +17,7 @@ working directory: fixtures/cli/tsgolint_config_error\n",
+        "         See https://github.com/oxc-project/tsgolint/issues/351 for more information.\n",
+        " \n",
+        " Found 0 warnings and 1 error.\n",
+        "-Finished in <variable>ms on 1 file with 111 rules using 1 threads.\n",
+        "+Finished in <variable>ms on 1 file with 193 rules using 1 threads.\n",
+        " ----------\n",
+        " CLI result: LintFoundErrors\n",
+        " ----------\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T015",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware --report-unused-disable-directives unused.ts@oxlint.snap",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware --report-unused-disable-directives unused.ts@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "d11c2ae8f1ed0b8da387dd9eac392d96cf0596e6",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware --report-unused-disable-directives unused.ts@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "52ff809f4a20f39e80105ec6892924acc9e904e8",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "119af48cceedd8defdb77e36928f880275e94e905e1fcafbb617723adbd8c699",
+        "canonical_patch_bytes": 1051,
+        "canonical_hunks": 1,
+        "canonical_line_count": 13,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 13,
+        "sha256": "119af48cceedd8defdb77e36928f880275e94e905e1fcafbb617723adbd8c699"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware --report-unused-disable-directives unused.ts@oxlint.snap b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware --report-unused-disable-directives unused.ts@oxlint.snap\n",
+        "index d11c2ae8f1..52ff809f4a 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware --report-unused-disable-directives unused.ts@oxlint.snap\t\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware --report-unused-disable-directives unused.ts@oxlint.snap\t\n",
+        "@@ -78,7 +78,7 @@ working directory: fixtures/cli/tsgolint_disable_directives\n",
+        "     `----\n",
+        " \n",
+        " Found 8 warnings and 0 errors.\n",
+        "-Finished in <variable>ms on 1 file with 111 rules using 1 threads.\n",
+        "+Finished in <variable>ms on 1 file with 193 rules using 1 threads.\n",
+        " ----------\n",
+        " CLI result: LintSucceeded\n",
+        " ----------\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T016",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware@oxlint.snap",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "6cb5476ef115c33491c2eb2c293b10b99dac8f0d",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "02fc042f3218845516abe812212996810ea3d177",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "7c1a6519b9cfaa5035b0db309b633a1231e8d7e8fc70ae5d721f65e561c7c5f7",
+        "canonical_patch_bytes": 908,
+        "canonical_hunks": 1,
+        "canonical_line_count": 13,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 13,
+        "sha256": "7c1a6519b9cfaa5035b0db309b633a1231e8d7e8fc70ae5d721f65e561c7c5f7"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware@oxlint.snap b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware@oxlint.snap\n",
+        "index 6cb5476ef1..02fc042f32 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware@oxlint.snap\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_disable_directives_--type-aware@oxlint.snap\n",
+        "@@ -145,7 +145,7 @@ working directory: fixtures/cli/tsgolint_disable_directives\n",
+        "   help: Consider removing this declaration.\n",
+        " \n",
+        " Found 15 warnings and 0 errors.\n",
+        "-Finished in <variable>ms on 3 files with 111 rules using 1 threads.\n",
+        "+Finished in <variable>ms on 3 files with 193 rules using 1 threads.\n",
+        " ----------\n",
+        " CLI result: LintSucceeded\n",
+        " ----------\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T017",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_tsconfig_extends_config_err_--type-aware -D no-floating-promises@oxlint.snap",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_tsconfig_extends_config_err_--type-aware -D no-floating-promises@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "cc83ee5edc9cfd92214e292203aef9fb6e2f6217",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_tsconfig_extends_config_err_--type-aware -D no-floating-promises@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "7ae73a3902663426989d6f2b17480bedde8ca73b",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "1bd4ebd0c3f716382f618ec8ae9745fed75084d2f53486387b6cf8d419a04dc8",
+        "canonical_patch_bytes": 1088,
+        "canonical_hunks": 1,
+        "canonical_line_count": 13,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 13,
+        "sha256": "1bd4ebd0c3f716382f618ec8ae9745fed75084d2f53486387b6cf8d419a04dc8"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_tsconfig_extends_config_err_--type-aware -D no-floating-promises@oxlint.snap b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_tsconfig_extends_config_err_--type-aware -D no-floating-promises@oxlint.snap\n",
+        "index cc83ee5edc..7ae73a3902 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_tsconfig_extends_config_err_--type-aware -D no-floating-promises@oxlint.snap\t\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_tsconfig_extends_config_err_--type-aware -D no-floating-promises@oxlint.snap\t\n",
+        "@@ -11,7 +11,7 @@ working directory: fixtures/cli/tsgolint_tsconfig_extends_config_err\n",
+        "         See https://github.com/oxc-project/tsgolint/issues/351 for more information.\n",
+        " \n",
+        " Found 0 warnings and 1 error.\n",
+        "-Finished in <variable>ms on 1 file with 111 rules using 1 threads.\n",
+        "+Finished in <variable>ms on 1 file with 193 rules using 1 threads.\n",
+        " ----------\n",
+        " CLI result: LintFoundErrors\n",
+        " ----------\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T018",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_--type-check -c config-type-check-false.json@oxlint.snap",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_--type-check -c config-type-check-false.json@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "b01ba569e5c2e1be36529851997b26bf56e7b4ba",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_--type-check -c config-type-check-false.json@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "1a834bf5fe4ef2a4612a19c5a33f32d4caab86f6",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "9e8825db3c83a3c9291d0d66bc8051e93f3e93dcf0a39640864c2be58e5d0141",
+        "canonical_patch_bytes": 961,
+        "canonical_hunks": 1,
+        "canonical_line_count": 13,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 13,
+        "sha256": "9e8825db3c83a3c9291d0d66bc8051e93f3e93dcf0a39640864c2be58e5d0141"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_--type-check -c config-type-check-false.json@oxlint.snap b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_--type-check -c config-type-check-false.json@oxlint.snap\n",
+        "index b01ba569e5..1a834bf5fe 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_--type-check -c config-type-check-false.json@oxlint.snap\t\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_--type-check -c config-type-check-false.json@oxlint.snap\t\n",
+        "@@ -30,7 +30,7 @@ working directory: fixtures/cli/tsgolint_type_error\n",
+        "    `----\n",
+        " \n",
+        " Found 2 warnings and 1 error.\n",
+        "-Finished in <variable>ms on 2 files with 111 rules using 1 threads.\n",
+        "+Finished in <variable>ms on 2 files with 193 rules using 1 threads.\n",
+        " ----------\n",
+        " CLI result: LintFoundErrors\n",
+        " ----------\n"
+      ]
+    },
+    {
+      "target": {
+        "id": "T019",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check-false.json@oxlint.snap",
+        "before": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check-false.json@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "cfbdd8a71d797206ac4c0985dbc4b021be627caf",
+          "origin": "approved Oxlint 1.87.0 pin"
+        },
+        "after": {
+          "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check-false.json@oxlint.snap",
+          "mode": "100644",
+          "blob_oid": "7a9a2f039a24ff75320a7eafba53b8dfbc44a5b7",
+          "origin": "product epoch"
+        },
+        "canonical_patch_sha256": "4e8f529361389c50b01545fea224bc81eb13b91d53a3147bf028454acac29b96",
+        "canonical_patch_bytes": 943,
+        "canonical_hunks": 1,
+        "canonical_line_count": 13,
+        "fragment_count": 1
+      },
+      "fragment": {
+        "part": 1,
+        "parts": 1,
+        "canonical_line_start": 1,
+        "canonical_line_end": 13,
+        "sha256": "4e8f529361389c50b01545fea224bc81eb13b91d53a3147bf028454acac29b96"
+      },
+      "canonical_patch_lines": [
+        "diff --git a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check-false.json@oxlint.snap b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check-false.json@oxlint.snap\n",
+        "index cfbdd8a71d..7a9a2f039a 100644\n",
+        "--- a/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check-false.json@oxlint.snap\t\n",
+        "+++ b/native/oxc-oxlint-effect-fork/apps/oxlint/src/snapshots/fixtures__cli__tsgolint_type_error_-c config-type-check-false.json@oxlint.snap\t\n",
+        "@@ -24,7 +24,7 @@ working directory: fixtures/cli/tsgolint_type_error\n",
+        "   help: Consider removing this declaration.\n",
+        " \n",
+        " Found 2 warnings and 0 errors.\n",
+        "-Finished in <variable>ms on 2 files with 111 rules using 1 threads.\n",
+        "+Finished in <variable>ms on 2 files with 193 rules using 1 threads.\n",
+        " ----------\n",
+        " CLI result: LintSucceeded\n",
+        " ----------\n"
+      ]
+    }
+  ]
+}

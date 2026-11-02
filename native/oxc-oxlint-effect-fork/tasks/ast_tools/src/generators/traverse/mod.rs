@@ -14,7 +14,7 @@ use quote::quote;
 use crate::{
     Codegen, Generator, TRAVERSE_CRATE_PATH,
     output::{Output, output_path},
-    schema::{Def, Schema, TypeDef},
+    schema::{Def, Schema, StructOrEnum},
 };
 
 use self::ancestor::is_ast_type_with_visitor;
@@ -95,15 +95,14 @@ pub(super) fn generate_traverse_trait(
     let ctx_use = &config.ctx_use;
     let mut methods = quote!();
 
-    for type_def in &schema.types {
+    for type_def in schema.structs_and_enums() {
         if !is_ast_type_with_visitor(type_def, schema) {
             continue;
         }
 
         let (visitor_names, ty) = match type_def {
-            TypeDef::Struct(s) => (s.visit.visitor_names.as_ref().unwrap(), s.ty(schema)),
-            TypeDef::Enum(e) => (e.visit.visitor_names.as_ref().unwrap(), e.ty(schema)),
-            _ => continue,
+            StructOrEnum::Struct(s) => (s.visit.visitor_names.as_ref().unwrap(), s.ty(schema)),
+            StructOrEnum::Enum(e) => (e.visit.visitor_names.as_ref().unwrap(), e.ty(schema)),
         };
 
         let snake_name = traverse_snake_name(visitor_names);
@@ -119,17 +118,17 @@ pub(super) fn generate_traverse_trait(
         });
     }
 
-    // Special "Statements" type: Vec<'a, Statement<'a>>
+    // Special "Statements" type: ArenaVec<'a, Statement<'a>>
     methods.extend(quote! {
         ///@@line_break
         #[inline]
-        fn enter_statements(&mut self, node: &mut Vec<'a, Statement<'a>>, ctx: &mut #ctx_ty) {}
+        fn enter_statements(&mut self, node: &mut ArenaVec<'a, Statement<'a>>, ctx: &mut #ctx_ty) {}
         #[inline]
-        fn exit_statements(&mut self, node: &mut Vec<'a, Statement<'a>>, ctx: &mut #ctx_ty) {}
+        fn exit_statements(&mut self, node: &mut ArenaVec<'a, Statement<'a>>, ctx: &mut #ctx_ty) {}
     });
 
     quote! {
-        use oxc_allocator::Vec;
+        use oxc_allocator::ArenaVec;
         use oxc_ast::ast::*;
 
         ///@@line_break

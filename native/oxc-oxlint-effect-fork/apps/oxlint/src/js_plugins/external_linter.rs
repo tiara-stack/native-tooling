@@ -14,7 +14,7 @@ use oxc_allocator::{Allocator, free_fixed_size_allocator};
 use oxc_linter::{
     ExternalLinter, ExternalLinterCreateWorkspaceCb, ExternalLinterDestroyWorkspaceCb,
     ExternalLinterLintFileCb, ExternalLinterLoadPluginCb, ExternalLinterSetupRuleConfigsCb,
-    LintFileResult, LoadPluginResult,
+    LintFileFailure, LintFileOutput, LoadPluginResult,
 };
 
 use crate::{
@@ -141,8 +141,8 @@ fn wrap_setup_rule_configs(cb: JsSetupRuleConfigsCb) -> ExternalLinterSetupRuleC
 /// Result returned by `lintFile` JS callback.
 #[derive(Clone, Debug, Deserialize)]
 pub enum LintFileReturnValue {
-    Success(Vec<LintFileResult>),
-    Failure(String),
+    Success(LintFileOutput),
+    Failure(LintFileFailure),
 }
 
 /// Wrap `lintFile` JS callback as a normal Rust function.
@@ -161,6 +161,7 @@ fn wrap_lint_file(cb: JsLintFileCb) -> ExternalLinterLintFileCb {
               options_ids: Vec<u32>,
               settings_json: String,
               globals_json: String,
+              collect_timings: bool,
               workspace_uri: Option<String>,
               allocator: &Allocator| {
             let (tx, rx) = channel();
@@ -183,6 +184,7 @@ fn wrap_lint_file(cb: JsLintFileCb) -> ExternalLinterLintFileCb {
                     options_ids,
                     settings_json,
                     globals_json,
+                    collect_timings,
                     workspace_uri,
                 )),
                 ThreadsafeFunctionCallMode::NonBlocking,
@@ -199,30 +201,31 @@ fn wrap_lint_file(cb: JsLintFileCb) -> ExternalLinterLintFileCb {
             if status == Status::Ok {
                 match rx.recv() {
                     // `lintFile` returns `null` if no diagnostics reported, and no error occurred
-                    Ok(Ok(None)) => Ok(Vec::new()),
+                    Ok(Ok(None)) => Ok(LintFileOutput::default()),
                     // `lintFile` returns JSON string if diagnostics reported, or an error occurred
                     Ok(Ok(Some(json))) => {
                         match serde_json::from_str(&json) {
-                            // Diagnostics reported
-                            Ok(LintFileReturnValue::Success(diagnostics)) => Ok(diagnostics),
+                            // Linting succeeded
+                            Ok(LintFileReturnValue::Success(output)) => Ok(output),
                             // Error occurred on JS side
-                            Ok(LintFileReturnValue::Failure(err)) => Err(err),
+                            Ok(LintFileReturnValue::Failure(failure)) => Err(failure),
                             // JSON deserialization failure.
                             // Possible if rule produces fixes/suggestions with out of range offsets.
                             Err(err) => Err(format!(
                                 "Failed to deserialize JSON returned by `lintFile`: {err}"
-                            )),
+                            )
+                            .into()),
                         }
                     }
                     // `lintFile` threw an error - should be impossible because `lintFile` is wrapped in try-catch
-                    Ok(Err(err)) => Err(format!("`lintFile` threw an error: {err}")),
+                    Ok(Err(err)) => Err(format!("`lintFile` threw an error: {err}").into()),
                     // Sender "hung up" - should be impossible because closure passed to `call_with_return_value`
                     // takes ownership of the sender `tx`. Unless NAPI-RS drops the closure without calling it,
                     // `tx.send()` always happens before `tx` is dropped.
-                    Err(err) => Err(format!("`lintFile` did not respond: {err}")),
+                    Err(err) => Err(format!("`lintFile` did not respond: {err}").into()),
                 }
             } else {
-                Err(format!("Failed to schedule `lintFile` callback: {status:?}"))
+                Err(format!("Failed to schedule `lintFile` callback: {status:?}").into())
             }
         },
     ))
@@ -253,7 +256,7 @@ unsafe fn get_buffer(
     // We only create an immutable ref from this pointer.
     let metadata_ptr = unsafe { allocator.fixed_size_metadata_ptr() };
     // SAFETY: Fixed-size allocators always have a valid `FixedSizeAllocatorMetadata`
-    // stored at the pointer returned by `Allocator::fixed_size_metadata_ptr`.
+    // stored at the pointer returned by `Allocator::fixed_size_metadata_ptr`
     let metadata = unsafe { metadata_ptr.as_ref() };
 
     let buffer_id = metadata.id;
@@ -270,15 +273,12 @@ unsafe fn get_buffer(
     // Buffer has not already been sent to JS. Send it.
 
     // Get pointer to start of allocator chunk.
-    // Note: `Allocator::data_ptr` would not provide the right pointer, because source text
-    // gets written to start of the allocator chunk, and `data_ptr` gets moved to after it.
-    // SAFETY: Fixed-size allocators have their chunk aligned on `BLOCK_ALIGN`,
-    // and size less than `BLOCK_ALIGN`. So we can get pointer to start of `Allocator` chunk
-    // by rounding down to next multiple of `BLOCK_ALIGN`. That can't go out of bounds of
-    // the backing allocation.
+    // SAFETY: Fixed-size allocators have their chunk aligned on `BLOCK_ALIGN`, and size less than `BLOCK_ALIGN`.
+    // So we can get pointer to start of `Allocator` chunk by rounding down to next multiple of `BLOCK_ALIGN`.
+    // That can't go out of bounds of the backing allocation.
     let chunk_ptr = unsafe {
         let ptr = metadata_ptr.cast::<u8>();
-        let offset = ptr.as_ptr() as usize % BLOCK_ALIGN;
+        let offset = ptr.addr().get() % BLOCK_ALIGN;
         ptr.sub(offset)
     };
 
@@ -288,15 +288,17 @@ unsafe fn get_buffer(
     //
     // We can't prove that no mutable references to data in the buffer exist,
     // but there shouldn't be any, because linter doesn't mutate the AST.
-    // Anyway, I (@overlookmotel) am not sure if the aliasing rules apply to code in another
-    // language. Probably not, as JS code is outside the domain of the "Rust abstract machine".
+    // Anyway, I (@overlookmotel) am not sure if the aliasing rules apply to code in another language.
+    // Probably not, as JS code is outside the domain of the "Rust abstract machine".
     // As long as we don't mutate data in the buffer on JS side, it should be fine.
     //
-    // On the other side, while many immutable references to data in the buffer exist
-    // (`AstKind`s for every AST node), JS side does not mutate the data in the buffer,
-    // so that shouldn't break the guarantees of `&` references.
+    // On the other side, while many immutable references to data in the buffer exist (`AstKind`s for every AST node),
+    // JS side does not mutate the data in the buffer, so that shouldn't break the guarantees of `&` references.
     //
     // This is all a bit wavy, but such is the way with sharing memory outside of Rust.
+    //
+    // The `Uint8Array` shared with JS covers the allocatable region plus `RawTransferMetadata`.
+    // It does not include `FixedSizeAllocatorMetadata` or `ChunkFooter`, which sit at the end of the block.
     let buffer = unsafe {
         Uint8Array::with_external_data(chunk_ptr.as_ptr(), BUFFER_SIZE, move |_ptr, _len| {
             free_fixed_size_allocator(metadata_ptr);

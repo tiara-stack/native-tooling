@@ -1,15 +1,7 @@
-commit: 4f7b4175
+commit: 4f5ddae2
 
 estree_typescript_tokens Summary:
-AST Parsed     : 9764/9764 (100.00%)
-Positive Passed: 9759/9764 (99.95%)
-Expect to Parse: tasks/coverage/typescript/tests/cases/compiler/ambientWithStatements.ts
-A 'return' statement can only be used within a function body.
-Expect to Parse: tasks/coverage/typescript/tests/cases/compiler/constDeclarations-invalidContexts.ts
-Lexical declaration cannot appear in a single-statement context
-Expect to Parse: tasks/coverage/typescript/tests/cases/compiler/constDeclarations-scopes.ts
-Lexical declaration cannot appear in a single-statement context
-Expect to Parse: tasks/coverage/typescript/tests/cases/compiler/constDeclarations-validContexts.ts
-Lexical declaration cannot appear in a single-statement context
-Expect to Parse: tasks/coverage/typescript/tests/cases/conformance/parser/ecmascript5/ErrorRecovery/parserStatementIsNotAMemberVariableDeclaration1.ts
-A 'return' statement can only be used within a function body.
+AST Parsed     : 9590/9591 (99.99%)
+Positive Passed: 9590/9591 (99.99%)
+Fatal error: tasks/coverage/typescript/tsc/testdata/tests/cases/compiler/jsdocThisTagWithThisParameter.ts
+Identifier expected. 'this' is a reserved word that cannot be used here.

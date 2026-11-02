@@ -16,7 +16,8 @@ declare_oxc_lint!(
     RedundantOrDie(tsgolint),
     effect,
     correctness,
-    none
+    none,
+    version = "1.58.0",
 );
 
 impl Rule for RedundantOrDie {}

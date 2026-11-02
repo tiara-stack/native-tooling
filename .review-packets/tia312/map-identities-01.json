@@ -1,0 +1,1466 @@
+{
+  "format": "tia312-review-packet-v1",
+  "kind": "map",
+  "group": "identities",
+  "product_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+  "records": [
+    {
+      "target": "T028",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/any_unknown_in_error_context.rs",
+      "public_id": "effect/any-unknown-in-error-context",
+      "backend_name": "any_unknown_in_error_context",
+      "effect_name": "anyUnknownInErrorContext",
+      "rust_type": "AnyUnknownInErrorContext",
+      "enum_variant": "EffectAnyUnknownInErrorContext",
+      "internal_id": 331,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T029",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/async_function.rs",
+      "public_id": "effect/async-function",
+      "backend_name": "async_function",
+      "effect_name": "asyncFunction",
+      "rust_type": "AsyncFunction",
+      "enum_variant": "EffectAsyncFunction",
+      "internal_id": 332,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T030",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/catch_all_to_map_error.rs",
+      "public_id": "effect/catch-all-to-map-error",
+      "backend_name": "catch_all_to_map_error",
+      "effect_name": "catchAllToMapError",
+      "rust_type": "CatchAllToMapError",
+      "enum_variant": "EffectCatchAllToMapError",
+      "internal_id": 333,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T031",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/catch_to_ignore.rs",
+      "public_id": "effect/catch-to-ignore",
+      "backend_name": "catch_to_ignore",
+      "effect_name": "catchToIgnore",
+      "rust_type": "CatchToIgnore",
+      "enum_variant": "EffectCatchToIgnore",
+      "internal_id": 334,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T032",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/catch_to_or_else_succeed.rs",
+      "public_id": "effect/catch-to-or-else-succeed",
+      "backend_name": "catch_to_or_else_succeed",
+      "effect_name": "catchToOrElseSucceed",
+      "rust_type": "CatchToOrElseSucceed",
+      "enum_variant": "EffectCatchToOrElseSucceed",
+      "internal_id": 335,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T033",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/catch_unfailable_effect.rs",
+      "public_id": "effect/catch-unfailable-effect",
+      "backend_name": "catch_unfailable_effect",
+      "effect_name": "catchUnfailableEffect",
+      "rust_type": "CatchUnfailableEffect",
+      "enum_variant": "EffectCatchUnfailableEffect",
+      "internal_id": 336,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T034",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/class_self_mismatch.rs",
+      "public_id": "effect/class-self-mismatch",
+      "backend_name": "class_self_mismatch",
+      "effect_name": "classSelfMismatch",
+      "rust_type": "ClassSelfMismatch",
+      "enum_variant": "EffectClassSelfMismatch",
+      "internal_id": 337,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T035",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/crypto_random_uuid.rs",
+      "public_id": "effect/crypto-random-uuid",
+      "backend_name": "crypto_random_uuid",
+      "effect_name": "cryptoRandomUUID",
+      "rust_type": "CryptoRandomUuid",
+      "enum_variant": "EffectCryptoRandomUuid",
+      "internal_id": 338,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T036",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/crypto_random_uuid_in_effect.rs",
+      "public_id": "effect/crypto-random-uuid-in-effect",
+      "backend_name": "crypto_random_uuid_in_effect",
+      "effect_name": "cryptoRandomUUIDInEffect",
+      "rust_type": "CryptoRandomUuidInEffect",
+      "enum_variant": "EffectCryptoRandomUuidInEffect",
+      "internal_id": 339,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T037",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/deterministic_keys.rs",
+      "public_id": "effect/deterministic-keys",
+      "backend_name": "deterministic_keys",
+      "effect_name": "deterministicKeys",
+      "rust_type": "DeterministicKeys",
+      "enum_variant": "EffectDeterministicKeys",
+      "internal_id": 340,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T038",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/duplicate_package.rs",
+      "public_id": "effect/duplicate-package",
+      "backend_name": "duplicate_package",
+      "effect_name": "duplicatePackage",
+      "rust_type": "DuplicatePackage",
+      "enum_variant": "EffectDuplicatePackage",
+      "internal_id": 341,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T039",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/effect_do_notation.rs",
+      "public_id": "effect/effect-do-notation",
+      "backend_name": "effect_do_notation",
+      "effect_name": "effectDoNotation",
+      "rust_type": "EffectDoNotation",
+      "enum_variant": "EffectEffectDoNotation",
+      "internal_id": 342,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T040",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/effect_fn_iife.rs",
+      "public_id": "effect/effect-fn-iife",
+      "backend_name": "effect_fn_iife",
+      "effect_name": "effectFnIife",
+      "rust_type": "EffectFnIife",
+      "enum_variant": "EffectEffectFnIife",
+      "internal_id": 343,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T041",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/effect_fn_implicit_any.rs",
+      "public_id": "effect/effect-fn-implicit-any",
+      "backend_name": "effect_fn_implicit_any",
+      "effect_name": "effectFnImplicitAny",
+      "rust_type": "EffectFnImplicitAny",
+      "enum_variant": "EffectEffectFnImplicitAny",
+      "internal_id": 344,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T042",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/effect_fn_opportunity.rs",
+      "public_id": "effect/effect-fn-opportunity",
+      "backend_name": "effect_fn_opportunity",
+      "effect_name": "effectFnOpportunity",
+      "rust_type": "EffectFnOpportunity",
+      "enum_variant": "EffectEffectFnOpportunity",
+      "internal_id": 345,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T043",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/effect_gen_uses_adapter.rs",
+      "public_id": "effect/effect-gen-uses-adapter",
+      "backend_name": "effect_gen_uses_adapter",
+      "effect_name": "effectGenUsesAdapter",
+      "rust_type": "EffectGenUsesAdapter",
+      "enum_variant": "EffectEffectGenUsesAdapter",
+      "internal_id": 346,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T044",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/effect_in_failure.rs",
+      "public_id": "effect/effect-in-failure",
+      "backend_name": "effect_in_failure",
+      "effect_name": "effectInFailure",
+      "rust_type": "EffectInFailure",
+      "enum_variant": "EffectEffectInFailure",
+      "internal_id": 347,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T045",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/effect_in_void_success.rs",
+      "public_id": "effect/effect-in-void-success",
+      "backend_name": "effect_in_void_success",
+      "effect_name": "effectInVoidSuccess",
+      "rust_type": "EffectInVoidSuccess",
+      "enum_variant": "EffectEffectInVoidSuccess",
+      "internal_id": 348,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T046",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/effect_map_flatten.rs",
+      "public_id": "effect/effect-map-flatten",
+      "backend_name": "effect_map_flatten",
+      "effect_name": "effectMapFlatten",
+      "rust_type": "EffectMapFlatten",
+      "enum_variant": "EffectEffectMapFlatten",
+      "internal_id": 349,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T047",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/effect_map_void.rs",
+      "public_id": "effect/effect-map-void",
+      "backend_name": "effect_map_void",
+      "effect_name": "effectMapVoid",
+      "rust_type": "EffectMapVoid",
+      "enum_variant": "EffectEffectMapVoid",
+      "internal_id": 350,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T048",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/effect_succeed_with_void.rs",
+      "public_id": "effect/effect-succeed-with-void",
+      "backend_name": "effect_succeed_with_void",
+      "effect_name": "effectSucceedWithVoid",
+      "rust_type": "EffectSucceedWithVoid",
+      "enum_variant": "EffectEffectSucceedWithVoid",
+      "internal_id": 351,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T049",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/extends_native_error.rs",
+      "public_id": "effect/extends-native-error",
+      "backend_name": "extends_native_error",
+      "effect_name": "extendsNativeError",
+      "rust_type": "ExtendsNativeError",
+      "enum_variant": "EffectExtendsNativeError",
+      "internal_id": 352,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T050",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/floating_effect.rs",
+      "public_id": "effect/floating-effect",
+      "backend_name": "floating_effect",
+      "effect_name": "floatingEffect",
+      "rust_type": "FloatingEffect",
+      "enum_variant": "EffectFloatingEffect",
+      "internal_id": 353,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T051",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/generic_effect_services.rs",
+      "public_id": "effect/generic-effect-services",
+      "backend_name": "generic_effect_services",
+      "effect_name": "genericEffectServices",
+      "rust_type": "GenericEffectServices",
+      "enum_variant": "EffectGenericEffectServices",
+      "internal_id": 354,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T052",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/global_console.rs",
+      "public_id": "effect/global-console",
+      "backend_name": "global_console",
+      "effect_name": "globalConsole",
+      "rust_type": "GlobalConsole",
+      "enum_variant": "EffectGlobalConsole",
+      "internal_id": 355,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T053",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/global_console_in_effect.rs",
+      "public_id": "effect/global-console-in-effect",
+      "backend_name": "global_console_in_effect",
+      "effect_name": "globalConsoleInEffect",
+      "rust_type": "GlobalConsoleInEffect",
+      "enum_variant": "EffectGlobalConsoleInEffect",
+      "internal_id": 356,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T054",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/global_date.rs",
+      "public_id": "effect/global-date",
+      "backend_name": "global_date",
+      "effect_name": "globalDate",
+      "rust_type": "GlobalDate",
+      "enum_variant": "EffectGlobalDate",
+      "internal_id": 357,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T055",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/global_date_in_effect.rs",
+      "public_id": "effect/global-date-in-effect",
+      "backend_name": "global_date_in_effect",
+      "effect_name": "globalDateInEffect",
+      "rust_type": "GlobalDateInEffect",
+      "enum_variant": "EffectGlobalDateInEffect",
+      "internal_id": 358,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T056",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/global_error_in_effect_catch.rs",
+      "public_id": "effect/global-error-in-effect-catch",
+      "backend_name": "global_error_in_effect_catch",
+      "effect_name": "globalErrorInEffectCatch",
+      "rust_type": "GlobalErrorInEffectCatch",
+      "enum_variant": "EffectGlobalErrorInEffectCatch",
+      "internal_id": 359,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T057",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/global_error_in_effect_failure.rs",
+      "public_id": "effect/global-error-in-effect-failure",
+      "backend_name": "global_error_in_effect_failure",
+      "effect_name": "globalErrorInEffectFailure",
+      "rust_type": "GlobalErrorInEffectFailure",
+      "enum_variant": "EffectGlobalErrorInEffectFailure",
+      "internal_id": 360,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T058",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/global_fetch.rs",
+      "public_id": "effect/global-fetch",
+      "backend_name": "global_fetch",
+      "effect_name": "globalFetch",
+      "rust_type": "GlobalFetch",
+      "enum_variant": "EffectGlobalFetch",
+      "internal_id": 361,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T059",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/global_fetch_in_effect.rs",
+      "public_id": "effect/global-fetch-in-effect",
+      "backend_name": "global_fetch_in_effect",
+      "effect_name": "globalFetchInEffect",
+      "rust_type": "GlobalFetchInEffect",
+      "enum_variant": "EffectGlobalFetchInEffect",
+      "internal_id": 362,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T060",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/global_random.rs",
+      "public_id": "effect/global-random",
+      "backend_name": "global_random",
+      "effect_name": "globalRandom",
+      "rust_type": "GlobalRandom",
+      "enum_variant": "EffectGlobalRandom",
+      "internal_id": 363,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T061",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/global_random_in_effect.rs",
+      "public_id": "effect/global-random-in-effect",
+      "backend_name": "global_random_in_effect",
+      "effect_name": "globalRandomInEffect",
+      "rust_type": "GlobalRandomInEffect",
+      "enum_variant": "EffectGlobalRandomInEffect",
+      "internal_id": 364,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T062",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/global_timers.rs",
+      "public_id": "effect/global-timers",
+      "backend_name": "global_timers",
+      "effect_name": "globalTimers",
+      "rust_type": "GlobalTimers",
+      "enum_variant": "EffectGlobalTimers",
+      "internal_id": 365,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T063",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/global_timers_in_effect.rs",
+      "public_id": "effect/global-timers-in-effect",
+      "backend_name": "global_timers_in_effect",
+      "effect_name": "globalTimersInEffect",
+      "rust_type": "GlobalTimersInEffect",
+      "enum_variant": "EffectGlobalTimersInEffect",
+      "internal_id": 366,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T064",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/instance_of_schema.rs",
+      "public_id": "effect/instance-of-schema",
+      "backend_name": "instance_of_schema",
+      "effect_name": "instanceOfSchema",
+      "rust_type": "InstanceOfSchema",
+      "enum_variant": "EffectInstanceOfSchema",
+      "internal_id": 367,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T065",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/layer_merge_all_with_dependencies.rs",
+      "public_id": "effect/layer-merge-all-with-dependencies",
+      "backend_name": "layer_merge_all_with_dependencies",
+      "effect_name": "layerMergeAllWithDependencies",
+      "rust_type": "LayerMergeAllWithDependencies",
+      "enum_variant": "EffectLayerMergeAllWithDependencies",
+      "internal_id": 368,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T066",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/lazy_effect.rs",
+      "public_id": "effect/lazy-effect",
+      "backend_name": "lazy_effect",
+      "effect_name": "lazyEffect",
+      "rust_type": "LazyEffect",
+      "enum_variant": "EffectLazyEffect",
+      "internal_id": 369,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T067",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/lazy_promise_in_effect_sync.rs",
+      "public_id": "effect/lazy-promise-in-effect-sync",
+      "backend_name": "lazy_promise_in_effect_sync",
+      "effect_name": "lazyPromiseInEffectSync",
+      "rust_type": "LazyPromiseInEffectSync",
+      "enum_variant": "EffectLazyPromiseInEffectSync",
+      "internal_id": 370,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T068",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/leaking_requirements.rs",
+      "public_id": "effect/leaking-requirements",
+      "backend_name": "leaking_requirements",
+      "effect_name": "leakingRequirements",
+      "rust_type": "LeakingRequirements",
+      "enum_variant": "EffectLeakingRequirements",
+      "internal_id": 371,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T069",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/missed_pipeable_opportunity.rs",
+      "public_id": "effect/missed-pipeable-opportunity",
+      "backend_name": "missed_pipeable_opportunity",
+      "effect_name": "missedPipeableOpportunity",
+      "rust_type": "MissedPipeableOpportunity",
+      "enum_variant": "EffectMissedPipeableOpportunity",
+      "internal_id": 372,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T070",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/missing_effect_context.rs",
+      "public_id": "effect/missing-effect-context",
+      "backend_name": "missing_effect_context",
+      "effect_name": "missingEffectContext",
+      "rust_type": "MissingEffectContext",
+      "enum_variant": "EffectMissingEffectContext",
+      "internal_id": 373,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T071",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/missing_effect_error.rs",
+      "public_id": "effect/missing-effect-error",
+      "backend_name": "missing_effect_error",
+      "effect_name": "missingEffectError",
+      "rust_type": "MissingEffectError",
+      "enum_variant": "EffectMissingEffectError",
+      "internal_id": 374,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T072",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/missing_effect_service_dependency.rs",
+      "public_id": "effect/missing-effect-service-dependency",
+      "backend_name": "missing_effect_service_dependency",
+      "effect_name": "missingEffectServiceDependency",
+      "rust_type": "MissingEffectServiceDependency",
+      "enum_variant": "EffectMissingEffectServiceDependency",
+      "internal_id": 375,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T073",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/missing_layer_context.rs",
+      "public_id": "effect/missing-layer-context",
+      "backend_name": "missing_layer_context",
+      "effect_name": "missingLayerContext",
+      "rust_type": "MissingLayerContext",
+      "enum_variant": "EffectMissingLayerContext",
+      "internal_id": 376,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T074",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/missing_return_yield_star.rs",
+      "public_id": "effect/missing-return-yield-star",
+      "backend_name": "missing_return_yield_star",
+      "effect_name": "missingReturnYieldStar",
+      "rust_type": "MissingReturnYieldStar",
+      "enum_variant": "EffectMissingReturnYieldStar",
+      "internal_id": 377,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T075",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/missing_star_in_yield_effect_gen.rs",
+      "public_id": "effect/missing-star-in-yield-effect-gen",
+      "backend_name": "missing_star_in_yield_effect_gen",
+      "effect_name": "missingStarInYieldEffectGen",
+      "rust_type": "MissingStarInYieldEffectGen",
+      "enum_variant": "EffectMissingStarInYieldEffectGen",
+      "internal_id": 378,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T076",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/multiple_catch_tag.rs",
+      "public_id": "effect/multiple-catch-tag",
+      "backend_name": "multiple_catch_tag",
+      "effect_name": "multipleCatchTag",
+      "rust_type": "MultipleCatchTag",
+      "enum_variant": "EffectMultipleCatchTag",
+      "internal_id": 379,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T077",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/multiple_effect_provide.rs",
+      "public_id": "effect/multiple-effect-provide",
+      "backend_name": "multiple_effect_provide",
+      "effect_name": "multipleEffectProvide",
+      "rust_type": "MultipleEffectProvide",
+      "enum_variant": "EffectMultipleEffectProvide",
+      "internal_id": 380,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T078",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/nested_effect_gen_yield.rs",
+      "public_id": "effect/nested-effect-gen-yield",
+      "backend_name": "nested_effect_gen_yield",
+      "effect_name": "nestedEffectGenYield",
+      "rust_type": "NestedEffectGenYield",
+      "enum_variant": "EffectNestedEffectGenYield",
+      "internal_id": 381,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T079",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/new_promise.rs",
+      "public_id": "effect/new-promise",
+      "backend_name": "new_promise",
+      "effect_name": "newPromise",
+      "rust_type": "NewPromise",
+      "enum_variant": "EffectNewPromise",
+      "internal_id": 382,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T080",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/new_schema_class.rs",
+      "public_id": "effect/new-schema-class",
+      "backend_name": "new_schema_class",
+      "effect_name": "newSchemaClass",
+      "rust_type": "NewSchemaClass",
+      "enum_variant": "EffectNewSchemaClass",
+      "internal_id": 383,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T081",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/node_builtin_import.rs",
+      "public_id": "effect/node-builtin-import",
+      "backend_name": "node_builtin_import",
+      "effect_name": "nodeBuiltinImport",
+      "rust_type": "NodeBuiltinImport",
+      "enum_variant": "EffectNodeBuiltinImport",
+      "internal_id": 384,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T082",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/non_object_effect_service_type.rs",
+      "public_id": "effect/non-object-effect-service-type",
+      "backend_name": "non_object_effect_service_type",
+      "effect_name": "nonObjectEffectServiceType",
+      "rust_type": "NonObjectEffectServiceType",
+      "enum_variant": "EffectNonObjectEffectServiceType",
+      "internal_id": 385,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T083",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/outdated_api.rs",
+      "public_id": "effect/outdated-api",
+      "backend_name": "outdated_api",
+      "effect_name": "outdatedApi",
+      "rust_type": "OutdatedApi",
+      "enum_variant": "EffectOutdatedApi",
+      "internal_id": 386,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T084",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/overridden_schema_constructor.rs",
+      "public_id": "effect/overridden-schema-constructor",
+      "backend_name": "overridden_schema_constructor",
+      "effect_name": "overriddenSchemaConstructor",
+      "rust_type": "OverriddenSchemaConstructor",
+      "enum_variant": "EffectOverriddenSchemaConstructor",
+      "internal_id": 387,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T085",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/prefer_schema_over_json.rs",
+      "public_id": "effect/prefer-schema-over-json",
+      "backend_name": "prefer_schema_over_json",
+      "effect_name": "preferSchemaOverJson",
+      "rust_type": "PreferSchemaOverJson",
+      "enum_variant": "EffectPreferSchemaOverJson",
+      "internal_id": 388,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T086",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/process_env.rs",
+      "public_id": "effect/process-env",
+      "backend_name": "process_env",
+      "effect_name": "processEnv",
+      "rust_type": "ProcessEnv",
+      "enum_variant": "EffectProcessEnv",
+      "internal_id": 389,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T087",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/process_env_in_effect.rs",
+      "public_id": "effect/process-env-in-effect",
+      "backend_name": "process_env_in_effect",
+      "effect_name": "processEnvInEffect",
+      "rust_type": "ProcessEnvInEffect",
+      "enum_variant": "EffectProcessEnvInEffect",
+      "internal_id": 390,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T088",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/redundant_map_error.rs",
+      "public_id": "effect/redundant-map-error",
+      "backend_name": "redundant_map_error",
+      "effect_name": "redundantMapError",
+      "rust_type": "RedundantMapError",
+      "enum_variant": "EffectRedundantMapError",
+      "internal_id": 391,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T089",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/redundant_or_die.rs",
+      "public_id": "effect/redundant-or-die",
+      "backend_name": "redundant_or_die",
+      "effect_name": "redundantOrDie",
+      "rust_type": "RedundantOrDie",
+      "enum_variant": "EffectRedundantOrDie",
+      "internal_id": 392,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T090",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/redundant_schema_tag_identifier.rs",
+      "public_id": "effect/redundant-schema-tag-identifier",
+      "backend_name": "redundant_schema_tag_identifier",
+      "effect_name": "redundantSchemaTagIdentifier",
+      "rust_type": "RedundantSchemaTagIdentifier",
+      "enum_variant": "EffectRedundantSchemaTagIdentifier",
+      "internal_id": 393,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T091",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/return_effect_in_gen.rs",
+      "public_id": "effect/return-effect-in-gen",
+      "backend_name": "return_effect_in_gen",
+      "effect_name": "returnEffectInGen",
+      "rust_type": "ReturnEffectInGen",
+      "enum_variant": "EffectReturnEffectInGen",
+      "internal_id": 394,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T092",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/run_effect_inside_effect.rs",
+      "public_id": "effect/run-effect-inside-effect",
+      "backend_name": "run_effect_inside_effect",
+      "effect_name": "runEffectInsideEffect",
+      "rust_type": "RunEffectInsideEffect",
+      "enum_variant": "EffectRunEffectInsideEffect",
+      "internal_id": 395,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T093",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/schema_number.rs",
+      "public_id": "effect/schema-number",
+      "backend_name": "schema_number",
+      "effect_name": "schemaNumber",
+      "rust_type": "SchemaNumber",
+      "enum_variant": "EffectSchemaNumber",
+      "internal_id": 396,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T094",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/schema_struct_with_tag.rs",
+      "public_id": "effect/schema-struct-with-tag",
+      "backend_name": "schema_struct_with_tag",
+      "effect_name": "schemaStructWithTag",
+      "rust_type": "SchemaStructWithTag",
+      "enum_variant": "EffectSchemaStructWithTag",
+      "internal_id": 397,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T095",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/schema_sync_in_effect.rs",
+      "public_id": "effect/schema-sync-in-effect",
+      "backend_name": "schema_sync_in_effect",
+      "effect_name": "schemaSyncInEffect",
+      "rust_type": "SchemaSyncInEffect",
+      "enum_variant": "EffectSchemaSyncInEffect",
+      "internal_id": 398,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T096",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/schema_union_of_literals.rs",
+      "public_id": "effect/schema-union-of-literals",
+      "backend_name": "schema_union_of_literals",
+      "effect_name": "schemaUnionOfLiterals",
+      "rust_type": "SchemaUnionOfLiterals",
+      "enum_variant": "EffectSchemaUnionOfLiterals",
+      "internal_id": 399,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T097",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/scope_in_layer_effect.rs",
+      "public_id": "effect/scope-in-layer-effect",
+      "backend_name": "scope_in_layer_effect",
+      "effect_name": "scopeInLayerEffect",
+      "rust_type": "ScopeInLayerEffect",
+      "enum_variant": "EffectScopeInLayerEffect",
+      "internal_id": 400,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T098",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/service_not_as_class.rs",
+      "public_id": "effect/service-not-as-class",
+      "backend_name": "service_not_as_class",
+      "effect_name": "serviceNotAsClass",
+      "rust_type": "ServiceNotAsClass",
+      "enum_variant": "EffectServiceNotAsClass",
+      "internal_id": 401,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T099",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/strict_boolean_expressions.rs",
+      "public_id": "effect/strict-boolean-expressions",
+      "backend_name": "strict_boolean_expressions",
+      "effect_name": "strictBooleanExpressions",
+      "rust_type": "StrictBooleanExpressions",
+      "enum_variant": "EffectStrictBooleanExpressions",
+      "internal_id": 402,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T100",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/strict_effect_provide.rs",
+      "public_id": "effect/strict-effect-provide",
+      "backend_name": "strict_effect_provide",
+      "effect_name": "strictEffectProvide",
+      "rust_type": "StrictEffectProvide",
+      "enum_variant": "EffectStrictEffectProvide",
+      "internal_id": 403,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T101",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/try_catch_in_effect_gen.rs",
+      "public_id": "effect/try-catch-in-effect-gen",
+      "backend_name": "try_catch_in_effect_gen",
+      "effect_name": "tryCatchInEffectGen",
+      "rust_type": "TryCatchInEffectGen",
+      "enum_variant": "EffectTryCatchInEffectGen",
+      "internal_id": 404,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T102",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unknown_in_effect_catch.rs",
+      "public_id": "effect/unknown-in-effect-catch",
+      "backend_name": "unknown_in_effect_catch",
+      "effect_name": "unknownInEffectCatch",
+      "rust_type": "UnknownInEffectCatch",
+      "enum_variant": "EffectUnknownInEffectCatch",
+      "internal_id": 405,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T103",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_arrow_block.rs",
+      "public_id": "effect/unnecessary-arrow-block",
+      "backend_name": "unnecessary_arrow_block",
+      "effect_name": "unnecessaryArrowBlock",
+      "rust_type": "UnnecessaryArrowBlock",
+      "enum_variant": "EffectUnnecessaryArrowBlock",
+      "internal_id": 406,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T104",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_effect_gen.rs",
+      "public_id": "effect/unnecessary-effect-gen",
+      "backend_name": "unnecessary_effect_gen",
+      "effect_name": "unnecessaryEffectGen",
+      "rust_type": "UnnecessaryEffectGen",
+      "enum_variant": "EffectUnnecessaryEffectGen",
+      "internal_id": 407,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T105",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_fail_yieldable_error.rs",
+      "public_id": "effect/unnecessary-fail-yieldable-error",
+      "backend_name": "unnecessary_fail_yieldable_error",
+      "effect_name": "unnecessaryFailYieldableError",
+      "rust_type": "UnnecessaryFailYieldableError",
+      "enum_variant": "EffectUnnecessaryFailYieldableError",
+      "internal_id": 408,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T106",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_pipe.rs",
+      "public_id": "effect/unnecessary-pipe",
+      "backend_name": "unnecessary_pipe",
+      "effect_name": "unnecessaryPipe",
+      "rust_type": "UnnecessaryPipe",
+      "enum_variant": "EffectUnnecessaryPipe",
+      "internal_id": 409,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T107",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_pipe_chain.rs",
+      "public_id": "effect/unnecessary-pipe-chain",
+      "backend_name": "unnecessary_pipe_chain",
+      "effect_name": "unnecessaryPipeChain",
+      "rust_type": "UnnecessaryPipeChain",
+      "enum_variant": "EffectUnnecessaryPipeChain",
+      "internal_id": 410,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    },
+    {
+      "target": "T108",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unnecessary_typeof_type.rs",
+      "public_id": "effect/unnecessary-typeof-type",
+      "backend_name": "unnecessary_typeof_type",
+      "effect_name": "unnecessaryTypeofType",
+      "rust_type": "UnnecessaryTypeofType",
+      "enum_variant": "EffectUnnecessaryTypeofType",
+      "internal_id": 411,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    }
+  ]
+}

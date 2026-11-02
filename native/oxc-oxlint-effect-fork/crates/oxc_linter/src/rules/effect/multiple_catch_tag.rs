@@ -16,7 +16,8 @@ declare_oxc_lint!(
     MultipleCatchTag(tsgolint),
     effect,
     correctness,
-    none
+    none,
+    version = "1.58.0",
 );
 
 impl Rule for MultipleCatchTag {}

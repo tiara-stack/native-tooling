@@ -6,7 +6,7 @@ use std::{
 
 use rustc_hash::FxHashSet;
 
-use oxc_span::CompactStr;
+use oxc_str::CompactStr;
 
 use crate::ModuleRecord;
 
@@ -76,20 +76,6 @@ impl<'a, T> ModuleGraphVisitorBuilder<'a, T> {
         self.event = Some(Box::new(event));
         self
     }
-
-    // /// Sets the enter module event closure.
-    // #[must_use]
-    // pub fn enter<F: FnMut(ModulePair, &ModuleRecord) + 'a>(mut self, enter: F) -> Self {
-    // self.enter = Some(Box::new(enter));
-    // self
-    // }
-
-    // /// Sets the leave module event closure.
-    // #[must_use]
-    // pub fn leave<F: FnMut(ModulePair, &ModuleRecord) + 'a>(mut self, leave: F) -> Self {
-    // self.leave = Some(Box::new(leave));
-    // self
-    // }
 
     /// Behaves similar to a flat fold_while iteration.
     pub fn visit_fold<V: Fn(T, ModulePair, &ModuleRecord) -> VisitFoldWhile<T>>(

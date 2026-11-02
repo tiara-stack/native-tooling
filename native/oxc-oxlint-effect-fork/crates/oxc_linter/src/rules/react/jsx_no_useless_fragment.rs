@@ -5,7 +5,7 @@ use crate::{
     rule::{DefaultRuleConfig, Rule},
     utils::is_jsx_fragment,
 };
-use oxc_allocator::Vec as ArenaVec;
+use oxc_allocator::ArenaVec;
 use oxc_ast::{
     AstKind,
     ast::{
@@ -65,11 +65,13 @@ declare_oxc_lint!(
     pedantic,
     suggestion,
     config = JsxNoUselessFragment,
+    version = "0.0.14",
+    short_description = "Disallow unnecessary fragments.",
 );
 
 impl Rule for JsxNoUselessFragment {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
@@ -94,7 +96,7 @@ impl Rule for JsxNoUselessFragment {
 
 impl JsxNoUselessFragment {
     fn check_element(&self, node: &AstNode, elem: &JSXElement, ctx: &LintContext) {
-        if jsx_elem_has_key_attr(elem) {
+        if jsx_elem_has_key_or_ref_attr(elem) {
             return;
         }
 
@@ -238,7 +240,7 @@ fn trim_like_react(text: &str) -> &str {
     &text[start..end]
 }
 
-fn can_fix(node: &AstNode, children: &ArenaVec<JSXChild<'_>>, ctx: &LintContext) -> bool {
+fn can_fix(node: &AstNode, children: &ArenaVec<'_, JSXChild<'_>>, ctx: &LintContext) -> bool {
     let parent = ctx.nodes().parent_kind(node.id());
 
     if !matches!(parent, AstKind::JSXElement(_) | AstKind::JSXFragment(_)) {
@@ -277,7 +279,7 @@ fn is_whitespace_only_text(child: &JSXChild) -> bool {
     }
 }
 
-fn jsx_elem_has_key_attr(elem: &JSXElement) -> bool {
+fn jsx_elem_has_key_or_ref_attr(elem: &JSXElement) -> bool {
     elem.opening_element.attributes.iter().any(|attr| {
         let JSXAttributeItem::Attribute(attr) = attr else {
             return false;
@@ -287,14 +289,15 @@ fn jsx_elem_has_key_attr(elem: &JSXElement) -> bool {
             return false;
         };
 
-        ident.name == "key"
+        matches!(ident.name.as_str(), "key" | "ref")
     })
 }
 
-fn is_fragment_with_single_expression(children: &oxc_allocator::Vec<'_, JSXChild<'_>>) -> bool {
-    let children = children.iter().filter(|v| is_padding_spaces(v)).collect::<Vec<_>>();
+fn is_fragment_with_single_expression(children: &ArenaVec<'_, JSXChild<'_>>) -> bool {
+    let mut non_padding_children = children.iter().filter(|child| is_padding_spaces(child));
 
-    children.len() == 1 && matches!(children[0], JSXChild::ExpressionContainer(_))
+    matches!(non_padding_children.next(), Some(JSXChild::ExpressionContainer(_)))
+        && non_padding_children.next().is_none()
 }
 
 fn is_padding_spaces(v: &JSXChild<'_>) -> bool {
@@ -323,27 +326,29 @@ fn is_html_element(elem_name: &JSXElementName) -> bool {
     ident.name.starts_with(char::is_lowercase)
 }
 
-fn has_less_than_two_children(children: &oxc_allocator::Vec<'_, JSXChild<'_>>) -> bool {
-    let non_padding_children = children.iter().filter(|v| is_padding_spaces(v)).collect::<Vec<_>>();
+fn has_less_than_two_children(children: &ArenaVec<'_, JSXChild<'_>>) -> bool {
+    let mut non_padding_child_count = 0;
+    let mut has_call_expression_child = false;
 
-    if non_padding_children.len() < 2 {
-        return !non_padding_children.iter().any(|v| {
-            if let JSXChild::ExpressionContainer(v) = v {
-                if let JSXExpression::CallExpression(_) = v.expression {
-                    return true;
-                }
-                return false;
-            }
+    for child in children.iter().filter(|child| is_padding_spaces(child)) {
+        non_padding_child_count += 1;
+        if non_padding_child_count >= 2 {
+            return false;
+        }
 
-            false
-        });
+        has_call_expression_child = matches!(
+            child,
+            JSXChild::ExpressionContainer(expression)
+                if matches!(expression.expression, JSXExpression::CallExpression(_))
+        );
     }
-    false
+
+    !has_call_expression_child
 }
 
 fn is_fragment_with_only_text_and_is_not_child<'a>(
     id: NodeId,
-    node: &oxc_allocator::Vec<'a, JSXChild<'a>>,
+    node: &ArenaVec<'a, JSXChild<'a>>,
     ctx: &LintContext,
 ) -> bool {
     if node.len() != 1 {
@@ -375,6 +380,14 @@ fn test() {
         (r"<Foo><><div /><div /></></Foo>", None),
         (r#"<div p={<>{"a"}{"b"}</>} />"#, None),
         (r"<Fragment key={item.id}>{item.value}</Fragment>", None),
+        (r"<Fragment ref={fragmentRef}><Heading /></Fragment>", None),
+        (r"<React.Fragment ref={fragmentRef}><Heading /></React.Fragment>", None),
+        (r"<div><Fragment ref={fragmentRef}><Heading /></Fragment></div>", None),
+        (r"<Fragment key={item.id} ref={fragmentRef}><Heading /></Fragment>", None),
+        (
+            r"{items.map(item => <Fragment key={item.id} ref={refs[item.id]}>{item.value}</Fragment>)}",
+            None,
+        ),
         (r"<Fooo content={<>eeee ee eeeeeee eeeeeeee</>} />", None),
         (r"<>{foos.map(foo => foo)}</>", None),
         (r"<>{moo}</>", Some(json!([{ "allowExpressions": true }]))),

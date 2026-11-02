@@ -1,7 +1,7 @@
 import { pathToFileURL } from "node:url";
 import { describe, expect, it } from "vitest";
 import { createLspConnection } from "../utils";
-import { WatchKind } from "vscode-languageserver-protocol/lib/node/main";
+import { WatchKind } from "vscode-languageserver-protocol/node";
 
 describe("LSP initialization", () => {
   it("should start LSP server and respond to initialize request", async () => {
@@ -23,21 +23,63 @@ describe("LSP initialization", () => {
     expect(initResult.serverInfo?.name).toBe("oxfmt");
   });
 
+  it("should append VP version to server info if VP_VERSION env variable is set", async () => {
+    const vpVersion = "1.2.3";
+    await using client = createLspConnection({
+      VP_VERSION: vpVersion,
+    });
+    const initResult = await client.initialize(null);
+
+    expect(initResult.serverInfo?.version).toContain(`(VP: ${vpVersion})`);
+  });
+
   it.each([
     [
       undefined,
-      [".oxfmtrc.json", ".oxfmtrc.jsonc", "oxfmt.config.ts", "vite.config.ts", ".editorconfig"],
+      [
+        "**/.oxfmtrc.json",
+        "**/.oxfmtrc.jsonc",
+        "**/oxfmt.config.ts",
+        "**/oxfmt.config.mts",
+        ".editorconfig",
+        ".prettierignore",
+      ],
     ],
     [
       { "fmt.configPath": "" },
-      [".oxfmtrc.json", ".oxfmtrc.jsonc", "oxfmt.config.ts", "vite.config.ts", ".editorconfig"],
+      [
+        "**/.oxfmtrc.json",
+        "**/.oxfmtrc.jsonc",
+        "**/oxfmt.config.ts",
+        "**/oxfmt.config.mts",
+        ".editorconfig",
+        ".prettierignore",
+      ],
     ],
-    [{ "fmt.configPath": "./custom-config.json" }, ["./custom-config.json", ".editorconfig"]],
+    [
+      { "fmt.configPath": "./custom-config.json" },
+      ["custom-config.json", ".editorconfig", ".prettierignore"],
+    ],
+    // Vite+ mode: only `vite.config.*`, and nested configs are never discovered
+    [
+      undefined,
+      [
+        "vite.config.js",
+        "vite.config.mjs",
+        "vite.config.ts",
+        "vite.config.cjs",
+        "vite.config.mts",
+        "vite.config.cts",
+        ".editorconfig",
+        ".prettierignore",
+      ],
+      { VP_VERSION: "1" },
+    ],
   ])(
     "should send correct dynamic watch pattern registration for config: %s",
-    async (lspConfig, expectedPatterns) => {
+    async (lspConfig, expectedPatterns, env?: Record<string, string>) => {
       const dirUri = pathToFileURL(import.meta.dirname).href;
-      await using client = createLspConnection();
+      await using client = createLspConnection(env);
       await client.initialize(
         [{ uri: dirUri, name: "test" }],
         {
@@ -52,7 +94,7 @@ describe("LSP initialization", () => {
       const registrations = await client.getDynamicRegistration();
       expect(registrations).toEqual([
         {
-          id: `watcher-formatter-${dirUri}`,
+          id: `watcher-${dirUri}`,
           method: "workspace/didChangeWatchedFiles",
           registerOptions: {
             watchers: expectedPatterns.map((pattern) => ({

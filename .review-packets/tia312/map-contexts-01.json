@@ -1,0 +1,1412 @@
+{
+  "format": "tia312-review-packet-v1",
+  "kind": "map",
+  "group": "contexts",
+  "product_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+  "records": [
+    {
+      "id": "C001",
+      "path": ".agents/autonomous-development.yaml",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "154150301f270cca749e3186708adb7438e44476",
+      "source_line_count": 9,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 9
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-01.json",
+          "record_index": 0,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 9,
+          "sha256": "e5ffbc7a9714595c5c77b0ae78eb51908c59ace29a10766ab849307b1ce62783",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C002",
+      "path": ".coderabbit.yaml",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "28c19494f97326a510fbee7179c2b757d0ef947a",
+      "source_line_count": 9,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 9
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-01.json",
+          "record_index": 1,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 9,
+          "sha256": "9f2985c9a8de87de26b9692fb2f1287f2c8ddd1935ef041cd9f48cf75e47a964",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C003",
+      "path": "AGENTS.md",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "6d87a4642a1b2407ff51e2be192c15166e87e6dc",
+      "source_line_count": 25,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 25
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-01.json",
+          "record_index": 2,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 25,
+          "sha256": "d479db06b94b49c327673fd1b6a61fad73ccb19e0d802ac03e5faa4c939f5421",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C004",
+      "path": "native/effect-tsgo/.gitrepo",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "dcd90b17a8b6e9a3d69344c0c55b749db9f8294e",
+      "source_line_count": 11,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 11
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-01.json",
+          "record_index": 3,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 11,
+          "sha256": "1d01c5444904d17d18b7125b053ec1351d384c6086a5fd54500cad74d1f120a7",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C005",
+      "path": "native/effect-tsgo/_packages/tsgo/src/metadata.json",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "f2e38624eebb808c3b3e7cd2b2c58a4bb4b3aab0",
+      "source_line_count": 3158,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 337
+        },
+        {
+          "start": 339,
+          "end": 463
+        },
+        {
+          "start": 488,
+          "end": 654
+        },
+        {
+          "start": 701,
+          "end": 753
+        },
+        {
+          "start": 829,
+          "end": 1144
+        },
+        {
+          "start": 1168,
+          "end": 1336
+        },
+        {
+          "start": 1360,
+          "end": 1844
+        },
+        {
+          "start": 1940,
+          "end": 1963
+        },
+        {
+          "start": 2104,
+          "end": 2294
+        },
+        {
+          "start": 2449,
+          "end": 2496
+        },
+        {
+          "start": 2521,
+          "end": 2590
+        },
+        {
+          "start": 2736,
+          "end": 2809
+        },
+        {
+          "start": 2834,
+          "end": 2960
+        },
+        {
+          "start": 3013,
+          "end": 3156
+        }
+      ],
+      "selection_reason": "Group/preset context plus complete objects for the82 retained Effect identities; later-only rule objects are omitted as context, not review targets.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-01.json",
+          "record_index": 4,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 337,
+          "sha256": "ec7d7bd0e199b9724b34aeb5ea10fdf5187f3674dc5a2a377ddd7d5ce82322eb",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-01.json",
+          "record_index": 5,
+          "selection": 2,
+          "source_line_start": 339,
+          "source_line_end": 463,
+          "sha256": "e6039a715a1e0f868dac87ae7b152e23c1e434ef77e041531e0e9f21e7bd92a7",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-01.json",
+          "record_index": 6,
+          "selection": 3,
+          "source_line_start": 488,
+          "source_line_end": 654,
+          "sha256": "ecb7505b03eda28c85ff96640f6eeb6aa1adccb91fdc2ea4d08629df1656b0f7",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-01.json",
+          "record_index": 7,
+          "selection": 4,
+          "source_line_start": 701,
+          "source_line_end": 753,
+          "sha256": "f1b84f4563e23d1649d8d94aaeaeac1162183de450f7584de91825e9fc92b471",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-02.json",
+          "record_index": 0,
+          "selection": 5,
+          "source_line_start": 829,
+          "source_line_end": 1144,
+          "sha256": "dab4159c0e67bc8e3da8c4538470faf6f53f127431db51d090e9dd8e8343dba3",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-02.json",
+          "record_index": 1,
+          "selection": 6,
+          "source_line_start": 1168,
+          "source_line_end": 1336,
+          "sha256": "9e54d8e411640eddf583309b2f044c099f39cd1415059a5eb651d9b27d023c9a",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-03.json",
+          "record_index": 0,
+          "selection": 7,
+          "source_line_start": 1360,
+          "source_line_end": 1844,
+          "sha256": "91b91a076f26664c64a4ca45aa033b67e68331bfd3734918fcb4041d11ced607",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-03.json",
+          "record_index": 1,
+          "selection": 8,
+          "source_line_start": 1940,
+          "source_line_end": 1963,
+          "sha256": "c4485966c5a00d6736dd6d1e357290e0bae418d5ce1af5a5b7db1bab6cd82243",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-03.json",
+          "record_index": 2,
+          "selection": 9,
+          "source_line_start": 2104,
+          "source_line_end": 2294,
+          "sha256": "88f2f6169ee72126f3c9a6e889d53406212c49166581eb342adbeeee3ddee7a9",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-03.json",
+          "record_index": 3,
+          "selection": 10,
+          "source_line_start": 2449,
+          "source_line_end": 2496,
+          "sha256": "5cdfa97e3cda47d218900275931c6998a117a9415543b8342ec168ad70172fdb",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-03.json",
+          "record_index": 4,
+          "selection": 11,
+          "source_line_start": 2521,
+          "source_line_end": 2590,
+          "sha256": "9ebe0d3b10d99975d31822abfa44472385d13a24cd8345448694fb52a9fd9df0",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-03.json",
+          "record_index": 5,
+          "selection": 12,
+          "source_line_start": 2736,
+          "source_line_end": 2809,
+          "sha256": "c556de7dcb8615bbcc4c2002d6577ed4895d0da399e329539ec9d296ab3a58ac",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-04.json",
+          "record_index": 0,
+          "selection": 13,
+          "source_line_start": 2834,
+          "source_line_end": 2960,
+          "sha256": "63b2ed8e06a3f45a0ca92261f8819c67e814e58adf82a9b18a3cbc1a83e35284",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-04.json",
+          "record_index": 1,
+          "selection": 14,
+          "source_line_start": 3013,
+          "source_line_end": 3156,
+          "sha256": "d944701b9da3fa1fa441a3f2b30347ed4c6cc102370567bf19d7e43df938e436",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C006",
+      "path": "native/oxc-oxlint-effect-fork/.agents/verification.md",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "073b7a628d9aa7ee59ce4e15d1cf08aa054652ba",
+      "source_line_count": 10,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 10
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-04.json",
+          "record_index": 2,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 10,
+          "sha256": "4412f706953fd7870b46604a4b82ec1d7b34e75f02b0b65ec9e8f30dc739f3a7",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C007",
+      "path": "native/oxc-oxlint-effect-fork/.cargo/config.toml",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "25fa3ba238ea4f3eb38eff1e3fbb48ea5c573faf",
+      "source_line_count": 44,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 44
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-04.json",
+          "record_index": 3,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 44,
+          "sha256": "21a9cc15ad2fb8679cf7024b8b3c65e3b1fe0f087268cc1d903ecac4aec2956b",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C008",
+      "path": "native/oxc-oxlint-effect-fork/.clippy.toml",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "631686352e964a46bd1bdef2ce750dce684b8ad5",
+      "source_line_count": 17,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 17
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-04.json",
+          "record_index": 4,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 17,
+          "sha256": "c351a16d85f6e3d431d5e75e7d912a9fcd52c9cd010811e1a2a3c3fb1dbc18a7",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C009",
+      "path": "native/oxc-oxlint-effect-fork/AGENTS.md",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "c4d032ead9e32ef9ae8e98e0070920686810e14b",
+      "source_line_count": 337,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 337
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-04.json",
+          "record_index": 5,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 337,
+          "sha256": "01f3c2fc4e12d8339c68c1ae81b8db664588df530884668aa9071ac907e47a9a",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C010",
+      "path": "native/oxc-oxlint-effect-fork/Cargo.lock",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "17378266e1fa794ae6df61576f3836caf0a54501",
+      "source_line_count": 4642,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 3
+        },
+        {
+          "start": 81,
+          "end": 89
+        },
+        {
+          "start": 318,
+          "end": 326
+        },
+        {
+          "start": 372,
+          "end": 377
+        },
+        {
+          "start": 2259,
+          "end": 2337
+        },
+        {
+          "start": 2683,
+          "end": 2693
+        },
+        {
+          "start": 2709,
+          "end": 2720
+        },
+        {
+          "start": 2911,
+          "end": 2948
+        },
+        {
+          "start": 3504,
+          "end": 3513
+        },
+        {
+          "start": 3545,
+          "end": 3558
+        },
+        {
+          "start": 4267,
+          "end": 4277
+        },
+        {
+          "start": 4292,
+          "end": 4306
+        }
+      ],
+      "selection_reason": "Exact dependency records for the source CLI/linter, declaration/code generators, schema and naming interfaces; other lock entries are not expanded.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-04.json",
+          "record_index": 6,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 3,
+          "sha256": "cab3c319a062072cd280df54ff4786200bf6cfe548a2c8674c0289dfa35ae214",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-04.json",
+          "record_index": 7,
+          "selection": 2,
+          "source_line_start": 81,
+          "source_line_end": 89,
+          "sha256": "884c500b13d9512019b20187e87ea469dad40b2382fb0b0dc765711acaf31a63",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-04.json",
+          "record_index": 8,
+          "selection": 3,
+          "source_line_start": 318,
+          "source_line_end": 326,
+          "sha256": "0e4582912711c8382b15bb1752ec99d4ccada3b53650b91e3eaef65421ca76e7",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-04.json",
+          "record_index": 9,
+          "selection": 4,
+          "source_line_start": 372,
+          "source_line_end": 377,
+          "sha256": "1d28df1eaeaf4831730d6c0ce7a5681846fd8931769112d825b7aea2c325421f",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-05.json",
+          "record_index": 0,
+          "selection": 5,
+          "source_line_start": 2259,
+          "source_line_end": 2337,
+          "sha256": "87e9961ec6bea819beaeee0edaf8f986ef849a35b2f7fd64cc31c41def7552d8",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-05.json",
+          "record_index": 1,
+          "selection": 6,
+          "source_line_start": 2683,
+          "source_line_end": 2693,
+          "sha256": "0000edeeb9dd74d44f866893cdb7f1526c4671e4fa63898230aef365ae6eeb83",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-05.json",
+          "record_index": 2,
+          "selection": 7,
+          "source_line_start": 2709,
+          "source_line_end": 2720,
+          "sha256": "f05102585fdb3fc2a34b9e3e67dd4a92d52240e011486d2e727500baecb6b646",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-05.json",
+          "record_index": 3,
+          "selection": 8,
+          "source_line_start": 2911,
+          "source_line_end": 2948,
+          "sha256": "cdb114d30b64ea3234b182e5d35134005a01199ac7d1491b12e69fd678921820",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-05.json",
+          "record_index": 4,
+          "selection": 9,
+          "source_line_start": 3504,
+          "source_line_end": 3513,
+          "sha256": "4b56ac4f17c15c5aff87f5dd993f5d56d4fb2bc876237e9e425d69adb548aa08",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-05.json",
+          "record_index": 5,
+          "selection": 10,
+          "source_line_start": 3545,
+          "source_line_end": 3558,
+          "sha256": "a6f630e6ad2cb089d53c416b297ee1df356d12c847d8b0c3650e104181678103",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-05.json",
+          "record_index": 6,
+          "selection": 11,
+          "source_line_start": 4267,
+          "source_line_end": 4277,
+          "sha256": "6be6c56a9d614a3427b6d100920546d7d9d745f8103a63cb49ed310440c0ae41",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-05.json",
+          "record_index": 7,
+          "selection": 12,
+          "source_line_start": 4292,
+          "source_line_end": 4306,
+          "sha256": "f36882c2146dd7dc09cfa5c76927d7051886836e3e65b05ce7f44d75e0ee249d",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C011",
+      "path": "native/oxc-oxlint-effect-fork/Cargo.toml",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "d836fba18ffa18eb7fffd94a4e04f52aa743fd96",
+      "source_line_count": 355,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 355
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-05.json",
+          "record_index": 8,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 355,
+          "sha256": "827ad2a68497ae27fe16dd44347eeadabebe4d5d2de003cd2945538dfdaea2c3",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C012",
+      "path": "native/oxc-oxlint-effect-fork/apps/oxlint/fixtures/cli/tsgolint/.oxlintrc.json",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "a56ed2b4e2c29cde4306c5b7bc620727c2e0d1cc",
+      "source_line_count": 67,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 67
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-05.json",
+          "record_index": 9,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 67,
+          "sha256": "2c068f4b0f337d90d00aa00187cb2c9334dce2550577a05b105b9b7c3dcf12f3",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C013",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_ast/src/ast_kind_impl.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "8936f8804a0bb7dac4e449699d60461179820cbe",
+      "source_line_count": 904,
+      "selected_ranges": [
+        {
+          "start": 213,
+          "end": 232
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-05.json",
+          "record_index": 10,
+          "selection": 1,
+          "source_line_start": 213,
+          "source_line_end": 232,
+          "sha256": "2f53ece25e81675d9bd5b1f5dc7c9f9243c4f9582e7e4aea6578baf595dfb0c4",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C054",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/config/rules.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "cd39d92037e712a739c3468db347619c0398c9bc",
+      "source_line_count": 1244,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 105
+        },
+        {
+          "start": 250,
+          "end": 565
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-05.json",
+          "record_index": 11,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 105,
+          "sha256": "21f174e0f55bfba34465b6905583c4565b669076b6bffe4f0071bb6c8981d06e",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-06.json",
+          "record_index": 0,
+          "selection": 2,
+          "source_line_start": 250,
+          "source_line_end": 565,
+          "sha256": "47ea82f1b2594fea7a4bb15132475c332d4b188039a7527aae7812074827772a",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C014",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/generated/assert_layouts.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "b5773d88ab4500c51c00cbf13a040a0f78deacc7",
+      "source_line_count": 37,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 37
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-06.json",
+          "record_index": 1,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 37,
+          "sha256": "979d7c5475a6cc46e2e1dec16a6a9909c5bfcc46aa170f7a7f6bb092c50b5ecc",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C015",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/lib.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "931b7399729dde292501724e24dca60fcad986d6",
+      "source_line_count": 1057,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 90
+        },
+        {
+          "start": 385,
+          "end": 425
+        },
+        {
+          "start": 1000,
+          "end": 1057
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-06.json",
+          "record_index": 2,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 90,
+          "sha256": "24f6c826619afa0233a91330ae118ce0443f95d24a20efb51a3e2a8de70146e9",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-06.json",
+          "record_index": 3,
+          "selection": 2,
+          "source_line_start": 385,
+          "source_line_end": 425,
+          "sha256": "46b86941102a510989aa6da0f5cfcddcaf8eb522fcdf054d98c13f45357b4b4c",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-06.json",
+          "record_index": 4,
+          "selection": 3,
+          "source_line_start": 1000,
+          "source_line_end": 1057,
+          "sha256": "294786271cdad06c4b9c1e453fac412a787fbed42d7a6aa88def10b639e512c2",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C016",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rule.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "da8761a147cd5088e486c880948c22e24524660f",
+      "source_line_count": 974,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 80
+        },
+        {
+          "start": 370,
+          "end": 466
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-06.json",
+          "record_index": 5,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 80,
+          "sha256": "587eb0e959aca0d0c5557d8ac1c0dd78ed27491321b3b0ffb3eb0eab8ba97fce",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        },
+        {
+          "packet": ".review-packets/tia312/context-interfaces-06.json",
+          "record_index": 6,
+          "selection": 2,
+          "source_line_start": 370,
+          "source_line_end": 466,
+          "sha256": "39e9d991e51d0583e50f1ff79af0aa85ad6476ede025f3aa3e49de4e10b5a68e",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C017",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/typescript/no_generated_empty_object_type.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "0626a89d12fc50368592bead5b76f561e965d318",
+      "source_line_count": 51,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 51
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-06.json",
+          "record_index": 7,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 51,
+          "sha256": "af189e3888d3f3981407a8fcc82e260f68c07ccf194b95710f54c20d37273e34",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C018",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/utils/regex.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "d56be55800bfa897efeb4d65de800218dd464d14",
+      "source_line_count": 287,
+      "selected_ranges": [
+        {
+          "start": 13,
+          "end": 49
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-06.json",
+          "record_index": 8,
+          "selection": 1,
+          "source_line_start": 13,
+          "source_line_end": 49,
+          "sha256": "4702366e6c4681aab9ddafc6bd569baeb4d0807ee01d6d752a23c2a9b4a1ddca",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C019",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_macros/src/declare_oxc_lint.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "746a2e3933df93a037d29efa388c2b5769f02c0c",
+      "source_line_count": 468,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 468
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-07.json",
+          "record_index": 0,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 468,
+          "sha256": "7f7a3a1c85cd1e4ab5f6acca85fd30571f886d9b10d81d8fe0946da3f0c10c55",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C020",
+      "path": "native/oxc-oxlint-effect-fork/npm/oxlint/bin/oxlint",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100755",
+      "blob_oid": "874f6269b88f6c16718b9286209f8cb86cfcffab",
+      "source_line_count": 3,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-07.json",
+          "record_index": 1,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 3,
+          "sha256": "ecab4e2f1bebaab1a3306620bee562ec16e8cb83dd5fb739b94a5aae3c9e34bd",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C021",
+      "path": "native/oxc-oxlint-effect-fork/rust-toolchain.toml",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "8f624742d3e6fdf9af88e927191227f4d98b0d44",
+      "source_line_count": 3,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-07.json",
+          "record_index": 2,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 3,
+          "sha256": "8f1d138e5654698acc01fcf2e93e3d16d74a2bb7aa1f481521512f6d20756ee6",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C022",
+      "path": "native/oxc-oxlint-effect-fork/tasks/ast_tools/src/generators/assert_layouts.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "cbae88b60de0c7a0abeaf5796a821c46f5b4add4",
+      "source_line_count": 859,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 135
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-07.json",
+          "record_index": 3,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 135,
+          "sha256": "62a5fd4b5e2f2ff2410aa8b0427fb79f657fd3801a787cb5604dafe096174921",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C023",
+      "path": "native/oxc-oxlint-effect-fork/tasks/common/src/test_file.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "1395d004c3a5f7ea67c236296c602a5d5305f597",
+      "source_line_count": 155,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 155
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-07.json",
+          "record_index": 4,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 155,
+          "sha256": "0ee7cb35527d343f79c3d537978ca65638cd1b2be251313c09964805defebc34",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C024",
+      "path": "native/oxc-oxlint-effect-fork/tasks/linter_codegen/Cargo.toml",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "c53da9c5a8bb386587fbbe4d81d9ecd32f28a453",
+      "source_line_count": 22,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 22
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-07.json",
+          "record_index": 5,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 22,
+          "sha256": "9c46837b5e98bf56f89a226e20a3976fec4d5a741e1fbd1e9fa66bd4b831630e",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C025",
+      "path": "native/oxc-oxlint-effect-fork/tasks/linter_codegen/src/early_diverge_detector.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "7a2d14daafb9c7845dc330ff42e69e169b8a8c8b",
+      "source_line_count": 112,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 112
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-08.json",
+          "record_index": 0,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 112,
+          "sha256": "1147187420213eb456b35271f8760cf41b636e70998638a75dd94883b8286235",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C026",
+      "path": "native/oxc-oxlint-effect-fork/tasks/linter_codegen/src/if_else_detector.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "fa7ec188030f281a8f509ac169a84bb2f3e3c86f",
+      "source_line_count": 116,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 116
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-08.json",
+          "record_index": 1,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 116,
+          "sha256": "60219492f14ecd36385a8cede5e02fbe7a11e7092ddb083f4a53a7ca68e2fc9f",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C027",
+      "path": "native/oxc-oxlint-effect-fork/tasks/linter_codegen/src/let_else_detector.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "68ab9fd3ad167e09c3739e87211578b5a46280ee",
+      "source_line_count": 125,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 125
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-08.json",
+          "record_index": 2,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 125,
+          "sha256": "6de09967a380ec81a54a065bbcb0733a6a77ce23dc360b5ba6a40683fa09f29b",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C028",
+      "path": "native/oxc-oxlint-effect-fork/tasks/linter_codegen/src/main.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "80afecf890a8fe06976619acffd7554c87dd47cb",
+      "source_line_count": 296,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 296
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-08.json",
+          "record_index": 3,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 296,
+          "sha256": "e2417747182048a6b2a0b9a8f0738d88ea48fb3b2afa3bd82894a98121cb8c2c",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C029",
+      "path": "native/oxc-oxlint-effect-fork/tasks/linter_codegen/src/match_detector.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "a0e983bf73b731c0eac840d89a81bb673fcd742a",
+      "source_line_count": 118,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 118
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-08.json",
+          "record_index": 4,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 118,
+          "sha256": "d801bfe4762f8bee826d0e16da0d4556ab647bafb12506506b4b2fb801d98fa1",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C030",
+      "path": "native/oxc-oxlint-effect-fork/tasks/linter_codegen/src/member_expression_kinds.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "0d348aad5c2e26a914a36a849f4077c747465d3f",
+      "source_line_count": 58,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 58
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-08.json",
+          "record_index": 5,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 58,
+          "sha256": "092c7604715366ffff102f390e23b554c8a509f0ffb7d899fd094ae76594df41",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C031",
+      "path": "native/oxc-oxlint-effect-fork/tasks/linter_codegen/src/node_type_set.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "95ef14c87579ac1e09e5631f0c4f48c96384c122",
+      "source_line_count": 41,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 41
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-08.json",
+          "record_index": 6,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 41,
+          "sha256": "9e89e52a723be3b169b3df02ad7cdfc5b2364b0ff2795e879b0f512d01139a8a",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C032",
+      "path": "native/oxc-oxlint-effect-fork/tasks/linter_codegen/src/regex_node_kinds.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "cb91ce00de322d0765f8baffedd272144562b813",
+      "source_line_count": 46,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 46
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-09.json",
+          "record_index": 0,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 46,
+          "sha256": "abbac17ce9006ff97aed5352c6dc261f2418f43e6b9d0a515ed2bbd1e345f87f",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C033",
+      "path": "native/oxc-oxlint-effect-fork/tasks/linter_codegen/src/rules.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "366d4c175f03ca2a0a2735d28a0a5a7dee8c15bb",
+      "source_line_count": 88,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 88
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-09.json",
+          "record_index": 1,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 88,
+          "sha256": "48767c4a8b3caefc1170280a00cdd39f2c3fa6824d1a19c7b951f9e4a82882eb",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C034",
+      "path": "native/oxc-oxlint-effect-fork/tasks/linter_codegen/src/rules_enum.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "4354f10dc58fae5cdc8fdd0f1969f0349caec65b",
+      "source_line_count": 528,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 528
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-09.json",
+          "record_index": 2,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 528,
+          "sha256": "f2e2c2d1a4c357045217cfda78f11dff9f6c1d0c6c23acdb6e323abd821a88e6",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C035",
+      "path": "native/oxc-oxlint-effect-fork/tasks/linter_codegen/src/utils.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "19a1ea4859e5bf48922e8109317b12f985b801e6",
+      "source_line_count": 68,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 68
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-09.json",
+          "record_index": 3,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 68,
+          "sha256": "ce0389a0457162256ea4e0cc4e2053f8c46b202169603b0d51c45772d9a94a80",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C036",
+      "path": "native/oxc-oxlint-effect-fork/tasks/track_linter_timings/src/lib.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "138fa75c1f8b0c438a422ce39f6ff07d4920e9e5",
+      "source_line_count": 104,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 104
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-09.json",
+          "record_index": 4,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 104,
+          "sha256": "9da80f556393f6d92daa2d20b351471dab9c22236f28e3b2e0ba417f79a1a609",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C055",
+      "path": "native/oxc-oxlint-effect-fork/tasks/website_common/Cargo.toml",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "d54a6aa171c227d8b146eb55fe89e53bdd0e0874",
+      "source_line_count": 20,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-09.json",
+          "record_index": 5,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 20,
+          "sha256": "1f0dbebc03eae2e43abd83fc7eb6e31dda8048ae355ba0443216c0aef22ec029",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C056",
+      "path": "native/oxc-oxlint-effect-fork/tasks/website_common/src/lib.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "1ded4aa52cc3e1168df84f47a2a43d1fdeb8a5a6",
+      "source_line_count": 53,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 53
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-09.json",
+          "record_index": 6,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 53,
+          "sha256": "16f1b2569b81a4f418fb58ea1a4dceedda1ca7d8e510d311a87b6168ef5d35cc",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    },
+    {
+      "id": "C057",
+      "path": "native/oxc-oxlint-effect-fork/tasks/website_common/src/schema_json.rs",
+      "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+      "mode": "100644",
+      "blob_oid": "5938e74570e9518580d6f90d817b151b67a480e9",
+      "source_line_count": 63,
+      "selected_ranges": [
+        {
+          "start": 1,
+          "end": 63
+        }
+      ],
+      "selection_reason": "Bounded necessary interface source; complete small file or explicitly named relevant sections.",
+      "fragments": [
+        {
+          "packet": ".review-packets/tia312/context-interfaces-10.json",
+          "record_index": 0,
+          "selection": 1,
+          "source_line_start": 1,
+          "source_line_end": 63,
+          "sha256": "78f579ed4defa4233e32c843338cccd6eace8eaf969a0b5c7a77d406eb207db6",
+          "kind": "exact_source_excerpt_not_a_custom_patch"
+        }
+      ]
+    }
+  ]
+}

@@ -56,7 +56,9 @@ declare_oxc_lint!(
     PreferModernMathApis,
     unicorn,
     restriction,
-    pending
+    pending,
+    version = "0.1.1",
+    short_description = "Checks for usage of legacy patterns for mathematical operations.",
 );
 
 impl Rule for PreferModernMathApis {
@@ -241,13 +243,7 @@ fn is_pow_2_expression(expression: &Expression, ctx: &LintContext<'_>) -> bool {
     if let Expression::BinaryExpression(bin_expr) = expression.without_parentheses() {
         match bin_expr.operator {
             BinaryOperator::Exponential => {
-                if let Expression::NumericLiteral(number_lit) =
-                    &bin_expr.right.without_parentheses()
-                {
-                    (number_lit.value - 2_f64).abs() < f64::EPSILON
-                } else {
-                    false
-                }
+                bin_expr.right.without_parentheses().is_number_value(2.0)
             }
             BinaryOperator::Multiplication => {
                 is_same_expression(&bin_expr.left, &bin_expr.right, ctx)

@@ -1,6 +1,8 @@
-export * from "@oxc-parser/binding-wasm32-wasi";
-import * as bindings from "@oxc-parser/binding-wasm32-wasi";
+export * from "@oxc-parser/binding-wasm32-wasip1";
+import * as bindings from "@oxc-parser/binding-wasm32-wasip1";
 import { wrap } from "./wrap.js";
+
+export { default as visitorKeys } from "./generated/visit/keys.js";
 
 export async function parse(...args) {
   return wrap(await bindings.parse(...args));

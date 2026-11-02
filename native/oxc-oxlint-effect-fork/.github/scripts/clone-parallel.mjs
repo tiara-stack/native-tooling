@@ -2,7 +2,7 @@
 // oxlint-disable no-console
 
 // Clone submodules in parallel for faster setup
-// Usage: node clone-parallel.mjs [test262] [babel] [typescript] [prettier] [estree-conformance] [node-compat-table]
+// Usage: node clone-parallel.mjs [test262] [babel] [typescript] [estree-conformance] [node-compat-table]
 // Arguments: "true" or "false" for each submodule
 
 import { spawn } from "node:child_process";
@@ -10,12 +10,10 @@ import { existsSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 // Submodule commit SHAs - updated automatically by .github/workflows/update_submodules.yml
-// NOTE: Prettier version is now pinned to `v3.8.0` (not updated by workflow above), Update manually as needed
-const TEST262_SHA = "5c8206929d81b2d3d727ca6aac56c18358c8d790";
-const BABEL_SHA = "0124e7c78434e604d82b3a800f1b70b6750cc965";
-const TYPESCRIPT_SHA = "4f7b4175fe38424fffebb0a20355633bc077d52c";
-const PRETTIER_SHA = "812a4d0071270f61a7aa549d625b618be7e09d71";
-const ESTREE_CONFORMANCE_SHA = "dc0f79bf3df93139dcc242281a9308a17e3956a2";
+const TEST262_SHA = "7ab7fafa0003f73fc85c1b95d88094d33f7eb8bd";
+const BABEL_SHA = "4f4ef5d44f02f35a8aa2c418644c6dece52b8366";
+const TYPESCRIPT_SHA = "4f5ddae224b9529a69b571f631fe3a2cb283162f";
+const ESTREE_CONFORMANCE_SHA = "4c2814a7eda0a39ea80a63a6ce8c55ec470f024c";
 const NODE_COMPAT_TABLE_SHA = "499beb6f1daa36f10c26b85a7f3ec3b3448ded23";
 
 const repoRoot = join(import.meta.dirname, "..", "..");
@@ -25,9 +23,8 @@ const args = process.argv.slice(2);
 const TEST262 = args[0] !== "false";
 const BABEL = args[1] !== "false";
 const TYPESCRIPT = args[2] !== "false";
-const PRETTIER = args[3] !== "false";
-const ESTREE_CONFORMANCE = args[4] !== "false";
-const NODE_COMPAT_TABLE = args[5] !== "false";
+const ESTREE_CONFORMANCE = args[3] !== "false";
+const NODE_COMPAT_TABLE = args[4] !== "false";
 
 /**
  * Run a git command and return a promise
@@ -88,22 +85,18 @@ async function cloneRepo(shouldClone, repo, path, ref, name) {
     }
 
     if (existsSync(gitDir)) {
-      // Directory exists with git repo - update it
-    } else if (existsSync(fullPath)) {
-      // Directory exists but no git repo - initialize it
-      await runGit(["init", "--quiet"], fullPath);
+      // Directory exists with git repo - ensure origin URL is correct
+      try {
+        await runGit(["remote", "set-url", "origin", repoUrl], fullPath);
+      } catch {
+        await runGit(["remote", "add", "origin", repoUrl], fullPath);
+      }
     } else {
-      // Directory doesn't exist - clone it
-      await runGit(
-        ["clone", "--quiet", "--no-progress", "--single-branch", "--depth", "1", repoUrl, fullPath],
-        repoRoot,
-      );
-    }
-
-    // Check if origin exists and update or add it
-    try {
-      await runGit(["remote", "set-url", "origin", repoUrl], fullPath);
-    } catch {
+      // Directory doesn't exist or has no git repo - initialize it
+      if (!existsSync(fullPath)) {
+        mkdirSync(fullPath, { recursive: true });
+      }
+      await runGit(["init", "--quiet"], fullPath);
       await runGit(["remote", "add", "origin", repoUrl], fullPath);
     }
 
@@ -133,13 +126,6 @@ async function main() {
       "tasks/coverage/typescript",
       TYPESCRIPT_SHA,
       "typescript",
-    ),
-    cloneRepo(
-      PRETTIER,
-      "prettier/prettier",
-      "tasks/prettier_conformance/prettier",
-      PRETTIER_SHA,
-      "prettier",
     ),
     cloneRepo(
       ESTREE_CONFORMANCE,

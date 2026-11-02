@@ -1,13 +1,15 @@
 use oxc_ast::ast::*;
+use oxc_formatter_core::{Buffer, Format};
 use oxc_span::GetSpan;
 
 use crate::{
     ast_nodes::{AstNode, AstNodes},
     formatter::{
-        Buffer, Format, Formatter,
+        JsFormatContext, JsFormatter,
         prelude::{format_with, group, soft_block_indent_with_maybe_space},
         trivia::format_dangling_comments,
     },
+    utils::object::should_preserve_quote,
     write,
 };
 
@@ -38,7 +40,9 @@ impl<'a> ObjectPatternLike<'a, '_> {
         }
     }
 
-    fn is_inline(&self, _f: &Formatter<'_, 'a>) -> bool {
+    /// A parameter pattern never groups: `FormalParameter` groups the pattern with its type annotation (as Prettier's `printObject` does),
+    /// so a source-broken type literal must break the pattern too (`{ log, logger }: {\n ... }`); a group here would cut that.
+    fn is_inline(&self, _f: &JsFormatter<'_, 'a>) -> bool {
         match self {
             Self::ObjectPattern(node) => match node.parent() {
                 AstNodes::FormalParameter(_) => true,
@@ -98,7 +102,7 @@ impl<'a> ObjectPatternLike<'a, '_> {
         }
     }
 
-    fn layout(&self, f: &Formatter<'_, 'a>) -> ObjectPatternLayout {
+    fn layout(&self, f: &JsFormatter<'_, 'a>) -> ObjectPatternLayout {
         if self.is_empty() {
             return ObjectPatternLayout::Empty;
         }
@@ -118,18 +122,37 @@ impl<'a> ObjectPatternLike<'a, '_> {
         }
     }
 
-    fn write_properties(&self, f: &mut Formatter<'_, 'a>) {
+    fn write_properties(&self, f: &mut JsFormatter<'_, 'a>) {
+        let is_consistent = f.options().quote_properties.is_consistent();
+        if is_consistent {
+            let quote_needed = match self {
+                Self::ObjectPattern(o) => o
+                    .properties
+                    .iter()
+                    .any(|property| should_preserve_quote(&property.key, property.computed, f)),
+                Self::ObjectAssignmentTarget(o) => o.properties.iter().any(|property| {
+                    matches!(property, AssignmentTargetProperty::AssignmentTargetPropertyProperty(property)
+                        if should_preserve_quote(&property.name, property.computed, f))
+                }),
+            };
+            f.context_mut().push_quote_needed(quote_needed);
+        }
+
         match self {
             Self::ObjectPattern(o) => BindingPropertyList::new(o.properties(), o.rest()).fmt(f),
             Self::ObjectAssignmentTarget(o) => {
                 AssignmentTargetPropertyList::new(o.properties(), o.rest()).fmt(f);
             }
         }
+
+        if is_consistent {
+            f.context_mut().pop_quote_needed();
+        }
     }
 }
 
-impl<'a> Format<'a> for ObjectPatternLike<'a, '_> {
-    fn fmt(&self, f: &mut Formatter<'_, 'a>) {
+impl<'a> Format<'a, JsFormatContext<'a>> for ObjectPatternLike<'a, '_> {
+    fn fmt(&self, f: &mut JsFormatter<'_, 'a>) {
         let should_insert_space_around_brackets = f.options().bracket_spacing.value();
         let format_properties = format_with(|f| {
             write!(
@@ -145,7 +168,7 @@ impl<'a> Format<'a> for ObjectPatternLike<'a, '_> {
 
         match self.layout(f) {
             ObjectPatternLayout::Empty => {
-                write!(f, format_dangling_comments(self.span()).with_block_indent());
+                write!(f, format_dangling_comments(self.span()).with_soft_block_indent());
             }
             ObjectPatternLayout::Inline => {
                 write!(f, format_properties);

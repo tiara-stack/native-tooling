@@ -1,13 +1,13 @@
 import { runCli } from "./bindings";
 import {
-  initExternalFormatter,
-  disposeExternalFormatter,
+  initExternalServices,
+  disposeExternalServices,
   formatFile,
   formatEmbeddedCode,
   formatEmbeddedDoc,
   sortTailwindClasses,
 } from "./cli/worker-proxy";
-import { loadJsConfig } from "./cli/js_config";
+import { loadJsConfig, loadVitePlusConfig } from "./cli/js_config";
 
 // napi-JS `oxfmt` CLI entry point
 // See also `run_cli()` function in `./src/main_napi.rs`
@@ -40,8 +40,8 @@ void (async () => {
   // NOTE: If the mode is formatter CLI, it will also perform formatting and return an exit code
   const [mode, exitCode] = await runCli(
     args,
-    loadJsConfig,
-    initExternalFormatter,
+    process.env.VP_VERSION ? loadVitePlusConfig : loadJsConfig,
+    initExternalServices,
     formatFile,
     formatEmbeddedCode,
     formatEmbeddedDoc,
@@ -65,19 +65,21 @@ void (async () => {
   // Other modes are handled by Rust, just need to set `exitCode`
 
   // Clean up worker pool to not V8 crashes on process exit
-  await disposeExternalFormatter();
+  await disposeExternalServices();
 
   // NOTE: It's recommended to set `process.exitCode` instead of calling `process.exit()`.
   // `process.exit()` kills the process immediately and `stdout` may not be flushed before process dies.
   // https://nodejs.org/api/process.html#processexitcode
   process.exitCode = exitCode!;
 
-  // Node.js < 25.4.0 has a race condition with ThreadsafeFunction cleanup that causes
+  // Older Node.js versions have a race condition with ThreadsafeFunction cleanup that causes
   // crashes on large codebases. Add a small delay to allow pending NAPI operations
-  // to complete before exit. Fixed in Node.js 25.4.0+.
+  // to complete before exit. Fixed in Node.js 25.4.0+ and backported to 24.13.1.
   // See: https://github.com/nodejs/node/issues/55706
-  const [major, minor] = process.versions.node.split(".").map(Number);
-  if (major < 25 || (major === 25 && minor < 4)) {
+  // Backport: https://nodejs.org/en/blog/release/v24.13.1
+  const [major, minor, patch] = process.versions.node.split(".").map(Number);
+  const hasNode24Fix = major === 24 && (minor > 13 || (minor === 13 && patch >= 1));
+  if (!hasNode24Fix && (major < 25 || (major === 25 && minor < 4))) {
     setTimeout(() => process.exit(), 50);
   }
 })();

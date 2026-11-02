@@ -24,7 +24,7 @@ pub struct PreferAsConst;
 declare_oxc_lint!(
     /// ### What it does
     ///
-    /// Enforce the use of `as const` over literal type.
+    /// Enforce the use of `as const` over literal types.
     ///
     /// ### Why is this bad?
     ///
@@ -56,7 +56,9 @@ declare_oxc_lint!(
     PreferAsConst,
     typescript,
     correctness,
-    conditional_fix
+    conditional_fix,
+    version = "0.0.8",
+    short_description = "Enforce the use of `as const` over literal types.",
 );
 
 impl Rule for PreferAsConst {
@@ -120,13 +122,9 @@ fn literal_type_span_if_matches(
             }
             _ => None,
         },
-        TSLiteral::NumericLiteral(number_literal) => match initial_value_expression {
-            Expression::NumericLiteral(initial_number) => {
-                ((number_literal.value - initial_number.value).abs() < f64::EPSILON)
-                    .then_some(number_literal.span)
-            }
-            _ => None,
-        },
+        TSLiteral::NumericLiteral(number_literal) => initial_value_expression
+            .is_number_value(number_literal.value)
+            .then_some(number_literal.span),
         _ => None,
     }
 }

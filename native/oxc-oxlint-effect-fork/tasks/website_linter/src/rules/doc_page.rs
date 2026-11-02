@@ -39,6 +39,7 @@ impl Context {
             documentation,
             schema,
             plugin,
+            version,
             turned_on_by_default,
             autofix,
             category,
@@ -52,12 +53,15 @@ impl Context {
         );
 
         let normalized_plugin_name = get_normalized_plugin_name(plugin);
-        let title = full_rule_name(rule, normalized_plugin_name, true);
+        let rule_name = full_rule_name(rule, normalized_plugin_name, true);
 
         // Write frontmatter
         let default = if *turned_on_by_default { "true" } else { "false" };
         let type_aware = if *is_tsgolint_rule { "true" } else { "false" };
         let fix = autofix.to_string();
+        let upstream_line = upstream_docs_url(plugin, name)
+            .map(|url| format!("upstream: \"{url}\"\n"))
+            .unwrap_or_default();
 
         let file = file!();
         #[cfg(windows)]
@@ -66,7 +70,7 @@ impl Context {
 
         writeln!(
             self.page,
-            "---\ntitle: \"{title}\"\ncategory: \"{category}\"\ndefault: {default}\ntype_aware: {type_aware}\nfix: \"{fix}\"\n---\n"
+            "---\ntitle: \"{rule_name} | Oxlint\"\nrule: \"{rule_name}\"\ncategory: \"{category}\"\nversion: \"{version}\"\ndefault: {default}\ntype_aware: {type_aware}\nfix: \"{fix}\"\n{upstream_line}---\n"
         )?;
 
         writeln!(
@@ -121,7 +125,7 @@ const source = `{}`;{}
         // how-to-use and rule references components.
         writeln!(
             self.page,
-            "\n## How to use\n<RuleHowToUse />\n\n## References\n<RuleReferences />"
+            "\n## How to use\n<RuleHowToUse />\n\n## Version\nThis rule was added in v{version}.\n\n## References\n<RuleReferences />"
         )?;
 
         Ok(self.page.take())
@@ -284,6 +288,113 @@ fn full_rule_name(
     }
 }
 
+/// Returns the upstream-plugin docs URL for `(plugin, name)`, where `name` is the
+/// rule's kebab-case identifier. Returns `None` for native `oxc` rules or unknown
+/// plugins. Per-rule overrides handle directories that do not match their true
+/// upstream (e.g. React Hooks rules under `react/` are sourced from
+/// `eslint-plugin-react-hooks`).
+fn upstream_docs_url(plugin: &str, name: &str) -> Option<String> {
+    let override_url: Option<&'static str> = match (plugin, name) {
+        ("react", "rules-of-hooks") => Some("https://react.dev/reference/rules/rules-of-hooks"),
+        // React Compiler rules without a dedicated upstream page share the
+        // `eslint-plugin-react-hooks` README with `exhaustive-deps`.
+        (
+            "react",
+            "exhaustive-deps"
+            | "capitalized-calls"
+            | "exhaustive-effect-dependencies"
+            | "hooks"
+            | "invariant"
+            | "memo-dependencies"
+            | "no-deriving-state-in-effects"
+            | "rule-suppression"
+            | "syntax"
+            | "todo"
+            | "void-use-memo",
+        ) => Some(
+            "https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/README.md",
+        ),
+        ("react", "only-export-components") => Some(
+            "https://github.com/ArnaudBarre/eslint-plugin-react-refresh/blob/main/docs/only-export-components.md",
+        ),
+        // React Compiler rules are ported from `eslint-plugin-react-hooks`, not
+        // `eslint-plugin-react`. Those with a page on react.dev link to it.
+        (
+            "react",
+            "error-boundaries"
+            | "globals"
+            | "immutability"
+            | "incompatible-library"
+            | "preserve-manual-memoization"
+            | "purity"
+            | "refs"
+            | "set-state-in-effect"
+            | "set-state-in-render"
+            | "static-components"
+            | "unsupported-syntax"
+            | "use-memo",
+        ) => {
+            return Some(format!(
+                "https://react.dev/reference/eslint-plugin-react-hooks/lints/{name}"
+            ));
+        }
+        _ => None,
+    };
+    if let Some(url) = override_url {
+        return Some(url.to_owned());
+    }
+    Some(match plugin {
+        "eslint" => format!("https://eslint.org/docs/latest/rules/{name}"),
+        "typescript" => format!("https://typescript-eslint.io/rules/{name}/"),
+        "jest" => format!(
+            "https://github.com/jest-community/eslint-plugin-jest/blob/main/docs/rules/{name}.md"
+        ),
+        "unicorn" => format!(
+            "https://github.com/sindresorhus/eslint-plugin-unicorn/blob/main/docs/rules/{name}.md"
+        ),
+        "import" => format!(
+            "https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/{name}.md"
+        ),
+        "react" => format!(
+            "https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/{name}.md"
+        ),
+        "react_perf" => format!(
+            "https://github.com/cvazac/eslint-plugin-react-perf/blob/master/docs/rules/{name}.md"
+        ),
+        "jsx_a11y" => format!(
+            "https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/main/docs/rules/{name}.md"
+        ),
+        "nextjs" => format!("https://nextjs.org/docs/messages/{name}"),
+        "jsdoc" => {
+            // jsdoc URLs use camelCase rule names.
+            let mut camel = String::with_capacity(name.len());
+            let mut upper = false;
+            for c in name.chars() {
+                if c == '-' {
+                    upper = true;
+                } else if upper {
+                    camel.extend(c.to_uppercase());
+                    upper = false;
+                } else {
+                    camel.push(c);
+                }
+            }
+            format!("https://github.com/gajus/eslint-plugin-jsdoc/blob/main/docs/rules/{camel}.md")
+        }
+        "node" => format!(
+            "https://github.com/eslint-community/eslint-plugin-n/blob/master/docs/rules/{name}.md"
+        ),
+        "promise" => format!(
+            "https://github.com/eslint-community/eslint-plugin-promise/blob/main/docs/rules/{name}.md"
+        ),
+        "vitest" => format!(
+            "https://github.com/vitest-dev/eslint-plugin-vitest/blob/main/docs/rules/{name}.md"
+        ),
+        "vue" => format!("https://eslint.vuejs.org/rules/{name}.html"),
+        _ => return None,
+    })
+}
+
 fn ordinal(n: usize) -> String {
     let suffix = match n % 100 {
         11..=13 => "th",
@@ -295,4 +406,38 @@ fn ordinal(n: usize) -> String {
         },
     };
     format!("{n}{suffix}")
+}
+
+#[cfg(test)]
+mod tests {
+    use oxc_linter::table::RuleTable;
+
+    use super::upstream_docs_url;
+
+    /// React Compiler rules must never point at `eslint-plugin-react`, where
+    /// they do not exist.
+    #[test]
+    fn react_compiler_rules_do_not_link_to_eslint_plugin_react() {
+        let table = RuleTable::new(None);
+        let mut checked = 0;
+        for section in &table.sections {
+            for rule in &section.rows {
+                let is_react_compiler_rule = rule
+                    .documentation
+                    .is_some_and(|doc| doc.contains("Powered by the React Compiler"));
+                if !is_react_compiler_rule {
+                    continue;
+                }
+                checked += 1;
+                let url = upstream_docs_url(rule.plugin.as_str(), rule.name).unwrap();
+                assert!(
+                    !url.contains("jsx-eslint/eslint-plugin-react/"),
+                    "{}/{} links to {url}",
+                    rule.plugin,
+                    rule.name
+                );
+            }
+        }
+        assert!(checked > 0);
+    }
 }

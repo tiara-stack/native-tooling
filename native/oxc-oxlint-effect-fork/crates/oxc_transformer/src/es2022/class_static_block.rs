@@ -42,7 +42,7 @@
 use itoa::Buffer as ItoaBuffer;
 
 use oxc_allocator::TakeIn;
-use oxc_ast::{NONE, ast::*};
+use oxc_ast::ast::*;
 use oxc_span::SPAN;
 use oxc_syntax::scope::{ScopeFlags, ScopeId};
 use oxc_traverse::Traverse;
@@ -112,14 +112,14 @@ impl ClassStaticBlock {
         let expr = Self::convert_block_to_expression(block, ctx);
 
         let key = keys.get_unique(ctx);
-        let key = ctx.ast.property_key_private_identifier(SPAN, key);
+        let key = PropertyKey::new_private_identifier(SPAN, key, ctx);
 
-        ctx.ast.class_element_property_definition(
+        ClassElement::new_property_definition(
             block.span,
             PropertyDefinitionType::PropertyDefinition,
-            ctx.ast.vec(),
+            [],
             key,
-            NONE,
+            None,
             Some(expr),
             false,
             true,
@@ -129,6 +129,7 @@ impl ClassStaticBlock {
             false,
             false,
             None,
+            ctx,
         )
     }
 
@@ -162,7 +163,7 @@ impl ClassStaticBlock {
         // Always strict mode since we're in a class.
         *ctx.scoping_mut().scope_flags_mut(scope_id) =
             ScopeFlags::Function | ScopeFlags::Arrow | ScopeFlags::StrictMode;
-        wrap_statements_in_arrow_function_iife(stmts.take_in(ctx.ast), scope_id, block.span, ctx)
+        wrap_statements_in_arrow_function_iife(stmts.take_in(ctx), scope_id, block.span, ctx)
     }
 
     /// Convert static block to expression which will be value of private field,
@@ -173,7 +174,7 @@ impl ClassStaticBlock {
         scope_id: ScopeId,
         ctx: &mut TraverseCtx<'a>,
     ) -> Expression<'a> {
-        let expr = expr.take_in(ctx.ast);
+        let expr = expr.take_in(ctx);
 
         // Remove the scope for the static block from the scope chain
         ctx.remove_scope_for_expression(scope_id, &expr);
@@ -241,8 +242,9 @@ impl<'a> Keys<'a> {
     #[cold]
     #[inline(never)]
     fn get_unique_slow(&mut self, ctx: &TraverseCtx<'a>) -> Str<'a> {
-        // Source text length is limited to `u32::MAX` so impossible to have more than `u32::MAX`
-        // private keys. So `u32` is sufficient here.
+        // Source text is limited to `MAX_LEN` (defined in `oxc_parser`), which is less than `u32::MAX`.
+        // So a class cannot have anywhere near `u32::MAX` private keys.
+        // So `u32` is sufficient here, and `i` cannot overflow.
         let mut i = 2u32;
         let mut buffer = ItoaBuffer::new();
         let mut num_str;
@@ -254,7 +256,7 @@ impl<'a> Keys<'a> {
             i += 1;
         }
 
-        let key = ctx.ast.str_from_strs_array(["_", num_str]);
+        let key = Str::from_strs_array_in(["_", num_str], ctx);
         self.numbered.push(&key.as_str()[1..]);
 
         key

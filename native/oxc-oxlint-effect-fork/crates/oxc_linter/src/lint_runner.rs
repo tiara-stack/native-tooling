@@ -11,7 +11,7 @@ use oxc_span::Span;
 
 use crate::{
     AllowWarnDeny, DisableDirectives, FixKind, LintService, LintServiceOptions, Linter, Message,
-    OsFileSystem, TsGoLintState,
+    OsFileSystem, RuleTimingStore, TsGoLintState, suppression::DiffManager,
 };
 
 /// Unified runner that orchestrates both regular (oxc) and type-aware (tsgolint) linting
@@ -25,6 +25,7 @@ pub struct LintRunner {
     directives_store: DirectivesStore,
     /// Current working directory
     cwd: PathBuf,
+    type_check_only: bool,
 }
 
 /// Manages disable directives across all linting engines.
@@ -126,6 +127,14 @@ impl DirectivesStore {
     pub fn remove(&self, path: &Path) {
         self.map.lock().expect("DirectivesStore mutex poisoned in remove").remove(path);
     }
+
+    /// Take and remove disable directives for a specific file in a single lock acquisition.
+    ///
+    /// # Panics
+    /// Panics if the mutex is poisoned.
+    pub fn take(&self, path: &Path) -> Option<DisableDirectives> {
+        self.map.lock().expect("DirectivesStore mutex poisoned in take").remove(path)
+    }
 }
 
 impl Default for DirectivesStore {
@@ -142,6 +151,9 @@ pub struct LintRunnerBuilder {
     lint_service_options: LintServiceOptions,
     silent: bool,
     fix_kind: FixKind,
+    type_check_only: bool,
+    timings: bool,
+    with_ignore_fixes: bool,
 }
 
 impl LintRunnerBuilder {
@@ -153,6 +165,9 @@ impl LintRunnerBuilder {
             lint_service_options,
             silent: false,
             fix_kind: FixKind::None,
+            type_check_only: false,
+            timings: false,
+            with_ignore_fixes: false,
         }
     }
 
@@ -180,6 +195,24 @@ impl LintRunnerBuilder {
         self
     }
 
+    #[must_use]
+    pub fn with_type_check_only(mut self, type_check_only: bool) -> Self {
+        self.type_check_only = type_check_only;
+        self
+    }
+
+    #[must_use]
+    pub fn with_timings(mut self, timings: bool) -> Self {
+        self.timings = timings;
+        self
+    }
+
+    #[must_use]
+    pub fn with_ignore_fixes(mut self, with_ignore_fixes: bool) -> Self {
+        self.with_ignore_fixes = with_ignore_fixes;
+        self
+    }
+
     /// # Errors
     /// Returns an error if the type-aware linter fails to initialize.
     pub fn build(self) -> Result<LintRunner, String> {
@@ -191,7 +224,14 @@ impl LintRunnerBuilder {
                 self.regular_linter.config.clone(),
                 self.fix_kind,
             ) {
-                Ok(state) => Some(state.with_silent(self.silent).with_type_check(self.type_check)),
+                Ok(state) => Some(
+                    state
+                        .with_silent(self.silent)
+                        .with_type_check(self.type_check)
+                        .with_type_check_only(self.type_check_only)
+                        .with_timings(self.timings)
+                        .with_ignore_fixes(self.with_ignore_fixes),
+                ),
                 Err(e) => return Err(e),
             }
         } else {
@@ -207,6 +247,7 @@ impl LintRunnerBuilder {
             type_aware_linter,
             directives_store: directives_coordinator,
             cwd,
+            type_check_only: self.type_check_only,
         })
     }
 }
@@ -220,18 +261,36 @@ impl LintRunner {
     /// Run both regular and type-aware linting on files
     /// # Errors
     /// Returns an error if type-aware linting fails.
-    pub fn lint_files(
+    pub fn lint_files<const TIMINGS: bool>(
         mut self,
         files: &[Arc<OsStr>],
         tx_error: DiagnosticSender,
+        diff_manager: &Arc<DiffManager>,
+        rule_timing_store: Option<&RuleTimingStore>,
     ) -> Result<Self, String> {
-        // Phase 1: Regular linting (collects disable directives)
         let fs: &(dyn crate::RuntimeFileSystem + Sync + Send) = &OsFileSystem;
 
-        self.lint_service.run(fs, files.to_owned(), &tx_error);
+        if self.type_check_only {
+            self.lint_service.collect_parse_diagnostics(fs, files.to_owned(), &tx_error);
+        } else {
+            self.lint_service.run::<TIMINGS>(
+                fs,
+                files.to_owned(),
+                &tx_error,
+                diff_manager,
+                rule_timing_store,
+            );
+        }
 
         if let Some(type_aware_linter) = self.type_aware_linter.take() {
-            type_aware_linter.lint(files, self.directives_store.map(), tx_error, fs)?;
+            type_aware_linter.lint(
+                files,
+                self.directives_store.map(),
+                tx_error,
+                fs,
+                diff_manager,
+                rule_timing_store,
+            )?;
         } else {
             drop(tx_error);
         }
@@ -251,7 +310,7 @@ impl LintRunner {
 
         if let Some(type_aware_linter) = &self.type_aware_linter {
             let tsgo_messages =
-                type_aware_linter.lint_source(files, file_system, self.directives_store.map())?;
+                type_aware_linter.lint_source(files, file_system, &self.directives_store.map())?;
             messages.extend(tsgo_messages);
         }
 

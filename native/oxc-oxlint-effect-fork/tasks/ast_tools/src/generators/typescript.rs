@@ -12,7 +12,7 @@ use crate::{
         should_skip_enum_variant, should_skip_field,
     },
     output::Output,
-    schema::{Def, EnumDef, FieldDef, Schema, StructDef, TypeDef, TypeId},
+    schema::{Def, EnumDef, FieldDef, Schema, StructDef, StructOrEnum, TypeDef, TypeId},
     utils::{FxIndexSet, format_cow, write_it},
 };
 
@@ -51,7 +51,7 @@ fn generate_ts_type_defs(schema: &Schema, codegen: &Codegen) -> String {
 
     let mut code = String::new();
     let mut ast_node_names: Vec<String> = vec![];
-    for type_def in &schema.types {
+    for type_def in schema.structs_and_enums() {
         if type_def.generates_derive(estree_derive_id) {
             generate_ts_type_def(type_def, &mut code, &mut ast_node_names, program_type_id, schema);
         }
@@ -70,7 +70,7 @@ fn generate_ts_type_defs(schema: &Schema, codegen: &Codegen) -> String {
 ///
 /// Push type defs to `code`.
 fn generate_ts_type_def(
-    type_def: &TypeDef,
+    type_def: StructOrEnum<'_>,
     code: &mut String,
     ast_node_names: &mut Vec<String>,
     program_type_id: TypeId,
@@ -78,18 +78,16 @@ fn generate_ts_type_def(
 ) {
     // Skip TS def generation if `#[estree(no_ts_def)]` attribute
     let no_ts_def = match type_def {
-        TypeDef::Struct(struct_def) => &struct_def.estree.no_ts_def,
-        TypeDef::Enum(enum_def) => &enum_def.estree.no_ts_def,
-        _ => unreachable!(),
+        StructOrEnum::Struct(struct_def) => &struct_def.estree.no_ts_def,
+        StructOrEnum::Enum(enum_def) => &enum_def.estree.no_ts_def,
     };
 
     if !no_ts_def {
         let ts_def = match type_def {
-            TypeDef::Struct(struct_def) => {
+            StructOrEnum::Struct(struct_def) => {
                 generate_ts_type_def_for_struct(struct_def, ast_node_names, program_type_id, schema)
             }
-            TypeDef::Enum(enum_def) => generate_ts_type_def_for_enum(enum_def, schema),
-            _ => unreachable!(),
+            StructOrEnum::Enum(enum_def) => generate_ts_type_def_for_enum(enum_def, schema),
         };
 
         if let Some(ts_def) = ts_def {
@@ -99,9 +97,8 @@ fn generate_ts_type_def(
 
     // Add additional custom TS def if provided via `#[estree(add_ts_def = "...")]` attribute
     let add_ts_def = match type_def {
-        TypeDef::Struct(struct_def) => &struct_def.estree.add_ts_def,
-        TypeDef::Enum(enum_def) => &enum_def.estree.add_ts_def,
-        _ => unreachable!(),
+        StructOrEnum::Struct(struct_def) => &struct_def.estree.add_ts_def,
+        StructOrEnum::Enum(enum_def) => &enum_def.estree.add_ts_def,
     };
     if let Some(add_ts_def) = add_ts_def {
         write_it!(code, "export {add_ts_def};\n\n");
@@ -115,8 +112,13 @@ fn generate_ts_type_def_for_struct(
     program_type_id: TypeId,
     schema: &Schema,
 ) -> Option<String> {
-    // If struct marked with `#[estree(ts_alias = "...")]`, then it needs no type def
-    if struct_def.estree.ts_alias.is_some() {
+    // If struct marked with `#[estree(ts_alias = "...")]`, then it needs no type def.
+    // It is still an AST node unless marked `#[estree(no_type)]`, so register the alias in the
+    // `Node` union. Multiple native nodes may share one ESTree alias.
+    if let Some(ts_alias) = &struct_def.estree.ts_alias {
+        if !struct_def.estree.no_type && !ast_node_names.contains(ts_alias) {
+            ast_node_names.push(ts_alias.clone());
+        }
         return None;
     }
 
@@ -361,7 +363,9 @@ fn generate_ts_type_def_for_enum(enum_def: &EnumDef, schema: &Schema) -> Option<
         .collect::<FxIndexSet<_>>();
 
     variant_type_names.extend(
-        enum_def.inherits_types(schema).map(|inherited_type| ts_type_name(inherited_type, schema)),
+        enum_def
+            .inherits_enums(schema)
+            .map(|inherited_enum_def| enum_ts_type_name(inherited_enum_def, schema)),
     );
 
     let union = variant_type_names.iter().join(" | ");
@@ -384,17 +388,7 @@ fn ts_type_name<'s>(type_def: &'s TypeDef, schema: &'s Schema) -> Cow<'s, str> {
                 Cow::Borrowed(struct_def.name())
             }
         }
-        TypeDef::Enum(enum_def) => {
-            if let Some(ts_alias) = &enum_def.estree.ts_alias {
-                Cow::Borrowed(ts_alias)
-            } else if let Some(converter_name) = &enum_def.estree.via
-                && let Some(type_name) = get_ts_type_for_converter(converter_name, schema)
-            {
-                Cow::Borrowed(type_name)
-            } else {
-                Cow::Borrowed(enum_def.name())
-            }
-        }
+        TypeDef::Enum(enum_def) => enum_ts_type_name(enum_def, schema),
         TypeDef::Primitive(primitive_def) => Cow::Borrowed(match primitive_def.name() {
             #[rustfmt::skip]
             "u8" | "u16" | "u32" | "u64" | "u128" | "usize"
@@ -413,6 +407,19 @@ fn ts_type_name<'s>(type_def: &'s TypeDef, schema: &'s Schema) -> Cow<'s, str> {
         TypeDef::Box(box_def) => ts_type_name(box_def.inner_type(schema), schema),
         TypeDef::Cell(cell_def) => ts_type_name(cell_def.inner_type(schema), schema),
         TypeDef::Pointer(pointer_def) => ts_type_name(pointer_def.inner_type(schema), schema),
+    }
+}
+
+/// Get TS type name for an enum.
+fn enum_ts_type_name<'s>(enum_def: &'s EnumDef, schema: &'s Schema) -> Cow<'s, str> {
+    if let Some(ts_alias) = &enum_def.estree.ts_alias {
+        Cow::Borrowed(ts_alias)
+    } else if let Some(converter_name) = &enum_def.estree.via
+        && let Some(type_name) = get_ts_type_for_converter(converter_name, schema)
+    {
+        Cow::Borrowed(type_name)
+    } else {
+        Cow::Borrowed(enum_def.name())
     }
 }
 
@@ -484,7 +491,7 @@ fn amend_oxlint_types(code: &str) -> String {
     #[expect(clippy::disallowed_methods, reason = "always results in replacement")]
     let code =
         code.replacen("hashbang: Hashbang | null;", "comments: Comment[]; tokens: Token[];", 1);
-    assert!(code.len() != old_len); // Check replacement was made
+    assert_ne!(code.len(), old_len); // Check replacement was made
 
     // Make `parent` fields non-optional
     #[expect(clippy::disallowed_methods)]

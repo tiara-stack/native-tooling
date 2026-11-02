@@ -6,13 +6,14 @@
 
 use std::cell::Cell;
 
-use oxc_allocator::{Box, CloneIn, Dummy, GetAddress, TakeIn, UnstableAddress, Vec};
+use oxc_allocator::{Box, CloneIn, Dummy, GetAddress, ReplaceWith, TakeIn, UnstableAddress, Vec};
 use oxc_ast_macros::ast;
 use oxc_estree::ESTree;
-use oxc_span::{ContentEq, GetSpan, GetSpanMut, Span, Str};
-use oxc_syntax::node::NodeId;
+use oxc_span::{ContentEq, GetSpan, GetSpanMut, Span};
+use oxc_str::Str;
+use oxc_syntax::{GetNodeId, node::NodeId};
 
-use super::{inherit_variants, js::*, literal::*, ts::*};
+use super::{js::*, literal::*, ts::*};
 
 // 1.2 JSX Elements
 
@@ -35,7 +36,8 @@ use super::{inherit_variants, js::*, literal::*, ts::*};
 /// See: [JSX Syntax](https://facebook.github.io/jsx/)
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXElement<'a> {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -69,7 +71,8 @@ pub struct JSXElement<'a> {
 /// ```
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 #[estree(add_fields(selfClosing = JSXOpeningElementSelfClosing))]
 pub struct JSXOpeningElement<'a> {
     /// Unique identifier for this AST node.
@@ -98,7 +101,8 @@ pub struct JSXOpeningElement<'a> {
 /// ```
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXClosingElement<'a> {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -118,7 +122,8 @@ pub struct JSXClosingElement<'a> {
 /// See: [`React.Fragment`](https://react.dev/reference/react/Fragment)
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXFragment<'a> {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -135,7 +140,8 @@ pub struct JSXFragment<'a> {
 /// JSX Opening Fragment (`<>`)
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 #[estree(add_fields(attributes = JsEmptyArray, selfClosing = JsFalse))]
 pub struct JSXOpeningFragment {
     /// Unique identifier for this AST node.
@@ -147,7 +153,8 @@ pub struct JSXOpeningFragment {
 /// JSX Closing Fragment (`</>`)
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXClosingFragment {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -158,7 +165,8 @@ pub struct JSXClosingFragment {
 /// JSX Element Name
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, GetAddress, ContentEq, ESTree)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetAddress, GetNodeId, GetSpan, GetSpanMut)]
 pub enum JSXElementName<'a> {
     /// `<div />`
     Identifier(Box<'a, JSXIdentifier<'a>>) = 0,
@@ -183,7 +191,8 @@ pub enum JSXElementName<'a> {
 /// ```
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXNamespacedName<'a> {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -212,7 +221,8 @@ pub struct JSXNamespacedName<'a> {
 /// [`member expression`]: JSXMemberExpressionObject::MemberExpression
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXMemberExpression<'a> {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -242,7 +252,8 @@ pub struct JSXMemberExpression<'a> {
 /// ```
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, GetAddress, ContentEq, ESTree)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetAddress, GetNodeId, GetSpan, GetSpanMut)]
 pub enum JSXMemberExpressionObject<'a> {
     /// `<Apple.Orange />`
     #[estree(via = JSXElementIdentifierReference)]
@@ -261,15 +272,18 @@ pub enum JSXMemberExpressionObject<'a> {
 /// ## Example
 ///
 /// ```tsx
-/// // boolean-like and string-like expressions are not wrapped in containers.
-/// // Here, only `container` is a JSXExpressionContainer.
-/// <Foo bar baz="bang" container={4}/>
-///   {4}  // <- wrapped in container
-/// </Foo>
+/// // `bar` has no value; `baz` has a StringLiteral value.
+/// // Both `{4}` parts are JSXExpressionContainer nodes.
+/// const element = (
+///   <Foo bar baz="bang" container={4}>
+///     {4}
+///   </Foo>
+/// );
 /// ```
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXExpressionContainer<'a> {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -279,7 +293,6 @@ pub struct JSXExpressionContainer<'a> {
     pub expression: JSXExpression<'a>,
 }
 
-inherit_variants! {
 /// JSX Expression
 ///
 /// Gets wrapped by a [`JSXExpressionContainer`]. Inherits variants from [`Expression`]. See [`ast`
@@ -288,7 +301,8 @@ inherit_variants! {
 /// [`ast` module docs]: `super`
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut)]
 pub enum JSXExpression<'a> {
     /// An empty expression
     ///
@@ -297,16 +311,17 @@ pub enum JSXExpression<'a> {
     /// <Foo>{}</Foo>
     /// //   ^^
     /// ```
-    EmptyExpression(JSXEmptyExpression) = 64,
-    // `Expression` variants added here by `inherit_variants!` macro
-    @inherit Expression
-}
+    EmptyExpression(Box<'a, JSXEmptyExpression>) = 64,
+
+    // `Expression` variants added here by `#[ast]` macro
+    INHERIT(Expression<'a>),
 }
 
 /// An empty JSX expression (`{}`)
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXEmptyExpression {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -327,7 +342,8 @@ pub struct JSXEmptyExpression {
 /// ```
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, GetAddress, ContentEq, ESTree)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetAddress, GetNodeId, GetSpan, GetSpanMut)]
 pub enum JSXAttributeItem<'a> {
     /// A `key="value"` attribute
     Attribute(Box<'a, JSXAttribute<'a>>) = 0,
@@ -348,7 +364,8 @@ pub enum JSXAttributeItem<'a> {
 /// //                 name ^^^ ^^^^ value
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXAttribute<'a> {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -356,9 +373,8 @@ pub struct JSXAttribute<'a> {
     pub span: Span,
     /// The name of the attribute. This is a prop in React-like applications.
     pub name: JSXAttributeName<'a>,
-    /// The value of the attribute. This can be a string literal, an expression,
-    /// or an element. Will be [`None`] for boolean-like attributes (e.g.
-    /// `<button disabled />`).
+    /// The value of the attribute.
+    /// [`None`] for boolean-like attributes (e.g. `<button disabled />`).
     pub value: Option<JSXAttributeValue<'a>>,
 }
 
@@ -371,7 +387,8 @@ pub struct JSXAttribute<'a> {
 /// ```
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXSpreadAttribute<'a> {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -398,7 +415,8 @@ pub struct JSXSpreadAttribute<'a> {
 /// ```
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, GetAddress, ContentEq, ESTree)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetAddress, GetNodeId, GetSpan, GetSpanMut)]
 pub enum JSXAttributeName<'a> {
     /// An attribute name without a namespace prefix, e.g. `foo` in `foo="bar"`.
     Identifier(Box<'a, JSXIdentifier<'a>>) = 0,
@@ -426,7 +444,8 @@ pub enum JSXAttributeName<'a> {
 /// ```
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, GetAddress, ContentEq, ESTree)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetAddress, GetNodeId, GetSpan, GetSpanMut)]
 pub enum JSXAttributeValue<'a> {
     /// `<Component foo="bar" />`
     StringLiteral(Box<'a, StringLiteral<'a>>) = 0,
@@ -445,7 +464,8 @@ pub enum JSXAttributeValue<'a> {
 /// [`IdentifierName`]: super::IdentifierName
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXIdentifier<'a> {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -463,7 +483,8 @@ pub struct JSXIdentifier<'a> {
 /// Part of a [`JSXElement`].
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, GetAddress, ContentEq, ESTree)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetAddress, GetNodeId, GetSpan, GetSpanMut)]
 pub enum JSXChild<'a> {
     /// `<Foo>Some Text</Foo>`
     Text(Box<'a, JSXText<'a>>) = 0,
@@ -482,7 +503,8 @@ pub enum JSXChild<'a> {
 /// Variant of [`JSXChild`] that represents an object spread (`{...expression}`).
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXSpreadChild<'a> {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -499,12 +521,17 @@ pub struct JSXSpreadChild<'a> {
 /// ## Example
 ///
 /// ```tsx
-/// <Foo>Some text</Foo>     // `Some Text` is a JSXText,
-/// <Foo>"Some string"</Foo> // but `"Some string"` is a StringLiteral.
+/// // Both children are JSXText, including the quotation marks:
+/// const plain = <Foo>Some text</Foo>;
+/// const quoted = <Foo>"Some string"</Foo>;
+///
+/// // The expression container contains a StringLiteral:
+/// const expression = <Foo>{"Some string"}</Foo>;
 /// ```
 #[ast(visit)]
 #[derive(Debug)]
-#[generate_derive(CloneIn, Dummy, TakeIn, GetSpan, GetSpanMut, ContentEq, ESTree, UnstableAddress)]
+#[generate_derive(CloneIn, Dummy, ReplaceWith, TakeIn)]
+#[generate_derive(ContentEq, ESTree, GetNodeId, GetSpan, GetSpanMut, UnstableAddress)]
 pub struct JSXText<'a> {
     /// Unique identifier for this AST node.
     pub node_id: Cell<NodeId>,
@@ -517,5 +544,6 @@ pub struct JSXText<'a> {
     ///
     /// `None` when this ast node is not constructed from the parser.
     #[content_eq(skip)]
+    #[estree(from_span)]
     pub raw: Option<Str<'a>>,
 }

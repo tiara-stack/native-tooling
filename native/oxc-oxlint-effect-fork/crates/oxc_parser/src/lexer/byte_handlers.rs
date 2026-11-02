@@ -1,3 +1,4 @@
+use oxc_ast::CommentKind;
 use oxc_data_structures::assert_unchecked;
 
 use crate::{
@@ -29,7 +30,7 @@ pub type ByteHandler<C> = unsafe fn(&mut Lexer<'_, C>) -> Kind;
 pub type ByteHandlers<C> = [ByteHandler<C>; 256];
 
 /// Macro to create a lookup table mapping any incoming byte to a handler function defined below.
-/// <https://github.com/ratel-rust/ratel-core/blob/v0.7.0/ratel/src/lexer/mod.rs>
+/// <https://github.com/ratel-rust/ratel-core/blob/e55a1310ba69a3f5ce2a9a6eef643feced02ac08/ratel/src/lexer/mod.rs>
 #[rustfmt::skip]
 macro_rules! byte_handlers {
     () => {
@@ -304,7 +305,7 @@ ascii_byte_handler!(COM(lexer) {
 // -
 ascii_byte_handler!(MIN(lexer) {
     lexer.consume_char();
-    lexer.read_minus().unwrap_or_else(|| lexer.skip_single_line_comment())
+    lexer.read_minus().unwrap_or_else(|| lexer.skip_single_line_comment(CommentKind::HtmlClose))
 });
 
 // .
@@ -319,7 +320,7 @@ ascii_byte_handler!(SLH(lexer) {
     match lexer.peek_byte() {
         Some(b'/') => {
             lexer.consume_char();
-            lexer.skip_single_line_comment()
+            lexer.skip_single_line_comment(CommentKind::Line)
         }
         Some(b'*') => {
             lexer.consume_char();
@@ -363,7 +364,7 @@ ascii_byte_handler!(SEM(lexer) {
 // <
 ascii_byte_handler!(LSS(lexer) {
     lexer.consume_char();
-    lexer.read_left_angle().unwrap_or_else(|| lexer.skip_single_line_comment())
+    lexer.read_left_angle().unwrap_or_else(|| lexer.skip_single_line_comment(CommentKind::HtmlOpen))
 });
 
 // =

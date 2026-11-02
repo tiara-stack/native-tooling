@@ -1,5 +1,3 @@
-export default {
-  fmt: {
-    semi: false,
-  },
-};
+import { defineConfig } from "vite";
+
+export default defineConfig(() => ({}));

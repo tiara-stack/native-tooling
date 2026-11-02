@@ -1,49 +1,75 @@
-use oxc_allocator::Vec;
+use oxc_allocator::ArenaVec;
 use oxc_ast::ast::*;
+use oxc_formatter_core::{Buffer, Format};
 use oxc_span::GetSpan;
 
-use crate::print::semicolon::OptionalSemicolon;
+use crate::print::semicolon::{
+    FormatContentWithSemicolon, semicolon_terminated_expression_content_end,
+};
 use crate::utils::assignment_like::AssignmentLike;
 use crate::{
     ast_nodes::{AstNode, AstNodes},
     format_args,
-    formatter::{Buffer, Format, Formatter, prelude::*, separated::FormatSeparatedIter},
+    formatter::{JsFormatContext, JsFormatter, prelude::*, separated::FormatSeparatedIter},
     options::TrailingSeparator,
     write,
 };
 
 use super::FormatWrite;
 
+/// Whether the declaration is a `for`/`for-in`/`for-of` head,
+/// terminated by the head itself (the head-vs-body test is by span: a declaration can also be the body).
+/// Everywhere else the declaration terminates itself, including `export const ...`,
+/// whose `ExportDeclaration` prints no semicolon of its own (see its `FormatWrite` implementation).
+fn is_for_head_declaration(decl: &AstNode<'_, VariableDeclaration<'_>>) -> bool {
+    match decl.parent() {
+        AstNodes::ForStatement(stmt) => {
+            stmt.init.as_ref().is_some_and(|init| init.span() == decl.span())
+        }
+        AstNodes::ForInStatement(stmt) => stmt.left.span() == decl.span(),
+        AstNodes::ForOfStatement(stmt) => stmt.left.span() == decl.span(),
+        _ => false,
+    }
+}
+
 impl<'a> FormatWrite<'a> for AstNode<'a, VariableDeclaration<'a>> {
-    fn write(&self, f: &mut Formatter<'_, 'a>) {
-        let semicolon = match self.parent() {
-            AstNodes::ExportNamedDeclaration(_) => false,
-            AstNodes::ForStatement(stmt) => {
-                stmt.init().is_some_and(|init| init.span() != self.span())
-            }
-            AstNodes::ForInStatement(stmt) => stmt.left().span() != self.span(),
-            AstNodes::ForOfStatement(stmt) => stmt.left().span() != self.span(),
-            _ => true,
-        };
+    fn write(&self, f: &mut JsFormatter<'_, 'a>) {
+        let semicolon = !is_for_head_declaration(self);
 
         if self.declare() {
             write!(f, ["declare", space()]);
         }
 
-        write!(
-            f,
-            group(&format_args!(
-                self.kind().as_str(),
-                space(),
-                self.declarations(),
-                semicolon.then_some(OptionalSemicolon)
-            ))
-        );
+        let declarations = self.declarations();
+        let format_declarations = format_with(|f| {
+            if semicolon {
+                let last_declarator = declarations.as_ref().last();
+                let declarations_end = last_declarator.map_or(self.span().end, |d| d.span().end);
+                let content_end = last_declarator
+                    .and_then(|declarator| declarator.init.as_ref())
+                    .map_or(declarations_end, |init| {
+                        semicolon_terminated_expression_content_end(
+                            f,
+                            init,
+                            declarations_end,
+                            self.span().end,
+                            true,
+                        )
+                    });
+                write!(
+                    f,
+                    FormatContentWithSemicolon::new(declarations, content_end, self.span().end)
+                );
+            } else {
+                write!(f, declarations);
+            }
+        });
+        write!(f, group(&format_args!(self.kind().as_str(), space(), format_declarations)));
     }
 }
 
-impl<'a> Format<'a> for AstNode<'a, Vec<'a, VariableDeclarator<'a>>> {
-    fn fmt(&self, f: &mut Formatter<'_, 'a>) {
+impl<'a> Format<'a, JsFormatContext<'a>> for AstNode<'a, ArenaVec<'a, VariableDeclarator<'a>>> {
+    fn fmt(&self, f: &mut JsFormatter<'_, 'a>) {
         let length = self.len();
 
         let is_parent_for_loop = matches!(
@@ -94,7 +120,7 @@ impl<'a> Format<'a> for AstNode<'a, Vec<'a, VariableDeclarator<'a>>> {
 }
 
 impl<'a> FormatWrite<'a> for AstNode<'a, VariableDeclarator<'a>> {
-    fn write(&self, f: &mut Formatter<'_, 'a>) {
+    fn write(&self, f: &mut JsFormatter<'_, 'a>) {
         AssignmentLike::VariableDeclarator(self).fmt(f);
     }
 }

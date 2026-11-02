@@ -3,7 +3,7 @@ use oxc_estree::{ESTree, JsonSafeString, Serializer};
 
 /// Serialized as `null`.
 #[ast_meta]
-#[estree(ts_type = "null", raw_deser = "null")]
+#[estree(ts_type = "null", raw_deser = "null", raw_deser_inline)]
 pub struct Null<T>(pub T);
 
 impl<T> ESTree for Null<T> {
@@ -14,7 +14,7 @@ impl<T> ESTree for Null<T> {
 
 /// Serialized as `null`. Field only present in TS-ESTree AST.
 #[ast_meta]
-#[estree(ts_type = "null", raw_deser = "null")]
+#[estree(ts_type = "null", raw_deser = "null", raw_deser_inline)]
 #[ts]
 pub struct TsNull<T>(pub T);
 
@@ -24,9 +24,26 @@ impl<T> ESTree for TsNull<T> {
     }
 }
 
+/// Serialized as `null`, but typed as `TSTypeAnnotation | null`. Field only present in TS-ESTree AST.
+///
+/// Used for binding-pattern nodes (e.g. `BindingIdentifier`, `ObjectPattern`) whose `typeAnnotation`
+/// is `null` when the node is serialized standalone, but is populated with a real `TSTypeAnnotation`
+/// by the parent converter (`BindingPatternKindAndTsFields`) when the binding is annotated, as in
+/// `const x: string = ""`.
+#[ast_meta]
+#[estree(ts_type = "TSTypeAnnotation | null", raw_deser = "null", raw_deser_inline)]
+#[ts]
+pub struct TsTypeAnnotationOrNull<T>(pub T);
+
+impl<T> ESTree for TsTypeAnnotationOrNull<T> {
+    fn serialize<S: Serializer>(&self, serializer: S) {
+        Null(()).serialize(serializer);
+    }
+}
+
 /// Serialized as `true`.
 #[ast_meta]
-#[estree(ts_type = "true", raw_deser = "true")]
+#[estree(ts_type = "true", raw_deser = "true", raw_deser_inline)]
 pub struct True<T>(pub T);
 
 impl<T> ESTree for True<T> {
@@ -37,7 +54,7 @@ impl<T> ESTree for True<T> {
 
 /// Serialized as `false`.
 #[ast_meta]
-#[estree(ts_type = "false", raw_deser = "false")]
+#[estree(ts_type = "false", raw_deser = "false", raw_deser_inline)]
 pub struct False<T>(pub T);
 
 impl<T> ESTree for False<T> {
@@ -48,7 +65,7 @@ impl<T> ESTree for False<T> {
 
 /// Serialized as `false`. Field only present in JS ESTree AST (not TS-ESTree).
 #[ast_meta]
-#[estree(ts_type = "false", raw_deser = "false")]
+#[estree(ts_type = "false", raw_deser = "false", raw_deser_inline)]
 #[js_only]
 pub struct JsFalse<T>(pub T);
 
@@ -60,7 +77,7 @@ impl<T> ESTree for JsFalse<T> {
 
 /// Serialized as `false`. Field only present in TS-ESTree AST.
 #[ast_meta]
-#[estree(ts_type = "false", raw_deser = "false")]
+#[estree(ts_type = "false", raw_deser = "false", raw_deser_inline)]
 #[ts]
 pub struct TsFalse<T>(pub T);
 
@@ -72,7 +89,7 @@ impl<T> ESTree for TsFalse<T> {
 
 /// Serialized as `"value"`.
 #[ast_meta]
-#[estree(ts_type = "'value'", raw_deser = "'value'")]
+#[estree(ts_type = "'value'", raw_deser = "'value'", raw_deser_inline)]
 #[ts]
 pub struct TsValue<T>(pub T);
 
@@ -84,7 +101,7 @@ impl<T> ESTree for TsValue<T> {
 
 /// Serialized as `"in"`.
 #[ast_meta]
-#[estree(ts_type = "'in'", raw_deser = "'in'")]
+#[estree(ts_type = "'in'", raw_deser = "'in'", raw_deser_inline)]
 pub struct In<T>(pub T);
 
 impl<T> ESTree for In<T> {
@@ -95,7 +112,7 @@ impl<T> ESTree for In<T> {
 
 /// Serialized as `"init"`.
 #[ast_meta]
-#[estree(ts_type = "'init'", raw_deser = "'init'")]
+#[estree(ts_type = "'init'", raw_deser = "'init'", raw_deser_inline)]
 pub struct Init<T>(pub T);
 
 impl<T> ESTree for Init<T> {
@@ -106,7 +123,7 @@ impl<T> ESTree for Init<T> {
 
 /// Serialized as `"this"`.
 #[ast_meta]
-#[estree(ts_type = "'this'", raw_deser = "'this'")]
+#[estree(ts_type = "'this'", raw_deser = "'this'", raw_deser_inline)]
 pub struct This<T>(pub T);
 
 impl<T> ESTree for This<T> {
@@ -117,7 +134,7 @@ impl<T> ESTree for This<T> {
 
 /// Serialized as `"global"`.
 #[ast_meta]
-#[estree(ts_type = "'global'", raw_deser = "'global'")]
+#[estree(ts_type = "'global'", raw_deser = "'global'", raw_deser_inline)]
 pub struct Global<T>(pub T);
 
 impl<T> ESTree for Global<T> {
@@ -128,7 +145,7 @@ impl<T> ESTree for Global<T> {
 
 /// Serialized as `[]`.
 #[ast_meta]
-#[estree(ts_type = "[]", raw_deser = "[]")]
+#[estree(ts_type = "[]", raw_deser = "[]", raw_deser_inline)]
 pub struct EmptyArray<T>(pub T);
 
 impl<T> ESTree for EmptyArray<T> {
@@ -139,7 +156,7 @@ impl<T> ESTree for EmptyArray<T> {
 
 /// Serialized as `[]`. Field only present in JS ESTree AST (not TS-ESTree).
 #[ast_meta]
-#[estree(ts_type = "[]", raw_deser = "[]")]
+#[estree(ts_type = "[]", raw_deser = "[]", raw_deser_inline)]
 #[js_only]
 pub struct JsEmptyArray<T>(pub T);
 
@@ -151,7 +168,7 @@ impl<T> ESTree for JsEmptyArray<T> {
 
 /// Serialized as `[]`. Field only present in TS-ESTree AST.
 #[ast_meta]
-#[estree(ts_type = "[]", raw_deser = "[]")]
+#[estree(ts_type = "[]", raw_deser = "[]", raw_deser_inline)]
 #[ts]
 pub struct TsEmptyArray<T>(pub T);
 

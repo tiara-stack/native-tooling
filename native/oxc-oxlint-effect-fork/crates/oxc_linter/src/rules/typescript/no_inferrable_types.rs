@@ -1,3 +1,4 @@
+use oxc_allocator::ArenaVec;
 use oxc_ast::{
     AstKind,
     ast::{
@@ -63,11 +64,13 @@ declare_oxc_lint!(
     style,
     suggestion,
     config = NoInferrableTypes,
+    version = "0.14.0",
+    short_description = "Disallow explicit type declarations for variables or parameters initialized to a number, string, or boolean.",
 );
 
 impl Rule for NoInferrableTypes {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
@@ -146,7 +149,7 @@ impl Rule for NoInferrableTypes {
 impl NoInferrableTypes {
     fn check_formal_parameters<'a>(
         &self,
-        params: &oxc_allocator::Vec<'a, FormalParameter<'a>>,
+        params: &ArenaVec<'a, FormalParameter<'a>>,
         ctx: &LintContext<'a>,
     ) {
         if self.ignore_parameters {
@@ -224,10 +227,8 @@ fn is_inferrable_type(type_annotation: &TSTypeAnnotation, init: &Expression) -> 
             false
         }
         TSType::TSUndefinedKeyword(_) => match init.get_inner_expression() {
-            Expression::Identifier(id) => id.name == "undefined",
-            Expression::UnaryExpression(unary_expr) => {
-                matches!(unary_expr.operator, UnaryOperator::Void)
-            }
+            Expression::Identifier(id) => id.is_undefined(),
+            Expression::UnaryExpression(unary_expr) => unary_expr.operator.is_void(),
             _ => false,
         },
         _ => false,
@@ -290,8 +291,7 @@ fn is_init_boolean(init: &Expression) -> bool {
 }
 
 fn is_init_null(init: &Expression) -> bool {
-    let init = init.get_inner_expression();
-    matches!(init, Expression::NullLiteral(_))
+    init.get_inner_expression().is_null()
 }
 
 fn is_init_number(init: &Expression) -> bool {
@@ -519,7 +519,7 @@ fn test() {
         (
             "
             class A {
-              a!: number = 1;
+              a: number = 1;
             }
                   ",
             Some(serde_json::json!([ { "ignoreProperties": false, }, ])),
@@ -603,7 +603,7 @@ fn test() {
         (
             "
             class A {
-              a!: number = 1;
+              a: number = 1;
             }
                   ",
             "

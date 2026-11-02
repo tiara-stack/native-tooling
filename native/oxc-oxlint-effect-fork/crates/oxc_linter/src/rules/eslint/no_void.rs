@@ -2,7 +2,6 @@ use oxc_ast::AstKind;
 use oxc_diagnostics::OxcDiagnostic;
 use oxc_macros::declare_oxc_lint;
 use oxc_span::Span;
-use oxc_syntax::operator::UnaryOperator;
 use schemars::JsonSchema;
 use serde::Deserialize;
 
@@ -55,11 +54,13 @@ declare_oxc_lint!(
     restriction,
     suggestion,
     config = NoVoid,
+    version = "0.2.5",
+    short_description = "Disallows the use of the `void` operator.",
 );
 
 impl Rule for NoVoid {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
@@ -74,7 +75,7 @@ impl Rule for NoVoid {
             return;
         }
 
-        if unary_expr.operator == UnaryOperator::Void {
+        if unary_expr.operator.is_void() {
             ctx.diagnostic_with_suggestion(no_void_diagnostic(unary_expr.span), |fixer| {
                 fixer.replace(unary_expr.span, "undefined")
             });

@@ -1,10 +1,11 @@
 use oxc_ast::{
     AstKind,
-    ast::{Expression, MemberExpression, ObjectPropertyKind, PropertyKind, Statement},
+    ast::{Expression, MemberExpression, ObjectPropertyKind, PropertyKind},
 };
 use oxc_diagnostics::OxcDiagnostic;
 use oxc_macros::declare_oxc_lint;
 use oxc_span::{GetSpan, Span};
+use oxc_str::CompactStr;
 use schemars::JsonSchema;
 use serde::Deserialize;
 
@@ -12,7 +13,7 @@ use crate::{
     AstNode,
     ast_util::is_method_call,
     context::LintContext,
-    rule::Rule,
+    rule::{DefaultRuleConfig, Rule},
     utils::{call_expr_member_expr_property_span, does_expr_match_any_path},
 };
 
@@ -22,19 +23,19 @@ fn prefer_object_from_entries_diagnostic(span: Span) -> OxcDiagnostic {
         .with_label(span)
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, Deserialize)]
 pub struct PreferObjectFromEntries(Box<PreferObjectFromEntriesConfig>);
 
 #[derive(Debug, Clone, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase", default)]
+#[serde(rename_all = "camelCase", default, deny_unknown_fields)]
 pub struct PreferObjectFromEntriesConfig {
     /// Additional functions to treat as equivalents to `Object.fromEntries`.
-    functions: Vec<String>,
+    functions: Vec<CompactStr>,
 }
 
 impl Default for PreferObjectFromEntriesConfig {
     fn default() -> Self {
-        Self { functions: vec!["_.fromPairs".to_string(), "lodash.fromPairs".to_string()] }
+        Self { functions: vec!["_.fromPairs".into(), "lodash.fromPairs".into()] }
     }
 }
 
@@ -82,6 +83,8 @@ declare_oxc_lint!(
     style,
     pending,
     config = PreferObjectFromEntriesConfig,
+    version = "0.16.12",
+    short_description = "Encourages using `Object.fromEntries` when converting an array of key-value pairs into an object.",
 );
 
 impl Rule for PreferObjectFromEntries {
@@ -94,7 +97,7 @@ impl Rule for PreferObjectFromEntries {
             && call_expr.arguments[0].is_expression()
             && does_expr_match_any_path(
                 &call_expr.callee,
-                self.functions.iter().map(|fun| fun.split('.').collect::<Vec<_>>()),
+                self.functions.iter().map(|fun| fun.split('.')),
             )
         {
             ctx.diagnostic(prefer_object_from_entries_diagnostic(call_expr.callee.span()));
@@ -133,19 +136,12 @@ impl Rule for PreferObjectFromEntries {
             return;
         };
 
-        if !reducer.expression || reducer.r#async {
+        if !reducer.is_expression() || reducer.r#async {
             return;
         }
 
-        let Statement::ExpressionStatement(stmt) = reducer
-            .body
-            .statements
-            .first()
-            .expect("arrow function expressions must have at least one body statement")
-        else {
-            return;
-        };
-        let stmt = stmt.expression.get_inner_expression();
+        let Some(stmt) = reducer.get_expression() else { return };
+        let stmt = stmt.get_inner_expression();
 
         let Some(accumulator_ident) =
             reducer.params.items.first().and_then(|arg| arg.pattern.get_binding_identifier())
@@ -233,15 +229,9 @@ impl Rule for PreferObjectFromEntries {
     }
 
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        let config: PreferObjectFromEntriesConfig = value
-            .as_array()
-            .and_then(|arr| arr.first())
-            .map(|config| {
-                serde_json::from_value(config.clone()).expect("Failed to deserialize config")
-            })
-            .unwrap_or_default();
-
-        Ok(Self(Box::new(config)))
+        DefaultRuleConfig::<PreferObjectFromEntriesConfig>::from_value(value)
+            .map(DefaultRuleConfig::into_inner)
+            .map(|config| Self(Box::new(config)))
     }
 }
 
@@ -261,7 +251,7 @@ fn is_empty_object(expr: &Expression) -> bool {
                 .expect("call expression must have 1 argument")
                 .as_expression()
                 .map(oxc_ast::ast::Expression::get_inner_expression)
-                .is_some_and(|expr| matches!(expr, Expression::NullLiteral(_))) =>
+                .is_some_and(Expression::is_null) =>
         {
             true
         }
@@ -284,7 +274,6 @@ fn test() {
         ("pairs.notReduce(object => ({...object, key}), {});", None),
         ("pairs.reduce(object => ({...object, key}), {notEmpty});", None),
         ("pairs.reduce(object => ({...object, key}), []);", None),
-        ("pairs.reduce(object => ({...object, key}), {}, extraArgument);", None),
         ("pairs.reduce(...[(object => ({...object, key}))], {});", None),
         ("pairs.reduce(object => ({...object, key}), ...[{}]);", None),
         ("pairs.reduce(object => ({...object, key}), Object.create());", None),
@@ -352,6 +341,13 @@ fn test() {
         ("_.foo(pairs)", Some(serde_json::json!([{"functions": ["foo"]}]))),
         ("foo(pairs)", Some(serde_json::json!([{"functions": ["utils.object.foo"]}]))),
         ("object.foo(pairs)", Some(serde_json::json!([{"functions": ["utils.object.foo"]}]))),
+        ("foo(pairs)", Some(serde_json::json!([{"functions": ["", ".foo", "foo."]}]))),
+        (
+            "utils.foo(pairs)",
+            Some(serde_json::json!([{"functions": ["utils..foo", "utils.foo.extra"]}])),
+        ),
+        ("utils.foo.extra(pairs)", Some(serde_json::json!([{"functions": ["utils.foo"]}]))),
+        ("utils['foo'](pairs)", Some(serde_json::json!([{"functions": ["utils.foo"]}]))),
     ];
 
     let fail = vec![
@@ -432,6 +428,10 @@ fn test() {
             Some(serde_json::json!([{"functions": ["myFromPairsFunction"]}])),
         ),
         ("utils.object.foo(pairs)", Some(serde_json::json!([{"functions": ["utils.object.foo"]}]))),
+        (
+            "utils.foo(pairs)",
+            Some(serde_json::json!([{"functions": ["utils", "utils.foo", "utils.foo.extra"]}])),
+        ),
     ];
 
     Tester::new(PreferObjectFromEntries::NAME, PreferObjectFromEntries::PLUGIN, pass, fail)

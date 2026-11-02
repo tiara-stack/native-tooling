@@ -7,11 +7,16 @@ use oxc_ast::{
 use oxc_diagnostics::OxcDiagnostic;
 use oxc_ecmascript::{ToBoolean, WithoutGlobalReferenceInformation};
 use oxc_macros::declare_oxc_lint;
-use oxc_span::{CompactStr, Span};
+use oxc_span::Span;
+use oxc_str::CompactStr;
 use oxc_syntax::operator::UnaryOperator;
 
 use crate::{
-    AstNode, context::LintContext, globals::AriaProperty, rule::Rule, utils::get_jsx_attribute_name,
+    AstNode,
+    context::LintContext,
+    globals::AriaProperty,
+    rule::Rule,
+    utils::{get_jsx_attribute_name, starts_with_ignore_case},
 };
 
 fn aria_proptypes_diagnostic(
@@ -58,6 +63,8 @@ declare_oxc_lint!(
     AriaProptypes,
     jsx_a11y,
     correctness,
+    version = "1.36.0",
+    short_description = "Enforces that elements do not use invalid ARIA state and property values.",
 );
 
 impl Rule for AriaProptypes {
@@ -66,6 +73,12 @@ impl Rule for AriaProptypes {
             return;
         };
         let name = get_jsx_attribute_name(&attr.name);
+        // Only `aria-*` attributes resolve to an `AriaProperty`. Check the prefix without
+        // allocating so non-ARIA attributes (including camelCase names that would
+        // otherwise allocate a lowercased copy) short-circuit before the lowercasing.
+        if !starts_with_ignore_case(&name, "aria-") {
+            return;
+        }
         let name = name.cow_to_ascii_lowercase();
         let Ok(aria_prop_name) = AriaProperty::try_from(name.as_ref()) else { return };
         let aria_prop_type = get_aria_prop_type(aria_prop_name);

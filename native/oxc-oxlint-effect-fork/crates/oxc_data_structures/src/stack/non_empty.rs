@@ -58,7 +58,7 @@ use super::{StackCapacity, StackCommon};
 ///    uses 1 less register, but disadvantage that [`last`] and [`last_mut`] are 2 instructions, not 1.
 ///    <https://godbolt.org/z/xnx7YP5de>
 ///
-/// 2. Stack could grow downwards, like a bump allocator does. This would probably make [`pop`] use
+/// 2. Stack could grow downwards, like `bumpalo` does. This would probably make [`pop`] use
 ///    1 less register, but at the cost that: (a) the stack can never grow in place, which would incur
 ///    more memory copies when the stack grows, and (b) [`as_slice`] would have the entries in
 ///    reverse order.
@@ -647,7 +647,6 @@ mod tests {
     #[should_panic(expected = "Cannot create a `NonEmptyStack` from an empty iterator")]
     fn from_empty_iterator() {
         let arr: [u64; 0] = [];
-        #[expect(clippy::from_iter_instead_of_collect)]
         NonEmptyStack::from_iter(arr.iter());
     }
 
@@ -981,16 +980,29 @@ mod tests {
 
             stack.pop();
             assert_eq!(drops(), &[30]);
-            assert!(drops().is_empty());
+            assert_eq!(drops(), []);
 
             stack.push(Droppy(31));
             stack.push(Droppy(40));
             stack.push(Droppy(50));
             assert_eq!(stack.len(), 5);
             assert_eq!(stack.capacity(), 8);
-            assert!(drops().is_empty());
+            assert_eq!(drops(), []);
         }
 
         assert_eq!(drops(), &[10, 20, 31, 40, 50]);
+    }
+
+    /// `NonEmptyStack<T>` is `Send` / `Sync` only if `T` is.
+    #[test]
+    fn send_sync() {
+        use std::rc::Rc;
+
+        use crate::types::implements;
+
+        assert!(implements!(NonEmptyStack<u32>: Send));
+        assert!(implements!(NonEmptyStack<u32>: Sync));
+        assert!(implements!(NonEmptyStack<Rc<u32>>: !Send));
+        assert!(implements!(NonEmptyStack<Rc<u32>>: !Sync));
     }
 }

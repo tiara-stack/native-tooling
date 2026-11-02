@@ -1,10 +1,10 @@
 use std::cell::LazyCell;
 
-use lazy_regex::{Regex, RegexBuilder};
+use lazy_regex::Regex;
 use schemars::JsonSchema;
 use serde::Deserialize;
 
-use oxc_ast::{AstKind, Comment};
+use oxc_ast::{AstKind, AstType, Comment};
 use oxc_diagnostics::OxcDiagnostic;
 use oxc_macros::declare_oxc_lint;
 use oxc_span::Span;
@@ -12,6 +12,7 @@ use oxc_span::Span;
 use crate::{
     context::LintContext,
     rule::{DefaultRuleConfig, Rule},
+    utils::deserialize_regex_option,
 };
 
 fn no_inline_comments_diagnostic(span: Span) -> OxcDiagnostic {
@@ -36,7 +37,7 @@ pub struct NoInlineCommentsConfig {
     ///     "no-inline-comments": ["error", { "ignorePattern": "webpackChunkName" }]
     /// }
     /// ```
-    #[serde(default, deserialize_with = "deserialize_ignore_pattern")]
+    #[serde(default, deserialize_with = "deserialize_regex_option")]
     ignore_pattern: Option<Regex>,
 }
 
@@ -46,18 +47,6 @@ impl std::ops::Deref for NoInlineComments {
     fn deref(&self) -> &Self::Target {
         &self.0
     }
-}
-
-fn deserialize_ignore_pattern<'de, D>(deserializer: D) -> Result<Option<Regex>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    use serde::de::Error;
-
-    Option::<String>::deserialize(deserializer)?
-        .map(|pattern| RegexBuilder::new(&pattern).build())
-        .transpose()
-        .map_err(D::Error::custom)
 }
 
 declare_oxc_lint!(
@@ -90,18 +79,23 @@ declare_oxc_lint!(
     NoInlineComments,
     eslint,
     pedantic,
-    config = NoInlineCommentsConfig
+    config = NoInlineCommentsConfig,
+    version = "1.34.0",
+    short_description = "Disallows comments on the same line as code.",
 );
 
 impl Rule for NoInlineComments {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run_once(&self, ctx: &LintContext) {
         let source_text = ctx.source_text();
 
         let jsx_empty_expr_spans = LazyCell::new(|| {
+            if !ctx.nodes().contains(AstType::JSXEmptyExpression) {
+                return Vec::new();
+            }
             ctx.nodes()
                 .iter()
                 .filter_map(|node| {

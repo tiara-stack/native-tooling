@@ -93,8 +93,10 @@ declare_oxc_lint!(
     NoUnknownProperty,
     react,
     restriction,
-    pending,
+    suggestion,
     config = NoUnknownPropertyConfig,
+    version = "0.2.0",
+    short_description = "Disallow usage of unknown DOM properties.",
 );
 
 const ATTRIBUTE_TAGS_MAP: Map<&'static str, Set<&'static str>> = phf_map! {
@@ -103,6 +105,8 @@ const ATTRIBUTE_TAGS_MAP: Map<&'static str, Set<&'static str>> = phf_map! {
     "checked" => phf_set! {"input"},
     // Intentionally lowercased, per the react types.
     "closedby" => phf_set! {"dialog"},
+    // Intentionally lowercased, React 19.3 recognizes it as a boolean attribute and warns on `credentialLess`.
+    "credentialless" => phf_set! {"iframe"},
     // image is required for SVG support, all other tags are HTML.
     "crossOrigin" => phf_set! {"script", "img", "video", "audio", "link", "image"},
     "displaystyle" => phf_set! {"math"},
@@ -203,6 +207,8 @@ const ATTRIBUTE_TAGS_MAP: Map<&'static str, Set<&'static str>> = phf_map! {
     "shadowrootdelegatesfocus" => phf_set! {"template"},
     "shadowrootserializable" => phf_set! {"template"},
     "transform-origin" => phf_set! {"rect"},
+    // React 19: https://react.dev/reference/react-dom/components/link#props
+    "precedence" => phf_set! {"style", "link"},
 };
 
 const DOM_PROPERTIES_NAMES: Set<&'static str> = phf_set! {
@@ -256,7 +262,9 @@ const DOM_PROPERTIES_NAMES: Set<&'static str> = phf_set! {
     "onCompositionUpdate", "onCut", "onDoubleClick", "onDrag", "onDragEnd", "onDragEnter", "onDragExit", "onDragLeave",
     "onError", "onFocus", "onInput", "onKeyDown", "onKeyPress", "onKeyUp", "onLoad", "onWheel", "onDragOver",
     "onDragStart", "onDrop", "onMouseDown", "onMouseEnter", "onMouseLeave", "onMouseMove", "onMouseOut", "onMouseOver",
-    "onMouseUp", "onPaste", "onScroll", "onScrollEnd", "onSelect", "onSubmit", "onBeforeToggle", "onToggle", "onTransitionEnd", "radioGroup",
+    "onMouseUp", "onPaste", "onScroll", "onScrollEnd", "onSelect", "onSubmit", "onBeforeToggle", "onToggle",
+    "onTransitionCancel", "onTransitionEnd", "onTransitionRun", "onTransitionStart",
+    "onFullscreenChange", "onFullscreenError", "radioGroup",
     "readOnly", "referrerPolicy", "rowSpan", "srcDoc", "srcLang", "srcSet", "useMap",
     // SVG attributes
     // See https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
@@ -271,7 +279,7 @@ const DOM_PROPERTIES_NAMES: Set<&'static str> = phf_set! {
     "gradientUnits", "horizAdvX", "horizOriginX", "imageRendering", "kernelMatrix",
     "kernelUnitLength", "keyPoints", "keySplines", "keyTimes", "lengthAdjust", "letterSpacing",
     "lightingColor", "limitingConeAngle", "markerEnd", "markerMid", "markerStart", "markerHeight",
-    "markerUnits", "markerWidth", "maskContentUnits", "maskUnits", "mathematical", "numOctaves",
+    "markerUnits", "markerWidth", "maskContentUnits", "maskType", "maskUnits", "mathematical", "numOctaves",
     "overlinePosition", "overlineThickness", "panose1", "paintOrder", "pathLength",
     "patternContentUnits", "patternTransform", "patternUnits", "pointerEvents", "pointsAtX",
     "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits",
@@ -307,7 +315,8 @@ const DOM_PROPERTIES_NAMES: Set<&'static str> = phf_set! {
     "onPlayingCapture", "onProgressCapture", "onRateChangeCapture", "onSeekedCapture", "onSeekingCapture", "onStalledCapture", "onSuspendCapture",
     "onTimeUpdateCapture", "onVolumeChangeCapture", "onWaitingCapture", "onSelectCapture", "onTouchCancelCapture", "onTouchEndCapture",
     "onTouchMoveCapture", "onTouchStartCapture", "onScrollCapture", "onScrollEndCapture", "onWheelCapture", "onAnimationEndCapture",
-    "onAnimationStartCapture", "onTransitionEndCapture",
+    "onAnimationStartCapture", "onTransitionCancelCapture", "onTransitionEndCapture", "onTransitionRunCapture",
+    "onTransitionStartCapture", "onFullscreenChangeCapture", "onFullscreenErrorCapture",
     "onAuxClick", "onAuxClickCapture", "onClickCapture", "onContextMenuCapture", "onDoubleClickCapture",
     "onDragCapture", "onDragEndCapture", "onDragEnterCapture", "onDragExitCapture", "onDragLeaveCapture",
     "onDragOverCapture", "onDragStartCapture", "onDropCapture", "onMouseDownCapture",
@@ -383,6 +392,7 @@ const DOM_ATTRIBUTES_TO_CAMEL: Map<&'static str, &'static str> = phf_map! {
     "marker-end" => "markerEnd",
     "marker-mid" => "markerMid",
     "marker-start" => "markerStart",
+    "mask-type" => "maskType",
     "overline-position" => "overlinePosition",
     "overline-thickness" => "overlineThickness",
     "paint-order" => "paintOrder",
@@ -489,7 +499,7 @@ fn has_uppercase(name: &str) -> bool {
 
 impl Rule for NoUnknownProperty {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
@@ -565,7 +575,10 @@ impl Rule for NoUnknownProperty {
                             ctx.diagnostic(unknown_prop(span));
                         },
                         |prop| {
-                            ctx.diagnostic(unknown_prop_with_standard_name(span, prop));
+                            ctx.diagnostic_with_suggestion(
+                                unknown_prop_with_standard_name(span, prop),
+                                |fixer| fixer.replace(span, *prop),
+                            );
                         },
                     );
             });
@@ -592,6 +605,18 @@ fn test() {
         (r#"<div className="bar"></div>;"#, None),
         (r"<div onMouseDown={this._onMouseDown}></div>;", None),
         (r"<div onScrollEnd={this._onScrollEnd}></div>;", None),
+        (r"<div onFullscreenChange={this._onFullscreenChange}></div>;", None),
+        (r"<div onFullscreenError={this._onFullscreenError}></div>;", None),
+        (r"<div onFullscreenChangeCapture={this._onFullscreenChange}></div>;", None),
+        (r"<div onFullscreenErrorCapture={this._onFullscreenError}></div>;", None),
+        (r"<div onTransitionCancel={this._onTransitionCancel}></div>;", None),
+        (r"<div onTransitionCancelCapture={this._onTransitionCancelCapture}></div>;", None),
+        (r"<div onTransitionRun={this._onTransitionRun}></div>;", None),
+        (r"<div onTransitionRunCapture={this._onTransitionRunCapture}></div>;", None),
+        (r"<div onTransitionStart={this._onTransitionStart}></div>;", None),
+        (r"<div onTransitionStartCapture={this._onTransitionStartCapture}></div>;", None),
+        (r#"<iframe credentialless src="https://example.com" />"#, None),
+        (r#"<mask maskType="alpha" />"#, None),
         (r"<div onScrollEndCapture={this._onScrollEndCapture}></div>;", None),
         (r#"<a href="someLink" download="foo">Read more</a>"#, None),
         (r#"<area download="foo" />"#, None),
@@ -747,6 +772,31 @@ fn test() {
             "#,
             None,
         ),
+        // React 19 `precedence` on stylesheet resources: `<link rel="stylesheet">` and `<style>`
+        // https://react.dev/reference/react-dom/components/link
+        (
+            r#"
+                <Suspense fallback="loading...">
+                  <link rel="stylesheet" href="foo" precedence="default" />
+                  <link rel="stylesheet" href="bar" precedence="high" />
+                  <article className="foo-class bar-class" />
+                </Suspense>
+            "#,
+            None,
+        ),
+        (
+            r#"
+                <div>
+                  <p>hello</p>
+                  <link rel="stylesheet" href="baz" precedence="default" />
+                </div>
+            "#,
+            None,
+        ),
+        (
+            r#"<style precedence="default" href="custom-style">{`body { color: red; }`}</style>"#,
+            None,
+        ),
     ];
 
     let fail = vec![
@@ -805,27 +855,32 @@ fn test() {
             None,
         ),
         ("<t onChñnge/>", None),
+        (r#"<div precedence="default" />"#, None),
+        (r"<div credentialless />", None),
+        (r#"<iframe credentialLess src="https://example.com" />"#, None),
+        (r#"<mask mask-type="alpha" />"#, None),
+        (r#"<script precedence="high" src="foo.js" />"#, None),
     ];
 
-    // TODO: Add a fixer for this rule.
-    let _fix = vec![
-        (r#"<div class="bar"></div>;"#, r#"<div className="bar"></div>;"#, None::<()>),
-        (r#"<div for="bar"></div>;"#, r#"<div htmlFor="bar"></div>;"#, None),
-        (r#"<div accept-charset="bar"></div>;"#, r#"<div acceptCharset="bar"></div>;"#, None),
-        (r#"<div http-equiv="bar"></div>;"#, r#"<div httpEquiv="bar"></div>;"#, None),
-        (r#"<div accesskey="bar"></div>;"#, r#"<div accessKey="bar"></div>;"#, None),
-        (r#"<div onclick="bar"></div>;"#, r#"<div onClick="bar"></div>;"#, None),
-        (r#"<div onmousedown="bar"></div>;"#, r#"<div onMouseDown="bar"></div>;"#, None),
-        (r#"<div onMousedown="bar"></div>;"#, r#"<div onMouseDown="bar"></div>;"#, None),
-        (r#"<use xlink:href="bar" />;"#, r#"<use xlinkHref="bar" />;"#, None),
+    let fix = vec![
+        (r#"<div class="bar"></div>;"#, r#"<div className="bar"></div>;"#),
+        (r#"<div for="bar"></div>;"#, r#"<div htmlFor="bar"></div>;"#),
+        (r#"<div accept-charset="bar"></div>;"#, r#"<div acceptCharset="bar"></div>;"#),
+        (r#"<div http-equiv="bar"></div>;"#, r#"<div httpEquiv="bar"></div>;"#),
+        (r#"<div accesskey="bar"></div>;"#, r#"<div accessKey="bar"></div>;"#),
+        (r#"<div onclick="bar"></div>;"#, r#"<div onClick="bar"></div>;"#),
+        (r#"<div onmousedown="bar"></div>;"#, r#"<div onMouseDown="bar"></div>;"#),
+        (r#"<div onMousedown="bar"></div>;"#, r#"<div onMouseDown="bar"></div>;"#),
+        (r#"<use xlink:href="bar" />;"#, r#"<use xlinkHref="bar" />;"#),
         (
             r#"<rect clip-path="bar" transform-origin="center" />;"#,
             r#"<rect clipPath="bar" transform-origin="center" />;"#,
-            None,
         ),
-        ("<script crossorigin nomodule />", "<script crossOrigin noModule />", None),
-        ("<div crossorigin />", "<div crossOrigin />", None),
+        ("<script crossorigin nomodule />", "<script crossOrigin noModule />"),
+        ("<div crossorigin />", "<div crossOrigin />"),
     ];
 
-    Tester::new(NoUnknownProperty::NAME, NoUnknownProperty::PLUGIN, pass, fail).test_and_snapshot();
+    Tester::new(NoUnknownProperty::NAME, NoUnknownProperty::PLUGIN, pass, fail)
+        .expect_fix(fix)
+        .test_and_snapshot();
 }

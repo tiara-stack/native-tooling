@@ -115,6 +115,9 @@ jobs:
       - name: Verify native compiler and diagnostic protocol
         run: vp run -w native:test:backend
 
+      - name: Verify Effect rules through the native Oxlint CLI
+        run: vp run -w native:test:oxlint
+
       - name: Stage native binaries
         run: vp run -w native:stage
 

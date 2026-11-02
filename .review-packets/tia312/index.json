@@ -1,0 +1,562 @@
+{
+  "format": "tia312-review-packet-index-v1",
+  "product_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+  "product_epoch_tree": "f10bdb9c343d2c6e42005f8022fab06dcbd191c8",
+  "canonical_source_tree_excluding_review_packets": "0c5052873acec8dd6319b836994da0d160fb277e",
+  "metadata_commit": "The Git commit containing this directory; intentionally not self-embedded.",
+  "future_PR_head": "Bound and read back by the coordinator after submission; not claimed equal to product_epoch.",
+  "GitHub_PR_base": {
+    "branch": "main",
+    "commit": "3afe0bf85f98734c1beeebc5fa69ea5520f31019"
+  },
+  "custom_review_baseline": {
+    "kind": "reconstructed-approved-pin-baseline",
+    "synthetic_content_id": "e4b33206cb729be0f77e82da1717ed9cd916004a",
+    "not_a_hosted_repository_commit": true,
+    "hosted_resolution_required": false,
+    "approved_oxlint_pin": "2bd08ebe8f36fcf1954a675ffdeb4c6d0129f609",
+    "version": "1.87.0",
+    "assigned_main_parent": "3afe0bf85f98734c1beeebc5fa69ea5520f31019",
+    "required_before_context_bytes": "Every custom preimage/context line is in canonical_patch_lines; every required selected interface excerpt is in source_utf8_lines. Full unchanged upstream files are not review targets."
+  },
+  "canonical": {
+    "representation": "JSON UTF-8 line arrays preserving LF terminators; concatenate parsed values verbatim, no separators, then UTF-8 encode.",
+    "corpus_target_order": "lexicographic repository path",
+    "corpus_sha256": "8737b8dece895f0c862f3100b96a53d684143657db16c04ad8e0c7a412f4f2d4",
+    "corpus_bytes": 397062,
+    "target_count": 118,
+    "hunks": 161
+  },
+  "source_scope": {
+    "canonical_targets": 118,
+    "physical_entries": 117,
+    "canonical_endpoint_hunks": 161,
+    "physical_rename_aware_hunks": 162,
+    "necessary_context_files": 60,
+    "generated_outputs": 4,
+    "retained_marker_names": 82,
+    "excluded_stock_update_paths": 10644,
+    "supplemental_bounded_interface_files": 2,
+    "context_record_count": 62
+  },
+  "rename": {
+    "old_path": "patches/oxlint@1.58.0-native-effect.patch",
+    "old_target": "T113",
+    "new_path": "patches/oxlint@1.87.0-native-effect.patch",
+    "new_target": "T114",
+    "canonical_endpoint_hunks": 2,
+    "physical_rename_hunks": 3,
+    "both_endpoint_bytes_included": true
+  },
+  "git_attribute_normalization": {
+    "note": "The reconstructed approved archive uses repository Git attributes. Fourteen CRLF fixture blobs normalize as listed; none is a custom target. Decoding packet bytes performs no further normalization.",
+    "pairs": [
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter/tests/fixtures/js/crlf/block-comment.js",
+        "reference": "approved-current",
+        "archive_blob": "e83a8ef85fe2623947d90eae566c37c18849b31e",
+        "canonical_blob": "bc0cc5559b2fa483208ceefba3844ed4e82f36a3",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter/tests/fixtures/js/crlf/block-comment.js.snap",
+        "reference": "approved-current",
+        "archive_blob": "bf68de1db9ad150e901bdddd91782314ee3ee842",
+        "canonical_blob": "15252ad02711c0fa3a86def0b9f0dfaca0f7de55",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter/tests/fixtures/js/crlf/ignore.js",
+        "reference": "approved-current",
+        "archive_blob": "7f8dfbe69fdae1fb0c5357596f7d4fe01568ca0b",
+        "canonical_blob": "7a72aa79f350ba20f727c0a237a8254d13fa5aa8",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter/tests/fixtures/js/crlf/ignore.js.snap",
+        "reference": "approved-current",
+        "archive_blob": "4ee30eaa16407d36db8d8c18cf41898770b32828",
+        "canonical_blob": "81310a1b84340c56e858eefb3755ade425236784",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter/tests/fixtures/js/crlf/options.json",
+        "reference": "approved-current",
+        "archive_blob": "9d601c4d181d7aab4a7f4f7da2b8445eb942ebea",
+        "canonical_blob": "a7fe4e5804feef2074ddb87c23770237d47f9fe1",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter_graphql/tests/fixtures/graphql/crlf/ignore.graphql",
+        "reference": "approved-current",
+        "archive_blob": "33e3f6c29390ca8fc0bf1a1f16bc558de085d426",
+        "canonical_blob": "b0bda474f119684c4ed8b4208d1543976bff5bc7",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter_graphql/tests/fixtures/graphql/crlf/ignore.graphql.snap",
+        "reference": "approved-current",
+        "archive_blob": "b3043ac7c957bee00c31c83ff972f16a5876aeb3",
+        "canonical_blob": "88c3fc4f0d1e0f392bcbe566d32ca77d252a3bc4",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter_graphql/tests/fixtures/graphql/crlf/options.json",
+        "reference": "approved-current",
+        "archive_blob": "c43256bc3c4737fa5664f0ebf626633fd9248f9e",
+        "canonical_blob": "e2aae06272d5b1c6d867d659d12922f081459007",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter_json/tests/fixtures/jsonc/crlf/ignore.jsonc",
+        "reference": "approved-current",
+        "archive_blob": "df03e5e34166176bd127f670f151243b651f3282",
+        "canonical_blob": "6c94d52b3a9186e0e3623445bfa9c8d081a1868f",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter_json/tests/fixtures/jsonc/crlf/ignore.jsonc.snap",
+        "reference": "approved-current",
+        "archive_blob": "08c7a7af026c9c26313233c2e4a9a670af010b72",
+        "canonical_blob": "63ec44645a7ce04dbd3cd7fbe997ee5247105034",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter_json/tests/fixtures/jsonc/crlf/options.json",
+        "reference": "approved-current",
+        "archive_blob": "ec33788b693e3f9d9ffa826484f7fdda8429a209",
+        "canonical_blob": "15e36775a2c60e45801076feec660f739f411407",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter_yaml/tests/fixtures/yaml/crlf/eol.yaml",
+        "reference": "approved-current",
+        "archive_blob": "c129d134b500f6a1752c4f76d3eec808475f00e4",
+        "canonical_blob": "eafca9d7a5735f8ed8d65770dfae913863c545fc",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter_yaml/tests/fixtures/yaml/crlf/eol.yaml.snap",
+        "reference": "approved-current",
+        "archive_blob": "3977ef1c5756f71fecb32bd8187fd091f3bdd5e6",
+        "canonical_blob": "b843339f288976e3ec8d1727565848a8fb0da6d3",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      },
+      {
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_formatter_yaml/tests/fixtures/yaml/crlf/options.json",
+        "reference": "approved-current",
+        "archive_blob": "c43256bc3c4737fa5664f0ebf626633fd9248f9e",
+        "canonical_blob": "e2aae06272d5b1c6d867d659d12922f081459007",
+        "proof": "git hash-object --path applies the repository Git attributes; content equals the exact Git object"
+      }
+    ]
+  },
+  "requirements": {
+    "issue": "TIA-312",
+    "url": "https://linear.app/tiara-stack/issue/TIA-312",
+    "what_to_build": "Rebase the custom Oxlint fork onto Oxlint 1.87.0 while preserving the current Effect marker-rule integration.",
+    "acceptance": [
+      "The custom fork builds on Oxlint 1.87.0.",
+      "All existing Effect rule IDs remain configurable and report through the custom CLI.",
+      "Existing Effect lint fixtures pass with their current severities and output.",
+      "The source development path continues to use repo-local native binaries."
+    ],
+    "compatible_parent_pins": {
+      "TypeScript": "7.0.2",
+      "Effect-tsgo": "0.46.1",
+      "Effect": "4.0.1"
+    },
+    "later_scope": "TIA315 additional Go diagnostics/fix payload; TIA316 additional Rust markers/fix propagation; TIA317 complete upgraded installed Vite+ consumer."
+  },
+  "packets": [
+    {
+      "path": ".review-packets/tia312/code-integration-tests-01.json",
+      "sha256": "9849b0fb7d20534a6db5dd674323c8d6f41ac9d4038ebc2271d9ae37f290ad99",
+      "bytes": 48102,
+      "kind": "code",
+      "group": "integration-tests",
+      "records": 19
+    },
+    {
+      "path": ".review-packets/tia312/code-integration-tests-02.json",
+      "sha256": "8c53e74d505ab248108a2f97c0f994965dd61735a93d8fa9e44deef29edaa656",
+      "bytes": 8080,
+      "kind": "code",
+      "group": "integration-tests",
+      "records": 3
+    },
+    {
+      "path": ".review-packets/tia312/code-bridge-config-01.json",
+      "sha256": "37eaa61719a6eb72727ade2599e2de698dca6204f95fe6abdf8c09ae7470fa3e",
+      "bytes": 32622,
+      "kind": "code",
+      "group": "bridge-config",
+      "records": 6
+    },
+    {
+      "path": ".review-packets/tia312/code-runners-01.json",
+      "sha256": "303049441b53ea0d25c5e1c73b77358ee19fe54844a975ddc4097a8be7ba576b",
+      "bytes": 27749,
+      "kind": "code",
+      "group": "runners",
+      "records": 1
+    },
+    {
+      "path": ".review-packets/tia312/code-enum-01.json",
+      "sha256": "c9d82e61b5220966f0b9a4050024e47c6442a5e3cbed99a9f4f119aff0e6d7a8",
+      "bytes": 32304,
+      "kind": "code",
+      "group": "enum",
+      "records": 1
+    },
+    {
+      "path": ".review-packets/tia312/code-enum-02.json",
+      "sha256": "2c35d5ed99d1b8b3844b2fae386e1199a0481b73067e1c960765ac184b4e9985",
+      "bytes": 32623,
+      "kind": "code",
+      "group": "enum",
+      "records": 1
+    },
+    {
+      "path": ".review-packets/tia312/code-enum-03.json",
+      "sha256": "c80794e882242f9b04714689f036987bed9449c28efcc20e493c8571bdff01e3",
+      "bytes": 32636,
+      "kind": "code",
+      "group": "enum",
+      "records": 1
+    },
+    {
+      "path": ".review-packets/tia312/code-enum-04.json",
+      "sha256": "95bcfdf8defebfa372b9dad99b7a8dd2a897078dbc6c61aa94fd0ffc2e5214ec",
+      "bytes": 32411,
+      "kind": "code",
+      "group": "enum",
+      "records": 1
+    },
+    {
+      "path": ".review-packets/tia312/code-enum-05.json",
+      "sha256": "55da3f96f3281d5485faeb1d1ff5c8b54ea8ee9d77dcce599e7310e35185103d",
+      "bytes": 32243,
+      "kind": "code",
+      "group": "enum",
+      "records": 1
+    },
+    {
+      "path": ".review-packets/tia312/code-enum-06.json",
+      "sha256": "2bf0c747a2978b296a7b5f5e8ff9850fbe0944e0495f3161c4d9faadd4b802a2",
+      "bytes": 32181,
+      "kind": "code",
+      "group": "enum",
+      "records": 1
+    },
+    {
+      "path": ".review-packets/tia312/code-enum-07.json",
+      "sha256": "32ea2ec7b0f1017b6062a2cefe847c53478e1f25174b396f3cf875bed617c96b",
+      "bytes": 32027,
+      "kind": "code",
+      "group": "enum",
+      "records": 1
+    },
+    {
+      "path": ".review-packets/tia312/code-enum-08.json",
+      "sha256": "ad90dde06f747c01741d2036be05f3ba570abc485f9562df2f3fcb1d63a01149",
+      "bytes": 45837,
+      "kind": "code",
+      "group": "enum",
+      "records": 2
+    },
+    {
+      "path": ".review-packets/tia312/code-markers-01.json",
+      "sha256": "c75d0fa138fc648be4123f977e61607ed00d5051b33f064d65c0d89f0b5997ef",
+      "bytes": 48367,
+      "kind": "code",
+      "group": "markers",
+      "records": 21
+    },
+    {
+      "path": ".review-packets/tia312/code-markers-02.json",
+      "sha256": "46f7b3e3a019db111155d672bfd63ff2fa4a09ddd3ee8b10412a5f310263f768",
+      "bytes": 48457,
+      "kind": "code",
+      "group": "markers",
+      "records": 21
+    },
+    {
+      "path": ".review-packets/tia312/code-markers-03.json",
+      "sha256": "a302fcd2d526c2ad864e6b35cffe15f62e07832012c367ed54f132739d1b89f9",
+      "bytes": 48689,
+      "kind": "code",
+      "group": "markers",
+      "records": 21
+    },
+    {
+      "path": ".review-packets/tia312/code-markers-04.json",
+      "sha256": "d22678a1703750786ae32d29082d3d9bb2312c13f401bbdf5e48f906e47eff54",
+      "bytes": 44166,
+      "kind": "code",
+      "group": "markers",
+      "records": 19
+    },
+    {
+      "path": ".review-packets/tia312/code-schemas-01.json",
+      "sha256": "5696da7402c637c3929b59406ab55cd0c5d9fb9aa4e7359f8bc3a980488fe807",
+      "bytes": 17399,
+      "kind": "code",
+      "group": "schemas",
+      "records": 2
+    },
+    {
+      "path": ".review-packets/tia312/code-handoff-01.json",
+      "sha256": "79cfc04d5b1dc628dbb7e0d25738e1b6eb02b92d27b38265bea3b1ead775d5da",
+      "bytes": 39433,
+      "kind": "code",
+      "group": "handoff",
+      "records": 4
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-01.json",
+      "sha256": "d8eaecc94100cee86cc1e9ded1d18ab64623511dcb7020d4a1d4ab71f3f8f99c",
+      "bytes": 46262,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 8
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-02.json",
+      "sha256": "33cd24ed619f699aefbb45e421f1fa79d6b800824084f8979b99feb3177ff969",
+      "bytes": 28817,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 2
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-03.json",
+      "sha256": "8e69f6a231a2dfa857ee8c1783fd3cc8b0ae4e308dba839603b9b9af5b2cc998",
+      "bytes": 48631,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 6
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-04.json",
+      "sha256": "cf9c3cf0a6a2a0a823ba8a8394e48f0d37b861b0306be90c307da4f54114da48",
+      "bytes": 46505,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 10
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-05.json",
+      "sha256": "812373a1f0e37a153ee22f31a38041f3fd0b6dd487713137f5fc27c873e8e61f",
+      "bytes": 45218,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 12
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-06.json",
+      "sha256": "080cb935fe69eff584afe702f17c1a86c314fdd94d0baad09126187d6514cc6d",
+      "bytes": 47310,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 9
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-07.json",
+      "sha256": "80e2278b264347c059b99279d37b45a1dd6926616875cca1d83491869471ce66",
+      "bytes": 43726,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 6
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-08.json",
+      "sha256": "0bfa850dba8c5775c794b5f76a6e5510fc80442edfb9f5a69c826408f48477ba",
+      "bytes": 49095,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 7
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-09.json",
+      "sha256": "5de438738c5fe68d2cd466599a1c3ad97ba6366700a3f27972e635f116652c66",
+      "bytes": 46006,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 7
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-10.json",
+      "sha256": "dc4f40c65784e31c96d4e978b516037d99f0c2c8c0e295ccb1fe7129e404855e",
+      "bytes": 44696,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 6
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-11.json",
+      "sha256": "87423d7acfdc9aaaa89d90e2f6935892f8690c05617a2448010e910c8e4d318b",
+      "bytes": 40404,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 5
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-12.json",
+      "sha256": "d0215f4efa56900142cac6addb952b21a851901884a892256632fc3f3fed9998",
+      "bytes": 48130,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 10
+    },
+    {
+      "path": ".review-packets/tia312/context-interfaces-13.json",
+      "sha256": "99fff52daac28e2d6bf5700e3209caf82f1ead56af670597335ed5b8738963dd",
+      "bytes": 40565,
+      "kind": "context",
+      "group": "interfaces",
+      "records": 11
+    },
+    {
+      "path": ".review-packets/tia312/map-targets-01.json",
+      "sha256": "0addf29ba3f949d1301946ed72a102d7701266b888884d5eedfd293336df7f7d",
+      "bytes": 49120,
+      "kind": "map",
+      "group": "targets",
+      "records": 40
+    },
+    {
+      "path": ".review-packets/tia312/map-targets-02.json",
+      "sha256": "b8708892a95f4965ae035d5c231afe6bbc9bf61c57dfd96dd8c48e9255b46583",
+      "bytes": 48876,
+      "kind": "map",
+      "group": "targets",
+      "records": 49
+    },
+    {
+      "path": ".review-packets/tia312/map-targets-03.json",
+      "sha256": "7427320a752cdacff8a0fea2d76a4728fe39854ab1629de819930582b5aae2dc",
+      "bytes": 29639,
+      "kind": "map",
+      "group": "targets",
+      "records": 29
+    },
+    {
+      "path": ".review-packets/tia312/map-contexts-01.json",
+      "sha256": "35cdc1b3deff078069a5197664fff8b007b101b1d0ac947036027a747bee519b",
+      "bytes": 48824,
+      "kind": "map",
+      "group": "contexts",
+      "records": 40
+    },
+    {
+      "path": ".review-packets/tia312/map-contexts-02.json",
+      "sha256": "dab5bf7c74474f1a6caf01707081a81d16a16db03a063ecb6243b414c7b129cf",
+      "bytes": 23238,
+      "kind": "map",
+      "group": "contexts",
+      "records": 20
+    },
+    {
+      "path": ".review-packets/tia312/map-identities-01.json",
+      "sha256": "24d88605c56ad673226d1a8ec26ddbe615fe58314f7b9bc7bd3befe18317ea6d",
+      "bytes": 49066,
+      "kind": "map",
+      "group": "identities",
+      "records": 81
+    },
+    {
+      "path": ".review-packets/tia312/map-identities-02.json",
+      "sha256": "1b8a8cff6d068eb585d01b7c5f16e4fb2c71fbf6aeab66b3c121a2cafe30209e",
+      "bytes": 810,
+      "kind": "map",
+      "group": "identities",
+      "records": 1
+    },
+    {
+      "path": ".review-packets/tia312/context-supplemental-01.json",
+      "sha256": "788c07ecb18df14f6249ba6417310b0ed66c9a867301232c30ed3bcf84f376b4",
+      "bytes": 2970,
+      "kind": "context",
+      "group": "supplemental",
+      "records": 2
+    },
+    {
+      "path": ".review-packets/tia312/map-contexts-supplemental.json",
+      "sha256": "5bdc35d4dc91152f0353aa6e5df819f45b1b9b58f0791072051b8f2a8783dcab",
+      "bytes": 2043,
+      "kind": "map",
+      "group": "contexts",
+      "records": 2
+    }
+  ],
+  "controls": [
+    {
+      "path": ".review-packets/tia312/README.md",
+      "sha256": "8a3287b477ea2e7a9e566362e3e23d69748e0a8baf377b5137e6abb13c4d77b3"
+    },
+    {
+      "path": ".review-packets/tia312/hosted-config.yaml",
+      "sha256": "d99969bf3f1bd855221a42c41a7c2859b13107b454c75f915c4d2411d1ab47f8"
+    },
+    {
+      "path": ".review-packets/tia312/hosted-request.md",
+      "sha256": "211539ba22514a21d6f4ee78a23c85756c12a9c4ebdb15f73f53ee7ccb50757e"
+    }
+  ],
+  "self_hash": "External Git/phase receipt binds index.json; index does not hash itself.",
+  "hosted_selection": {
+    "exact_paths": [
+      ".review-packets/tia312/README.md",
+      ".review-packets/tia312/code-bridge-config-01.json",
+      ".review-packets/tia312/code-enum-01.json",
+      ".review-packets/tia312/code-enum-02.json",
+      ".review-packets/tia312/code-enum-03.json",
+      ".review-packets/tia312/code-enum-04.json",
+      ".review-packets/tia312/code-enum-05.json",
+      ".review-packets/tia312/code-enum-06.json",
+      ".review-packets/tia312/code-enum-07.json",
+      ".review-packets/tia312/code-enum-08.json",
+      ".review-packets/tia312/code-handoff-01.json",
+      ".review-packets/tia312/code-integration-tests-01.json",
+      ".review-packets/tia312/code-integration-tests-02.json",
+      ".review-packets/tia312/code-markers-01.json",
+      ".review-packets/tia312/code-markers-02.json",
+      ".review-packets/tia312/code-markers-03.json",
+      ".review-packets/tia312/code-markers-04.json",
+      ".review-packets/tia312/code-runners-01.json",
+      ".review-packets/tia312/code-schemas-01.json",
+      ".review-packets/tia312/context-interfaces-01.json",
+      ".review-packets/tia312/context-interfaces-02.json",
+      ".review-packets/tia312/context-interfaces-03.json",
+      ".review-packets/tia312/context-interfaces-04.json",
+      ".review-packets/tia312/context-interfaces-05.json",
+      ".review-packets/tia312/context-interfaces-06.json",
+      ".review-packets/tia312/context-interfaces-07.json",
+      ".review-packets/tia312/context-interfaces-08.json",
+      ".review-packets/tia312/context-interfaces-09.json",
+      ".review-packets/tia312/context-interfaces-10.json",
+      ".review-packets/tia312/context-interfaces-11.json",
+      ".review-packets/tia312/context-interfaces-12.json",
+      ".review-packets/tia312/context-interfaces-13.json",
+      ".review-packets/tia312/context-supplemental-01.json",
+      ".review-packets/tia312/hosted-config.yaml",
+      ".review-packets/tia312/hosted-request.md",
+      ".review-packets/tia312/index.json",
+      ".review-packets/tia312/map-contexts-01.json",
+      ".review-packets/tia312/map-contexts-02.json",
+      ".review-packets/tia312/map-contexts-supplemental.json",
+      ".review-packets/tia312/map-identities-01.json",
+      ".review-packets/tia312/map-identities-02.json",
+      ".review-packets/tia312/map-targets-01.json",
+      ".review-packets/tia312/map-targets-02.json",
+      ".review-packets/tia312/map-targets-03.json"
+    ],
+    "explicit_native_exclusion": "!native/**",
+    "inheritance": false,
+    "metadata_diff_paths": 44,
+    "conservative_paths_plus_inline_config": 45,
+    "observed_cap": 150,
+    "actual_provider_admission": "Not performed; coordinator must verify after guarded submission."
+  }
+}

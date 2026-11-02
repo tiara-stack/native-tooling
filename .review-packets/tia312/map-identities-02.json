@@ -1,0 +1,26 @@
+{
+  "format": "tia312-review-packet-v1",
+  "kind": "map",
+  "group": "identities",
+  "product_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+  "records": [
+    {
+      "target": "T109",
+      "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/rules/effect/unsafe_effect_type_assertion.rs",
+      "public_id": "effect/unsafe-effect-type-assertion",
+      "backend_name": "unsafe_effect_type_assertion",
+      "effect_name": "unsafeEffectTypeAssertion",
+      "rust_type": "UnsafeEffectTypeAssertion",
+      "enum_variant": "EffectUnsafeEffectTypeAssertion",
+      "internal_id": 412,
+      "parameters": {
+        "backend": "tsgolint",
+        "plugin": "effect",
+        "category": "correctness",
+        "fix": "none",
+        "options": null,
+        "version": "1.58.0"
+      }
+    }
+  ]
+}

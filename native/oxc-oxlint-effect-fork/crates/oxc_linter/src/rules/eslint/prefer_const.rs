@@ -1,4 +1,6 @@
-use oxc_ast::ast::{AssignmentTarget, AssignmentTargetMaybeDefault, AssignmentTargetProperty};
+use oxc_ast::ast::{
+    AssignmentTarget, AssignmentTargetMaybeDefault, AssignmentTargetProperty, VariableDeclaration,
+};
 use oxc_ast::{AstKind, ast::VariableDeclarationKind};
 use oxc_diagnostics::OxcDiagnostic;
 use oxc_macros::declare_oxc_lint;
@@ -9,6 +11,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     AstNode,
+    ast_util::outermost_paren_parent,
     context::LintContext,
     fixer::{RuleFix, RuleFixer},
     rule::{DefaultRuleConfig, Rule},
@@ -48,6 +51,14 @@ declare_oxc_lint!(
     ///
     /// Requires `const` declarations for variables that are never
     /// reassigned after their initial declaration.
+    ///
+    /// #### Ignored Files
+    /// This rule ignores `.svelte` and `.vue` files entirely. Oxlint only parses the
+    /// `<script>` blocks of these files, so a binding that the template reassigns looks
+    /// like it is never reassigned, and turning it into a `const` makes the framework
+    /// compiler fail. In Svelte the template writes through `bind:this={el}` and
+    /// `bind:value={x}`; in Vue a `<script setup>` `let` is a `setup-let` binding that
+    /// `v-model="x"` and inline handlers such as `@click="x = 1"` assign to directly.
     ///
     /// ### Why is this bad?
     ///
@@ -92,11 +103,13 @@ declare_oxc_lint!(
     style,
     conditional_fix,
     config = PreferConst,
+    version = "1.43.0",
+    short_description = "Requires `const` declarations for variables that are never reassigned after their initial declaration.",
 );
 
 impl Rule for PreferConst {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
@@ -187,6 +200,11 @@ impl Rule for PreferConst {
             }
         }
     }
+
+    fn should_run(&self, ctx: &crate::context::ContextHost) -> bool {
+        // ignore svelte/vue: their templates can reassign a binding, which we can't see.
+        !ctx.file_extension().is_some_and(|ext| ext == "svelte" || ext == "vue")
+    }
 }
 
 impl PreferConst {
@@ -194,7 +212,7 @@ impl PreferConst {
     /// Returns `noop` if the fix should not be applied.
     fn fix_let_to_const<'a>(
         fixer: RuleFixer<'_, 'a>,
-        decl: &oxc_ast::ast::VariableDeclaration<'a>,
+        decl: &VariableDeclaration<'a>,
         declarator_index: usize,
         all_const: bool,
         is_for_in_of_init: bool,
@@ -219,7 +237,8 @@ impl PreferConst {
         let decl_span = decl.span();
         let decl_text = decl_span.source_text(ctx.source_text());
 
-        if let Some(let_pos) = decl_text.find("let") {
+        if let Some(let_pos) = fixer.find_next_token_within(decl_span.start, decl_span.end, "let") {
+            let let_pos = let_pos as usize;
             let new_text = format!("{}const{}", &decl_text[..let_pos], &decl_text[let_pos + 3..]);
             fixer.replace(decl_span, new_text)
         } else {
@@ -528,6 +547,44 @@ impl PreferConst {
             return false;
         }
 
+        // A separate assignment can become a declaration only when it is a standalone
+        // statement. Assignments used as arguments, initializers, etc. must remain `let`.
+        // Only traverse nodes that can form a binding pattern. In particular, TS
+        // assertions and non-null expressions cannot be used in a const binding.
+        let Some(assignment) = ctx.nodes().ancestors(write_node_id).find(|node| {
+            !matches!(
+                node.kind(),
+                AstKind::ParenthesizedExpression(_)
+                    | AstKind::ArrayAssignmentTarget(_)
+                    | AstKind::ObjectAssignmentTarget(_)
+                    | AstKind::AssignmentTargetRest(_)
+                    | AstKind::AssignmentTargetWithDefault(_)
+                    | AstKind::AssignmentTargetPropertyIdentifier(_)
+                    | AstKind::AssignmentTargetPropertyProperty(_)
+            )
+        }) else {
+            return false;
+        };
+        if !matches!(assignment.kind(), AstKind::AssignmentExpression(_)) {
+            return false;
+        }
+        let Some(statement) = outermost_paren_parent(assignment, ctx.semantic()) else {
+            return false;
+        };
+        if !matches!(statement.kind(), AstKind::ExpressionStatement(_))
+            || !matches!(
+                ctx.nodes().parent_kind(statement.id()),
+                AstKind::Program(_)
+                    | AstKind::BlockStatement(_)
+                    | AstKind::FunctionBody(_)
+                    | AstKind::StaticBlock(_)
+                    | AstKind::SwitchCase(_)
+                    | AstKind::TSModuleBlock(_)
+            )
+        {
+            return false;
+        }
+
         // Check if the write is inside any control flow, loops, or certain destructuring assignments
         // If a destructuring assignment:
         // 1. Is inside a block (not at function/program level), OR
@@ -536,7 +593,6 @@ impl PreferConst {
         //
         // EXCEPTION: Variables declared in for-in/of loop bodies get fresh bindings per iteration
         let mut is_invalid_destructuring = false;
-        let mut is_in_loop_body = false;
 
         for ancestor in ctx.nodes().ancestors(write_node_id).skip(1) {
             match ancestor.kind() {
@@ -549,25 +605,9 @@ impl PreferConst {
                 // Check for for-in/of loops FIRST before other checks
                 // Variables declared in the loop body get a fresh binding each iteration
                 AstKind::ForInStatement(_) | AstKind::ForOfStatement(_) => {
-                    // Check if the variable's scope is a child of this loop's scope
                     let loop_scope = ancestor.scope_id();
-                    let mut current_scope = Some(symbol_scope);
-
-                    // Walk up the scope tree from the variable's scope
-                    while let Some(scope) = current_scope {
-                        if scope == loop_scope {
-                            // We found the loop scope - variable is NOT in loop body
-                            break;
-                        }
-                        let parent_scope = symbol_table.scope_parent_id(scope);
-                        if parent_scope == Some(loop_scope) {
-                            // The variable's scope's parent is the loop scope
-                            // This means the variable is declared in the loop body
-                            is_in_loop_body = true;
-                            break;
-                        }
-                        current_scope = parent_scope;
-                    }
+                    let is_in_loop_body =
+                        symbol_table.scope_is_descendant_of(symbol_scope, loop_scope);
 
                     if !is_in_loop_body {
                         // Variable is declared outside the loop - can't be const
@@ -679,16 +719,8 @@ impl PreferConst {
 
                     // Otherwise, check if variable is declared inside the for loop scope
                     let control_flow_scope = ancestor.scope_id();
-                    let mut current = symbol_table.scope_parent_id(symbol_scope);
-                    let mut is_inside = false;
-
-                    while let Some(scope) = current {
-                        if scope == control_flow_scope {
-                            is_inside = true;
-                            break;
-                        }
-                        current = symbol_table.scope_parent_id(scope);
-                    }
+                    let is_inside =
+                        symbol_table.scope_is_descendant_of(symbol_scope, control_flow_scope);
 
                     if !is_inside {
                         return false;
@@ -710,18 +742,8 @@ impl PreferConst {
                     // If yes, the variable is declared inside the control flow
                     let control_flow_scope = ancestor.scope_id();
 
-                    // Walk up from symbol_scope - if we find control_flow_scope as a parent,
-                    // then symbol_scope is inside the control flow
-                    let mut current = symbol_table.scope_parent_id(symbol_scope);
-                    let mut is_inside = false;
-
-                    while let Some(scope) = current {
-                        if scope == control_flow_scope {
-                            is_inside = true;
-                            break;
-                        }
-                        current = symbol_table.scope_parent_id(scope);
-                    }
+                    let is_inside =
+                        symbol_table.scope_is_descendant_of(symbol_scope, control_flow_scope);
 
                     if !is_inside {
                         // Variable is declared outside the control flow but written inside
@@ -900,6 +922,26 @@ fn test() {
             "class C { static { () => a; let a = 1; } };",
             Some(serde_json::json!([{ "ignoreReadBeforeAssign": true }])),
         ), // { "ecmaVersion": 2022 }
+        (
+            "let titleWrapper: HTMLElement;
+             let descriptionWrapper: HTMLElement;
+             const item = _.div({ className: [this.attr.classFamily] },
+                 titleWrapper = _.div({ className: [this.attr.classFamily] },
+                     _.div({ className: [this.attr.classFamily] })),
+                 descriptionWrapper = _.div({ className: [this.attr.classFamily] },
+                     _.div({ className: [this.attr.classFamily] }))
+             );",
+            None,
+        ),
+        ("let a; foo(a = 1);", None),
+        ("let a; const b = (a = 1);", None),
+        ("let a; const b = { value: a = 1 };", None),
+        ("function f() { let a; return a = 1; }", None),
+        ("let a; obj.b = a = 1;", None),
+        ("let a; foo(({ a } = obj));", None),
+        ("for (const item of items) { let a; foo(a = item); }", None),
+        ("namespace N { let value; use(value = 1); }", None),
+        ("module N { let value; use(value = 1); }", None),
     ];
 
     let fail = vec![
@@ -1194,6 +1236,115 @@ fn test() {
 }
 
 #[test]
+fn test_typescript_assignment_targets() {
+    use crate::tester::Tester;
+
+    let pass = vec![
+        "let a: any; (a as number) = 1; use(a);",
+        "let a: any; a! = 1; use(a);",
+        "let a: any; (<number>a) = 1; use(a);",
+        "let a: any; (a satisfies number) = 1; use(a);",
+        "let a: any; [(a as number)] = values; use(a);",
+        "let a: any; ({ value: a! } = obj); use(a);",
+    ];
+
+    Tester::new(PreferConst::NAME, PreferConst::PLUGIN, pass, vec![])
+        .change_rule_path("test.ts")
+        .intentionally_allow_no_fix_tests()
+        .test();
+}
+
+#[test]
+fn test_svelte() {
+    use crate::tester::Tester;
+
+    // The markup is stripped before linting; it documents the template-side write
+    // (`bind:this`, `bind:value`) that makes these bindings reassigned in reality.
+    let pass = vec![
+        (
+            "<script lang=\"ts\">
+                let divEl: HTMLElement | null = $state(null);
+             </script>
+             <div bind:this={divEl}></div>",
+            None,
+        ),
+        (
+            "<script>
+                let value = \"\";
+             </script>
+             <input bind:value />",
+            None,
+        ),
+        // Both blocks of a two-script component are linted; neither may report.
+        (
+            "<script module>
+                let shared = 0;
+             </script>
+             <script>
+                let value = \"\";
+             </script>
+             <input bind:value />",
+            None,
+        ),
+    ];
+
+    Tester::new(PreferConst::NAME, PreferConst::PLUGIN, pass, vec![])
+        .change_rule_path("test.svelte")
+        .intentionally_allow_no_fix_tests()
+        .test();
+}
+
+#[test]
+fn test_vue() {
+    use crate::tester::Tester;
+
+    // A `<script setup>` `let` is a `setup-let` binding: `v-model` and inline handlers
+    // compile to direct assignments to it, so `const` breaks the render function.
+    let pass = vec![
+        (
+            "<script setup>
+                let msg = \"\";
+             </script>
+             <template><input v-model=\"msg\" /></template>",
+            None,
+        ),
+        (
+            "<script setup lang=\"ts\">
+                let open = false;
+             </script>
+             <template><button @click=\"open = !open\">{{ open }}</button></template>",
+            None,
+        ),
+    ];
+
+    Tester::new(PreferConst::NAME, PreferConst::PLUGIN, pass, vec![])
+        .change_rule_path("test.vue")
+        .intentionally_allow_no_fix_tests()
+        .test();
+}
+
+#[test]
+fn test_astro() {
+    use crate::tester::Tester;
+
+    // Guards against over-suppressing every partial-loader extension: Astro templates
+    // are expression-only and cannot assign, so the rule must keep reporting there.
+    let fail = vec![(
+        "---
+            let a = 1;
+            console.log(a);
+         ---
+         <p>{a}</p>",
+        None,
+    )];
+
+    Tester::new(PreferConst::NAME, PreferConst::PLUGIN, vec![], fail)
+        .change_rule_path("test.astro")
+        .intentionally_allow_no_fix_tests()
+        .test();
+}
+
+#[test]
 fn test_oxc() {
     use crate::tester::Tester;
 
@@ -1372,6 +1523,9 @@ fn test_oxc() {
             }",
             Some(serde_json::json!([{ "ignoreReadBeforeAssign": false }])),
         ),
+        // Unlike ESLint, preserve diagnostics for standalone assignments in TS module blocks.
+        ("namespace N { let value; value = 1; use(value); }", None),
+        ("module N { let value; (value = 1); use(value); }", None),
     ];
 
     let fix = vec![

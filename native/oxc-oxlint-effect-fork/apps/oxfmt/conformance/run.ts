@@ -1,21 +1,33 @@
 // oxlint-disable no-console, no-await-in-loop
 
 import { createTwoFilesPatch } from "diff";
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  globSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { join, relative } from "node:path";
 import prettier from "prettier";
+import * as sveltePlugin from "prettier-plugin-svelte";
 import { format } from "../dist/index.js";
 
 const CONFORMANCE_DIR = import.meta.dirname;
 const FIXTURES_DIR = join(CONFORMANCE_DIR, "fixtures");
+const EXTERNALS_DIR = join(FIXTURES_DIR, "externals");
 const SNAPSHOTS_DIR = join(CONFORMANCE_DIR, "snapshots");
+const REPO_ROOT = join(CONFORMANCE_DIR, "..", "..", "..");
+const DIVERGENCES_FILES = globSync("{apps/oxfmt,crates/oxc_formatter*}/DIVERGENCES.md", {
+  cwd: REPO_ROOT,
+});
 
 type Category = {
   name: string;
   sources: Source[];
   optionSets: Record<string, unknown>[];
-  /** Notes for known failures, keyed by fixture name (exact match) */
-  notes?: Record<string, string>;
 };
 
 type Source = {
@@ -23,130 +35,216 @@ type Source = {
   ext?: string;
   /** Files to exclude (e.g. test runner files that are not fixtures) */
   excludes?: string[];
+  /** Transform relative path to a filepath for formatting (e.g. "xxx/input.html" → "xxx.svelte") */
+  resolveFilePath?: (name: string) => string;
 };
 
 const categories: Category[] = [
   {
     name: "js-in-vue",
     sources: [
-      { dir: join(FIXTURES_DIR, "prettier"), ext: ".vue" },
-      { dir: join(FIXTURES_DIR, "vue-vben-admin"), ext: ".vue" },
+      { dir: join(EXTERNALS_DIR, "prettier"), ext: ".vue" },
+      { dir: join(EXTERNALS_DIR, "vue-vben-admin"), ext: ".vue" },
       { dir: join(FIXTURES_DIR, "edge-cases", "js-in-vue") },
     ],
     optionSets: [
       { printWidth: 80 },
       { printWidth: 100, vueIndentScriptAndStyle: true, singleQuote: true },
     ],
-    notes: {
-      "prettier/vue/multiparser/lang-tsx.vue": "`lang=tsx` is not supported",
-      "vue-vben-admin/effects/common-ui/src/components/api-component/api-component.vue":
-        "`<T = any,>() => {}` comma in generic param is removed even in .ts(x) file",
-    },
   },
   {
     name: "gql-in-js",
     sources: [
       {
-        dir: join(FIXTURES_DIR, "prettier", "js/multiparser-graphql"),
+        dir: join(EXTERNALS_DIR, "prettier", "js/multiparser-graphql"),
         ext: ".js",
         excludes: ["format.test.js"],
       },
       { dir: join(FIXTURES_DIR, "edge-cases", "gql-in-js") },
     ],
     optionSets: [{ printWidth: 80 }, { printWidth: 100 }],
-    notes: {},
   },
   {
     name: "css-in-js",
     sources: [
       {
-        dir: join(FIXTURES_DIR, "prettier", "js/multiparser-css"),
+        dir: join(EXTERNALS_DIR, "prettier", "js/multiparser-css"),
         ext: ".js",
         excludes: ["format.test.js"],
       },
       {
-        dir: join(FIXTURES_DIR, "prettier", "jsx/embed"),
+        dir: join(EXTERNALS_DIR, "prettier", "jsx/embed"),
         ext: ".js",
         excludes: ["format.test.js"],
       },
       { dir: join(FIXTURES_DIR, "edge-cases", "css-in-js") },
     ],
     optionSets: [{ printWidth: 80 }, { printWidth: 100 }],
-    notes: {
-      "prettier/js/multiparser-css/styled-components.js": "`Xxx.extend` not recognized as tag",
-    },
   },
   {
     name: "html-in-js",
     sources: [
       {
-        dir: join(FIXTURES_DIR, "prettier", "js/multiparser-html"),
+        dir: join(EXTERNALS_DIR, "prettier", "js/multiparser-html"),
         ext: ".js",
         excludes: ["format.test.js"],
       },
       {
-        dir: join(FIXTURES_DIR, "webawesome"),
+        dir: join(EXTERNALS_DIR, "prettier", "js/embeded"),
+        ext: ".js",
+        excludes: ["format.test.js"],
+      },
+      {
+        dir: join(EXTERNALS_DIR, "webawesome"),
         ext: ".ts",
       },
       { dir: join(FIXTURES_DIR, "edge-cases", "html-in-js") },
     ],
     optionSets: [{ printWidth: 80 }, { printWidth: 100, htmlWhitespaceSensitivity: "ignore" }],
-    notes: {
-      "prettier/js/multiparser-html/issue-10691.js":
-        "js-in-html(`<script>`)-in-js needs lot more work; Please see oxc_formatter/src/print/template/embed/html.rs",
-      "webawesome/relative-time/relative-time.test.ts":
-        "html-in-js: Need to solve `label({ embed, hug }))` + `shouldExpandLastArg`",
-      "webawesome/slider/slider.ts":
-        "`@decorator` + union type: https://github.com/oxc-project/oxc/issues/20519",
-    },
   },
   {
     name: "angular-in-js",
     sources: [
       {
-        dir: join(FIXTURES_DIR, "prettier", "typescript/angular-component-examples"),
+        dir: join(EXTERNALS_DIR, "prettier", "typescript/angular-component-examples"),
         ext: ".ts",
       },
       { dir: join(FIXTURES_DIR, "edge-cases", "angular-in-js") },
     ],
     optionSets: [{ printWidth: 80 }, { printWidth: 100, htmlWhitespaceSensitivity: "ignore" }],
-    notes: {},
   },
   {
     name: "md-in-js",
     sources: [
       {
-        dir: join(FIXTURES_DIR, "prettier", "js/multiparser-markdown"),
+        dir: join(EXTERNALS_DIR, "prettier", "js/multiparser-markdown"),
         ext: ".js",
         excludes: ["format.test.js"],
       },
       { dir: join(FIXTURES_DIR, "edge-cases", "md-in-js") },
     ],
     optionSets: [{ printWidth: 80 }, { printWidth: 100, proseWrap: "always" }],
-    notes: {},
   },
   {
     name: "xxx-in-js-comment",
     sources: [
       {
-        dir: join(FIXTURES_DIR, "prettier", "js/multiparser-html/language-comment"),
+        dir: join(EXTERNALS_DIR, "prettier", "js/multiparser-html/language-comment"),
         ext: ".js",
         excludes: ["format.test.js"],
       },
       {
-        dir: join(FIXTURES_DIR, "prettier", "js/multiparser-comments"),
+        dir: join(EXTERNALS_DIR, "prettier", "js/multiparser-comments"),
         ext: ".js",
         excludes: ["format.test.js"],
       },
       { dir: join(FIXTURES_DIR, "edge-cases", "xxx-in-js-comment") },
     ],
-    optionSets: [{ printWidth: 80 }, { printWith: 100 }],
-    notes: {},
+    optionSets: [{ printWidth: 80 }, { printWidth: 100 }],
+  },
+  {
+    name: "svelte",
+    sources: [
+      {
+        dir: join(EXTERNALS_DIR, "plugin-svelte"),
+        ext: "input.html",
+        excludes: ["syntax-error"],
+        resolveFilePath: (name) => name.replace("/input.html", ".svelte"),
+      },
+    ],
+    optionSets: [
+      { printWidth: 80, svelte: {} },
+      {
+        printWidth: 120,
+        singleQuote: true,
+        htmlWhitespaceSensitivity: "ignore",
+        bracketSameLine: true,
+        // For prettier
+        svelteIndentScriptAndStyle: true,
+        svelteSortOrder: "options-scripts-styles-markup",
+        // For oxfmt
+        svelte: {
+          indentScriptAndStyle: true,
+          sortOrder: "options-scripts-styles-markup",
+        },
+      },
+    ],
+  },
+  {
+    name: "markdown",
+    sources: [
+      {
+        dir: join(EXTERNALS_DIR, "prettier", "markdown"),
+        ext: ".md",
+        // Cursor offsets and plugin loading are not formatter concerns
+        excludes: ["markdown/cursor/", "markdown/broken-plugins/"],
+      },
+      { dir: join(FIXTURES_DIR, "edge-cases", "xxx-in-md") },
+    ],
+    optionSets: [{ printWidth: 80 }, { printWidth: 100, proseWrap: "always" }],
+  },
+  {
+    // Real-world documents, dense with fenced code (css / html / js)
+    name: "markdown-mdn",
+    sources: [
+      { dir: join(EXTERNALS_DIR, "mdn-learn"), ext: ".md" },
+      { dir: join(EXTERNALS_DIR, "mdn-css-guides"), ext: ".md" },
+    ],
+    // mdn's own `.prettierrc` first: the documents are already formatted by it.
+    // `proseWrap: always` is left to the `markdown` category,
+    // mdn's GitHub alerts and macros would fail on known divergences (`line-shapes`) in bulk.
+    optionSets: [{ printWidth: 80, bracketSameLine: true }, { printWidth: 100 }],
+  },
+  {
+    name: "graphql",
+    sources: [{ dir: join(EXTERNALS_DIR, "gitlab"), ext: ".graphql" }],
+    optionSets: [{ printWidth: 80 }, { printWidth: 100 }],
+  },
+  {
+    name: "less",
+    sources: [{ dir: join(EXTERNALS_DIR, "ng-zorro-antd"), ext: ".less" }],
+    optionSets: [{ printWidth: 80 }, { printWidth: 100 }],
+  },
+  {
+    name: "css",
+    sources: [
+      { dir: join(EXTERNALS_DIR, "mantine"), ext: ".css" },
+      { dir: join(EXTERNALS_DIR, "docusaurus"), ext: ".css" },
+    ],
+    optionSets: [{ printWidth: 80 }, { printWidth: 100 }],
+  },
+  {
+    name: "yaml",
+    sources: [
+      { dir: join(EXTERNALS_DIR, "aws-cloudformation-templates"), ext: ".yaml" },
+      { dir: join(EXTERNALS_DIR, "aws-cloudformation-templates"), ext: ".yml" },
+      { dir: join(EXTERNALS_DIR, "gitlab-ci-templates"), ext: ".yml" },
+      { dir: join(EXTERNALS_DIR, "gitlab"), ext: ".yml" },
+    ],
+    optionSets: [
+      { printWidth: 80 },
+      { printWidth: 100, tabWidth: 4, proseWrap: "always" },
+      { printWidth: 120, singleQuote: true, bracketSpacing: false, trailingComma: "none" },
+    ],
+  },
+  {
+    name: "scss",
+    sources: [
+      { dir: join(EXTERNALS_DIR, "vue-vben-admin"), ext: ".scss" },
+      { dir: join(EXTERNALS_DIR, "gitlab"), ext: ".scss" },
+    ],
+    optionSets: [{ printWidth: 80 }, { printWidth: 100 }],
+  },
+  {
+    name: "jsdoc",
+    sources: [{ dir: join(EXTERNALS_DIR, "svelte"), ext: ".js" }],
+    optionSets: [{ printWidth: 100 }],
   },
 ];
 
 // ---
 
+const divergences = collectDivergences();
 const results: CategoryResult[] = [];
 
 for (const category of categories) {
@@ -167,15 +265,45 @@ for (const category of categories) {
   }
 }
 
-writeReport(results);
+writeReport(results, divergences);
+
+const failedNames = new Set(
+  results.flatMap((r) => r.optionSetResults.flatMap((o) => o.failures.map((f) => f.name))),
+);
+for (const name of failedNames) {
+  if (!divergences.has(name)) {
+    console.warn(`WARNING: "${name}" fails and no DIVERGENCES.md entry lists it (unclassified)`);
+  }
+}
+for (const [name, refs] of divergences) {
+  if (!failedNames.has(name)) {
+    console.warn(`WARNING: "${name}" passes but ${refs.join(", ")} lists it, remove it?`);
+  }
+}
 
 // ---
+
+/** Fixture name -> `<file>#<slug>` for every backticked `externals/` / `edge-cases/` path in a DIVERGENCES.md entry. */
+function collectDivergences(): Map<string, string[]> {
+  const map = new Map<string, string[]>();
+  for (const file of DIVERGENCES_FILES) {
+    let slug = "";
+    for (const line of readFileSync(join(REPO_ROOT, file), "utf8").split("\n")) {
+      if (line.startsWith("## ")) slug = line.slice(3).trim();
+      for (const [, name] of line.matchAll(
+        /`(?:conformance\/fixtures\/)?((?:externals|edge-cases)\/[^`]+)`/g,
+      )) {
+        map.set(name, [...(map.get(name) ?? []), `${file}#${slug}`]);
+      }
+    }
+  }
+  return map;
+}
 
 type Fixture = { name: string; fullPath: string };
 
 type Failure = {
   name: string;
-  note?: string;
   oxfmt: string;
   prettier: string;
 };
@@ -198,7 +326,10 @@ function collectFixtures(sources: Source[]): Fixture[] {
   for (const source of sources) {
     if (!existsSync(source.dir)) continue;
 
-    for (const entry of readdirSync(source.dir, { withFileTypes: true, recursive: true })) {
+    for (const entry of readdirSync(source.dir, {
+      withFileTypes: true,
+      recursive: true,
+    })) {
       if (!entry.isFile()) continue;
       if (source.ext && !entry.name.endsWith(source.ext)) continue;
 
@@ -206,7 +337,8 @@ function collectFixtures(sources: Source[]): Fixture[] {
       const relPath = relative(FIXTURES_DIR, fullPath);
       if (source.excludes?.some((s) => relPath.includes(s))) continue;
 
-      results.push({ name: relPath, fullPath });
+      const name = source.resolveFilePath?.(relPath) ?? relPath;
+      results.push({ name, fullPath });
     }
   }
 
@@ -233,14 +365,18 @@ async function runCategory(category: Category, fixtures: Fixture[]): Promise<Cat
       } else {
         failures.push({
           name: fixture.name,
-          note: category.notes?.[fixture.name],
           oxfmt: oxfmtResult,
           prettier: prettierResult,
         });
       }
     }
 
-    optionSetResults.push({ options, passed, total: fixtures.length, failures });
+    optionSetResults.push({
+      options,
+      passed,
+      total: fixtures.length,
+      failures,
+    });
   }
 
   return { name: category.name, optionSetResults };
@@ -254,8 +390,9 @@ async function compareWithPrettier(
   let prettierResult: string;
   try {
     prettierResult = await prettier.format(content, {
-      filepath: fileName,
       ...options,
+      filepath: fileName,
+      plugins: [sveltePlugin],
     });
   } catch {
     prettierResult = "ERROR";
@@ -272,7 +409,7 @@ async function compareWithPrettier(
   return [oxfmtResult, prettierResult];
 }
 
-function writeReport(results: CategoryResult[]) {
+function writeReport(results: CategoryResult[], divergences: Map<string, string[]>) {
   const lines: string[] = [];
   const diffsDir = join(SNAPSHOTS_DIR, "diffs");
 
@@ -286,7 +423,11 @@ function writeReport(results: CategoryResult[]) {
     // Collect all failures per fixture across option sets
     const failuresByFixture = new Map<
       string,
-      { optionIndex: number; options: Record<string, unknown>; failure: Failure }[]
+      {
+        optionIndex: number;
+        options: Record<string, unknown>;
+        failure: Failure;
+      }[]
     >();
     for (let i = 0; i < result.optionSetResults.length; i++) {
       for (const failure of result.optionSetResults[i].failures) {
@@ -295,7 +436,11 @@ function writeReport(results: CategoryResult[]) {
           entries = [];
           failuresByFixture.set(failure.name, entries);
         }
-        entries.push({ optionIndex: i + 1, options: result.optionSetResults[i].options, failure });
+        entries.push({
+          optionIndex: i + 1,
+          options: result.optionSetResults[i].options,
+          failure,
+        });
       }
     }
 
@@ -315,13 +460,12 @@ function writeReport(results: CategoryResult[]) {
       lines.push("");
 
       if (r.failures.length > 0) {
-        lines.push("| File | Note |");
-        lines.push("| :--- | :--- |");
         for (const failure of r.failures) {
           const safeName = failure.name.replaceAll("/", "__");
           const diffRelPath = `diffs/${result.name}/${safeName}.md`;
-          const diffLink = `[${failure.name}](${diffRelPath})`;
-          lines.push(`| ${diffLink} | ${failure.note ?? ""} |`);
+          const refs = divergences.get(failure.name)?.join(", ") ?? "unclassified";
+          lines.push(`- [${failure.name}](${diffRelPath})`);
+          lines.push(`  - ${refs}`);
         }
         lines.push("");
       }
@@ -339,7 +483,11 @@ function writeDiffFile(
   diffsDir: string,
   categoryName: string,
   fixtureName: string,
-  entries: { optionIndex: number; options: Record<string, unknown>; failure: Failure }[],
+  entries: {
+    optionIndex: number;
+    options: Record<string, unknown>;
+    failure: Failure;
+  }[],
 ) {
   const safeName = fixtureName.replaceAll("/", "__");
   const dir = join(diffsDir, categoryName);
@@ -348,14 +496,6 @@ function writeDiffFile(
   const lines: string[] = [];
   lines.push(`# ${fixtureName}`);
   lines.push("");
-
-  const {
-    failure: { note },
-  } = entries[0];
-  if (note) {
-    lines.push(`> ${note}`);
-    lines.push("");
-  }
 
   for (const entry of entries) {
     lines.push(`## Option ${entry.optionIndex}`);

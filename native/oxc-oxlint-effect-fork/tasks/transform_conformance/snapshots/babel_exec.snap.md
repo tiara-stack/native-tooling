@@ -1,14 +1,23 @@
-commit: 0124e7c7
+commit: 4f4ef5d4
 
-node: v24.14.0
+node: v26.5.0
 
-Passed: 324 of 413 (78.45%)
+Passed: 318 of 416 (76.44%)
 
 Failures:
 
 ./fixtures/babel/babel-plugin-transform-arrow-functions-test-fixtures-arrow-functions-implicit-var-arguments-exec.test.js
-Parse failure: 'eval' and 'arguments' cannot be used as a binding identifier in strict mode
-At file: /fixtures/babel/babel-plugin-transform-arrow-functions-test-fixtures-arrow-functions-implicit-var-arguments-exec.test.js:4:5
+./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-arrow-functions-test-fixtures-arrow-functions-implicit-var-arguments-exec.test.js:5
+	var arguments = [
+	    ^^^^^^^^^
+
+SyntaxError: Unexpected eval or arguments in strict mode
+    at new Script (node:vm:118:7)
+    at createScript (node:vm:270:10)
+    at Object.runInThisContext (node:vm:318:10)
+    at VitestModuleRunner.directRequest (./node_modules/.pnpm/vite@8.3.1_@types+node@25.0.2_esbuild@0.28.2_terser@5.44.1_tsx@4.23.13/node_modules/vite/dist/node/module-runner.js:1272:80)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at VitestModuleRunner.cachedRequest (./node_modules/.pnpm/vite@8.3.1_@types+node@25.0.2_esbuild@0.28.2_terser@5.44.1_tsx@4.23.13/node_modules/vite/dist/node/module-runner.js:1179:73)
 
 ./fixtures/babel/babel-plugin-transform-async-generator-functions-test-fixtures-async-generators-await-in-finally-exec.test.js
 AssertionError: expected { value: 2, done: true } to deeply equal { value: 4, done: false }
@@ -29,12 +38,64 @@ AssertionError: expected undefined to be 'hello' // Object.is equality
     at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-nested-class-super-call-in-decorator-exec.test.js:21:28
 
 ./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-nested-class-super-property-in-accessor-key-exec.test.js
-Parse failure: Unexpected token `[`. Expected * for generator, private key, identifier or async
-At file: /fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-nested-class-super-property-in-accessor-key-exec.test.js:14:16
+./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-nested-class-super-property-in-accessor-key-exec.test.js:15
+	      accessor [super.toString()] = "hello";
+	               ^
+
+SyntaxError: Unexpected token '['
+    at new Script (node:vm:118:7)
+    at createScript (node:vm:270:10)
+    at Object.runInThisContext (node:vm:318:10)
+    at VitestModuleRunner.directRequest (./node_modules/.pnpm/vite@8.3.1_@types+node@25.0.2_esbuild@0.28.2_terser@5.44.1_tsx@4.23.13/node_modules/vite/dist/node/module-runner.js:1272:80)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at VitestModuleRunner.cachedRequest (./node_modules/.pnpm/vite@8.3.1_@types+node@25.0.2_esbuild@0.28.2_terser@5.44.1_tsx@4.23.13/node_modules/vite/dist/node/module-runner.js:1179:73)
 
 ./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-nested-class-super-property-in-decorator-exec.test.js
 AssertionError: expected undefined to be 'hello' // Object.is equality
     at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-nested-class-super-property-in-decorator-exec.test.js:22:28
+
+./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-before-member-call-with-transform-exec.test.js
+AssertionError: expected undefined to deeply equal 1
+    at Foo.test (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-before-member-call-with-transform-exec.test.js:42:263)
+    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-before-member-call-with-transform-exec.test.js:128:6
+
+./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-before-property-with-transform-exec.test.js
+AssertionError: expected undefined to deeply equal 1
+    at Foo.test (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-before-property-with-transform-exec.test.js:41:261)
+    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-before-property-with-transform-exec.test.js:121:6
+
+./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-delete-property-with-transform-exec.test.js
+AssertionError: expected function to throw an error, but it didn't
+    at Foo.test (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-delete-property-with-transform-exec.test.js:69:9)
+    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-delete-property-with-transform-exec.test.js:169:6
+
+./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-in-function-param-with-transform-exec.test.js
+TypeError: Cannot convert undefined or null to object
+    at hasOwnProperty (<anonymous>)
+    at _classPrivateFieldBase (./npm/runtime/src/helpers/classPrivateFieldLooseBase.js:2:26)
+    at value (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-in-function-param-with-transform-exec.test.js:63:13)
+    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-in-function-param-with-transform-exec.test.js:44:164
+    at j (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-in-function-param-with-transform-exec.test.js:45:8)
+    at Foo.test (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-in-function-param-with-transform-exec.test.js:52:13)
+    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-in-function-param-with-transform-exec.test.js:71:6
+
+./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-member-optional-call-with-transform-exec.test.js
+TypeError: Cannot convert undefined or null to object
+    at hasOwnProperty (<anonymous>)
+    at _classPrivateFieldBase (./npm/runtime/src/helpers/classPrivateFieldLooseBase.js:2:26)
+    at value (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-member-optional-call-with-transform-exec.test.js:123:13)
+    at Foo.test (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-member-optional-call-with-transform-exec.test.js:24:99)
+    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-member-optional-call-with-transform-exec.test.js:131:6
+
+./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-optional-member-call-with-transform-exec.test.js
+AssertionError: expected undefined to deeply equal 1
+    at Foo.test (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-optional-member-call-with-transform-exec.test.js:41:254)
+    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-optional-member-call-with-transform-exec.test.js:131:6
+
+./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-optional-property-with-transform-exec.test.js
+AssertionError: expected undefined to deeply equal 1
+    at Foo.test (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-optional-property-with-transform-exec.test.js:40:252)
+    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-optional-chain-optional-property-with-transform-exec.test.js:124:6
 
 ./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-parenthesized-optional-member-call-exec.test.js
 TypeError: Cannot read properties of undefined (reading 'bind')
@@ -43,8 +104,13 @@ TypeError: Cannot read properties of undefined (reading 'bind')
 
 ./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-parenthesized-optional-member-call-with-transform-exec.test.js
 TypeError: Cannot read properties of undefined (reading 'bind')
-    at Foo.test (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-parenthesized-optional-member-call-with-transform-exec.test.js:20:61)
+    at Foo.test (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-parenthesized-optional-member-call-with-transform-exec.test.js:20:42)
     at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-loose-parenthesized-optional-member-call-with-transform-exec.test.js:78:12
+
+./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-optional-chain-delete-property-with-transform-exec.test.js
+AssertionError: expected function to throw an error, but it didn't
+    at Foo.test (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-optional-chain-delete-property-with-transform-exec.test.js:69:9)
+    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-optional-chain-delete-property-with-transform-exec.test.js:169:6
 
 ./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-private-static-shadow-exec.test.js
 TypeError: e.has is not a function
@@ -55,8 +121,6 @@ TypeError: e.has is not a function
 
 ./fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-public-computed-toPrimitive-exec.test.js
 AssertionError: expected [Function] to throw error including '@@toPrimitive must return a primitive…' but got 'Cannot convert object to primitive va…'
-    at Proxy.<anonymous> (./node_modules/.pnpm/@vitest+expect@4.1.2/node_modules/@vitest/expect/dist/index.js:1551:16)
-    at Proxy.<anonymous> (./node_modules/.pnpm/@vitest+expect@4.1.2/node_modules/@vitest/expect/dist/index.js:1155:15)
     at Proxy.methodWrapper (./node_modules/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)
     at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-properties-test-fixtures-public-computed-toPrimitive-exec.test.js:37:5
 
@@ -78,13 +142,18 @@ TypeError: attempted to use private field on non-instance
     at getFoo (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-static-block-test-fixtures-integration-loose-private-methods-access-exec.test.js:12:17)
     at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-static-block-test-fixtures-integration-loose-private-methods-access-exec.test.js:13:9
 
-./fixtures/babel/babel-plugin-transform-class-static-block-test-fixtures-integration-new-target-exec.test.js
-AssertionError: expected [Function Base] to be undefined // Object.is equality
-    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-class-static-block-test-fixtures-integration-new-target-exec.test.js:10:29
-
 ./fixtures/babel/babel-plugin-transform-explicit-resource-management-test-fixtures-transform-top-level-hoisting-mutate-outer-class-binding-exec.test.js
-Parse failure: 'import', and 'export' cannot be used outside of module code
-At file: /fixtures/babel/babel-plugin-transform-explicit-resource-management-test-fixtures-transform-top-level-hoisting-mutate-outer-class-binding-exec.test.js:4:1
+./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-explicit-resource-management-test-fixtures-transform-top-level-hoisting-mutate-outer-class-binding-exec.test.js:6
+	export { A };
+	^^^^^^
+
+SyntaxError: Unexpected token 'export'
+    at new Script (node:vm:118:7)
+    at createScript (node:vm:270:10)
+    at Object.runInThisContext (node:vm:318:10)
+    at VitestModuleRunner.directRequest (./node_modules/.pnpm/vite@8.3.1_@types+node@25.0.2_esbuild@0.28.2_terser@5.44.1_tsx@4.23.13/node_modules/vite/dist/node/module-runner.js:1272:80)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at VitestModuleRunner.cachedRequest (./node_modules/.pnpm/vite@8.3.1_@types+node@25.0.2_esbuild@0.28.2_terser@5.44.1_tsx@4.23.13/node_modules/vite/dist/node/module-runner.js:1179:73)
 
 ./fixtures/babel/babel-plugin-transform-object-rest-spread-test-fixtures-object-rest-for-x-assignment-shadowed-block-scoped-bindings-exec.test.js
 ReferenceError: Cannot access 'a' before initialization
@@ -434,16 +503,21 @@ ReferenceError: _Foo_brand is not defined
     at new Foo (./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-assumption-privateFieldsAsProperties-method-exec.test.js:8:40)
     at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-assumption-privateFieldsAsProperties-method-exec.test.js:19:13
 
-./fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-private-loose-rhs-not-object-exec.test.js
-AssertionError: expected [Function] to throw error including 'right-hand side of \'in\' should be a…' but got '_Class_brand is not defined'
-    at Proxy.<anonymous> (./node_modules/.pnpm/@vitest+expect@4.1.2/node_modules/@vitest/expect/dist/index.js:1551:16)
-    at Proxy.<anonymous> (./node_modules/.pnpm/@vitest+expect@4.1.2/node_modules/@vitest/expect/dist/index.js:1155:15)
-    at Proxy.methodWrapper (./node_modules/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)
-    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-private-loose-rhs-not-object-exec.test.js:176:5
+./fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-private-half-constructed-static-exec.test.js
+AssertionError: expected true to be false // Object.is equality
+    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-private-half-constructed-static-exec.test.js:29:15
 
 ./fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-private-loose-static-shadow-exec.test.js
 AssertionError: expected 2 to be 5 // Object.is equality
     at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-private-loose-static-shadow-exec.test.js:18:25
+
+./fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-private-static-field-initialization-exec.test.js
+AssertionError: expected [ true, true, true, true, true, …(3) ] to deeply equal [ false, true, true, false, …(4) ]
+    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-private-static-field-initialization-exec.test.js:23:17
+
+./fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-private-static-field-redeclared-in-loop-exec.test.js
+AssertionError: expected [ true, true, true, true ] to deeply equal [ false, true, true, true ]
+    at ./tasks/transform_conformance/fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-private-static-field-redeclared-in-loop-exec.test.js:15:18
 
 ./fixtures/babel/babel-plugin-transform-private-property-in-object-test-fixtures-private-static-shadow-exec.test.js
 AssertionError: expected 2 to be 5 // Object.is equality
@@ -459,8 +533,6 @@ AssertionError: expected 2 to be 5 // Object.is equality
 
 ./fixtures/babel/babel-preset-env-test-fixtures-plugins-integration-issue-15170-exec.test.js
 AssertionError: expected [Function] to not throw an error but 'ReferenceError: x is not defined' was thrown
-    at Proxy.<anonymous> (./node_modules/.pnpm/@vitest+expect@4.1.2/node_modules/@vitest/expect/dist/index.js:1551:16)
-    at Proxy.<anonymous> (./node_modules/.pnpm/@vitest+expect@4.1.2/node_modules/@vitest/expect/dist/index.js:1155:15)
     at Proxy.methodWrapper (./node_modules/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)
     at ./tasks/transform_conformance/fixtures/babel/babel-preset-env-test-fixtures-plugins-integration-issue-15170-exec.test.js:6:9
 

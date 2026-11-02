@@ -9,7 +9,7 @@ use crate::{
     Result,
     codegen::{Codegen, DeriveId},
     schema::{Def, EnumDef, FieldDef, File, Schema, StructDef, TypeDef, VariantDef, Visibility},
-    utils::create_safe_ident,
+    utils::{create_ident, create_safe_ident},
 };
 
 use super::{
@@ -149,6 +149,7 @@ fn parse_estree_attr(location: AttrLocation, part: AttrPart) -> Result<()> {
             AttrPart::Tag("flatten") => struct_def.fields[field_index].estree.flatten = true,
             AttrPart::Tag("no_flatten") => struct_def.fields[field_index].estree.no_flatten = true,
             AttrPart::Tag("json_safe") => struct_def.fields[field_index].estree.json_safe = true,
+            AttrPart::Tag("from_span") => struct_def.fields[field_index].estree.from_span = true,
             AttrPart::String("rename", value) => {
                 struct_def.fields[field_index].estree.rename = Some(value);
             }
@@ -203,6 +204,7 @@ fn parse_estree_attr(location: AttrLocation, part: AttrPart) -> Result<()> {
         AttrLocation::Meta(meta) => match part {
             AttrPart::String("ts_type", ts_type) => meta.estree.ts_type = Some(ts_type),
             AttrPart::String("raw_deser", raw_deser) => meta.estree.raw_deser = Some(raw_deser),
+            AttrPart::Tag("raw_deser_inline") => meta.estree.raw_deser_inline = true,
             _ => return Err(()),
         },
         _ => unreachable!(),
@@ -520,7 +522,7 @@ impl<'s> StructSerializerGenerator<'s> {
 
             value.unwrap_or_else(|| {
                 panic!(
-                    "`#[estree(json_safe)]` is only valid on struct fields containing a `&str`, `Str`, or `Ident`: {}::{}",
+                    "`#[estree(json_safe)]` is only valid on struct fields containing a `&str`, `Str`, `Ident`, or `Option` of one of those: {}::{}",
                     struct_def.name(),
                     field.name(),
                 )
@@ -565,7 +567,7 @@ impl<'s> StructSerializerGenerator<'s> {
 
 /// Generate body of `serialize` method for an enum.
 fn generate_body_for_enum(enum_def: &EnumDef, schema: &Schema) -> TokenStream {
-    let match_branches = enum_def.all_variants(schema).map(|variant| {
+    let own_branches = enum_def.variants.iter().map(|variant| {
         let variant_ident = variant.ident();
 
         if should_skip_enum_variant(variant) {
@@ -603,9 +605,33 @@ fn generate_body_for_enum(enum_def: &EnumDef, schema: &Schema) -> TokenStream {
         }
     });
 
+    // Variants inherited via `INHERIT` are delegated to the inherited enum's `ESTree` impl
+    // through the generated `to_*` reference cast, instead of re-emitting an arm for each.
+    // This avoids duplicating the inherited enum's arms e.g. all of `Expression`'s variants
+    // in every enum that inherits `Expression` (`Argument`, `PropertyKey` etc),
+    // which reduces binary size.
+    let inherited_branches = enum_def.inherits.iter().map(|&inherits_id| {
+        let inherited = schema.enum_def(inherits_id);
+
+        let patterns = inherited.all_variants(schema).map(|variant| {
+            let variant_ident = variant.ident();
+            if variant.is_fieldless() {
+                quote!( Self::#variant_ident )
+            } else {
+                quote!( Self::#variant_ident(_) )
+            }
+        });
+
+        let to_inherited = create_ident(&format!("to_{}", inherited.snake_name()));
+        quote! {
+            #(#patterns)|* => self.#to_inherited().serialize(serializer),
+        }
+    });
+
     quote! {
         match self {
-            #(#match_branches)*
+            #(#own_branches)*
+            #(#inherited_branches)*
         }
     }
 }
@@ -634,10 +660,6 @@ fn get_converter_path(converter_name: &str, from_krate: &str, schema: &Schema) -
 ///
 /// This function also used by Typescript and raw transfer generators.
 pub fn should_skip_field(field: &FieldDef, schema: &Schema) -> bool {
-    // Always skip node_id field - it's internal and not part of ESTree serialization
-    if field.name() == "node_id" {
-        return true;
-    }
     if field.estree.skip {
         true
     } else {

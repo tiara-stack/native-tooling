@@ -9,7 +9,8 @@ working directory:
   "plugins": [
     "unicorn",
     "typescript",
-    "oxc"
+    "oxc",
+    "effect"
   ],
   "categories": {},
   "rules": {
@@ -47,6 +48,9 @@ working directory:
     },
     "vitest": {
       "typecheck": false
+    },
+    "jest": {
+      "version": null
     }
   },
   "env": {

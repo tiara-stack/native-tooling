@@ -1,0 +1,73 @@
+{
+  "format": "tia312-review-packet-v1",
+  "kind": "context",
+  "group": "supplemental",
+  "product_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+  "records": [
+    {
+      "context": {
+        "id": "S001",
+        "path": "native/oxc-oxlint-effect-fork/crates/oxc_linter/src/lint_runner.rs",
+        "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+        "mode": "100644",
+        "blob_oid": "7ed385232a27be13089a0ab98c70330e6e3b60bf"
+      },
+      "excerpt": {
+        "selection": 1,
+        "source_line_start": 218,
+        "source_line_end": 239,
+        "sha256": "3275b17f40609c28a7fffb8f75dab12becbf58ab53b1538425a83a3490ab3c74",
+        "kind": "exact_source_excerpt_not_a_custom_patch"
+      },
+      "source_utf8_lines": [
+        "    pub fn build(self) -> Result<LintRunner, String> {\n",
+        "        let directives_coordinator = DirectivesStore::new();\n",
+        "\n",
+        "        let type_aware_linter = if self.type_aware_enabled {\n",
+        "            match TsGoLintState::try_new(\n",
+        "                self.lint_service_options.cwd(),\n",
+        "                self.regular_linter.config.clone(),\n",
+        "                self.fix_kind,\n",
+        "            ) {\n",
+        "                Ok(state) => Some(\n",
+        "                    state\n",
+        "                        .with_silent(self.silent)\n",
+        "                        .with_type_check(self.type_check)\n",
+        "                        .with_type_check_only(self.type_check_only)\n",
+        "                        .with_timings(self.timings)\n",
+        "                        .with_ignore_fixes(self.with_ignore_fixes),\n",
+        "                ),\n",
+        "                Err(e) => return Err(e),\n",
+        "            }\n",
+        "        } else {\n",
+        "            None\n",
+        "        };\n"
+      ]
+    },
+    {
+      "context": {
+        "id": "S002",
+        "path": "native/oxc-oxlint-effect-fork/apps/oxlint/src/config_loader.rs",
+        "source_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+        "mode": "100644",
+        "blob_oid": "56917a9d443b5a6da14d79f9359bc70369cbc892"
+      },
+      "excerpt": {
+        "selection": 1,
+        "source_line_start": 699,
+        "source_line_end": 705,
+        "sha256": "d1c35052edee0e9c4a3277db81cc1b512bcde566e939070af92d66de86dd2fc3",
+        "kind": "exact_source_excerpt_not_a_custom_patch"
+      },
+      "source_utf8_lines": [
+        "fn js_config_not_supported_diagnostic(path: &Path) -> OxcDiagnostic {\n",
+        "    OxcDiagnostic::error(format!(\n",
+        "        \"JavaScript/TypeScript config file ({}) found but JS runtime not available.\",\n",
+        "        path.to_string_lossy().cow_replace('\\\\', \"/\")\n",
+        "    ))\n",
+        "    .with_help(\"Run oxlint via the npm package, or use JSON config files (.oxlintrc.json or .oxlintrc.jsonc).\")\n",
+        "}\n"
+      ]
+    }
+  ]
+}

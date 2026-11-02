@@ -13,7 +13,10 @@ use crate::{
     AstNode,
     context::LintContext,
     rule::{DefaultRuleConfig, Rule},
-    utils::{get_boolean_ancestor, is_boolean_call, is_boolean_node, pad_fix_with_token_boundary},
+    utils::{
+        expression_uses_optional_chain, get_boolean_ancestor, is_boolean_call, is_boolean_node,
+        pad_fix_with_token_boundary,
+    },
 };
 
 fn non_zero(span: Span, prop_name: &str, op_and_rhs: &str, help: Option<String>) -> OxcDiagnostic {
@@ -40,8 +43,10 @@ fn zero(span: Span, prop_name: &str, op_and_rhs: &str, help: Option<String>) -> 
 #[derive(Debug, Default, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "kebab-case")]
 enum NonZero {
+    /// Enforces non-zero to be checked with `foo.length > 0`.
     #[default]
     GreaterThan,
+    /// Enforces non-zero to be checked with `foo.length !== 0`.
     NotEqual,
 }
 
@@ -49,9 +54,6 @@ enum NonZero {
 #[serde(rename_all = "kebab-case", default, deny_unknown_fields)]
 pub struct ExplicitLengthCheck {
     /// Configuration option to specify how non-zero length checks should be enforced.
-    ///
-    /// `greater-than`: Enforces non-zero to be checked with `foo.length > 0`
-    /// `not-equal`: Enforces non-zero to be checked with `foo.length !== 0`
     non_zero: NonZero,
 }
 
@@ -94,11 +96,9 @@ declare_oxc_lint!(
     pedantic,
     conditional_fix,
     config = ExplicitLengthCheck,
+    version = "0.0.19",
+    short_description = "Enforce explicitly comparing the `length` or `size` property of a value.",
 );
-
-fn is_literal(expr: &Expression, value: f64) -> bool {
-    matches!(expr, Expression::NumericLiteral(lit) if (lit.value - value).abs() < f64::EPSILON)
-}
 
 fn is_compare_left(expr: &BinaryExpression, op: BinaryOperator, value: f64) -> bool {
     matches!(
@@ -107,7 +107,7 @@ fn is_compare_left(expr: &BinaryExpression, op: BinaryOperator, value: f64) -> b
             operator,
             left,
             ..
-        } if is_literal(left, value) && op == *operator
+        } if left.is_number_value(value) && op == *operator
     )
 }
 
@@ -118,7 +118,7 @@ fn is_compare_right(expr: &BinaryExpression, op: BinaryOperator, value: f64) -> 
             operator,
             right,
             ..
-        } if is_literal(right, value) && op == *operator
+        } if right.is_number_value(value) && op == *operator
     )
 }
 
@@ -259,13 +259,16 @@ impl ExplicitLengthCheck {
 
 impl Rule for ExplicitLengthCheck {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
         if let AstKind::StaticMemberExpression(static_member_expr) = node.kind() {
             let StaticMemberExpression { object, property, .. } = static_member_expr;
             if property.name != "length" && property.name != "size" {
+                return;
+            }
+            if static_member_expr.optional || expression_uses_optional_chain(object) {
                 return;
             }
             if let Expression::ThisExpression(_) = object {
@@ -354,6 +357,9 @@ fn test() {
             "const totalCount = tests.reduce((count, test) => count + (test.enabled ? test.maxSize : test.size), 0)",
             None,
         ),
+        ("const hasList = Boolean(foo.list?.length)", None),
+        ("const hasList = Boolean(foo?.list.length)", None),
+        ("const hasList = Boolean(foo?.list?.length)", None),
     ];
 
     let fail = vec![
@@ -364,7 +370,6 @@ fn test() {
         // (r#"const NON_NUMBER = "2"; const x = foo.length || NON_NUMBER"#, None),
         ("const x = foo.length || bar()", Some(serde_json::json!([{"non-zero": "not-equal"}]))),
         ("const x = foo.length || bar()", Some(serde_json::json!([{"non-zero": "greater-than"}]))),
-        ("const x = foo.length || bar()", None),
         ("() => foo.length && bar()", None),
         ("alert(foo.length && bar())", None),
         // Use of .size in conditional "test" position

@@ -1,15 +1,47 @@
-use std::path::Path;
+use std::{path::Path, sync::Arc};
 
-use serde_json::Value;
 use tracing::instrument;
 
-use oxc_allocator::AllocatorPool;
+use oxc_allocator::{Allocator, AllocatorPool};
 use oxc_diagnostics::OxcDiagnostic;
-use oxc_formatter::{FormatOptions, Formatter, enable_jsx_source_type, get_parse_options};
-use oxc_parser::Parser;
-use oxc_span::SourceType;
+use oxc_formatter_core::{FormatContext, FormatSession, Formatted, InputKind, Printed};
+use oxc_formatter_json::{JsonFormatOptions, JsonVariant};
+use oxc_formatter_yaml::YamlFormatOptions;
 
-use super::{FormatFileStrategy, ResolvedOptions};
+#[cfg(feature = "napi")]
+use super::options::{
+    inject_filepath, inject_oxfmt_plugin_payload, inject_parser, inject_svelte_plugin_payload,
+    inject_tailwind_plugin_payload, to_prettier,
+};
+use super::{
+    embed::dispatcher::ResolvedDispatchConfig,
+    options::{
+        ValidatedOptions, to_oxc_formatter_graphql, to_oxc_formatter_json, to_oxc_formatter_yaml,
+        to_oxc_toml, to_sort_package_json,
+    },
+    oxfmtrc::FormatConfig,
+    support::FileKind,
+};
+
+/// A classified file with its resolved config.
+///
+/// Built by [`super::ConfigResolver::resolve`] or `resolve_for_api`,
+/// where every fallible conversion already ran (`options::validate`).
+/// So the per-formatter options are mapped from `config` + `validated` at the format step.
+#[derive(Debug)]
+pub struct FormatStrategy {
+    pub(crate) kind: FileKind,
+    pub(crate) config: Arc<FormatConfig>,
+    pub(crate) validated: Arc<ValidatedOptions>,
+}
+
+impl FormatStrategy {
+    pub fn path(&self) -> &Arc<Path> {
+        self.kind.path()
+    }
+}
+
+// ---
 
 pub enum FormatResult {
     Success { is_changed: bool, code: String },
@@ -19,7 +51,7 @@ pub enum FormatResult {
 pub struct SourceFormatter {
     allocator_pool: AllocatorPool,
     #[cfg(feature = "napi")]
-    external_formatter: Option<super::ExternalFormatter>,
+    external_services: Option<super::ExternalServices>,
 }
 
 impl SourceFormatter {
@@ -27,231 +59,228 @@ impl SourceFormatter {
         Self {
             allocator_pool: AllocatorPool::new(num_of_threads),
             #[cfg(feature = "napi")]
-            external_formatter: None,
+            external_services: None,
         }
     }
 
-    /// Format a file based on its entry type and resolved options.
-    #[instrument(level = "debug", name = "oxfmt::format", skip_all, fields(path = %entry.path().display()))]
-    pub fn format(
-        &self,
-        entry: &FormatFileStrategy,
-        source_text: &str,
-        resolved_options: ResolvedOptions,
-    ) -> FormatResult {
-        let (result, insert_final_newline) = match (entry, resolved_options) {
-            (
-                FormatFileStrategy::OxcFormatter { path, source_type },
-                ResolvedOptions::OxcFormatter {
-                    format_options,
-                    external_options,
-                    filepath_override,
-                    insert_final_newline,
-                },
-            ) => (
-                self.format_by_oxc_formatter(
+    /// Format a file based on its resolved strategy.
+    #[instrument(level = "debug", name = "oxfmt::format", skip_all, fields(path = %strategy.path().display(), kind = %strategy.kind.name()))]
+    pub fn format(&self, source_text: &str, strategy: FormatStrategy) -> FormatResult {
+        // > Editors must not insert newlines in empty files when saving those files,
+        // > even if insert_final_newline = true.
+        // https://spec.editorconfig.org/#supported-pairs
+        if source_text.trim().is_empty() {
+            return FormatResult::Success {
+                is_changed: !source_text.is_empty(),
+                code: String::new(),
+            };
+        }
+
+        let FormatStrategy { kind, config, validated } = strategy;
+        let core = validated.core;
+        // Roots with a session take options from their dispatch config,
+        // others map them directly without building one.
+        let result = match kind {
+            FileKind::OxcFormatter { path, source_type } => {
+                let allocator = self.allocator_pool.get();
+                let dispatch_config =
+                    ResolvedDispatchConfig::for_root(Arc::clone(&config), validated, &path);
+                let session = self.root_session(&allocator, &dispatch_config);
+                let options = dispatch_config.js_options();
+                let result =
+                    oxc_formatter::format_with_session(&session, source_text, source_type, options)
+                        .and_then(|formatted| print(formatted, &path));
+                #[cfg(feature = "detect_code_removal")]
+                if let Ok(code) = &result
+                    && let Some(diff) =
+                        oxc_formatter::detect_code_removal(source_text, code, source_type)
+                {
+                    unreachable!("Code removal detected in `{}`:\n{diff}", path.display());
+                }
+                result
+            }
+            FileKind::OxcFormatterJson { path, variant } => {
+                self.format_json(source_text, &path, to_oxc_formatter_json(&config, core, variant))
+            }
+            FileKind::OxcFormatterJsonPackageJson { path } => {
+                // `sort_package_json` only accepts strictly valid JSON,
+                // but the `json-stringify` parser also accepts unquoted keys, trailing commas, etc.
+                // So format without sorting rather than bailing out.
+                let sorted = to_sort_package_json(&config).and_then(|options| {
+                    sort_package_json::sort_package_json_with_options(source_text, &options).ok()
+                });
+                self.format_json(
+                    sorted.as_deref().unwrap_or(source_text),
+                    &path,
+                    to_oxc_formatter_json(&config, core, JsonVariant::JsonStringify),
+                )
+            }
+            FileKind::OxcFormatterGraphql { path } => {
+                let options = to_oxc_formatter_graphql(&config, core);
+                let allocator = self.allocator_pool.get();
+                oxc_formatter_graphql::format(&allocator, source_text, options)
+                    .and_then(|formatted| print(formatted, &path))
+            }
+            FileKind::OxcFormatterCss { path, variant } => {
+                let allocator = self.allocator_pool.get();
+                let dispatch_config =
+                    ResolvedDispatchConfig::for_root(Arc::clone(&config), validated, &path);
+                let session = self.root_session(&allocator, &dispatch_config);
+                let options = dispatch_config.css_options(variant);
+                oxc_formatter_css::format_with_session(&session, source_text, options)
+                    .and_then(|formatted| print(formatted, &path))
+            }
+            FileKind::OxcFormatterYaml { path } => {
+                self.format_yaml(source_text, &path, to_oxc_formatter_yaml(&config, core))
+            }
+            // Mirroring Prettier's yaml embed: JSON if the whole text parses as JSON, YAML otherwise
+            FileKind::OxcFormatterYamlRc { path } => self
+                .format_json(
                     source_text,
-                    path,
-                    *source_type,
-                    *format_options,
-                    external_options,
-                    filepath_override.as_deref(),
-                ),
-                insert_final_newline,
-            ),
-            (
-                FormatFileStrategy::OxfmtToml { .. },
-                ResolvedOptions::OxfmtToml { toml_options, insert_final_newline },
-            ) => (Ok(Self::format_by_toml(source_text, toml_options)), insert_final_newline),
+                    &path,
+                    to_oxc_formatter_json(&config, core, JsonVariant::Json),
+                )
+                .or_else(|_| {
+                    self.format_yaml(source_text, &path, to_oxc_formatter_yaml(&config, core))
+                }),
+            FileKind::OxcFormatterMarkdown { path } => {
+                let allocator = self.allocator_pool.get();
+                let dispatch_config =
+                    ResolvedDispatchConfig::for_root(Arc::clone(&config), validated, &path);
+                let session = self.root_session(&allocator, &dispatch_config);
+                let options = dispatch_config.markdown_options();
+                oxc_formatter_markdown::format_with_session(&session, source_text, options)
+                    .and_then(|formatted| print(formatted, &path))
+            }
+            FileKind::OxfmtToml { .. } => {
+                Ok(oxc_toml::format(source_text, to_oxc_toml(&config, core)))
+            }
             #[cfg(feature = "napi")]
-            (
-                FormatFileStrategy::ExternalFormatter { path, parser_name },
-                ResolvedOptions::ExternalFormatter { external_options, insert_final_newline },
-            ) => (
-                self.format_by_external_formatter(source_text, path, parser_name, external_options),
-                insert_final_newline,
-            ),
-            #[cfg(feature = "napi")]
-            (
-                FormatFileStrategy::ExternalFormatterPackageJson { path, parser_name },
-                ResolvedOptions::ExternalFormatterPackageJson {
-                    external_options,
-                    sort_package_json,
-                    insert_final_newline,
-                },
-            ) => (
-                self.format_by_external_formatter_package_json(
-                    source_text,
-                    path,
-                    parser_name,
-                    external_options,
-                    sort_package_json.as_ref(),
-                ),
-                insert_final_newline,
-            ),
-            _ => unreachable!("FormatFileStrategy and ResolvedOptions variant mismatch"),
+            FileKind::Prettier { path, parser_name } => {
+                self.format_by_prettier(source_text, &path, parser_name, &config)
+            }
         };
 
         match result {
             Ok(mut code) => {
-                // NOTE: `insert_final_newline` relies on the fact that:
-                // - each formatter already ensures there is traliling newline
-                // - each formatter does not have an option to disable trailing newline
-                // So we can trim it here without allocating new string.
-                if !insert_final_newline {
-                    let trimmed_len = code.trim_end().len();
-                    code.truncate(trimmed_len);
+                // Every formatter always ends with a newline (no option to disable it),
+                // so trimming is enough without allocating a new string.
+                if !config.insert_final_newline.unwrap_or(true) {
+                    code.truncate(code.trim_end().len());
                 }
-
                 FormatResult::Success { is_changed: source_text != code, code }
             }
             Err(err) => FormatResult::Error(vec![err]),
         }
     }
 
-    /// Format JS/TS source code using `oxc_formatter`.
-    /// For embedded part and Tailwindcss sorting, `external_options` and `filepath_override` are used.
-    #[instrument(level = "debug", name = "oxfmt::format::oxc_formatter", skip_all)]
-    fn format_by_oxc_formatter(
+    /// A `PhysicalFile` root session carrying the build's default services
+    /// (`embed::services::for_root`).
+    #[cfg_attr(not(feature = "napi"), expect(clippy::unused_self))]
+    fn root_session<'a>(
+        &self,
+        allocator: &'a Allocator,
+        dispatch_config: &Arc<ResolvedDispatchConfig>,
+    ) -> FormatSession<'a> {
+        #[cfg(feature = "napi")]
+        let services = super::embed::services::for_root(self.external_services(), dispatch_config);
+        #[cfg(not(feature = "napi"))]
+        let services = super::embed::services::for_root(dispatch_config);
+        FormatSession::with_services(allocator, InputKind::PhysicalFile, services)
+    }
+
+    fn format_json(
         &self,
         source_text: &str,
         path: &Path,
-        source_type: SourceType,
-        format_options: FormatOptions,
-        external_options: Value,
-        filepath_override: Option<&Path>,
+        options: JsonFormatOptions,
     ) -> Result<String, OxcDiagnostic> {
-        let source_type = enable_jsx_source_type(source_type);
         let allocator = self.allocator_pool.get();
-
-        let ret = Parser::new(&allocator, source_text, source_type)
-            .with_options(get_parse_options())
-            .parse();
-        if !ret.errors.is_empty() {
-            // Return the first error for simplicity
-            return Err(ret.errors.into_iter().next().unwrap());
-        }
-
-        #[cfg(feature = "napi")]
-        let external_callbacks = Some(self.build_external_callbacks(
-            &format_options,
-            external_options,
-            path,
-            filepath_override,
-        ));
-        #[cfg(not(feature = "napi"))]
-        let external_callbacks = {
-            let _ = (path, external_options, filepath_override);
-            None
-        };
-
-        let base_formatter = Formatter::new(&allocator, format_options);
-        let formatted =
-            base_formatter.format_with_external_callbacks(&ret.program, external_callbacks);
-
-        let code = formatted.print().map_err(|err| {
-            OxcDiagnostic::error(format!(
-                "Failed to print formatted code: {}\n{err}",
-                path.display()
-            ))
-        })?;
-
-        #[cfg(feature = "detect_code_removal")]
-        {
-            if let Some(diff) =
-                oxc_formatter::detect_code_removal(source_text, code.as_code(), source_type)
-            {
-                unreachable!("Code removal detected in `{}`:\n{diff}", path.to_string_lossy());
-            }
-        }
-
-        Ok(code.into_code())
+        oxc_formatter_json::format(&allocator, source_text, options)
+            .and_then(|formatted| print(formatted, path))
     }
 
-    /// Format TOML file using `oxc_toml`.
-    #[instrument(level = "debug", name = "oxfmt::format::oxc_toml", skip_all)]
-    fn format_by_toml(source_text: &str, options: oxc_toml::Options) -> String {
-        oxc_toml::format(source_text, options)
+    fn format_yaml(
+        &self,
+        source_text: &str,
+        path: &Path,
+        options: YamlFormatOptions,
+    ) -> Result<String, OxcDiagnostic> {
+        let allocator = self.allocator_pool.get();
+        oxc_formatter_yaml::format(&allocator, source_text, options)
+            .and_then(|formatted| print(formatted, path))
     }
+}
+
+fn print<C: FormatContext>(
+    formatted: Formatted<'_, C>,
+    path: &Path,
+) -> Result<String, OxcDiagnostic> {
+    formatted.print().map(Printed::into_code).map_err(|err| {
+        OxcDiagnostic::error(format!("Failed to print formatted code: {}\n{err}", path.display()))
+    })
 }
 
 // ---
 
-/// NAPI-only methods for `SourceFormatter`.
-///
-/// These methods handle external formatter (Prettier) integration,
-/// which is only available when running through the Node.js NAPI bridge.
+/// NAPI-only methods for `SourceFormatter`, handling Prettier delegation.
 #[cfg(feature = "napi")]
 impl SourceFormatter {
     #[must_use]
-    pub fn with_external_formatter(
+    pub fn with_external_services(
         mut self,
-        external_formatter: Option<super::ExternalFormatter>,
+        external_services: Option<super::ExternalServices>,
     ) -> Self {
-        self.external_formatter = external_formatter;
+        self.external_services = external_services;
         self
     }
 
-    /// Build external callbacks for `oxc_formatter` from the NAPI external formatter.
-    ///
-    /// Sets `filepath` on options for Prettier plugins that depend on it,
-    /// and for the Tailwind sorter to resolve config.
-    /// `filepath_override` is `Some` in js-in-xxx flow (via `textToDoc()`),
-    /// where `path` is a dummy like `embedded.ts` but callbacks need the parent file path.
-    /// See `oxfmtrc::finalize_external_options()` for where this filepath originates.
-    fn build_external_callbacks(
-        &self,
-        format_options: &FormatOptions,
-        mut external_options: Value,
-        path: &Path,
-        filepath_override: Option<&Path>,
-    ) -> oxc_formatter::ExternalCallbacks {
-        let external_formatter = self
-            .external_formatter
+    /// The napi transport, installed by [`Self::with_external_services`] before any format run.
+    fn external_services(&self) -> &super::ExternalServices {
+        self.external_services
             .as_ref()
-            .expect("`external_formatter` must exist when `napi` feature is enabled");
-
-        if let Value::Object(ref mut map) = external_options {
-            let filepath = filepath_override.unwrap_or(path);
-            map.insert(
-                "filepath".to_string(),
-                Value::String(filepath.to_string_lossy().to_string()),
-            );
-        }
-
-        external_formatter.to_external_callbacks(format_options, external_options)
+            .expect("`external_services` must exist when `napi` feature is enabled")
     }
 
-    /// Format non-JS/TS file using external formatter (Prettier).
-    #[instrument(level = "debug", name = "oxfmt::format::external_formatter", skip_all, fields(parser = %parser_name))]
-    fn format_by_external_formatter(
+    /// Format a file by delegating to Prettier,
+    /// with plugin payloads injected when the parser can use them.
+    #[instrument(level = "debug", name = "oxfmt::external::format_file", skip_all, fields(parser = %parser_name))]
+    fn format_by_prettier(
         &self,
         source_text: &str,
         path: &Path,
         parser_name: &str,
-        mut external_options: Value,
+        config: &FormatConfig,
     ) -> Result<String, OxcDiagnostic> {
-        let external_formatter = self
-            .external_formatter
-            .as_ref()
-            .expect("`external_formatter` must exist when `napi` feature is enabled");
+        let mut prettier_options = to_prettier(config);
+        inject_parser(&mut prettier_options, parser_name);
+        inject_filepath(&mut prettier_options, path);
 
-        // Set `parser` and `filepath` on options for Prettier.
-        // We specify `parser` to skip parser inference for perf,
-        // and `filepath` because some plugins depend on it.
-        if let Value::Object(ref mut map) = external_options {
-            map.insert("parser".to_string(), Value::String(parser_name.to_string()));
-            map.insert("filepath".to_string(), Value::String(path.to_string_lossy().to_string()));
+        // CSS/SCSS/Less also benefit, but they are formatted by `oxc_formatter_css`
+        if matches!(parser_name, "html" | "vue" | "angular" | "glimmer" | "svelte") {
+            inject_tailwind_plugin_payload(&mut prettier_options, config);
+        }
+        // Parsers that embed JS/TS code.
+        // Expressions like `__vue_expression` and `__ng_directive` are not supported yet.
+        if matches!(parser_name, "vue" | "svelte") {
+            inject_oxfmt_plugin_payload(&mut prettier_options, config, path);
+        }
+        // `mdx` allows ```svelte code blocks
+        if matches!(parser_name, "svelte" | "mdx") {
+            inject_svelte_plugin_payload(&mut prettier_options, config);
         }
 
-        external_formatter.format_file(external_options, source_text).map_err(|err| {
-            // NOTE: We are trying to make the error from oxc_formatter and external_formatter (Prettier) look similar.
-            // Ideally, we would unify them into `OxcDiagnostic`,
-            // which would eliminate the need for relative path conversion.
+        self.external_services().format_file(prettier_options, source_text).map_err(|err| {
+            // NOTE: We are trying to make the error from oxc_formatter(_xxx) and Prettier look similar.
+            // Ideally, we would unify them into `OxcDiagnostic`, which would eliminate the need for relative path conversion.
             // However, doing so would require:
             // - Parsing Prettier's error messages
             // - Converting span information from UTF-16 to UTF-8
             // This is a non-trivial amount of work, so for now, just leave this as a best effort.
+            //
+            // This is the only place in the formatting pipeline that depends on `cwd`.
+            // It goes away together with this Prettier path, as `oxc_formatter_*` cover more languages.
+            // (Their errors carry labels, and entry points render paths with their own `cwd`.)
             let relative = std::env::current_dir()
                 .ok()
                 .and_then(|cwd| path.strip_prefix(cwd).ok().map(Path::to_path_buf));
@@ -264,34 +293,76 @@ impl SourceFormatter {
             OxcDiagnostic::error(message)
         })
     }
+}
 
-    /// Format `package.json`: optionally sort then format by external formatter.
-    #[instrument(
-        level = "debug",
-        name = "oxfmt::format::external_formatter_package_json",
-        skip_all
-    )]
-    fn format_by_external_formatter_package_json(
-        &self,
-        source_text: &str,
-        path: &Path,
-        parser_name: &str,
-        external_options: Value,
-        sort_options: Option<&sort_package_json::SortOptions>,
-    ) -> Result<String, OxcDiagnostic> {
-        let source_text: std::borrow::Cow<'_, str> = if let Some(options) = sort_options {
-            match sort_package_json::sort_package_json_with_options(source_text, options) {
-                Ok(sorted) => std::borrow::Cow::Owned(sorted),
-                // `sort_package_json` can only handle strictly valid JSON.
-                // On the other hand, Prettier's `json-stringify` parser is very permissive.
-                // It can format JSON like input even with unquoted keys or trailing commas.
-                // Therefore, rather than bailing out due to a sorting failure, we opt to format without sorting.
-                Err(_) => std::borrow::Cow::Borrowed(source_text),
-            }
-        } else {
-            std::borrow::Cow::Borrowed(source_text)
+/// The JS root's session wiring (registry dispatcher installed / off-gate honored),
+/// which the registry-level tests in `embed::dispatcher` cannot see.
+/// The napi build runs on `ExternalServices::dummy()` (native branches never call JS).
+#[cfg(test)]
+mod tests {
+    use oxc_span::SourceType;
+
+    use super::*;
+    use crate::core::{
+        options::validate,
+        oxfmtrc::{EmbeddedLanguageFormattingConfig, JsdocUserConfig},
+    };
+
+    fn format_ts(config: FormatConfig, source: &str) -> String {
+        let validated = validate(&config).expect("default-ish config must validate");
+        let kind = FileKind::OxcFormatter {
+            path: Arc::from(Path::new("test.ts")),
+            source_type: SourceType::ts(),
         };
+        let strategy =
+            FormatStrategy { kind, config: Arc::new(config), validated: Arc::new(validated) };
+        let formatter = SourceFormatter::new(1);
+        #[cfg(feature = "napi")]
+        let formatter =
+            formatter.with_external_services(Some(crate::core::ExternalServices::dummy()));
+        match formatter.format(source, strategy) {
+            FormatResult::Success { code, .. } => code,
+            FormatResult::Error(errors) => panic!("format failed: {errors:?}"),
+        }
+    }
 
-        self.format_by_external_formatter(&source_text, path, parser_name, external_options)
+    /// The JS root carries the registry dispatcher in every build,
+    /// so native xxx-in-js formats without Prettier.
+    #[test]
+    fn js_root_installs_the_registry_dispatcher() {
+        let code = format_ts(FormatConfig::default(), "const a = css`a{color:  red}`;\n");
+        assert!(code.contains("color: red;"), "css-in-js should format natively: {code}");
+    }
+
+    /// Pure-build criterion: html has no native branch and no Prettier fallback,
+    /// so the embed deliberately stays verbatim (under napi it reaches the fallback instead).
+    #[cfg(not(feature = "napi"))]
+    #[test]
+    fn non_native_embed_stays_verbatim_without_fallback() {
+        let source = "const h = html`<div>  <p>x</p></div>`;\n";
+        assert_eq!(format_ts(FormatConfig::default(), source), source);
+    }
+
+    /// A JSDoc fence whose language is in the native registry formats through
+    /// the fence adapter in every build (no Prettier involved).
+    #[test]
+    fn jsdoc_native_fence_formats_without_prettier() {
+        let config =
+            FormatConfig { jsdoc: Some(JsdocUserConfig::Bool(true)), ..FormatConfig::default() };
+        let source = "/**\n * ```css\n * a{color:  red}\n * ```\n */\n";
+        let code = format_ts(config, source);
+        assert!(code.contains("color: red;"), "css fence should format natively: {code}");
+    }
+
+    /// `embeddedLanguageFormatting: off` installs no dispatcher:
+    /// even native embeds stay verbatim.
+    #[test]
+    fn embedded_off_keeps_native_embeds_verbatim() {
+        let config = FormatConfig {
+            embedded_language_formatting: Some(EmbeddedLanguageFormattingConfig::Off),
+            ..FormatConfig::default()
+        };
+        let source = "const a = css`a{color:  red}`;\n";
+        assert_eq!(format_ts(config, source), source);
     }
 }

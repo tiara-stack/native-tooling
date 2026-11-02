@@ -2,14 +2,14 @@ use oxc_ast::{
     AstKind,
     ast::{
         ArrowFunctionExpression, BindingPattern, Expression, FunctionType, PropertyKind,
-        ReturnStatement, TSType, TSTypeName,
+        ReturnStatement,
     },
 };
-use oxc_ast_visit::Visit;
+use oxc_ast_visit::VisitJs;
 use oxc_diagnostics::OxcDiagnostic;
 use oxc_macros::declare_oxc_lint;
-use oxc_span::{CompactStr, GetSpan, Span};
-use oxc_syntax::operator::UnaryOperator;
+use oxc_span::{GetSpan, Span};
+use oxc_str::CompactStr;
 use rustc_hash::FxHashSet;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -134,6 +134,8 @@ declare_oxc_lint!(
     typescript,
     restriction,
     config = ExplicitFunctionReturnTypeConfig,
+    version = "0.4.4",
+    short_description = "This rule enforces that functions have an explicit return type annotation.",
 );
 
 fn explicit_function_return_type_diagnostic(span: Span) -> OxcDiagnostic {
@@ -145,7 +147,7 @@ fn explicit_function_return_type_diagnostic(span: Span) -> OxcDiagnostic {
 
 impl Rule for ExplicitFunctionReturnType {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
@@ -297,12 +299,11 @@ impl ExplicitFunctionReturnType {
         if !self.allow_concise_arrow_function_expressions_starting_with_void {
             return false;
         }
-        if !func.expression {
+        if !func.is_expression() {
             return false;
         }
         let Some(expr) = func.get_expression() else { return false };
-        let Expression::UnaryExpression(unary_expr) = expr else { return false };
-        matches!(unary_expr.operator, UnaryOperator::Void)
+        expr.is_void()
     }
 
     fn is_allowed_function<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) -> bool {
@@ -415,24 +416,10 @@ impl ExplicitFunctionReturnType {
 
         match expr {
             Expression::TSAsExpression(ts_expr) => {
-                let TSType::TSTypeReference(ts_type) = &ts_expr.type_annotation else {
-                    return false;
-                };
-                let TSTypeName::IdentifierReference(id_ref) = &ts_type.type_name else {
-                    return false;
-                };
-
-                id_ref.name == "const"
+                ts_expr.type_annotation.is_const_type_reference()
             }
             Expression::TSTypeAssertion(ts_expr) => {
-                let TSType::TSTypeReference(ts_type) = &ts_expr.type_annotation else {
-                    return false;
-                };
-                let TSTypeName::IdentifierReference(id_ref) = &ts_type.type_name else {
-                    return false;
-                };
-
-                id_ref.name == "const"
+                ts_expr.type_annotation.is_const_type_reference()
             }
             _ => false,
         }
@@ -594,7 +581,7 @@ fn ancestor_has_return_type<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) -> bo
 
     if let AstKind::ObjectProperty(prop) = parent.kind()
         && let Expression::ArrowFunctionExpression(func) = &prop.value
-        && !func.body.statements.is_empty()
+        && func.get_function_body().is_some_and(|body| !body.statements.is_empty())
         && func.return_type.is_some()
     {
         return true;
@@ -602,15 +589,11 @@ fn ancestor_has_return_type<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) -> bo
 
     for ancestor in ctx.nodes().ancestors(node.id()) {
         match ancestor.kind() {
-            AstKind::ArrowFunctionExpression(func) => {
-                if func.return_type.is_some() {
-                    return true;
-                }
+            AstKind::ArrowFunctionExpression(func) if func.return_type.is_some() => {
+                return true;
             }
-            AstKind::Function(func) => {
-                if func.return_type.is_some() {
-                    return true;
-                }
+            AstKind::Function(func) if func.return_type.is_some() => {
+                return true;
             }
             AstKind::VariableDeclarator(decl) => {
                 return decl.type_annotation.is_some();
@@ -618,10 +601,10 @@ fn ancestor_has_return_type<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) -> bo
             AstKind::PropertyDefinition(def) => {
                 return def.type_annotation.is_some();
             }
-            AstKind::ExpressionStatement(expr) => {
-                if !matches!(expr.expression, Expression::ArrowFunctionExpression(_)) {
-                    return false;
-                }
+            AstKind::ExpressionStatement(expr)
+                if !matches!(expr.expression, Expression::ArrowFunctionExpression(_)) =>
+            {
+                return false;
             }
             _ => {}
         }
@@ -632,7 +615,10 @@ fn ancestor_has_return_type<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) -> bo
 
 fn all_return_statements_are_functions(node: &AstNode) -> bool {
     let function_body = match node.kind() {
-        AstKind::ArrowFunctionExpression(arrow_func_expr) => &arrow_func_expr.body,
+        AstKind::ArrowFunctionExpression(arrow_func_expr) => {
+            let Some(body) = arrow_func_expr.get_function_body() else { return false };
+            body
+        }
         AstKind::Function(func) => {
             if let Some(func_body) = &func.body {
                 func_body
@@ -655,7 +641,7 @@ struct ReturnStatementChecker {
     all_returns_are_functions: bool,
 }
 
-impl<'a> Visit<'a> for ReturnStatementChecker {
+impl<'a> VisitJs<'a> for ReturnStatementChecker {
     fn visit_return_statement(&mut self, return_statement: &ReturnStatement<'a>) {
         self.has_return = true;
         self.all_returns_are_functions &=

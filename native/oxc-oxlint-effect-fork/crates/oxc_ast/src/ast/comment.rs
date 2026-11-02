@@ -1,9 +1,9 @@
 use bitflags::bitflags;
 
-use oxc_allocator::{Allocator, CloneIn};
+use oxc_allocator::{Allocator, CloneIn, CloneInSemanticIds};
 use oxc_ast_macros::ast;
 use oxc_estree::ESTree;
-use oxc_span::{ContentEq, Span};
+use oxc_span::{ContentEq, GetSpan, Span};
 
 /// Indicates a line or block comment.
 #[ast]
@@ -20,6 +20,12 @@ pub enum CommentKind {
     /// Multi-line block comment (contains line breaks)
     #[estree(rename = "Block")]
     MultiLineBlock = 2,
+    /// HTML opening line comment (`<!--`). The discriminant is the delimiter length.
+    #[estree(rename = "Line")]
+    HtmlOpen = 4,
+    /// HTML closing line comment (`-->`). The discriminant is the delimiter length.
+    #[estree(rename = "Line")]
+    HtmlClose = 3,
 }
 
 /// Information about a comment's position relative to a token.
@@ -78,20 +84,40 @@ pub enum CommentContent {
     /// `/* #__NO_SIDE_EFFECTS__ */`
     NoSideEffects = 6,
 
+    /// `/* #__NO_SIDE_EFFECTS__ */` that could not be applied to a function
+    NoSideEffectsNotApplied = 7,
+
     /// Webpack magic comment
     /// e.g. `/* webpackChunkName */`
     /// <https://webpack.js.org/api/module-methods/#magic-comments>
-    Webpack = 7,
+    Webpack = 8,
 
     /// Vite comment
     /// e.g. `/* @vite-ignore */`
     /// <https://github.com/search?q=repo%3Avitejs%2Fvite%20vite-ignore&type=code>
-    Vite = 8,
+    Vite = 9,
 
     /// Code Coverage Ignore
     /// `v8 ignore`, `c8 ignore`, `node:coverage`, `istanbul ignore`
     /// <https://github.com/oxc-project/oxc/issues/10091>
-    CoverageIgnore = 9,
+    CoverageIgnore = 10,
+
+    /// Turbopack magic comment
+    /// e.g. `/* turbopackOptional: true */`
+    /// <https://nextjs.org/docs/app/guides/lazy-loading#turbopackoptional-turbopack-only>
+    Turbopack = 11,
+
+    /// File-level code coverage ignore.
+    ///
+    /// `v8 ignore file`, `istanbul ignore file`.
+    /// Classified separately because its meaning remains valid if the next AST
+    /// node is removed, unlike position-sensitive coverage annotations.
+    CoverageIgnoreFile = 12,
+
+    /// Marks the following string or no-substitution template as a property name.
+    /// `/* @__KEY__ */` or `/* #__KEY__ */`
+    /// <https://esbuild.github.io/api/#mangle-key>
+    PropertyKey = 13,
 }
 
 bitflags! {
@@ -121,24 +147,37 @@ impl ContentEq for CommentNewlines {
 impl<'alloc> CloneIn<'alloc> for CommentNewlines {
     type Cloned = Self;
 
-    fn clone_in(&self, _: &'alloc Allocator) -> Self::Cloned {
+    fn clone_in_impl(
+        &self,
+        _with_semantic_ids: CloneInSemanticIds,
+        _: &'alloc Allocator,
+    ) -> Self::Cloned {
         *self
     }
 }
 
 /// A comment in source code.
 #[ast]
-#[generate_derive(CloneIn, ContentEq, ESTree)]
+#[generate_derive(CloneIn, ContentEq, ESTree, GetSpan)]
 #[derive(Debug, Default, Clone, Copy, Eq, PartialEq)]
 #[estree(add_fields(value = CommentValue), no_ts_def, no_parent)]
 pub struct Comment {
     /// The span of the comment text, with leading and trailing delimiters.
     pub span: Span,
 
-    /// Start of token this leading comment is attached to.
-    /// `/* Leading */ token`
-    ///                ^ This start
-    /// NOTE: Trailing comment attachment is not computed yet.
+    /// Source boundary this comment is attached to.
+    ///
+    /// Leading comments use the start of the following token:
+    /// ```text
+    /// /* Leading */ token
+    ///               ^ attached_to
+    /// ```
+    ///
+    /// Trailing comments use the end of the preceding token:
+    /// ```text
+    /// token| /* Trailing */
+    ///      ^ attached_to (the boundary immediately after `token`)
+    /// ```
     #[estree(skip)]
     pub attached_to: u32,
 
@@ -179,6 +218,9 @@ impl Comment {
     pub fn content_span(&self) -> Span {
         match self.kind {
             CommentKind::Line => Span::new(self.span.start + 2, self.span.end),
+            CommentKind::HtmlOpen | CommentKind::HtmlClose => {
+                Span::new(self.span.start + self.kind as u32, self.span.end)
+            }
             CommentKind::SingleLineBlock | CommentKind::MultiLineBlock => {
                 Span::new(self.span.start + 2, self.span.end - 2)
             }
@@ -188,7 +230,7 @@ impl Comment {
     /// Returns `true` if this is a line comment.
     #[inline]
     pub fn is_line(self) -> bool {
-        self.kind == CommentKind::Line
+        matches!(self.kind, CommentKind::Line | CommentKind::HtmlOpen | CommentKind::HtmlClose)
     }
 
     /// Returns `true` if this is a block comment (either single-line or multi-line).
@@ -261,10 +303,22 @@ impl Comment {
         self.content == CommentContent::NoSideEffects
     }
 
+    /// Is a leading `/* @__KEY__ */` or `/* #__KEY__ */` annotation.
+    #[inline]
+    pub fn is_property_key_annotation(self) -> bool {
+        self.content == CommentContent::PropertyKey && self.is_leading()
+    }
+
     /// Is webpack magic comment.
     #[inline]
     pub fn is_webpack(self) -> bool {
         self.content == CommentContent::Webpack
+    }
+
+    /// Is turbopack magic comment.
+    #[inline]
+    pub fn is_turbopack(self) -> bool {
+        self.content == CommentContent::Turbopack
     }
 
     /// Is vite special comment.
@@ -276,7 +330,14 @@ impl Comment {
     /// Is coverage ignore comment.
     #[inline]
     pub fn is_coverage_ignore(self) -> bool {
-        self.content == CommentContent::CoverageIgnore && self.is_leading()
+        matches!(self.content, CommentContent::CoverageIgnore | CommentContent::CoverageIgnoreFile)
+            && self.is_leading()
+    }
+
+    /// Is a file-level coverage ignore comment.
+    #[inline]
+    pub fn is_coverage_ignore_file(self) -> bool {
+        self.content == CommentContent::CoverageIgnoreFile && self.is_leading()
     }
 
     /// Returns `true` if this comment is preceded by a newline.

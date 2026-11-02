@@ -7,7 +7,8 @@ use oxc_ast::{
 use oxc_diagnostics::OxcDiagnostic;
 use oxc_macros::declare_oxc_lint;
 use oxc_semantic::IsGlobalReference;
-use oxc_span::{CompactStr, Span, ident::REQUIRE};
+use oxc_span::Span;
+use oxc_str::static_ident;
 use schemars::JsonSchema;
 use serde::Deserialize;
 
@@ -15,6 +16,7 @@ use crate::{
     AstNode,
     context::LintContext,
     rule::{DefaultRuleConfig, Rule},
+    utils::deserialize_regex_vec,
 };
 
 fn no_require_imports_diagnostic(span: Span) -> OxcDiagnostic {
@@ -40,7 +42,8 @@ pub struct NoRequireImportsConfig {
     /// ```ts
     /// console.log(require('../package.json').version);
     /// ```
-    allow: Vec<CompactStr>,
+    #[serde(default, deserialize_with = "deserialize_regex_vec")]
+    allow: Vec<Regex>,
     /// When set to `true`, `import ... = require(...)` declarations won't be reported.
     /// This is useful if you use certain module options that require strict CommonJS interop semantics.
     ///
@@ -114,18 +117,17 @@ declare_oxc_lint!(
     restriction,
     pending,  // TODO: fixer (change require to import)
     config = NoRequireImportsConfig,
+    version = "0.13.0",
+    short_description = "Forbids the use of CommonJS `require` calls.",
 );
 
-fn match_argument_value_with_regex(allow: &[CompactStr], argument_value: &str) -> bool {
-    allow
-        .iter()
-        .map(|pattern| Regex::new(pattern).unwrap())
-        .any(|regex| regex.is_match(argument_value))
+fn match_argument_value_with_regex(allow: &[Regex], argument_value: &str) -> bool {
+    allow.iter().any(|regex| regex.is_match(argument_value))
 }
 
 impl Rule for NoRequireImports {
     fn from_configuration(value: serde_json::Value) -> Result<Self, serde_json::error::Error> {
-        serde_json::from_value::<DefaultRuleConfig<Self>>(value).map(DefaultRuleConfig::into_inner)
+        DefaultRuleConfig::<Self>::from_value(value).map(DefaultRuleConfig::into_inner)
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
@@ -135,7 +137,9 @@ impl Rule for NoRequireImports {
                     return;
                 };
 
-                if id.name != REQUIRE || !id.is_global_reference_name(REQUIRE, ctx.scoping()) {
+                if id.name != static_ident!("require")
+                    || !id.is_global_reference_name(static_ident!("require"), ctx.scoping())
+                {
                     return;
                 }
 
@@ -152,10 +156,13 @@ impl Rule for NoRequireImports {
                                 return;
                             }
                         }
-                        Argument::StringLiteral(string_literal) => {
-                            if match_argument_value_with_regex(&self.allow, &string_literal.value) {
-                                return;
-                            }
+                        Argument::StringLiteral(string_literal)
+                            if match_argument_value_with_regex(
+                                &self.allow,
+                                &string_literal.value,
+                            ) =>
+                        {
+                            return;
                         }
                         _ => {}
                     }

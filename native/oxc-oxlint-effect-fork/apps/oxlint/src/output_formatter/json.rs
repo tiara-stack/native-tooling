@@ -1,12 +1,12 @@
 use std::{cell::RefCell, rc::Rc};
 
-use miette::JSONReportHandler;
-use oxc_span::CompactStr;
+use oxc_str::CompactStr;
+
 use rustc_hash::FxHashSet;
 use serde::Serialize;
 
 use oxc_diagnostics::{
-    Error,
+    Error, JSONReportHandler,
     reporter::{DiagnosticReporter, DiagnosticResult},
 };
 use oxc_linter::{RuleCategory, rules::RULES};
@@ -19,12 +19,14 @@ pub struct JsonOutputFormatter {
 }
 
 impl InternalFormatter for JsonOutputFormatter {
-    fn all_rules(&self, _enabled_rules: FxHashSet<&str>) -> Option<String> {
+    fn all_rules(&self, _enabled_rules: FxHashSet<(&str, &str)>) -> Option<String> {
         #[derive(Debug, Serialize)]
         struct RuleInfoJson<'a> {
             scope: &'a str,
             value: &'a str,
             category: RuleCategory,
+            #[cfg(feature = "ruledocs")]
+            version: &'a str,
             type_aware: bool,
             fix: String,
             default: bool,
@@ -32,14 +34,14 @@ impl InternalFormatter for JsonOutputFormatter {
         }
 
         // Determine which rules are turned on by default (same logic as RuleTable)
-        let default_plugin_names = ["eslint", "unicorn", "typescript", "oxc"];
-        let default_rules: FxHashSet<&'static str> = RULES
+        let default_plugin_names = ["eslint", "unicorn", "typescript", "oxc", "effect"];
+        let default_rules: FxHashSet<(&'static str, &'static str)> = RULES
             .iter()
             .filter(|rule| {
                 rule.category() == RuleCategory::Correctness
                     && default_plugin_names.contains(&rule.plugin_name())
             })
-            .map(oxc_linter::rules::RuleEnum::name)
+            .map(|rule| (rule.plugin_name(), rule.name()))
             .collect();
 
         let mut rules_info: Vec<_> = RULES
@@ -48,9 +50,11 @@ impl InternalFormatter for JsonOutputFormatter {
                 scope: rule.plugin_name(),
                 value: rule.name(),
                 category: rule.category(),
+                #[cfg(feature = "ruledocs")]
+                version: rule.version(),
                 type_aware: rule.is_tsgolint_rule(),
                 fix: rule.fix().to_string(),
-                default: default_rules.contains(rule.name()),
+                default: default_rules.contains(&(rule.plugin_name(), rule.name())),
                 docs_url: format!(
                     "https://oxc.rs/docs/guide/usage/linter/rules/{}/{}.html",
                     rule.plugin_name(),
@@ -60,7 +64,7 @@ impl InternalFormatter for JsonOutputFormatter {
             })
             .collect();
 
-        rules_info.sort_by_key(|rule| (rule.scope, rule.value));
+        rules_info.sort_unstable_by_key(|rule| (rule.scope, rule.value));
 
         Some(serde_json::to_string_pretty(&rules_info).expect("Failed to serialize"))
     }
@@ -134,16 +138,15 @@ impl JsonReporter {
 /// <https://github.com/fregante/eslint-formatters/tree/ae1fd9748596447d1fd09625c33d9e7ba9a3d06d/packages/eslint-formatter-json>
 fn format_json(diagnostics: &mut Vec<Error>) -> String {
     let handler = JSONReportHandler::new();
-    let messages = diagnostics
-        .drain(..)
-        .map(|error| {
-            let mut output = String::new();
-            handler.render_report(&mut output, error.as_ref()).unwrap();
-            output
-        })
-        .collect::<Vec<_>>()
-        .join(",\n");
-    format!("[{messages}]")
+    let mut output = String::from("[");
+    for (index, error) in diagnostics.drain(..).enumerate() {
+        if index > 0 {
+            output.push_str(",\n");
+        }
+        handler.render_report(&mut output, error.as_ref()).unwrap();
+    }
+    output.push(']');
+    output
 }
 
 #[cfg(test)]
@@ -153,7 +156,9 @@ mod test {
     use oxc_diagnostics::{NamedSource, OxcDiagnostic, reporter::DiagnosticResult};
     use oxc_span::Span;
 
-    use crate::output_formatter::{InternalFormatter, LintCommandInfo, json::JsonOutputFormatter};
+    use crate::output_formatter::{
+        InternalFormatter, LintCommandInfo, OxlintSuppressionFileAction, json::JsonOutputFormatter,
+    };
 
     #[test]
     fn reporter() {
@@ -179,11 +184,13 @@ mod test {
                 number_of_rules: Some(0),
                 start_time: Duration::new(0, 0),
                 threads_count: 1,
+                oxlint_suppression_file_action: OxlintSuppressionFileAction::None,
+                rule_timings: None,
             })
             .unwrap();
         assert_eq!(
             &output,
-            "{ \"diagnostics\": [{\"message\": \"error message\",\"severity\": \"warning\",\"causes\": [],\"filename\": \"file://test.ts\",\"labels\": [{\"span\": {\"offset\": 0,\"length\": 8,\"line\": 1,\"column\": 1}}],\"related\": []}],\n              \"number_of_files\": 0,\n              \"number_of_rules\": 0,\n              \"threads_count\": 1,\n              \"start_time\": 0\n            }\n            "
+            "{ \"diagnostics\": [{\"message\": \"error message\",\"severity\": \"warning\",\"filename\": \"file://test.ts\",\"labels\": [{\"span\": {\"offset\": 0,\"length\": 8,\"line\": 1,\"column\": 1}}]}],\n              \"number_of_files\": 0,\n              \"number_of_rules\": 0,\n              \"threads_count\": 1,\n              \"start_time\": 0\n            }\n            "
         );
     }
 }

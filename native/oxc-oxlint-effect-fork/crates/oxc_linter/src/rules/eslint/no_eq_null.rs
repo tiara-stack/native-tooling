@@ -57,7 +57,9 @@ declare_oxc_lint!(
     NoEqNull,
     eslint,
     restriction,
-    fix_dangerous
+    fix_dangerous,
+    version = "0.2.14",
+    short_description = "Disallow `null` comparisons without type-checking operators.",
 );
 
 impl Rule for NoEqNull {
@@ -81,14 +83,7 @@ impl Rule for NoEqNull {
                     " !== "
                 };
                 ctx.diagnostic_with_dangerous_fix(
-                    no_eq_null_diagnostic(
-                        //     Span::new(
-                        //     binary_expression.span.start,
-                        //     binary_expression.span.end,
-                        // )
-                        binary_expression.span,
-                        suggested_operator.trim(),
-                    ),
+                    no_eq_null_diagnostic(binary_expression.span, suggested_operator.trim()),
                     |fixer| {
                         let start = binary_expression.left.span().end;
                         let end = binary_expression.right.span().start;

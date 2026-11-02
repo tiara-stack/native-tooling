@@ -5,7 +5,7 @@ use std::num::NonZeroU32;
 use oxc_ast_macros::ast;
 
 pub mod class;
-pub mod comment_node;
+pub mod constant_value;
 pub mod es_target;
 pub mod identifier;
 pub mod keyword;
@@ -17,10 +17,13 @@ pub mod operator;
 pub mod precedence;
 pub mod reference;
 pub mod scope;
+pub mod semantic_id;
 #[cfg(feature = "serialize")]
 mod serialize;
 pub mod symbol;
 pub mod xml_entities;
+
+pub use node::GetNodeId;
 
 mod generated {
     #[cfg(debug_assertions)]

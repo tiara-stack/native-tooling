@@ -10,7 +10,7 @@ bitflags! {
     /// A parameterized production is shorthand for a set of productions defining all combinations of the parameter names,
     /// preceded by an underscore, appended to the parameterized nonterminal symbol.
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-    pub struct Context: u8 {
+    pub struct Context: u16 {
         /// [In] Flag, i.e. the [In] part in RelationalExpression[In, Yield, Await]
         /// Section 13.10 Relational Operators Note 2:
         /// The [In] grammar parameter is needed to avoid confusing the in operator
@@ -51,6 +51,11 @@ bitflags! {
         /// Parsing at the top level of the program (not inside any function).
         /// Used to detect top-level await in unambiguous mode.
         const TopLevel = 1 << 7;
+
+        /// `new.target` is allowed, i.e. inside a function, a class static block,
+        /// or a class field initializer. Arrow functions inherit this from their
+        /// surrounding context, and class bodies are transparent to it.
+        const NewTarget = 1 << 8;
     }
 }
 
@@ -99,6 +104,11 @@ impl Context {
     #[inline]
     pub(crate) fn has_top_level(self) -> bool {
         self.contains(Self::TopLevel)
+    }
+
+    #[inline]
+    pub(crate) fn has_new_target(self) -> bool {
+        self.contains(Self::NewTarget)
     }
 
     #[inline]
@@ -152,6 +162,11 @@ impl Context {
     }
 
     #[inline]
+    pub(crate) fn and_new_target(self, include: bool) -> Self {
+        self.and(Self::NewTarget, include)
+    }
+
+    #[inline]
     fn and(self, flag: Self, set: bool) -> Self {
         if set { self | flag } else { self - flag }
     }
@@ -159,6 +174,9 @@ impl Context {
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum StatementContext {
+    /// Direct child of `Program`.
+    /// Unlike `Context::TopLevel`, this excludes blocks and other nested statements.
+    Program,
     StatementList,
     If,
     Label,
@@ -170,6 +188,6 @@ pub enum StatementContext {
 
 impl StatementContext {
     pub(crate) fn is_single_statement(self) -> bool {
-        self != Self::StatementList
+        !matches!(self, Self::Program | Self::StatementList)
     }
 }

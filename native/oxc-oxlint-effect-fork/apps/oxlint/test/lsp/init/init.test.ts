@@ -44,21 +44,48 @@ describe("LSP initialization", () => {
     expect(initResult.serverInfo?.name).toBe("oxlint");
   });
 
+  it("should append VP version to server info if VP_VERSION env variable is set", async () => {
+    const vpVersion = "1.2.3";
+    await using client = createLspConnection({
+      VP_VERSION: vpVersion,
+    });
+    const initResult = await client.initialize(null);
+
+    expect(initResult.serverInfo?.version).toContain(`(VP: ${vpVersion})`);
+  });
+
   it.each([
     [
       undefined,
-      ["**/.oxlintrc.json", "**/.oxlintrc.jsonc", "**/oxlint.config.ts", "**/vite.config.ts"],
+      ["**/.oxlintrc.json", "**/.oxlintrc.jsonc", "**/oxlint.config.ts", "**/oxlint.config.mts"],
     ],
     [
       { configPath: "" },
-      ["**/.oxlintrc.json", "**/.oxlintrc.jsonc", "**/oxlint.config.ts", "**/vite.config.ts"],
+      ["**/.oxlintrc.json", "**/.oxlintrc.jsonc", "**/oxlint.config.ts", "**/oxlint.config.mts"],
     ],
-    [{ configPath: "./custom-config.json" }, ["./custom-config.json"]],
+    [{ configPath: "./custom-config.json" }, ["custom-config.json"]],
+    [
+      { disableNestedConfig: true },
+      [".oxlintrc.json", ".oxlintrc.jsonc", "oxlint.config.ts", "oxlint.config.mts"],
+    ],
+    // Vite+ mode: only `vite.config.*`, and nested configs are never discovered
+    [
+      undefined,
+      [
+        "vite.config.js",
+        "vite.config.mjs",
+        "vite.config.ts",
+        "vite.config.cjs",
+        "vite.config.mts",
+        "vite.config.cts",
+      ],
+      { VP_VERSION: "1" },
+    ],
   ])(
     "should send correct dynamic watch pattern registration for config: %s",
-    async (lspConfig, expectedPatterns) => {
+    async (lspConfig, expectedPatterns, env?: Record<string, string>) => {
       const dirUri = pathToFileURL(import.meta.dirname).href;
-      await using client = createLspConnection();
+      await using client = createLspConnection(env);
       await client.initialize(
         [{ uri: dirUri, name: "test" }],
         {
@@ -73,7 +100,7 @@ describe("LSP initialization", () => {
       const registrations = await client.getDynamicRegistration();
       expect(registrations).toEqual([
         {
-          id: `watcher-linter-${dirUri}`,
+          id: `watcher-${dirUri}`,
           method: "workspace/didChangeWatchedFiles",
           registerOptions: {
             watchers: expectedPatterns.map((pattern) => ({

@@ -10,35 +10,48 @@ use oxc_transformer::{TransformOptions, Transformer};
 
 fn bench_codegen(criterion: &mut Criterion) {
     for file in TestFiles::minimal().files() {
-        let id = BenchmarkId::from_parameter(&file.file_name);
         let source_text = &file.source_text;
         let source_type = file.source_type;
         let allocator = Allocator::default();
 
         let parser_ret = Parser::new(&allocator, source_text, source_type).parse();
-        assert!(parser_ret.errors.is_empty());
+        assert!(parser_ret.diagnostics.is_empty());
         let mut program = parser_ret.program;
 
-        let scoping = SemanticBuilder::new().build(&program).semantic.into_scoping();
+        let scoping =
+            SemanticBuilder::new().with_enum_eval(true).build(&program).semantic.into_scoping();
 
         let transform_options = TransformOptions::enable_all();
         let transformer_ret =
             Transformer::new(&allocator, Path::new(&file.file_name), &transform_options)
                 .build_with_scoping(scoping, &mut program);
-        assert!(transformer_ret.errors.is_empty());
+        assert!(transformer_ret.diagnostics.is_empty());
 
-        let mut group = criterion.benchmark_group("codegen");
-        group.bench_function(id, |b| {
-            b.iter_with_large_drop(|| {
-                Codegen::new()
-                    .with_options(CodegenOptions {
-                        source_map_path: Some(PathBuf::from(&file.file_name)),
-                        ..CodegenOptions::default()
-                    })
-                    .build(&program)
-            });
-        });
-        group.finish();
+        for ascii_only in [false, true] {
+            for sourcemap_enabled in [false, true] {
+                let name = format!(
+                    "codegen{}{}",
+                    if ascii_only { "_ascii_only" } else { "" },
+                    if sourcemap_enabled { "" } else { "_no_sourcemap" }
+                );
+
+                let id = BenchmarkId::from_parameter(&file.file_name);
+                let mut group = criterion.benchmark_group(name);
+                group.bench_function(id, |b| {
+                    b.iter_with_large_drop(|| {
+                        Codegen::new()
+                            .with_options(CodegenOptions {
+                                ascii_only,
+                                source_map_path: sourcemap_enabled
+                                    .then(|| PathBuf::from(&file.file_name)),
+                                ..CodegenOptions::default()
+                            })
+                            .build(&program)
+                    });
+                });
+                group.finish();
+            }
+        }
     }
 }
 

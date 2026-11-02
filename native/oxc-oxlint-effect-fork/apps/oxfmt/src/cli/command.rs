@@ -4,6 +4,8 @@ use bpaf::{Bpaf, Parser};
 #[cfg(feature = "napi")]
 use cow_utils::CowUtils;
 
+use crate::core::config_discovery;
+
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[expect(clippy::ptr_arg)]
@@ -101,7 +103,7 @@ fn mode() -> impl bpaf::Parser<Mode> {
 }
 
 /// Format output mode
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum OutputMode {
     /// Default - when no output option is specified, behaves like `--write` mode in Prettier
     Write,
@@ -146,6 +148,16 @@ pub struct ConfigOptions {
     /// Path to the configuration file (.json, .jsonc, .ts, .mts, .cts, .js, .mjs, .cjs)
     #[bpaf(short, long, argument("PATH"))]
     pub config: Option<PathBuf>,
+    /// Do not search for configuration files in subdirectories
+    #[bpaf(switch, hide_usage)]
+    pub disable_nested_config: bool,
+}
+
+impl ConfigOptions {
+    /// Nested config search: off with `--disable-nested-config`, off with an explicit `--config`, off in Vite+ mode.
+    pub fn use_nested_configs(&self) -> bool {
+        !self.disable_nested_config && self.config.is_none() && config_discovery().nested_configs()
+    }
 }
 
 /// Ignore Options
