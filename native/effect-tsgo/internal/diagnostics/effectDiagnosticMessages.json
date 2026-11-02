@@ -1,4 +1,8 @@
 {
+	"Effect.catchTag expresses tagged error recovery more directly than Effect.catchIf with a `_tag` equality predicate. effect(catchIfTagToCatchTag)": {
+		"category": "Suggestion",
+		"code": 377131
+	},
     "@effect-diagnostics directive has no effect.": {
         "category": "Warning",
         "code": 377000
@@ -303,11 +307,11 @@
         "category": "Warning",
         "code": 377073
     },
-    "This code uses `crypto.randomUUID()`, prefer the Effect `Random` module instead because it uses Effect-injected randomness rather than the `crypto` module behind the scenes. effect(cryptoRandomUUID)": {
+    "This code uses `crypto.randomUUID()`, prefer the Effect `Crypto` module instead. effect(cryptoRandomUUID)": {
         "category": "Warning",
         "code": 377078
     },
-    "This Effect code uses `crypto.randomUUID()`, prefer the Effect `Random` module instead because it uses Effect-injected randomness rather than the `crypto` module behind the scenes. effect(cryptoRandomUUIDInEffect)": {
+    "This Effect code uses `crypto.randomUUID()`, prefer the Effect `Crypto` module instead. effect(cryptoRandomUUIDInEffect)": {
         "category": "Warning",
         "code": 377079
     },
@@ -390,5 +394,141 @@
     "`Effect.{1}` expresses ignored failure more directly than `Effect.{0}` returning `Effect.void`. effect(catchToIgnore)": {
         "category": "Suggestion",
         "code": 377099
+    },
+    "`Effect.map` expresses this success-value transformation more directly than `Effect.flatMap` followed by `Effect.succeed`. effect(flatMapToMap)": {
+        "category": "Suggestion",
+        "code": 377100
+    },
+    "Exported function `{0}` has no pipeable overload corresponding to its signature `{1}`. effect(missingPipeableSignature)": {
+        "category": "Warning",
+        "code": 377101
+    },
+    "Classes extending `Schema.Opaque` must not declare instance members. effect(schemaOpaqueInstanceMember)": {
+        "category": "Error",
+        "code": 377102
+    },
+    "`Effect.succeed` expresses this constant value more directly than `Effect.sync`. effect(syncToSucceed)": {
+        "category": "Suggestion",
+        "code": 377103
+    },
+    "Do not use `Schema.Schema.Type<typeof X>` to extract a schema's type. Use `typeof X.Type` instead. effect(preferSchemaTypeProperty)": {
+        "category": "Error",
+        "code": 377104
+    },
+    "This Vitest callback returns an Effect that Vitest does not run. Use an Effect-aware test API or run the Effect with Effect.runPromise. effect(floatingEffectInVitest)": {
+        "category": "Error",
+        "code": 377105
+    },
+    "Schema literal values must be finite numbers; `{0}` throws during schema construction. Use a finite literal or model non-finite values with a refined Schema.Number. effect(schemaLiteralNonFinite)": {
+        "category": "Error",
+        "code": 377106
+    },
+    "Chained Effect.catch fallbacks that ignore the error can be written with Effect.firstSuccessOf. Wrap each lazy fallback with Effect.suspend to preserve when it is constructed. effect(catchChainToFirstSuccessOf)": {
+        "category": "Suggestion",
+        "code": 377107
+    },
+    "The Effect success channel contains a Promise that is not awaited. Use Effect.promise or Effect.tryPromise to represent async work. effect(promiseInEffectSuccess)": {
+        "category": "Warning",
+        "code": 377108
+    },
+    "`{0}` starts a fiber to run a pure constructor. Use the synchronous variant `{1}` instead. effect(preferUnsafeConstructor)": {
+        "category": "Suggestion",
+        "code": 377109
+    },
+    "Branching on `{0}.reason._tag` inside `Effect.{1}` hand-rolls reason dispatch; use `Effect.catchReason` or `Effect.catchReasons`, which re-fail unmatched reasons automatically. effect(catchTagToCatchReason)": {
+        "category": "Suggestion",
+        "code": 377110
+    },
+    "`AbortController` is manually constructed inside Effect code. Use `Effect.abortSignal` for Effect-managed cancellation. effect(abortControllerInEffect)": {
+        "category": "Suggestion",
+        "code": 377111
+    },
+    "This input is already assignable to the schema's Encoded type. Use `{0}` to preserve compile-time type checking instead of discarding the input type through `{1}`. effect(preferTypedSchemaDecoder)": {
+        "category": "Suggestion",
+        "code": 377112
+    },
+    "`Effect.forEach` expresses this effectful array mapping more directly than `Effect.all` over `Array#map`. effect(allOfMapToForEach)": {
+        "category": "Suggestion",
+        "code": 377113
+    },
+    "`Effect.asSome` expresses wrapping the success value in `Option.some` directly. effect(mapSomeToAsSome)": {
+        "category": "Suggestion",
+        "code": 377114
+    },
+    "`Effect.orDie` expresses escalating every typed failure into a defect more directly than `Effect.{0}` with an identity-forwarding `Effect.die` handler. effect(catchDieToOrDie)": {
+        "category": "Suggestion",
+        "code": 377115
+    },
+    "`Effect.{2}` expresses selective recovery more directly than `Effect.{0}` with a conditional `Effect.{1}` passthrough. effect(catchConditionalRefailToCatchIf)": {
+        "category": "Suggestion",
+        "code": 377116
+    },
+    "`Effect.{0}` expresses this Option success value directly. effect(preferSucceedSomeOrNone)": {
+        "category": "Suggestion",
+        "code": 377117
+    },
+    "`Effect.fromOption` expresses this Option-to-Effect conversion more directly than `Option.match` or an Option tag conditional. effect(optionMatchToFromOption)": {
+        "category": "Suggestion",
+        "code": 377118
+    },
+    "`Effect.acquireDisposable` expresses this disposable resource acquisition more directly than `Effect.acquireRelease` with a manual disposal finalizer. effect(acquireReleaseDisposable)": {
+        "category": "Suggestion",
+        "code": 377119
+    },
+    "`Effect.{0}` expresses this conditional validation more directly than `Effect.flatMap` with an identity `Effect.succeed` branch. effect(flatMapConditionalToFilterOrFail)": {
+        "category": "Suggestion",
+        "code": 377120
+    },
+    "This Effect first-completion race has exactly one sleep- or delay-based timer arm. `Effect.timeoutOrElse` expresses the timeout and fallback directly. effect(raceFirstWithSleepToTimeout)": {
+        "category": "Suggestion",
+        "code": 377121
+    },
+    "Branching on `{0}._tag` inside `Effect.{1}` hand-rolls tagged error dispatch; use `Effect.catchTag` or `Effect.catchTags`, which re-fail unmatched errors automatically. effect(catchAllTagDispatchToCatchTag)": {
+        "category": "Suggestion",
+        "code": 377122
+    },
+    "`Effect.{0}` of `Effect.exit` re-implements `Effect.{1}`. Use the dedicated Exit runner directly. effect(runOfExitToRunExit)": {
+        "category": "Suggestion",
+        "code": 377123
+    },
+    "`Effect.{0}` provides this inline single-service layer directly. effect(provideLayerSucceedToProvideService)": {
+        "category": "Suggestion",
+        "code": 377124
+    },
+    "`Effect.{0}` expresses this non-effectful fold more directly than `Effect.{1}` with `Effect.succeed` handlers. effect(matchEffectToMatch)": {
+        "category": "Suggestion",
+        "code": 377125
+    },
+    "`Effect.mapBoth` expresses these failure and success transformations more directly than `Effect.matchEffect`. effect(matchEffectToMapBoth)": {
+        "category": "Suggestion",
+        "code": 377126
+    },
+    "Use `Effect.{0}` to handle this timeout directly. effect(timeoutCatchTagToTimeoutOrElse)": {
+        "category": "Suggestion",
+        "code": 377127
+    },
+    "This module reference imports `{0}`, which is obsolete in Effect v4. In Effect v4, Schema is provided directly by `Schema` from `effect` (or `effect/Schema`). effect(obsoleteSchemaImport)": {
+        "category": "Warning",
+        "code": 377128
+    },
+    "This module reference imports `{0}`, which is obsolete in Effect v4. In Effect v4, pattern matching is provided directly by `Match` from `effect` (or `effect/Match`). effect(obsoleteMatchImport)": {
+        "category": "Warning",
+        "code": 377129
+    },
+    "`{0}` executes synchronously. Use `Schema.{1}` to compose this operation through Effect without throwing. effect(schemaSync)": {
+        "category": "Suggestion",
+        "code": 377130
+    },
+    "Use Effect.tapError to observe the error and preserve the original failure without having to re-fail it. effect(catchRefailToTapError)": {
+        "category": "Suggestion",
+        "code": 377133
+    },
+    "`Effect.andThen` expresses this sequencing more directly than `Effect.flatMap` with a zero-parameter callback. effect(flatMapIgnoredParamToAndThen)": {
+        "category": "Suggestion",
+        "code": 377132
+    },
+    "Unknown Effect diagnostic rule `{0}` in `diagnosticSeverity`. effect(unknownRuleName)": {
+        "category": "Warning",
+        "code": 377134
     }
 }

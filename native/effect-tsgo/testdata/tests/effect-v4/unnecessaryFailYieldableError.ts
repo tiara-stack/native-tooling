@@ -9,7 +9,7 @@ class NonYieldable extends Error {
 
 class DataTaggedError extends Data.TaggedError("DataTaggedError")<{}> {}
 
-class SchemaError extends Schema.ErrorClass<SchemaError>("SchemaError")({
+class SchemaError extends Schema.Error<SchemaError>("SchemaError")({
   _tag: Schema.tag("SchemaError")
 }) {}
 
@@ -21,6 +21,12 @@ export const unnecessaryFailYieldableError = Effect.gen(function*() {
   // should report
   yield* Effect.fail(new DataTaggedError())
   yield* Effect.fail(new SchemaError({}))
+})
+
+const fail = Effect.fail
+export const aliasedFail = Effect.gen(function*() {
+  yield* fail(new DataTaggedError())
+  return 1
 })
 
 // should not report

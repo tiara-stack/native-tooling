@@ -4,11 +4,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 // MultipleEffectProvide detects consecutive Effect.provide calls with Layer-typed
@@ -45,6 +45,7 @@ type MultipleEffectProvideMatch struct {
 // with Layer-typed arguments within piping flows.
 func AnalyzeMultipleEffectProvide(tp *typeparser.TypeParser, _ *checker.Checker, sf *ast.SourceFile) []MultipleEffectProvideMatch {
 	var matches []MultipleEffectProvideMatch
+	isEffectV4 := tp.SupportedEffectVersion() == typeparser.EffectMajorV4
 
 	flows := tp.PipingFlows(sf, true)
 	for _, flow := range flows {
@@ -81,6 +82,28 @@ func AnalyzeMultipleEffectProvide(tp *typeparser.TypeParser, _ *checker.Checker,
 				continue
 			}
 
+			isLocalProvide := false
+			if isEffectV4 && len(transformation.Args) > 1 {
+				options := transformation.Args[1]
+				if options != nil && options.Kind == ast.KindObjectLiteralExpression {
+					for _, property := range options.AsObjectLiteralExpression().Properties.Nodes {
+						if property == nil || property.Kind != ast.KindPropertyAssignment {
+							continue
+						}
+						assignment := property.AsPropertyAssignment()
+						name := assignment.Name()
+						if name != nil && name.Kind == ast.KindIdentifier && name.Text() == "local" && assignment.Initializer.Kind == ast.KindTrueKeyword {
+							isLocalProvide = true
+							break
+						}
+					}
+				}
+			}
+			if isLocalProvide {
+				finalizeChunk()
+				continue
+			}
+
 			// Check if the first argument is a Layer type
 			arg := transformation.Args[0]
 			argType := tp.GetTypeAtLocation(arg)
@@ -89,7 +112,7 @@ func AnalyzeMultipleEffectProvide(tp *typeparser.TypeParser, _ *checker.Checker,
 				continue
 			}
 
-			if tp.LayerType(argType, arg) == nil {
+			if tp.LayerType(argType) == nil {
 				// provide call but not with a Layer argument — breaks the chain
 				finalizeChunk()
 				continue

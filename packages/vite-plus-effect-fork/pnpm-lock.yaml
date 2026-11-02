@@ -374,6 +374,9 @@ importers:
       '@oxlint/plugins':
         specifier: 'catalog:'
         version: 1.68.0
+      '@tiara-stack/tsgo-effect':
+        specifier: link:../../../tsgo-effect
+        version: link:../../../tsgo-effect
       '@vitest/browser':
         specifier: 'catalog:'
         version: 4.1.9(vite@packages+core)(vitest@4.1.9)

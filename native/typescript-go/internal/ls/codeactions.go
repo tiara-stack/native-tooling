@@ -40,6 +40,7 @@ type CodeAction struct {
 	Description       string
 	Changes           []*lsproto.TextEdit
 	FixID             string
+	Kind              lsproto.CodeActionKind // optional; used by refactors to specify the code action kind
 	FixAllDescription string
 }
 
@@ -72,6 +73,32 @@ var codeFixProviders = []*CodeFixProvider{
 	IsolatedDeclarationsFixProvider,
 	FixClassIncorrectlyImplementsInterfaceProvider,
 	// Add more code fix providers here as they are implemented
+}
+
+// externalCodeFixProviders holds providers registered by external packages (e.g., etslshooks).
+// These are appended to the built-in providers when iterating.
+var externalCodeFixProviders []*CodeFixProvider
+
+// RegisterCodeFixProvider registers an external code fix provider.
+// Called by external packages (e.g., etslshooks) during init() to register their providers.
+// This allows @effect/tsgo to define code fixes without modifying the typescript-go patch.
+func RegisterCodeFixProvider(provider *CodeFixProvider) {
+	externalCodeFixProviders = append(externalCodeFixProviders, provider)
+}
+
+// RefactorProvider represents a provider for selection-based refactoring actions.
+// Unlike CodeFixProvider, refactors are not tied to a specific diagnostic error code.
+type RefactorProvider struct {
+	GetRefactorActions func(ctx context.Context, file *ast.SourceFile, span core.TextRange, program *compiler.Program, ls *LanguageService) ([]CodeAction, error)
+}
+
+// externalRefactorProviders holds providers registered by external packages (e.g., etslshooks).
+var externalRefactorProviders []*RefactorProvider
+
+// RegisterRefactorProvider registers an external refactor provider.
+// Called by external packages (e.g., etslshooks) during init() to register their providers.
+func RegisterRefactorProvider(provider *RefactorProvider) {
+	externalRefactorProviders = append(externalRefactorProviders, provider)
 }
 
 // ProvideCodeActions returns code actions for the given range and context
@@ -112,7 +139,9 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 
 			errorCode := *diag.Code.Integer
 
-			for _, provider := range codeFixProviders {
+			// Check all code fix providers (built-in + external)
+			allProviders := append(codeFixProviders, externalCodeFixProviders...)
+			for _, provider := range allProviders {
 				if !containsErrorCode(provider.ErrorCodes, errorCode) {
 					continue
 				}
@@ -152,6 +181,22 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 			return lsproto.CodeActionResponse{}, err
 		}
 		actions = append(actions, fixAllActions...)
+	}
+
+	// Run refactor providers when the request includes refactor.* kinds or no filter
+	if shouldRunRefactors(params) {
+		start := l.converters.LineAndCharacterToPosition(file, params.Range.Start)
+		end := l.converters.LineAndCharacterToPosition(file, params.Range.End)
+		textRange := core.NewTextRange(int(start), int(end))
+		for _, provider := range externalRefactorProviders {
+			refactorActions, err := provider.GetRefactorActions(ctx, file, textRange, program, l)
+			if err != nil {
+				return lsproto.CodeActionResponse{}, err
+			}
+			for _, action := range refactorActions {
+				actions = append(actions, convertRefactorToLSPCodeAction(&action, params.TextDocument.Uri))
+			}
+		}
 	}
 
 	return lsproto.CommandOrCodeActionArrayOrNull{CommandOrCodeActionArray: &actions}, nil
@@ -378,6 +423,38 @@ func (l *LanguageService) createOrganizeImportsAction(
 // containsErrorCode checks if the error code is in the list
 func containsErrorCode(codes []int32, code int32) bool {
 	return slices.Contains(codes, code)
+}
+
+// shouldRunRefactors returns true when refactor providers should be invoked.
+// Refactors run when no filter is specified or when the filter includes a refactor.* kind.
+func shouldRunRefactors(params *lsproto.CodeActionParams) bool {
+	if params.Context == nil || params.Context.Only == nil {
+		return true
+	}
+	for _, kind := range *params.Context.Only {
+		if strings.HasPrefix(string(kind), "refactor") {
+			return true
+		}
+	}
+	return false
+}
+
+// convertRefactorToLSPCodeAction converts a refactor CodeAction to an LSP CommandOrCodeAction.
+func convertRefactorToLSPCodeAction(action *CodeAction, uri lsproto.DocumentUri) lsproto.CommandOrCodeAction {
+	kind := action.Kind
+	if kind == "" {
+		kind = lsproto.CodeActionKindRefactorRewrite
+	}
+	changes := map[lsproto.DocumentUri][]*lsproto.TextEdit{
+		uri: action.Changes,
+	}
+	return lsproto.CommandOrCodeAction{
+		CodeAction: &lsproto.CodeAction{
+			Title: action.Description,
+			Kind:  &kind,
+			Edit:  &lsproto.WorkspaceEdit{Changes: &changes},
+		},
+	}
 }
 
 // convertToLSPCodeAction converts an internal CodeAction to an LSP CodeAction

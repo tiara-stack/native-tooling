@@ -4,11 +4,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 var RedundantMapError = rule.Rule{
@@ -92,7 +92,7 @@ func analyzeRedundantMapErrorFlowCandidate(tp *typeparser.TypeParser, sf *ast.So
 	}
 
 	lastTransform := flow.Transformations[len(flow.Transformations)-1]
-	if lastTransform.Node == nil || lastTransform.Callee == nil || len(lastTransform.Args) == 0 {
+	if lastTransform.Callee == nil || len(lastTransform.Args) == 0 {
 		return redundantMapErrorCandidate{}, nil, nil, false
 	}
 	if !tp.IsNodeReferenceToEffectModuleApi(lastTransform.Callee, "mapError") {
@@ -125,7 +125,7 @@ func analyzeRedundantMapErrorFlowCandidate(tp *typeparser.TypeParser, sf *ast.So
 
 	return redundantMapErrorCandidate{
 		yieldExpression: yieldExpr.AsNode(),
-		mapErrorNode:    lastTransform.Node,
+		mapErrorNode:    lastTransform.Callee,
 		mapperNode:      mapperNode,
 		mapperText:      mapperText,
 	}, genFn, genCallNode, true
@@ -166,7 +166,7 @@ func analyzeRedundantGeneratorMapErrorCandidate(tp *typeparser.TypeParser, c *ch
 			validYieldCount = -1
 			return true
 		}
-		if !mapperCanBeHoisted(c, generatorFunction.AsNode(), generatorCallNode, candidate.mapperNode) {
+		if !mapperCanBeHoisted(tp, c, generatorFunction.AsNode(), generatorCallNode, candidate.mapperNode) {
 			validYieldCount = -1
 			return true
 		}
@@ -241,8 +241,8 @@ func enclosingGeneratorCall(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func mapperCanBeHoisted(c *checker.Checker, generatorFunctionNode *ast.Node, hoistLocation *ast.Node, mapperNode *ast.Node) bool {
-	if c == nil || generatorFunctionNode == nil || hoistLocation == nil || mapperNode == nil {
+func mapperCanBeHoisted(tp *typeparser.TypeParser, c *checker.Checker, generatorFunctionNode *ast.Node, hoistLocation *ast.Node, mapperNode *ast.Node) bool {
+	if tp == nil || c == nil || generatorFunctionNode == nil || hoistLocation == nil || mapperNode == nil {
 		return false
 	}
 
@@ -253,7 +253,7 @@ func mapperCanBeHoisted(c *checker.Checker, generatorFunctionNode *ast.Node, hoi
 			return canHoist
 		}
 		if node.Kind == ast.KindIdentifier && isHoistSensitiveValueReference(node) {
-			symbol := hoistSensitiveReferenceSymbol(c, node)
+			symbol := hoistSensitiveReferenceSymbol(tp, c, node)
 			if symbol != nil {
 				if allSymbolDeclarationsInsideNode(symbol, mapperNode) {
 					node.ForEachChild(walk)
@@ -303,8 +303,8 @@ func allSymbolDeclarationsOutsideNode(symbol *ast.Symbol, node *ast.Node) bool {
 	return true
 }
 
-func hoistSensitiveReferenceSymbol(c *checker.Checker, node *ast.Node) *ast.Symbol {
-	if c == nil || node == nil {
+func hoistSensitiveReferenceSymbol(tp *typeparser.TypeParser, c *checker.Checker, node *ast.Node) *ast.Symbol {
+	if tp == nil || c == nil || node == nil {
 		return nil
 	}
 	if node.Parent != nil && node.Parent.Kind == ast.KindShorthandPropertyAssignment {
@@ -312,7 +312,7 @@ func hoistSensitiveReferenceSymbol(c *checker.Checker, node *ast.Node) *ast.Symb
 			return symbol
 		}
 	}
-	return c.GetSymbolAtLocation(node)
+	return tp.GetSymbolAtLocation(node)
 }
 
 func generatorFunctionKeywordRange(sf *ast.SourceFile, generatorFunction *ast.FunctionExpression) core.TextRange {

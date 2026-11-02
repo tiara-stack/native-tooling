@@ -5,11 +5,11 @@ import (
 
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 
 	"github.com/effect-ts/tsgo/etscore"
 )
@@ -152,14 +152,14 @@ func isPipeableAtIndex(tp *typeparser.TypeParser, flow *typeparser.PipingFlow, i
 		if subjectType == nil {
 			return false
 		}
-		return tp.IsPipeableType(subjectType, flow.Subject.Node)
+		return tp.IsPipeableType(subjectType)
 	}
 
 	t := flow.Transformations[index-1]
 	if t.OutType == nil {
 		return false
 	}
-	return tp.IsPipeableType(t.OutType, flow.Node)
+	return tp.IsPipeableType(t.OutType)
 }
 
 // getSubjectText extracts the subject text for the diagnostic message.

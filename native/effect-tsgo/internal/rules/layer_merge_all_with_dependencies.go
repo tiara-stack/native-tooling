@@ -6,11 +6,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 // LayerMergeAllWithDependencies detects interdependencies in Layer.mergeAll calls
@@ -98,11 +98,6 @@ func analyzeLayerMergeAllCall(tp *typeparser.TypeParser, c *checker.Checker, sf 
 		return nil
 	}
 
-	// Verify this is a property access expression (X.mergeAll shape)
-	if call.Expression.Kind != ast.KindPropertyAccessExpression {
-		return nil
-	}
-
 	// Parse all layer arguments
 	var layerInfos []layerInfo
 	// Map of actually provided types -> argument node that provides them
@@ -114,7 +109,7 @@ func analyzeLayerMergeAllCall(tp *typeparser.TypeParser, c *checker.Checker, sf 
 			continue
 		}
 
-		layer := tp.LayerType(argType, arg)
+		layer := tp.LayerType(argType)
 		if layer == nil {
 			continue
 		}

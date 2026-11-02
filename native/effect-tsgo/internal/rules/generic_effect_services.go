@@ -4,8 +4,8 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
 )
 
 // GenericEffectServices detects Effect Service class declarations that have type
@@ -16,7 +16,7 @@ var GenericEffectServices = rule.Rule{
 	Group:           "correctness",
 	Description:     "Prevents services with type parameters that cannot be discriminated at runtime",
 	DefaultSeverity: etscore.SeverityWarning,
-	SupportedEffect: []string{"v3", "v4"},
+	SupportedEffect: []string{"v3"},
 	Codes:           []int32{tsdiag.Effect_Services_with_type_parameters_are_not_supported_because_they_cannot_be_properly_discriminated_at_runtime_which_may_cause_unexpected_behavior_effect_genericEffectServices.Code()},
 	Run: func(ctx *rule.Context) []*ast.Diagnostic {
 		// V3-only rule
@@ -41,10 +41,10 @@ var GenericEffectServices = rule.Rule{
 			if node.Kind == ast.KindClassDeclaration {
 				classDecl := node.AsClassDeclaration()
 				if node.Name() != nil && classDecl.TypeParameters != nil && classDecl.HeritageClauses != nil {
-					classSym := ctx.Checker.GetSymbolAtLocation(node.Name())
+					classSym := ctx.TypeParser.GetSymbolAtLocation(node.Name())
 					if classSym != nil {
 						classType := ctx.Checker.GetTypeOfSymbolAtLocation(classSym, node)
-						if classType != nil && ctx.TypeParser.IsContextTag(classType, node) {
+						if classType != nil && ctx.TypeParser.IsContextTag(classType) {
 							diags = append(diags, ctx.NewDiagnostic(ctx.SourceFile, ctx.GetErrorRange(node.Name()), tsdiag.Effect_Services_with_type_parameters_are_not_supported_because_they_cannot_be_properly_discriminated_at_runtime_which_may_cause_unexpected_behavior_effect_genericEffectServices, nil))
 							continue // skip children
 						}

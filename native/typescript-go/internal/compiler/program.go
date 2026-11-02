@@ -32,6 +32,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+// FilterDiagnosticsForNoEmitOnErrorCallback is invoked before diagnostics
+// suppress emit when noEmitOnError is enabled.
+var FilterDiagnosticsForNoEmitOnErrorCallback func(*core.CompilerOptions, []*ast.Diagnostic) []*ast.Diagnostic
+
+// RegisterFilterDiagnosticsForNoEmitOnErrorCallback registers a callback to
+// filter diagnostics used by noEmitOnError.
+func RegisterFilterDiagnosticsForNoEmitOnErrorCallback(cb func(*core.CompilerOptions, []*ast.Diagnostic) []*ast.Diagnostic) {
+	FilterDiagnosticsForNoEmitOnErrorCallback = cb
+}
+
 type ProgramOptions struct {
 	Host                        CompilerHost
 	Config                      *tsoptions.ParsedCommandLine
@@ -1791,6 +1801,9 @@ func GetDiagnosticsOfAnyProgram(
 				allDiagnostics = append(allDiagnostics, program.GetDeclarationDiagnostics(ctx, file)...)
 			}
 		}
+	}
+	if skipNoEmitCheckForDtsDiagnostics && FilterDiagnosticsForNoEmitOnErrorCallback != nil {
+		allDiagnostics = FilterDiagnosticsForNoEmitOnErrorCallback(program.Options(), allDiagnostics)
 	}
 	return allDiagnostics
 }

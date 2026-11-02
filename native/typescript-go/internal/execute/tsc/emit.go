@@ -10,12 +10,24 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
+
+// FilterDiagnosticsForExitCodeCallback is invoked to filter diagnostics before
+// exit-code determination. It allows external packages to exclude certain
+// diagnostics from affecting the exit code while still reporting them.
+var FilterDiagnosticsForExitCodeCallback func(*core.CompilerOptions, []*ast.Diagnostic) []*ast.Diagnostic
+
+// RegisterFilterDiagnosticsForExitCodeCallback registers a callback to filter
+// diagnostics for exit-code determination.
+func RegisterFilterDiagnosticsForExitCodeCallback(cb func(*core.CompilerOptions, []*ast.Diagnostic) []*ast.Diagnostic) {
+	FilterDiagnosticsForExitCodeCallback = cb
+}
 
 func GetTraceWithWriterFromSys(w io.Writer, locale locale.Locale, testing CommandLineTesting) func(msg *diagnostics.Message, args ...any) {
 	if testing == nil {
@@ -62,9 +74,14 @@ func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics
 		statistics.Report(input.Writer, input.Testing)
 	}
 
-	if result.EmitResult.EmitSkipped && len(result.Diagnostics) > 0 {
+	diagnosticsForExitCode := result.Diagnostics
+	if FilterDiagnosticsForExitCodeCallback != nil {
+		diagnosticsForExitCode = FilterDiagnosticsForExitCodeCallback(input.Config.CompilerOptions(), result.Diagnostics)
+	}
+
+	if result.EmitResult.EmitSkipped && len(diagnosticsForExitCode) > 0 {
 		result.Status = ExitStatusDiagnosticsPresent_OutputsSkipped
-	} else if len(result.Diagnostics) > 0 {
+	} else if len(diagnosticsForExitCode) > 0 {
 		result.Status = ExitStatusDiagnosticsPresent_OutputsGenerated
 	}
 	return result, statistics

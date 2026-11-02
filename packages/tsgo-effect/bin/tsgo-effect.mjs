@@ -32,11 +32,28 @@ if (result.error) {
 process.exit(result.status ?? 1);
 
 function resolveBinary() {
+  const explicitPath = [process.env.TIARA_TSGO_EFFECT_PATH, process.env.TIARA_TSGO_PATH].find(
+    (path) => Boolean(path && existsSync(path)),
+  );
+  if (explicitPath) return explicitPath;
+
+  const sourceRoot = resolve(packageRoot, "../..");
+  if (existsSync(join(sourceRoot, "native", "typescript-go", "go.mod"))) {
+    const sourceBinary = join(
+      sourceRoot,
+      "native",
+      "typescript-go",
+      "built",
+      "local",
+      executableName,
+    );
+    if (existsSync(sourceBinary)) return sourceBinary;
+    throw new Error("Repository-local tsgo-effect is not built. Run pnpm native:build:tsgo.");
+  }
+
   /** @type {string[]} */
   const candidates = [];
   for (const candidate of [
-    process.env.TIARA_TSGO_EFFECT_PATH,
-    process.env.TIARA_TSGO_PATH,
     platformPackageName ? resolvePackageBinary(platformPackageName) : undefined,
     join(packageRoot, "vendor", `${process.platform}-${process.arch}`, executableName),
     findUp(process.cwd(), join("native", "typescript-go", "built", "local", executableName)),

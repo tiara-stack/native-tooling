@@ -4,8 +4,8 @@ import (
 	"github.com/effect-ts/tsgo/internal/fixable"
 	"github.com/effect-ts/tsgo/internal/rewriter"
 	"github.com/effect-ts/tsgo/internal/rules"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/ls"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/ls"
 )
 
 var CatchToOrElseSucceedFix = fixable.Fixable{
@@ -25,13 +25,10 @@ func runCatchToOrElseSucceedFix(ctx *fixable.Context) []ls.CodeAction {
 		if !diagRange.Intersects(ctx.Span) && !ctx.Span.ContainedBy(diagRange) {
 			continue
 		}
-
 		if action := ctx.NewFixAction(fixable.FixAction{
 			Description: "Replace with Effect.orElseSucceed",
 			Run: func(tracker *rewriter.Tracker) {
-				if match.CalleeNameNode != nil {
-					tracker.ReplaceNode(sf, match.CalleeNameNode, tracker.NewIdentifier("orElseSucceed"), nil)
-				}
+				replaceEffectMethodCallee(tracker, sf, match.Callee, match.CalleeNameNode, "orElseSucceed")
 
 				tracker.ReplaceNode(sf, match.SucceedCallExpression, match.SucceedArgument, nil)
 			},

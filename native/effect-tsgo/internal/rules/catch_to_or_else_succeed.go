@@ -5,11 +5,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 // CatchToOrElseSucceed suggests using Effect.orElseSucceed instead of Effect.catch + Effect.succeed.
@@ -35,6 +35,7 @@ var CatchToOrElseSucceed = rule.Rule{
 type CatchToOrElseSucceedMatch struct {
 	SourceFile            *ast.SourceFile
 	Location              core.TextRange
+	Callee                *ast.Node
 	CalleeNameNode        *ast.Node
 	CatchMethodName       string
 	SucceedCallExpression *ast.Node
@@ -58,7 +59,7 @@ func AnalyzeCatchToOrElseSucceed(tp *typeparser.TypeParser, _ *checker.Checker, 
 				continue
 			}
 
-			lazy := typeparser.ParseLazyExpression(transformation.Args[0], true)
+			lazy := typeparser.ParseLazyExpression(transformation.Args[0], typeparser.LazyExpressionThunk)
 			if lazy == nil {
 				continue
 			}
@@ -93,6 +94,7 @@ func AnalyzeCatchToOrElseSucceed(tp *typeparser.TypeParser, _ *checker.Checker, 
 			matches = append(matches, CatchToOrElseSucceedMatch{
 				SourceFile:            sf,
 				Location:              scanner.GetErrorRangeForNode(sf, transformation.Callee),
+				Callee:                transformation.Callee,
 				CalleeNameNode:        calleeNameNode,
 				CatchMethodName:       catchMethodName,
 				SucceedCallExpression: expr,

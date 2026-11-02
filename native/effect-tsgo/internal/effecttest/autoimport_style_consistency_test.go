@@ -5,11 +5,11 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/microsoft/typescript-go/shim/core"
-	"github.com/microsoft/typescript-go/shim/fourslash"
-	"github.com/microsoft/typescript-go/shim/ls/lsconv"
-	"github.com/microsoft/typescript-go/shim/ls/lsutil"
-	"github.com/microsoft/typescript-go/shim/lsp/lsproto"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	"github.com/microsoft/TypeScript/tsc/shim/fourslash"
+	"github.com/microsoft/TypeScript/tsc/shim/ls/lsconv"
+	"github.com/microsoft/TypeScript/tsc/shim/ls/lsutil"
+	"github.com/microsoft/TypeScript/tsc/shim/lsp/lsproto"
 
 	_ "github.com/effect-ts/tsgo/etslshooks"
 	_ "github.com/effect-ts/tsgo/etstesthooks"
@@ -59,6 +59,48 @@ Effect.runPromiseExit();`),
 
 Effect.runPromiseExit();
 `}, preferences)
+}
+
+func TestAutoImportEffectStyleConsistency_namespaceReexport(t *testing.T) {
+	t.Parallel()
+	const content = `// @Filename: /tsconfig.json
+{
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "namespaceImportPackages": ["effect"]
+      }
+    ]
+  }
+}
+// @effect-v4
+// @Filename: /mainCompletion.ts
+const completion = Effect/*completion*/;
+// @Filename: /mainFix.ts
+const fix = Effect/*fix*/;
+`
+
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+
+	preferences := &lsutil.UserPreferences{
+		IncludeCompletionsForModuleExports:    core.TSTrue,
+		IncludeCompletionsForImportStatements: core.TSTrue,
+	}
+	completion := "completion"
+
+	f.VerifyApplyCodeActionFromCompletion(t, &completion, &fourslash.ApplyCodeActionFromCompletionOptions{
+		Name:        "Effect",
+		Source:      "effect/Effect",
+		Description: "Add import from \"effect/Effect\"",
+		NewFileContent: new(`import * as Effect from "effect/Effect";
+
+const completion = Effect;`),
+		UserPreferences: preferences,
+	})
+
+	f.VerifyImportFixModuleSpecifiers(t, "fix", []string{"effect/Effect"}, preferences)
 }
 
 func TestAutoImportEffectStyleConsistency_barrel(t *testing.T) {
@@ -130,9 +172,9 @@ func verifyImportFixContentsUnordered(t *testing.T, f *fourslash.FourslashTest, 
 	if !ok {
 		t.Fatal("diagnostic request failed")
 	}
-	diagResult, ok := diagResp.Result.(lsproto.DocumentDiagnosticResponse)
-	if !ok {
-		t.Fatal("unexpected diagnostic response type")
+	diagResult, err := lsproto.TextDocumentDiagnosticInfo.UnmarshalResult(diagResp.Result)
+	if err != nil {
+		t.Fatalf("failed to unmarshal diagnostic response: %v", err)
 	}
 
 	var diagnostics []*lsproto.Diagnostic
@@ -151,9 +193,9 @@ func verifyImportFixContentsUnordered(t *testing.T, f *fourslash.FourslashTest, 
 	if !ok {
 		t.Fatal("code action request failed")
 	}
-	actionResult, ok := actionResp.Result.(lsproto.CodeActionResponse)
-	if !ok {
-		t.Fatal("unexpected code action response type")
+	actionResult, err := lsproto.TextDocumentCodeActionInfo.UnmarshalResult(actionResp.Result)
+	if err != nil {
+		t.Fatalf("failed to unmarshal code action response: %v", err)
 	}
 
 	var actual []string
@@ -270,8 +312,8 @@ succeed/*fix*/(1);
 		"import * as Sink from \"effect/Sink\";\n\nSink.succeed(1);\n",
 		"import * as Stream from \"effect/Stream\";\n\nStream.succeed(1);\n",
 		"import * as TxDeferred from \"effect/TxDeferred\";\n\nTxDeferred.succeed(1);\n",
-		"import * as Prompt from \"effect/unstable/cli/Prompt\";\n\nPrompt.succeed(1);\n",
-		"import * as DurableDeferred from \"effect/unstable/workflow/DurableDeferred\";\n\nDurableDeferred.succeed(1);\n",
+		"import * as Prompt from \"effect/cli/Prompt\";\n\nPrompt.succeed(1);\n",
+		"import * as DurableDeferred from \"effect/workflow/DurableDeferred\";\n\nDurableDeferred.succeed(1);\n",
 	}, preferences)
 }
 

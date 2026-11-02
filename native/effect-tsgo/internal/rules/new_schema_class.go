@@ -4,11 +4,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 // NewSchemaClass suggests using the Schema make API instead of direct
@@ -90,7 +90,7 @@ func isV4SchemaClassExpression(tp *typeparser.TypeParser, c *checker.Checker, ex
 	}
 
 	t := tp.GetTypeAtLocation(expr)
-	if t == nil || !tp.IsSchemaType(t, expr) {
+	if t == nil || !tp.IsSchemaType(t) {
 		return false
 	}
 

@@ -2220,11 +2220,11 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 	links := c.sourceFileLinks.Get(sourceFile)
 	if !links.typeChecked {
 		c.saveDeferredDiagnostics = true
-		// Clear any stale relation errors before type checking.
-		links.relationErrors = nil
 		if tr := c.tracer; tr != nil {
 			defer tr.Push(tracing.PhaseCheck, "checkSourceFile", map[string]any{"path": sourceFile.FileName()}, true)()
 		}
+		// Clear any stale relation errors before type checking.
+		links.relationErrors = nil
 		// Grammar checking
 		c.checkGrammarSourceFile(sourceFile)
 		c.renamedBindingElementsInTypes = nil

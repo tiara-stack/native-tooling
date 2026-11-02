@@ -7,9 +7,9 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
 )
 
 // MissingEffectServiceDependency checks that Effect.Service dependencies satisfy
@@ -74,7 +74,7 @@ func checkServiceDependencies(ctx *rule.Context, node *ast.Node) []*ast.Diagnost
 	options := serviceResult.Options
 
 	// Get the class symbol and type
-	classSym := ctx.Checker.GetSymbolAtLocation(className)
+	classSym := ctx.TypeParser.GetSymbolAtLocation(className)
 	if classSym == nil {
 		return nil
 	}
@@ -98,7 +98,7 @@ func checkServiceDependencies(ctx *rule.Context, node *ast.Node) []*ast.Diagnost
 	}
 
 	// Parse as Layer type to get RIn
-	layer := ctx.TypeParser.LayerType(defaultType, node)
+	layer := ctx.TypeParser.LayerType(defaultType)
 	if layer == nil {
 		return nil
 	}
@@ -133,7 +133,7 @@ func checkServiceDependencies(ctx *rule.Context, node *ast.Node) []*ast.Diagnost
 						depTypes := ctx.TypeParser.UnrollUnionMembers(numberIndexType)
 						for _, depType := range depTypes {
 							// Parse each dependency as Layer type
-							depLayer := ctx.TypeParser.LayerType(depType, options)
+							depLayer := ctx.TypeParser.LayerType(depType)
 							if depLayer != nil {
 								// Add the ROut of this dependency to provided services
 								providedResult := ctx.TypeParser.AppendToUniqueTypesMap(servicesMemory, depLayer.ROut, excludeNever)

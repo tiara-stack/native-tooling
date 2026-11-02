@@ -3,16 +3,15 @@
 A wrapper around [TypeScript-Go](https://github.com/microsoft/TypeScript-Go) that builds the Effect Language Service, providing Effect-TS diagnostics and quick fixes.
 This project targets **Effect V4** (codename: "smol") primarily and also Effect V3.
 
-## Currently in Alpha
-The TypeScript-Go version of the Effect LSP should be considered in Alpha. Expect breaking changes between releases and some missing features compared to previous version.
-Some of them are currently on hold due to not yet complete pipeline on the upstream TypeScript repository.
-
 ## Installation
 
 The setup of the TSGO version of the LSP can be performed via the command line interface:
 
 ```bash
+# Interactive and guided setup for human friends
 npx @effect/tsgo setup
+# Non-interactive, for LLM friends
+npx @effect/tsgo setup --help
 ```
 
 This will guide you through the installation process, which includes:
@@ -22,7 +21,31 @@ This will guide you through the installation process, which includes:
 4. Hinting at any additional editor configuration needed to ensure the LSP is active.
 
 > [!NOTE]
-> At the moment, you still need a native TypeScript install alongside `@effect/tsgo` — either `@typescript/native-preview` (nightlies) or `typescript` >= 7 (e.g. the 7.0 RC, `typescript@rc`). `effect-tsgo patch` and `effect-tsgo setup` detect and use whichever one is installed.
+> At the moment, you still need a native TypeScript install alongside `@effect/tsgo`: `typescript` >= 7 (e.g. `typescript@latest` or `typescript@next`) or an alias such as `@typescript/native`. `effect-tsgo patch` tries `typescript`, then `@typescript/native`, and accepts `--typescript-package <name>` to try a custom package name first.
+
+## LSP-based linter
+
+The Effect LSP doubles as a tool to perform type-aware linting of Effect code, and ships as well a way to emit additional Oxlint Type Aware rules.
+
+Linting can occur either during the `tsc` typecheck phase (with the benefit of running typechecking only once and caching the output), or via a dedicated `npx @effect/tsgo diagnostics --project tsconfig.json` command (with typechecking occurring again), or via the Oxlint Patch.
+
+<a href="https://github.com/Effect-TS/tsgo/blob/main/docs/README.md">See the Oxlint Setup guide</a> for instructions on how to install and configure Oxlint with the Effect LSP.
+
+When running in `tsc` mode, the Effect diagnostics are emitted as standard TypeScript diagnostics, and can be configured to affect the `tsc` exit code through the options `ignoreEffectSuggestionsInTscExitCode`, `ignoreEffectWarningsInTscExitCode`, and `ignoreEffectErrorsInTscExitCode`.
+
+When running in dedicated diagnostics mode, the Effect diagnostics can be emitted in structured formats, which can be further processed by other tools.
+
+<!-- supported-components:start -->
+## Supported Package Versions
+
+The following target package versions are supported by `@effect/tsgo@0.46.1`:
+
+| Component | Supported versions |
+|---|---|
+| TypeScript | `7.0.2`, `7.1.0-dev.20260924.1` |
+| Oxlint | `1.82.0`, `1.83.0`, `1.84.0`, `1.85.0` |
+| oxlint-tsgolint | `7.0.2001`, `7.0.2002`, `7.0.2003` |
+<!-- supported-components:end -->
 
 ## Diagnostic Status
 
@@ -31,99 +54,131 @@ Some diagnostics are off by default or have a default severity of suggestion, bu
 <!-- diagnostics-table:start -->
 <table>
   <thead>
-    <tr><th>Diagnostic</th><th>Sev</th><th>Fix</th><th>Description</th><th>v3</th><th>v4</th></tr>
+    <tr><th>Rule</th><th>Description</th></tr>
   </thead>
   <tbody>
-    <tr><td colspan="6"><strong>Correctness</strong> <em>Wrong, unsafe, or structurally invalid code patterns.</em></td></tr>
-    <tr><td><code>anyUnknownInErrorContext</code></td><td>➖</td><td></td><td>Detects &#39;any&#39; or &#39;unknown&#39; types in Effect error or requirements channels</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>classSelfMismatch</code></td><td>❌</td><td>🔧</td><td>Ensures Self type parameter matches the class name in Context/Service/Tag/Schema classes</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>duplicatePackage</code></td><td>⚠️</td><td></td><td>Warns when multiple versions of an Effect-related package are detected in the program</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>effectFnImplicitAny</code></td><td>❌</td><td></td><td>Mirrors noImplicitAny for unannotated Effect.fn, Effect.fnUntraced, and Effect.fnUntracedEager callback parameters when no outer contextual function type exists. Requires TS&#39;s noImplicitAny: true</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>floatingEffect</code></td><td>❌</td><td></td><td>Detects Effect values that are neither yielded nor assigned</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>genericEffectServices</code></td><td>⚠️</td><td></td><td>Prevents services with type parameters that cannot be discriminated at runtime</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>missingEffectContext</code></td><td>❌</td><td></td><td>Detects Effect values with unhandled context requirements</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>missingEffectError</code></td><td>❌</td><td>🔧</td><td>Detects Effect values with unhandled error types</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>missingLayerContext</code></td><td>❌</td><td></td><td>Detects Layer values with unhandled context requirements</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>missingReturnYieldStar</code></td><td>❌</td><td>🔧</td><td>Suggests using return yield* for Effects that never succeed</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>missingStarInYieldEffectGen</code></td><td>❌</td><td>🔧</td><td>Detects bare yield (without *) inside Effect generator scopes</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>nonObjectEffectServiceType</code></td><td>❌</td><td></td><td>Ensures Effect.Service types are objects, not primitives</td><td>✓</td><td></td></tr>
-    <tr><td><code>outdatedApi</code></td><td>⚠️</td><td></td><td>Detects usage of APIs that have been removed or renamed in Effect v4</td><td></td><td>✓</td></tr>
-    <tr><td><code>overriddenSchemaConstructor</code></td><td>❌</td><td>🔧</td><td>Prevents overriding constructors in Schema classes which breaks decoding behavior</td><td>✓</td><td>✓</td></tr>
-    <tr><td colspan="6"><strong>Anti-pattern</strong> <em>Discouraged patterns that often lead to bugs or confusing behavior.</em></td></tr>
-    <tr><td><code>catchUnfailableEffect</code></td><td>💡</td><td></td><td>Warns when using error handling on Effects that never fail</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>effectFnIife</code></td><td>⚠️</td><td>🔧</td><td>Effect.fn or Effect.fnUntraced is called as an IIFE; use Effect.gen instead</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>effectGenUsesAdapter</code></td><td>⚠️</td><td></td><td>Warns when using the deprecated adapter parameter in Effect.gen</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>effectInFailure</code></td><td>⚠️</td><td></td><td>Warns when an Effect is used inside an Effect failure channel</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>effectInVoidSuccess</code></td><td>⚠️</td><td></td><td>Detects nested Effects in void success channels that may cause unexecuted effects</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>globalErrorInEffectCatch</code></td><td>⚠️</td><td></td><td>Warns when catch callbacks return global Error type instead of typed errors</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>globalErrorInEffectFailure</code></td><td>⚠️</td><td></td><td>Warns when the global Error type is used in an Effect failure channel</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>layerMergeAllWithDependencies</code></td><td>⚠️</td><td>🔧</td><td>Detects interdependencies in Layer.mergeAll calls where one layer provides a service that another layer requires</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>lazyEffect</code></td><td>💡</td><td></td><td>Suggests avoiding exported zero-argument functions and service members that lazily return Effect or Stream values</td><td></td><td>✓</td></tr>
-    <tr><td><code>lazyPromiseInEffectSync</code></td><td>⚠️</td><td></td><td>Warns when Effect.sync lazily returns a Promise instead of using an async Effect constructor</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>leakingRequirements</code></td><td>💡</td><td></td><td>Detects implementation services leaked in service methods</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>multipleEffectProvide</code></td><td>⚠️</td><td>🔧</td><td>Warns against chaining Effect.provide calls which can cause service lifecycle issues</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>returnEffectInGen</code></td><td>💡</td><td>🔧</td><td>Warns when returning an Effect in a generator causes nested Effect&lt;Effect&lt;...&gt;&gt;</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>runEffectInsideEffect</code></td><td>💡</td><td>🔧</td><td>Suggests using Runtime or Effect.run*With methods instead of Effect.run* inside Effect contexts</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>schemaSyncInEffect</code></td><td>💡</td><td></td><td>Suggests using Effect-based Schema methods instead of sync methods inside Effect generators</td><td>✓</td><td></td></tr>
-    <tr><td><code>scopeInLayerEffect</code></td><td>⚠️</td><td>🔧</td><td>Suggests using Layer.scoped instead of Layer.effect when Scope is in requirements</td><td>✓</td><td></td></tr>
-    <tr><td><code>strictEffectProvide</code></td><td>➖</td><td></td><td>Warns when using Effect.provide with layers outside of application entry points</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>tryCatchInEffectGen</code></td><td>💡</td><td></td><td>Discourages try/catch in Effect generators in favor of Effect error handling</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>unknownInEffectCatch</code></td><td>⚠️</td><td></td><td>Warns when catch callbacks return unknown instead of typed errors</td><td>✓</td><td>✓</td></tr>
-    <tr><td colspan="6"><strong>Effect-native</strong> <em>Prefer Effect-native APIs and abstractions when available.</em></td></tr>
-    <tr><td><code>asyncFunction</code></td><td>➖</td><td></td><td>Warns when declaring async functions and suggests using Effect values and Effect.gen for async control flow</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>cryptoRandomUUID</code></td><td>➖</td><td></td><td>Warns when using crypto.randomUUID() outside Effect generators instead of the Effect Random module, which uses Effect-injected randomness rather than the crypto module behind the scenes</td><td></td><td>✓</td></tr>
-    <tr><td><code>cryptoRandomUUIDInEffect</code></td><td>➖</td><td></td><td>Warns when using crypto.randomUUID() inside Effect generators instead of the Effect Random module, which uses Effect-injected randomness rather than the crypto module behind the scenes</td><td></td><td>✓</td></tr>
-    <tr><td><code>extendsNativeError</code></td><td>➖</td><td></td><td>Warns when a class directly extends the native Error class</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>globalConsole</code></td><td>➖</td><td></td><td>Warns when using console methods outside Effect generators instead of Effect.log/Logger</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>globalConsoleInEffect</code></td><td>➖</td><td></td><td>Warns when using console methods inside Effect generators instead of Effect.log/Logger</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>globalDate</code></td><td>➖</td><td></td><td>Warns when using Date.now() or new Date() outside Effect generators instead of Clock/DateTime</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>globalDateInEffect</code></td><td>➖</td><td></td><td>Warns when using Date.now() or new Date() inside Effect generators instead of Clock/DateTime</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>globalFetch</code></td><td>➖</td><td></td><td>Warns when using the global fetch function outside Effect generators instead of the Effect HTTP client</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>globalFetchInEffect</code></td><td>➖</td><td></td><td>Warns when using the global fetch function inside Effect generators instead of the Effect HTTP client</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>globalRandom</code></td><td>➖</td><td></td><td>Warns when using Math.random() outside Effect generators instead of the Random service</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>globalRandomInEffect</code></td><td>➖</td><td></td><td>Warns when using Math.random() inside Effect generators instead of the Random service</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>globalTimers</code></td><td>➖</td><td></td><td>Warns when using setTimeout/setInterval outside Effect generators instead of Effect.sleep/Schedule</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>globalTimersInEffect</code></td><td>➖</td><td></td><td>Warns when using setTimeout/setInterval inside Effect generators instead of Effect.sleep/Schedule</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>instanceOfSchema</code></td><td>➖</td><td>🔧</td><td>Suggests using Schema.is instead of instanceof for Effect Schema types</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>newPromise</code></td><td>➖</td><td></td><td>Warns when constructing promises with new Promise instead of using Effect APIs</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>nodeBuiltinImport</code></td><td>➖</td><td></td><td>Warns when importing Node.js built-in modules that have Effect-native counterparts</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>preferSchemaOverJson</code></td><td>➖</td><td></td><td>Suggests using Effect Schema for JSON operations instead of JSON.parse/JSON.stringify</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>processEnv</code></td><td>➖</td><td></td><td>Warns when reading process.env outside Effect generators instead of using Effect Config</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>processEnvInEffect</code></td><td>➖</td><td></td><td>Warns when reading process.env inside Effect generators instead of using Effect Config</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>unsafeEffectTypeAssertion</code></td><td>➖</td><td>🔧</td><td>Detects unsafe type assertions that narrow Effect, Stream, or Layer error or requirements channels</td><td>✓</td><td>✓</td></tr>
-    <tr><td colspan="6"><strong>Style</strong> <em>Cleanup, consistency, and idiomatic Effect code.</em></td></tr>
-    <tr><td><code>catchAllToMapError</code></td><td>💡</td><td>🔧</td><td>Suggests using Effect.mapError instead of Effect.catch + Effect.fail</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>catchToIgnore</code></td><td>💡</td><td>🔧</td><td>Suggests using Effect.ignore or Effect.ignoreCause instead of Effect.catch/catchCause returning Effect.void</td><td></td><td>✓</td></tr>
-    <tr><td><code>catchToOrElseSucceed</code></td><td>💡</td><td>🔧</td><td>Suggests using Effect.orElseSucceed instead of Effect.catch + Effect.succeed</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>deterministicKeys</code></td><td>➖</td><td>🔧</td><td>Enforces deterministic naming for service/tag/error identifiers based on class names</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>effectDoNotation</code></td><td>➖</td><td></td><td>Suggests using Effect.gen or Effect.fn instead of the Effect.Do notation helpers</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>effectFnOpportunity</code></td><td>💡</td><td>🔧</td><td>Suggests using Effect.fn for functions that return an Effect</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>effectMapFlatten</code></td><td>💡</td><td></td><td>Suggests using Effect.flatMap instead of Effect.map followed by Effect.flatten in piping flows</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>effectMapVoid</code></td><td>💡</td><td>🔧</td><td>Suggests using Effect.asVoid instead of Effect.map(() =&gt; void 0), Effect.map(() =&gt; undefined), or Effect.map(() =&gt; {})</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>effectSucceedWithVoid</code></td><td>💡</td><td>🔧</td><td>Suggests using Effect.void instead of Effect.succeed(undefined) or Effect.succeed(void 0)</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>missedPipeableOpportunity</code></td><td>➖</td><td>🔧</td><td>Suggests using .pipe() for nested function calls</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>missingEffectServiceDependency</code></td><td>➖</td><td></td><td>Checks that Effect.Service dependencies satisfy all required layer inputs</td><td>✓</td><td></td></tr>
-    <tr><td><code>multipleCatchTag</code></td><td>💡</td><td></td><td>Suggests collapsing consecutive Effect.catchTag transformations into a single Effect.catchTags call when semantics stay equivalent</td><td></td><td>✓</td></tr>
-    <tr><td><code>nestedEffectGenYield</code></td><td>➖</td><td></td><td>Warns when yielding a nested bare Effect.gen inside an existing Effect generator context</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>newSchemaClass</code></td><td>➖</td><td>🔧</td><td>Suggests using Schema make instead of new for Schema classes</td><td></td><td>✓</td></tr>
-    <tr><td><code>redundantMapError</code></td><td>💡</td><td></td><td>Suggests hoisting a repeated trailing Effect.mapError from every yield in an Effect generator</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>redundantOrDie</code></td><td>💡</td><td></td><td>Suggests hoisting a repeated trailing Effect.orDie from every yield in an Effect generator</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>redundantSchemaTagIdentifier</code></td><td>💡</td><td>🔧</td><td>Suggests removing redundant identifier argument when it equals the tag value in Schema.TaggedClass/TaggedError/TaggedRequest</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>schemaNumber</code></td><td>💡</td><td>🔧</td><td>Suggests Schema.Finite and Schema.FiniteFromString instead of Schema.Number APIs when describing domain numbers</td><td></td><td>✓</td></tr>
-    <tr><td><code>schemaStructWithTag</code></td><td>💡</td><td>🔧</td><td>Suggests using Schema.TaggedStruct instead of Schema.Struct with _tag field</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>schemaUnionOfLiterals</code></td><td>➖</td><td>🔧</td><td>Suggests combining multiple Schema.Literal calls in Schema.Union into a single Schema.Literal</td><td>✓</td><td></td></tr>
-    <tr><td><code>serviceNotAsClass</code></td><td>➖</td><td>🔧</td><td>Warns when Context.Service is used as a variable instead of a class declaration</td><td></td><td>✓</td></tr>
-    <tr><td><code>strictBooleanExpressions</code></td><td>➖</td><td></td><td>Enforces boolean types in conditional expressions for type safety</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>unnecessaryArrowBlock</code></td><td>➖</td><td>🔧</td><td>Suggests using a concise arrow body when the block only returns an expression</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>unnecessaryEffectGen</code></td><td>💡</td><td>🔧</td><td>Suggests removing Effect.gen when it contains only a single return statement</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>unnecessaryFailYieldableError</code></td><td>💡</td><td>🔧</td><td>Suggests yielding yieldable errors directly instead of wrapping with Effect.fail</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>unnecessaryPipe</code></td><td>💡</td><td>🔧</td><td>Removes pipe calls with no arguments</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>unnecessaryPipeChain</code></td><td>💡</td><td>🔧</td><td>Simplifies chained pipe calls into a single pipe call</td><td>✓</td><td>✓</td></tr>
-    <tr><td><code>unnecessaryTypeofType</code></td><td>💡</td><td>🔧</td><td>Suggests replacing typeof Schema.Type style annotations with the matching named type when available</td><td>✓</td><td>✓</td></tr>
+    <tr><td colspan="2"><strong>Correctness</strong> <em>Wrong, unsafe, or structurally invalid code patterns.</em></td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/any-unknown-in-error-context.md"><code>anyUnknownInErrorContext</code></a></td><td>Detects &#39;any&#39; or &#39;unknown&#39; types in Effect error or requirements channels</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/class-self-mismatch.md"><code>classSelfMismatch</code></a></td><td>Ensures Self type parameter matches the class name in Context/Service/Tag/Schema classes</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/duplicate-package.md"><code>duplicatePackage</code></a></td><td>Warns when multiple versions of an Effect-related package are detected in the program</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/effect-fn-implicit-any.md"><code>effectFnImplicitAny</code></a></td><td>Mirrors noImplicitAny for unannotated Effect.fn, Effect.fnUntraced, and Effect.fnUntracedEager callback parameters when no outer contextual function type exists. Requires TS&#39;s noImplicitAny: true</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/floating-effect.md"><code>floatingEffect</code></a></td><td>Detects Effect values that are neither yielded nor assigned</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/floating-effect-in-vitest.md"><code>floatingEffectInVitest</code></a></td><td>Detects Effects returned from non-Effect-aware Vitest callbacks</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/generic-effect-services.md"><code>genericEffectServices</code></a></td><td>Prevents services with type parameters that cannot be discriminated at runtime</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/missing-effect-context.md"><code>missingEffectContext</code></a></td><td>Detects Effect values with unhandled context requirements</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/missing-effect-error.md"><code>missingEffectError</code></a></td><td>Detects Effect values with unhandled error types</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/missing-layer-context.md"><code>missingLayerContext</code></a></td><td>Detects Layer values with unhandled context requirements</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/missing-return-yield-star.md"><code>missingReturnYieldStar</code></a></td><td>Suggests using return yield* for Effects that never succeed</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/missing-star-in-yield-effect-gen.md"><code>missingStarInYieldEffectGen</code></a></td><td>Detects bare yield (without *) inside Effect generator scopes</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/non-object-effect-service-type.md"><code>nonObjectEffectServiceType</code></a></td><td>Ensures Effect.Service types are objects, not primitives</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/obsolete-match-import.md"><code>obsoleteMatchImport</code></a></td><td>Warns when importing @effect/match in projects targeting Effect v4, where Match is included directly in the effect package</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/obsolete-schema-import.md"><code>obsoleteSchemaImport</code></a></td><td>Warns when importing @effect/schema in projects targeting Effect v4, where Schema is included directly in the effect package</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/outdated-api.md"><code>outdatedApi</code></a></td><td>Detects usage of APIs that have been removed or renamed in Effect v4</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/overridden-schema-constructor.md"><code>overriddenSchemaConstructor</code></a></td><td>Prevents overriding constructors in Schema classes which breaks decoding behavior</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/promise-in-effect-success.md"><code>promiseInEffectSuccess</code></a></td><td>Detects Promise types in Effect success channels where they are not awaited</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/schema-literal-non-finite.md"><code>schemaLiteralNonFinite</code></a></td><td>Reports statically known non-finite numbers passed to Schema literal constructors</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/schema-opaque-instance-member.md"><code>schemaOpaqueInstanceMember</code></a></td><td>Disallows instance members in classes extending Schema.Opaque</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/unsafe-effect-type-assertion.md"><code>unsafeEffectTypeAssertion</code></a></td><td>Detects unsafe type assertions that narrow Effect, Stream, or Layer error or requirements channels</td></tr>
+    <tr><td colspan="2"><strong>Anti-pattern</strong> <em>Discouraged patterns that often lead to bugs or confusing behavior.</em></td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/catch-unfailable-effect.md"><code>catchUnfailableEffect</code></a></td><td>Warns when using error handling on Effects that never fail</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/effect-fn-iife.md"><code>effectFnIife</code></a></td><td>Effect.fn or Effect.fnUntraced is called as an IIFE; use Effect.gen instead</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/effect-gen-uses-adapter.md"><code>effectGenUsesAdapter</code></a></td><td>Warns when using the deprecated adapter parameter in Effect.gen</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/effect-in-failure.md"><code>effectInFailure</code></a></td><td>Warns when an Effect is used inside an Effect failure channel</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/effect-in-void-success.md"><code>effectInVoidSuccess</code></a></td><td>Detects nested Effects in void success channels that may cause unexecuted effects</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/global-error-in-effect-catch.md"><code>globalErrorInEffectCatch</code></a></td><td>Warns when catch callbacks return global Error type instead of typed errors</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/global-error-in-effect-failure.md"><code>globalErrorInEffectFailure</code></a></td><td>Warns when the global Error type is used in an Effect failure channel</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/layer-merge-all-with-dependencies.md"><code>layerMergeAllWithDependencies</code></a></td><td>Detects interdependencies in Layer.mergeAll calls where one layer provides a service that another layer requires</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/lazy-effect.md"><code>lazyEffect</code></a></td><td>Suggests avoiding exported zero-argument functions and service members that lazily return Effect or Stream values</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/lazy-promise-in-effect-sync.md"><code>lazyPromiseInEffectSync</code></a></td><td>Warns when Effect.sync lazily returns a Promise instead of using an async Effect constructor</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/leaking-requirements.md"><code>leakingRequirements</code></a></td><td>Detects implementation services leaked in service methods</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/multiple-effect-provide.md"><code>multipleEffectProvide</code></a></td><td>Warns against chaining Effect.provide calls which can cause service lifecycle issues</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/prefer-unsafe-constructor.md"><code>preferUnsafeConstructor</code></a></td><td>Suggests replacing Effect.runSync of a pure effect constructor with the synchronous *Unsafe variant exported by the same module</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/return-effect-in-gen.md"><code>returnEffectInGen</code></a></td><td>Warns when returning an Effect in a generator causes nested Effect&lt;Effect&lt;...&gt;&gt;</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/run-effect-inside-effect.md"><code>runEffectInsideEffect</code></a></td><td>Suggests using Runtime or Effect.run*With methods instead of Effect.run* inside Effect contexts</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/schema-sync-in-effect.md"><code>schemaSyncInEffect</code></a></td><td>Suggests using Effect-based Schema methods instead of sync methods inside Effect generators</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/scope-in-layer-effect.md"><code>scopeInLayerEffect</code></a></td><td>Suggests using Layer.scoped instead of Layer.effect when Scope is in requirements</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/strict-effect-provide.md"><code>strictEffectProvide</code></a></td><td>Warns when using Effect.provide with layers outside of application entry points</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/try-catch-in-effect-gen.md"><code>tryCatchInEffectGen</code></a></td><td>Discourages try/catch in Effect generators in favor of Effect error handling</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/unknown-in-effect-catch.md"><code>unknownInEffectCatch</code></a></td><td>Warns when catch callbacks return unknown instead of typed errors</td></tr>
+    <tr><td colspan="2"><strong>Effect-native</strong> <em>Prefer Effect-native APIs and abstractions when available.</em></td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/abort-controller-in-effect.md"><code>abortControllerInEffect</code></a></td><td>Warns when manually constructing AbortController inside Effect generators instead of using Effect.abortSignal</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/async-function.md"><code>asyncFunction</code></a></td><td>Warns when declaring async functions and suggests using Effect values and Effect.gen for async control flow</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/crypto-random-uuid.md"><code>cryptoRandomUUID</code></a></td><td>Warns when using crypto.randomUUID() outside Effect generators instead of the Effect Crypto module</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/crypto-random-uuid-in-effect.md"><code>cryptoRandomUUIDInEffect</code></a></td><td>Warns when using crypto.randomUUID() inside Effect generators instead of the Effect Crypto module</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/extends-native-error.md"><code>extendsNativeError</code></a></td><td>Warns when a class directly extends the native Error class</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/global-console.md"><code>globalConsole</code></a></td><td>Warns when using console methods outside Effect generators instead of Effect.log/Logger</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/global-console-in-effect.md"><code>globalConsoleInEffect</code></a></td><td>Warns when using console methods inside Effect generators instead of Effect.log/Logger</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/global-date.md"><code>globalDate</code></a></td><td>Warns when using Date.now() or new Date() outside Effect generators instead of Clock/DateTime</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/global-date-in-effect.md"><code>globalDateInEffect</code></a></td><td>Warns when using Date.now() or new Date() inside Effect generators instead of Clock/DateTime</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/global-fetch.md"><code>globalFetch</code></a></td><td>Warns when using the global fetch function outside Effect generators instead of the Effect HTTP client</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/global-fetch-in-effect.md"><code>globalFetchInEffect</code></a></td><td>Warns when using the global fetch function inside Effect generators instead of the Effect HTTP client</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/global-random.md"><code>globalRandom</code></a></td><td>Warns when using Math.random() outside Effect generators instead of the Random service</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/global-random-in-effect.md"><code>globalRandomInEffect</code></a></td><td>Warns when using Math.random() inside Effect generators instead of the Random service</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/global-timers.md"><code>globalTimers</code></a></td><td>Warns when using setTimeout/setInterval outside Effect generators instead of Effect.sleep/Schedule</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/global-timers-in-effect.md"><code>globalTimersInEffect</code></a></td><td>Warns when using setTimeout/setInterval inside Effect generators instead of Effect.sleep/Schedule</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/instance-of-schema.md"><code>instanceOfSchema</code></a></td><td>Suggests using Schema.is instead of instanceof for Effect Schema types</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/new-promise.md"><code>newPromise</code></a></td><td>Warns when constructing promises with new Promise instead of using Effect APIs</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/node-builtin-import.md"><code>nodeBuiltinImport</code></a></td><td>Warns when importing Node.js built-in modules that have Effect-native counterparts</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/prefer-schema-over-json.md"><code>preferSchemaOverJson</code></a></td><td>Suggests using Effect Schema for JSON operations instead of JSON.parse/JSON.stringify</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/process-env.md"><code>processEnv</code></a></td><td>Warns when reading process.env outside Effect generators instead of using Effect Config</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/process-env-in-effect.md"><code>processEnvInEffect</code></a></td><td>Warns when reading process.env inside Effect generators instead of using Effect Config</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/schema-sync.md"><code>schemaSync</code></a></td><td>Suggests Effect-based Schema decoding and encoding instead of synchronous methods</td></tr>
+    <tr><td colspan="2"><strong>Style</strong> <em>Cleanup, consistency, and idiomatic Effect code.</em></td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/acquire-release-disposable.md"><code>acquireReleaseDisposable</code></a></td><td>Suggests Effect.acquireDisposable when Effect.acquireRelease only invokes the acquired resource&#39;s disposal protocol</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/all-of-map-to-for-each.md"><code>allOfMapToForEach</code></a></td><td>Suggests using Effect.forEach instead of Effect.all over an effectful Array#map</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/catch-all-tag-dispatch-to-catch-tag.md"><code>catchAllTagDispatchToCatchTag</code></a></td><td>Suggests Effect.catchTag or Effect.catchTags for catch-all handlers that re-fail unmatched tagged errors</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/catch-all-to-map-error.md"><code>catchAllToMapError</code></a></td><td>Suggests using Effect.mapError instead of Effect.catch + Effect.fail</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/catch-chain-to-first-success-of.md"><code>catchChainToFirstSuccessOf</code></a></td><td>Suggests Effect.firstSuccessOf for consecutive error-independent Effect.catch fallbacks when the error type is preserved</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/catch-conditional-refail-to-catch-if.md"><code>catchConditionalRefailToCatchIf</code></a></td><td>Suggests Effect.catchIf, Effect.catchCauseIf, or Effect.catchTag for conditional catch handlers that re-fail their untouched input</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/catch-die-to-or-die.md"><code>catchDieToOrDie</code></a></td><td>Suggests using Effect.orDie instead of Effect.catch or Effect.catchAll with an identity-forwarding Effect.die handler</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/catch-if-tag-to-catch-tag.md"><code>catchIfTagToCatchTag</code></a></td><td>Suggests Effect.catchTag instead of Effect.catchIf with a direct _tag equality predicate</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/catch-refail-to-tap-error.md"><code>catchRefailToTapError</code></a></td><td>Suggests Effect.tapError for catch handlers that sequence an effect and then re-fail the original error</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/catch-tag-to-catch-reason.md"><code>catchTagToCatchReason</code></a></td><td>Suggests Effect.catchReason or Effect.catchReasons for handlers that re-fail unmatched reason._tag branches</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/catch-to-ignore.md"><code>catchToIgnore</code></a></td><td>Suggests using Effect.ignore or Effect.ignoreCause instead of Effect.catch/catchCause returning Effect.void</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/catch-to-or-else-succeed.md"><code>catchToOrElseSucceed</code></a></td><td>Suggests using Effect.orElseSucceed instead of Effect.catch + Effect.succeed</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/deterministic-keys.md"><code>deterministicKeys</code></a></td><td>Enforces deterministic naming for service/tag/error identifiers based on class names</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/effect-do-notation.md"><code>effectDoNotation</code></a></td><td>Suggests using Effect.gen or Effect.fn instead of the Effect.Do notation helpers</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/effect-fn-opportunity.md"><code>effectFnOpportunity</code></a></td><td>Suggests using Effect.fn for functions that return an Effect</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/effect-map-flatten.md"><code>effectMapFlatten</code></a></td><td>Suggests using Effect.flatMap instead of Effect.map followed by Effect.flatten in piping flows</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/effect-map-void.md"><code>effectMapVoid</code></a></td><td>Suggests using Effect.asVoid instead of Effect.map(() =&gt; void 0), Effect.map(() =&gt; undefined), or Effect.map(() =&gt; {})</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/effect-succeed-with-void.md"><code>effectSucceedWithVoid</code></a></td><td>Suggests using Effect.void instead of Effect.succeed(undefined) or Effect.succeed(void 0)</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/flat-map-conditional-to-filter-or-fail.md"><code>flatMapConditionalToFilterOrFail</code></a></td><td>Suggests Effect.filterOrFail or Effect.filterOrElse when Effect.flatMap conditionally passes its input through with Effect.succeed</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/flat-map-ignored-param-to-and-then.md"><code>flatMapIgnoredParamToAndThen</code></a></td><td>Suggests using Effect.andThen instead of Effect.flatMap when a zero-parameter callback returns an existing Effect value</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/flat-map-to-map.md"><code>flatMapToMap</code></a></td><td>Suggests using Effect.map instead of Effect.flatMap when the callback only wraps its result with Effect.succeed</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/map-some-to-as-some.md"><code>mapSomeToAsSome</code></a></td><td>Suggests using Effect.asSome instead of Effect.map when the mapper only wraps the success value with Option.some</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/match-effect-to-map-both.md"><code>matchEffectToMapBoth</code></a></td><td>Suggests Effect.mapBoth when Effect.matchEffect only transforms the failure and success channels</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/match-effect-to-match.md"><code>matchEffectToMatch</code></a></td><td>Suggests Effect.match or Effect.matchCause when both Effect.matchEffect handlers only return Effect.succeed</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/missed-pipeable-opportunity.md"><code>missedPipeableOpportunity</code></a></td><td>Suggests using .pipe() for nested function calls</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/missing-effect-service-dependency.md"><code>missingEffectServiceDependency</code></a></td><td>Checks that Effect.Service dependencies satisfy all required layer inputs</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/missing-pipeable-signature.md"><code>missingPipeableSignature</code></a></td><td>Reports exported fixed-arity functions whose call signatures have no corresponding pipeable overload</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/multiple-catch-tag.md"><code>multipleCatchTag</code></a></td><td>Suggests collapsing consecutive Effect.catchTag transformations into a single Effect.catchTags call when semantics stay equivalent</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/nested-effect-gen-yield.md"><code>nestedEffectGenYield</code></a></td><td>Warns when yielding a nested bare Effect.gen inside an existing Effect generator context</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/new-schema-class.md"><code>newSchemaClass</code></a></td><td>Suggests using Schema make instead of new for Schema classes</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/option-match-to-from-option.md"><code>optionMatchToFromOption</code></a></td><td>Suggests Effect.fromOption when Option.match or an Option tag conditional only converts Some to Effect.succeed and None to Effect.fail</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/prefer-schema-type-property.md"><code>preferSchemaTypeProperty</code></a></td><td>Disallows Schema.Schema.Type&lt;typeof X&gt; in favor of typeof X.Type</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/prefer-succeed-some-or-none.md"><code>preferSucceedSomeOrNone</code></a></td><td>Suggests using Effect.succeedNone or Effect.succeedSome instead of wrapping Option.none or Option.some with Effect.succeed</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/prefer-typed-schema-decoder.md"><code>preferTypedSchemaDecoder</code></a></td><td>Suggests typed Schema decoders when the input is assignable to the schema&#39;s Encoded type</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/provide-layer-succeed-to-provide-service.md"><code>provideLayerSucceedToProvideService</code></a></td><td>Suggests providing inline Layer.succeed and Layer.effect services directly</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/race-first-with-sleep-to-timeout.md"><code>raceFirstWithSleepToTimeout</code></a></td><td>Suggests Effect.timeoutOrElse when Effect.raceFirst has exactly one sleep- or delay-based timer arm</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/redundant-map-error.md"><code>redundantMapError</code></a></td><td>Suggests hoisting a repeated trailing Effect.mapError from every yield in an Effect generator</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/redundant-or-die.md"><code>redundantOrDie</code></a></td><td>Suggests hoisting a repeated trailing Effect.orDie from every yield in an Effect generator</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/redundant-schema-tag-identifier.md"><code>redundantSchemaTagIdentifier</code></a></td><td>Suggests removing redundant identifier argument when it equals the tag value in Schema.TaggedClass/TaggedError/TaggedRequest</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/run-of-exit-to-run-exit.md"><code>runOfExitToRunExit</code></a></td><td>Suggests using Effect.runPromiseExit instead of passing Effect.exit to Effect.runPromise</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/schema-number.md"><code>schemaNumber</code></a></td><td>Suggests Schema.Finite and Schema.FiniteFromString instead of Schema.Number APIs when describing domain numbers</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/schema-struct-with-tag.md"><code>schemaStructWithTag</code></a></td><td>Suggests using Schema.TaggedStruct instead of Schema.Struct with _tag field</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/schema-union-of-literals.md"><code>schemaUnionOfLiterals</code></a></td><td>Suggests combining multiple Schema.Literal calls in Schema.Union into a single Schema.Literal</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/service-not-as-class.md"><code>serviceNotAsClass</code></a></td><td>Warns when Context.Service is used as a variable instead of a class declaration</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/strict-boolean-expressions.md"><code>strictBooleanExpressions</code></a></td><td>Enforces boolean types in conditional expressions for type safety</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/sync-to-succeed.md"><code>syncToSucceed</code></a></td><td>Suggests using Effect.succeed instead of Effect.sync when the thunk returns a constant value</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/timeout-catch-tag-to-timeout-or-else.md"><code>timeoutCatchTagToTimeoutOrElse</code></a></td><td>Suggests dedicated timeout combinators instead of catching TimeoutError immediately after Effect.timeout</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/unnecessary-arrow-block.md"><code>unnecessaryArrowBlock</code></a></td><td>Suggests using a concise arrow body when the block only returns an expression</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/unnecessary-effect-gen.md"><code>unnecessaryEffectGen</code></a></td><td>Suggests removing Effect.gen when it contains only a single return statement</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/unnecessary-fail-yieldable-error.md"><code>unnecessaryFailYieldableError</code></a></td><td>Suggests yielding yieldable errors directly instead of wrapping with Effect.fail</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/unnecessary-pipe.md"><code>unnecessaryPipe</code></a></td><td>Removes pipe calls with no arguments</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/unnecessary-pipe-chain.md"><code>unnecessaryPipeChain</code></a></td><td>Simplifies chained pipe calls into a single pipe call</td></tr>
+    <tr><td><a href="https://github.com/Effect-TS/tsgo/blob/main/docs/rules/unnecessary-typeof-type.md"><code>unnecessaryTypeofType</code></a></td><td>Suggests replacing typeof Schema.Type style annotations with the matching named type when available</td></tr>
   </tbody>
 </table>
-
-`➖` off by default, `❌` error, `⚠️` warning, `💬` message, `💡` suggestion, `🔧` quick fix available
 <!-- diagnostics-table:end -->
 
 ## Refactor Status
@@ -168,20 +223,6 @@ Some diagnostics are off by default or have a default severity of suggestion, bu
 | `schemaBrand` | ✅ | ➖ | `brand("varName")` snippet when dot-accessing Schema in variable declarations (V3-only) |
 | `serviceMapSelfInClasses` | ✅ | ✅ | Service map self-type snippets in extends clauses |
 
-### Codegen Status
-
-| Codegen | V3 | V4 | Notes |
-|---------|----|----|-------|
-| `accessors` | ❌ | ❌ | Generate Service accessor methods from comment directive |
-| `annotate` | ❌ | ❌ | Generate type annotations from comment directive |
-| `typeToSchema` | ❌ | ❌ | Generate Schema from type alias comment directive |
-
-### Rename Status
-
-| Rename | V3 | V4 | Notes |
-|--------|----|----|-------|
-| `keyStrings` | ❌ | ❌ | Extend rename to include key string literals in Effect classes |
-
 ## Best Practices
 
 ### Relationship to Official TypeScript-Go (`tsgo`)
@@ -192,7 +233,7 @@ Effect-tsgo is a **superset** of the official [TypeScript-Go](https://github.com
 
 ### Version Pinning
 
-Each release of `effect-tsgo` is built against a specific upstream `tsgo` commit. The pinned commit is recorded in `flake.nix` (`typescript-go-src`). When upstream `tsgo` releases new features or fixes, `effect-tsgo` will adopt them in a subsequent release after validating compatibility with the Effect diagnostics layer.
+Each release of `effect-tsgo` is built against the versioned components recorded in `_packages/tsgo/upstream.json`. The Nix flake consumes the TypeScript `next` tag directly. When upstream `tsgo` releases new features or fixes, `effect-tsgo` will adopt them in a subsequent release after validating compatibility with the Effect diagnostics layer.
 
 ### When to Upgrade
 

@@ -1,10 +1,13 @@
 === Metadata ===
-Effect version: 4.0.0
+Effect version: 4.0.1
 
 
 
 ==== /.src/schemaMutableKey_ts2322.ts (0 errors) ====
-    import { Schema, Struct as Struct_, SchemaAST  } from "effect"
+    import { Schema, Struct as Struct_, SchemaAST } from "effect"
+    declare module "effect/SchemaAST" {
+      export function optionalKey<A extends SchemaAST.AST>(ast: A): A
+    }
     
     
     interface optionalKeyLambda extends Struct_.Lambda {

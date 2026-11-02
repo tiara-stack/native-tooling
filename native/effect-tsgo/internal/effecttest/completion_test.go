@@ -3,8 +3,8 @@ package effecttest_test
 import (
 	"testing"
 
-	"github.com/microsoft/typescript-go/shim/fourslash"
-	"github.com/microsoft/typescript-go/shim/lsp/lsproto"
+	"github.com/microsoft/TypeScript/tsc/shim/fourslash"
+	"github.com/microsoft/TypeScript/tsc/shim/lsp/lsproto"
 
 	_ "github.com/effect-ts/tsgo/etslshooks"
 	_ "github.com/effect-ts/tsgo/etstesthooks"
@@ -92,6 +92,12 @@ class Foo extends Schema./*1*/`
 		if !findCompletionLabel(completions.Items, "TaggedClass<Foo>") {
 			t.Error("expected 'TaggedClass<Foo>' completion")
 		}
+		if !findCompletionLabel(completions.Items, "TaggedError<Foo>") {
+			t.Error("expected 'TaggedError<Foo>' completion")
+		}
+		if !findCompletionLabel(completions.Items, "Error<Foo>") {
+			t.Error("expected 'Error<Foo>' completion")
+		}
 	}
 }
 
@@ -124,6 +130,7 @@ class MyService extends Context./*1*/`
 	completions := f.GetCompletions(t, nil)
 	if completions == nil {
 		t.Fatal("completions is nil")
+		return
 	}
 	if findCompletionLabel(completions.Items, "Service<MyService, {}>") {
 		t.Error("did not expect Effect completion when completions=false")

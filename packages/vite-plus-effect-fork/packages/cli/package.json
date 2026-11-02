@@ -373,7 +373,7 @@
     "@vitest/snapshot": "catalog:",
     "@vitest/spy": "catalog:",
     "@vitest/utils": "catalog:",
-    "@tiara-stack/tsgo-effect": "^0.1.0",
+    "@tiara-stack/tsgo-effect": "link:../../../tsgo-effect",
     "@voidzero-dev/vite-plus-core": "workspace:*",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

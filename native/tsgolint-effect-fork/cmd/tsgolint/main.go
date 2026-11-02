@@ -33,6 +33,7 @@ import (
 	"github.com/effect-ts/tsgo/tsgolint/internal/rules/no_duplicate_type_constituents"
 	"github.com/effect-ts/tsgo/tsgolint/internal/rules/no_floating_promises"
 	"github.com/effect-ts/tsgo/tsgolint/internal/rules/no_for_in_array"
+	"github.com/effect-ts/tsgo/tsgolint/internal/rules/no_generated_empty_object_type"
 	"github.com/effect-ts/tsgo/tsgolint/internal/rules/no_implied_eval"
 	"github.com/effect-ts/tsgo/tsgolint/internal/rules/no_meaningless_void_operator"
 	"github.com/effect-ts/tsgo/tsgolint/internal/rules/no_misused_promises"
@@ -172,6 +173,7 @@ var allRules = []rule.Rule{
 	no_duplicate_type_constituents.NoDuplicateTypeConstituentsRule,
 	no_floating_promises.NoFloatingPromisesRule,
 	no_for_in_array.NoForInArrayRule,
+	no_generated_empty_object_type.NoGeneratedEmptyObjectTypeRule,
 	no_implied_eval.NoImpliedEvalRule,
 	no_meaningless_void_operator.NoMeaninglessVoidOperatorRule,
 	no_misused_promises.NoMisusedPromisesRule,

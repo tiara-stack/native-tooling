@@ -162,7 +162,8 @@ type CompilerOptions struct {
 
 	// Effect holds the parsed @effect/language-service plugin configuration.
 	// This field is populated from the plugins array in tsconfig.json during config parsing.
-	Effect *etscore.EffectPluginOptions
+	// Incremental build info persists it separately from user compiler options.
+	Effect *etscore.EffectPluginOptions `json:"-"`
 }
 
 // noCopy may be embedded into structs which must not be copied

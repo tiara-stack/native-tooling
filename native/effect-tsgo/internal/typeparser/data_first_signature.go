@@ -3,8 +3,8 @@ package typeparser
 import (
 	"strings"
 
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
 )
 
 type ParsedDataFirstOrLastCall struct {
@@ -15,11 +15,15 @@ type ParsedDataFirstOrLastCall struct {
 	SubjectIndex int
 }
 
+type PipeableSignatureWitness struct {
+	ArgumentTypes []*checker.Type
+	SubjectType   *checker.Type
+}
+
 func (tp *TypeParser) DataFirstOrLastCall(node *ast.Node) *ParsedDataFirstOrLastCall {
 	if tp == nil || tp.checker == nil || node == nil || node.Kind != ast.KindCallExpression {
 		return nil
 	}
-
 	call := node.AsCallExpression()
 	if call == nil || call.Expression == nil || call.Arguments == nil || len(call.Arguments.Nodes) < 2 {
 		return nil
@@ -33,15 +37,20 @@ func (tp *TypeParser) DataFirstOrLastCall(node *ast.Node) *ParsedDataFirstOrLast
 
 	c := tp.checker
 	resolved := c.GetResolvedSignature(node)
-	if resolved == nil || resolved.Declaration() == nil {
+	if resolved == nil {
 		return nil
 	}
-	if len(resolved.Parameters()) != len(call.Arguments.Nodes) {
+	if len(call.Arguments.Nodes) < resolved.MinArgumentCount() ||
+		(len(call.Arguments.Nodes) > len(resolved.Parameters()) && !resolved.HasRestParameter()) {
 		return nil
 	}
 
-	resolvedSymbol := checker.Checker_getSymbolOfDeclaration(c, resolved.Declaration())
-	if resolvedSymbol == nil {
+	resolvedDeclaration := rawSignature(resolved).Declaration()
+	var resolvedSymbol *ast.Symbol
+	if resolvedDeclaration != nil {
+		resolvedSymbol = checker.Checker_getSymbolOfDeclaration(c, resolvedDeclaration)
+	}
+	if resolvedDeclaration != nil && resolvedSymbol == nil {
 		return nil
 	}
 	calleeType := tp.GetTypeAtLocation(call.Expression)
@@ -64,53 +73,190 @@ func (tp *TypeParser) DataFirstOrLastCall(node *ast.Node) *ParsedDataFirstOrLast
 		}
 	}
 
+	var matched *ParsedDataFirstOrLastCall
 	for _, subjectIndex := range subjectIndexes {
-		derived := derivePipeableSignatureFromDataFirst(c, resolved, subjectIndex)
-		if derived == nil {
+		subjectType := tp.GetTypeAtLocation(call.Arguments.Nodes[subjectIndex])
+		if subjectType == nil {
 			continue
 		}
+		args := omitArgAt(call.Arguments.Nodes, subjectIndex)
+		argumentTypes := make([]*checker.Type, 0, len(args))
+		for _, arg := range args {
+			argumentTypes = append(argumentTypes, tp.GetTypeAtLocation(arg))
+		}
+		witness := &PipeableSignatureWitness{ArgumentTypes: argumentTypes, SubjectType: subjectType}
 
 		for _, candidate := range candidates {
-			if candidate == nil || candidate.Declaration() == nil {
+			if candidate == nil {
 				continue
 			}
-			candidateSymbol := checker.Checker_getSymbolOfDeclaration(c, candidate.Declaration())
-			if candidateSymbol == nil || checker.Checker_getSymbolIfSameReference(c, resolvedSymbol, candidateSymbol) == nil {
-				continue
-			}
-			candidateReturn := c.GetReturnTypeOfSignature(candidate)
-			if candidateReturn == nil {
-				continue
-			}
-			returnedSigs := c.GetSignaturesOfType(candidateReturn, checker.SignatureKindCall)
-			hasUnaryReturnedCall := false
-			for _, returnedSig := range returnedSigs {
-				if returnedSig != nil && len(returnedSig.Parameters()) == 1 {
-					hasUnaryReturnedCall = true
-					break
+			if resolvedSymbol != nil {
+				candidateDeclaration := rawSignature(candidate).Declaration()
+				if candidateDeclaration == nil {
+					continue
+				}
+				candidateSymbol := checker.Checker_getSymbolOfDeclaration(c, candidateDeclaration)
+				if candidateSymbol == nil || checker.Checker_getSymbolIfSameReference(c, resolvedSymbol, candidateSymbol) == nil {
+					continue
 				}
 			}
-			if !hasUnaryReturnedCall {
-				continue
-			}
-			if !checker.Checker_isSignatureAssignableTo(c, candidate, derived, false) {
+			if !MatchesPipeableSignature(c, resolved, candidate, subjectIndex, witness) {
 				continue
 			}
 
-			return &ParsedDataFirstOrLastCall{
+			if matched != nil && matched.SubjectIndex != subjectIndex {
+				if matched.SubjectIndex < len(resolved.Parameters()) && isLikelySelfParameter(resolved.Parameters()[matched.SubjectIndex]) {
+					return matched
+				}
+				return nil
+			}
+			matched = &ParsedDataFirstOrLastCall{
 				Node:         call,
 				Callee:       call.Expression,
 				Subject:      call.Arguments.Nodes[subjectIndex],
-				Args:         omitArgAt(call.Arguments.Nodes, subjectIndex),
+				Args:         args,
 				SubjectIndex: subjectIndex,
 			}
+			break
 		}
 	}
 
-	return nil
+	return matched
 }
 
-func derivePipeableSignatureFromDataFirst(c *checker.Checker, sig *checker.Signature, subjectIndex int) *checker.Signature {
+// MatchesPipeableSignature reports whether candidate is the pipeable form of
+// dataFirst with the parameter at subjectIndex moved into a returned unary function.
+// When witness is nil, parameter types from dataFirst are used for comparison.
+func MatchesPipeableSignature(c *checker.Checker, dataFirst *checker.Signature, candidate *checker.Signature, subjectIndex int, witness *PipeableSignatureWitness) bool {
+	if c == nil || dataFirst == nil || candidate == nil {
+		return false
+	}
+	params := dataFirst.Parameters()
+	if subjectIndex < 0 || subjectIndex >= len(params) {
+		return false
+	}
+
+	var argumentTypes []*checker.Type
+	var subjectType *checker.Type
+	if witness != nil {
+		argumentTypes = witness.ArgumentTypes
+		subjectType = witness.SubjectType
+	} else {
+		argumentTypes = make([]*checker.Type, 0, len(params)-1)
+		for i, param := range params {
+			if i == subjectIndex {
+				subjectType = c.GetTypeOfSymbol(param)
+				continue
+			}
+			argumentTypes = append(argumentTypes, c.GetTypeOfSymbol(param))
+		}
+	}
+
+	return argumentTypesMatchParameters(c, argumentTypes, candidate) &&
+		candidateAcceptsSubject(c, candidate, subjectType) &&
+		pipeableSignatureShapesMatch(c, dataFirst, candidate, subjectIndex)
+}
+
+func argumentTypesMatchParameters(c *checker.Checker, args []*checker.Type, sig *checker.Signature) bool {
+	if c == nil || sig == nil || len(args) < sig.MinArgumentCount() {
+		return false
+	}
+	params := sig.Parameters()
+	if len(params) == 0 {
+		return len(args) == 0
+	}
+	if len(args) > len(params) && !sig.HasRestParameter() {
+		return false
+	}
+	for i, argType := range args {
+		paramIndex := i
+		if paramIndex >= len(params) {
+			paramIndex = len(params) - 1
+		}
+		paramType := c.GetTypeOfSymbol(params[paramIndex])
+		if !typeAcceptsArgument(c, argType, paramType) && (len(sig.TypeParameters()) == 0 || !hasCompatibleCallShape(c, argType, paramType)) {
+			return false
+		}
+	}
+	return true
+}
+
+func candidateAcceptsSubject(c *checker.Checker, candidate *checker.Signature, subjectType *checker.Type) bool {
+	if c == nil || candidate == nil || subjectType == nil {
+		return false
+	}
+	candidateReturn := c.GetReturnTypeOfSignature(candidate)
+	if candidateReturn == nil {
+		return false
+	}
+	for _, returned := range c.GetSignaturesOfType(candidateReturn, checker.SignatureKindCall) {
+		if returned == nil || len(returned.Parameters()) != 1 || returned.HasRestParameter() {
+			continue
+		}
+		parameterType := c.GetTypeOfSymbol(returned.Parameters()[0])
+		if typeAcceptsArgument(c, subjectType, parameterType) ||
+			(len(candidate.TypeParameters()) != 0 || len(returned.TypeParameters()) != 0) && hasCompatibleCallShape(c, subjectType, parameterType) {
+			return true
+		}
+	}
+	return false
+}
+
+func hasCompatibleCallShape(c *checker.Checker, left *checker.Type, right *checker.Type) bool {
+	if c == nil || left == nil || right == nil {
+		return false
+	}
+	leftCallable := len(c.GetSignaturesOfType(left, checker.SignatureKindCall)) > 0
+	rightCallable := len(c.GetSignaturesOfType(right, checker.SignatureKindCall)) > 0
+	return leftCallable == rightCallable
+}
+
+func typeAcceptsArgument(c *checker.Checker, argument *checker.Type, parameter *checker.Type) bool {
+	if c == nil || argument == nil || parameter == nil {
+		return false
+	}
+	if parameter.Flags()&checker.TypeFlagsTypeParameter != 0 {
+		constraint := c.GetConstraintOfTypeParameter(parameter)
+		return constraint == nil || typeAcceptsArgument(c, argument, constraint)
+	}
+	return sameShallowTypeOrigin(c, argument, parameter) || checker.Checker_isTypeAssignableTo(c, argument, parameter)
+}
+
+func sameShallowTypeOrigin(c *checker.Checker, left *checker.Type, right *checker.Type) bool {
+	if left == right {
+		return true
+	}
+	if c == nil || left == nil || right == nil {
+		return false
+	}
+
+	if left.ObjectFlags()&checker.ObjectFlagsReference != 0 || right.ObjectFlags()&checker.ObjectFlagsReference != 0 {
+		if left.ObjectFlags()&checker.ObjectFlagsReference == 0 || right.ObjectFlags()&checker.ObjectFlagsReference == 0 {
+			return false
+		}
+		leftTarget, rightTarget := left.Target(), right.Target()
+		return leftTarget == rightTarget || sameSymbolReference(c, leftTarget.Symbol(), rightTarget.Symbol())
+	}
+
+	leftAlias, rightAlias := left.Alias(), right.Alias()
+	if leftAlias != nil || rightAlias != nil {
+		return leftAlias != nil && rightAlias != nil && sameSymbolReference(c, leftAlias.Symbol(), rightAlias.Symbol())
+	}
+
+	if left.Symbol() != nil || right.Symbol() != nil {
+		return sameSymbolReference(c, left.Symbol(), right.Symbol())
+	}
+
+	return left.Flags() == right.Flags() && left.Flags()&checker.TypeFlagsSingleton != 0
+}
+
+func sameSymbolReference(c *checker.Checker, left *ast.Symbol, right *ast.Symbol) bool {
+	return left != nil && right != nil && checker.Checker_getSymbolIfSameReference(c, left, right) != nil
+}
+
+// DerivePipeableSignatureFromDataFirst removes the subject parameter from a
+// data-first signature and moves it to a unary function in the return type.
+func DerivePipeableSignatureFromDataFirst(c *checker.Checker, sig *checker.Signature, subjectIndex int) *checker.Signature {
 	if c == nil || sig == nil {
 		return nil
 	}

@@ -5,11 +5,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 // CatchAllToMapError suggests using Effect.mapError instead of Effect.catch + Effect.fail.
@@ -60,7 +60,7 @@ func AnalyzeCatchAllToMapError(tp *typeparser.TypeParser, _ *checker.Checker, sf
 			}
 			callback := transformation.Args[0]
 
-			lazy := typeparser.ParseLazyExpression(callback, false)
+			lazy := typeparser.ParseLazyExpression(callback, typeparser.LazyExpressionNone)
 			if lazy == nil {
 				continue
 			}

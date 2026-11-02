@@ -1,0 +1,43 @@
+{
+  "parent_packet": "review-packets/tia313/context/23-generation-crosswalk.json",
+  "collection": "collection_pairs",
+  "part": 1,
+  "parts": 1,
+  "entries": [
+    {
+      "compiler": "native/typescript-go/internal/collections/cow.go",
+      "linter": "native/tsgolint-effect-fork/internal/collections/cow.go",
+      "sha256": "c5b864947d8ff9eb94a422fcf372af70cea3a551a1fe89c06427ad2e2eefc94a"
+    },
+    {
+      "compiler": "native/typescript-go/internal/collections/multimap.go",
+      "linter": "native/tsgolint-effect-fork/internal/collections/multimap.go",
+      "sha256": "97402acb9a12f0f11a41da48edda387037429bb0f43555b045d28e6a1c3a1590"
+    },
+    {
+      "compiler": "native/typescript-go/internal/collections/ordered_map.go",
+      "linter": "native/tsgolint-effect-fork/internal/collections/ordered_map.go",
+      "sha256": "6649d93c4ef9282583ab0db18af524932eb739de065652fac6800882f42646d9"
+    },
+    {
+      "compiler": "native/typescript-go/internal/collections/ordered_set.go",
+      "linter": "native/tsgolint-effect-fork/internal/collections/ordered_set.go",
+      "sha256": "04392cd94a87e795031f29391fd5291b20bb1c0a11313472c884003cba7a8d7d"
+    },
+    {
+      "compiler": "native/typescript-go/internal/collections/set.go",
+      "linter": "native/tsgolint-effect-fork/internal/collections/set.go",
+      "sha256": "2de76c916ef54b6e0746d724827e74904be33fc82f7871913384e593fa0bbd46"
+    },
+    {
+      "compiler": "native/typescript-go/internal/collections/syncmap.go",
+      "linter": "native/tsgolint-effect-fork/internal/collections/syncmap.go",
+      "sha256": "73227a3bd71415b9b85c8715ef7c3ecac9e724d2579eec1c1a2340bb7149fa16"
+    },
+    {
+      "compiler": "native/typescript-go/internal/collections/syncset.go",
+      "linter": "native/tsgolint-effect-fork/internal/collections/syncset.go",
+      "sha256": "2f038294145eff7f2e395de4d5a7ffe832998873d41cd219044220b9c0364664"
+    }
+  ]
+}

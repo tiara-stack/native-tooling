@@ -4,8 +4,10 @@ import (
 	"strings"
 
 	"github.com/effect-ts/tsgo/etscore"
-	"github.com/microsoft/typescript-go/shim/ls/autoimport"
-	"github.com/microsoft/typescript-go/shim/lsp/lsproto"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/ls/autoimport"
+	"github.com/microsoft/TypeScript/tsc/shim/lsp/lsproto"
+	"github.com/microsoft/TypeScript/tsc/shim/modulespecifiers"
 )
 
 // stylePolicy applies auto-import style rewrites based on configured preferences.
@@ -14,12 +16,17 @@ type stylePolicy struct {
 	barrelPackages    map[string]bool
 	aliases           map[string]string
 	followReexports   bool
+	resolveTarget     func(export *autoimport.Export) (string, modulespecifiers.ResultKind)
 }
 
 // NewFixTransformer creates a FixTransformer from the given resolved Effect options.
 // Returns nil if the preferences are empty (no packages configured).
-func NewFixTransformer(resolved *etscore.ResolvedEffectPluginOptions) autoimport.FixTransformer {
+func NewFixTransformer(
+	resolved *etscore.ResolvedEffectPluginOptions,
+	resolveTarget func(export *autoimport.Export) (string, modulespecifiers.ResultKind),
+) autoimport.FixTransformer {
 	sp := newStylePolicy(resolved)
+	sp.resolveTarget = resolveTarget
 	if sp.isEmpty() {
 		return nil
 	}
@@ -105,6 +112,11 @@ func (sp *stylePolicy) Apply(export *autoimport.Export, fix *autoimport.Fix) *au
 	if pkgName == "" {
 		return fix
 	}
+	if pkgName == "effect" &&
+		(sp.namespacePackages[pkgName] || sp.barrelPackages[pkgName]) &&
+		strings.HasPrefix(fix.ModuleSpecifier, "effect/internal/") {
+		return nil
+	}
 
 	// Check namespace-import packages
 	if sp.namespacePackages[pkgName] {
@@ -129,6 +141,29 @@ func (sp *stylePolicy) applyNamespaceRewrite(export *autoimport.Export, fix *aut
 	// If no usage site is available, keep the original named-import fix.
 	if fix.UsagePosition == nil {
 		return fix
+	}
+
+	if isNamespaceReexport(export) {
+		if sp.resolveTarget == nil {
+			return fix
+		}
+		moduleSpecifier, moduleSpecifierKind := sp.resolveTarget(export)
+		if moduleSpecifier == "" {
+			return fix
+		}
+		return &autoimport.Fix{
+			AutoImportFix: &lsproto.AutoImportFix{
+				Kind:            lsproto.AutoImportFixKindAddNew,
+				ImportKind:      lsproto.ImportKindNamespace,
+				ModuleSpecifier: moduleSpecifier,
+				Name:            export.Name(),
+				UseRequire:      fix.UseRequire,
+				AddAsTypeOnly:   fix.AddAsTypeOnly,
+				UsagePosition:   fix.UsagePosition,
+			},
+			ModuleSpecifierKind: moduleSpecifierKind,
+			ModuleFileName:      string(export.Target.ModuleID),
+		}
 	}
 
 	// Check if this is a top-level named reexport
@@ -168,6 +203,14 @@ func (sp *stylePolicy) applyNamespaceRewrite(export *autoimport.Export, fix *aut
 		ModuleFileName:      fix.ModuleFileName,
 	}
 	return result
+}
+
+func isNamespaceReexport(export *autoimport.Export) bool {
+	return export != nil &&
+		export.Syntax == autoimport.ExportSyntaxModifier &&
+		export.Flags&ast.SymbolFlagsModule != 0 &&
+		export.Target.ModuleID != "" &&
+		export.Target.ModuleID != export.ModuleID
 }
 
 // applyBarrelRewrite rewrites a fix to a named import from the barrel package.

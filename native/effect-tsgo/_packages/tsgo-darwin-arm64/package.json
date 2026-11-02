@@ -1,6 +1,6 @@
 {
   "name": "@effect/tsgo-darwin-arm64",
-  "version": "0.16.0",
+  "version": "0.46.1",
   "description": "Effect Language Service for TypeScript-Go — Effect-specific diagnostics and hover features.",
   "license": "MIT",
   "repository": {
@@ -12,13 +12,19 @@
   "homepage": "https://github.com/Effect-TS/tsgo#readme",
   "publishConfig": {
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "executableFiles": [
+      "./lib/tsc",
+      "./lib/tsc-next",
+      "./lib/tsgolint"
+    ]
   },
   "preferUnplugged": true,
   "files": [
-    "lib/tsgo",
+    "artifacts/",
     "lib/tsc",
-    "README.md"
+    "README.md",
+    "lib/upstream.json"
   ],
   "os": [
     "darwin"

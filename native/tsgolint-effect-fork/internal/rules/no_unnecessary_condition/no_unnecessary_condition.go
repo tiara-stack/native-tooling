@@ -18,6 +18,7 @@ package no_unnecessary_condition
 import (
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/shim/ast"
 	"github.com/microsoft/typescript-go/shim/checker"
@@ -64,7 +65,7 @@ func buildAlwaysFalsyFuncMessage() rule.RuleMessage {
 func buildNeverNullishMessage() rule.RuleMessage {
 	return rule.RuleMessage{
 		Id:          "neverNullish",
-		Description: "Unnecessary optional chain on a non-nullish value.",
+		Description: "Unnecessary conditional, expected left-hand side of `??` operator to be possibly null or undefined.",
 	}
 }
 
@@ -72,6 +73,13 @@ func buildNeverOptionalChainMessage() rule.RuleMessage {
 	return rule.RuleMessage{
 		Id:          "neverOptionalChain",
 		Description: "Unnecessary optional chain on a non-nullish value.",
+	}
+}
+
+func buildSuggestRemoveOptionalChainMessage() rule.RuleMessage {
+	return rule.RuleMessage{
+		Id:          "suggestRemoveOptionalChain",
+		Description: "Remove unnecessary optional chain",
 	}
 }
 
@@ -89,12 +97,55 @@ func buildLiteralBinaryExpressionMessage() rule.RuleMessage {
 	}
 }
 
-func buildNoOverlapDiagnostic(leftType string, leftRange core.TextRange, rightType string, rightRange core.TextRange) rule.RuleDiagnostic {
+func buildTypedValueDiagnostic(message rule.RuleMessage, primaryRange core.TextRange, typeRange core.TextRange, typeName string) rule.RuleDiagnostic {
+	diagnostic := rule.RuleDiagnostic{
+		Range:   primaryRange,
+		Message: message,
+	}
+	if typeName != "" {
+		diagnostic.LabeledRanges = []rule.RuleLabeledRange{
+			{
+				Label: fmt.Sprintf("Type: %v", typeName),
+				Range: typeRange,
+			},
+		}
+	}
+	return diagnostic
+}
+
+func buildTypedReturnDiagnostic(message rule.RuleMessage, primaryRange core.TextRange, typeRange core.TextRange, typeName string) rule.RuleDiagnostic {
+	diagnostic := rule.RuleDiagnostic{
+		Range:   primaryRange,
+		Message: message,
+	}
+	if typeName != "" {
+		diagnostic.LabeledRanges = []rule.RuleLabeledRange{
+			{
+				Label: fmt.Sprintf("Return type: %v", typeName),
+				Range: typeRange,
+			},
+		}
+	}
+	return diagnostic
+}
+
+func buildTypeGuardDiagnostic(primaryRange core.TextRange, typeRange core.TextRange, valueType string, predicateType string) rule.RuleDiagnostic {
 	return rule.RuleDiagnostic{
-		Message: rule.RuleMessage{
-			Id:          "noOverlapBooleanExpression",
-			Description: "This condition will always return the same value since the types have no overlap.",
+		Range:   primaryRange,
+		Message: buildTypeGuardAlreadyIsTypeMessage(),
+		LabeledRanges: []rule.RuleLabeledRange{
+			{
+				Label: fmt.Sprintf("Type %v already satisfies predicate type %v", valueType, predicateType),
+				Range: typeRange,
+			},
 		},
+	}
+}
+
+func buildComparisonDiagnostic(message rule.RuleMessage, primaryRange core.TextRange, leftType string, leftRange core.TextRange, rightType string, rightRange core.TextRange) rule.RuleDiagnostic {
+	return rule.RuleDiagnostic{
+		Range:   primaryRange,
+		Message: message,
 		LabeledRanges: []rule.RuleLabeledRange{
 			{
 				Label: fmt.Sprintf("Type: %v", leftType),
@@ -106,6 +157,13 @@ func buildNoOverlapDiagnostic(leftType string, leftRange core.TextRange, rightTy
 			},
 		},
 	}
+}
+
+func buildNoOverlapDiagnostic(primaryRange core.TextRange, leftType string, leftRange core.TextRange, rightType string, rightRange core.TextRange) rule.RuleDiagnostic {
+	return buildComparisonDiagnostic(rule.RuleMessage{
+		Id:          "noOverlapBooleanExpression",
+		Description: "This condition will always return the same value since the types have no overlap.",
+	}, primaryRange, leftType, leftRange, rightType, rightRange)
 }
 
 func buildAlwaysNullishMessage() rule.RuleMessage {
@@ -120,6 +178,44 @@ func buildTypeGuardAlreadyIsTypeMessage() rule.RuleMessage {
 		Id:          "typeGuardAlreadyIsType",
 		Description: "Type predicate is unnecessary as the parameter type already satisfies the predicate.",
 	}
+}
+
+func truncateTypeNameForDiagnostic(typeName string) string {
+	typeRunes := []rune(typeName)
+	const maxTypeNameLength = 120
+	if len(typeRunes) > maxTypeNameLength {
+		return string(typeRunes[:maxTypeNameLength-3]) + "..."
+	}
+	return typeName
+}
+
+func typeNameForDiagnostic(typeChecker *checker.Checker, t *checker.Type) string {
+	return truncateTypeNameForDiagnostic(typeChecker.TypeToString(t))
+}
+
+func isSelfExplanatoryLiteral(node *ast.Node) bool {
+	if node == nil {
+		return false
+	}
+	switch ast.SkipParentheses(node).Kind {
+	case ast.KindTrueKeyword,
+		ast.KindFalseKeyword,
+		ast.KindNullKeyword,
+		ast.KindNumericLiteral,
+		ast.KindBigIntLiteral,
+		ast.KindStringLiteral,
+		ast.KindNoSubstitutionTemplateLiteral:
+		return true
+	default:
+		return false
+	}
+}
+
+func typeNameForNodeDiagnostic(typeChecker *checker.Checker, t *checker.Type, node *ast.Node) string {
+	if isSelfExplanatoryLiteral(node) {
+		return ""
+	}
+	return typeNameForDiagnostic(typeChecker, t)
 }
 
 // isIndeterminateType checks if a type cannot be determined at compile time.
@@ -157,6 +253,46 @@ func isIndeterminateType(t *checker.Type) bool {
 func isAlwaysNullishType(t *checker.Type) bool {
 	flags := checker.Type_flags(t)
 	return flags&(checker.TypeFlagsNull|checker.TypeFlagsUndefined|checker.TypeFlagsVoid) != 0
+}
+
+// isOnlyUsedForTruthiness reports whether an expression is checked for
+// truthiness by its consuming context, including assertion calls when enabled.
+// ParenthesizedExpression nodes are explicit in the TypeScript Go AST, so skip
+// them while walking to the consuming context.
+func isOnlyUsedForTruthiness(node *ast.Node, isAssertionArgument func(*ast.Node) bool) bool {
+	parent := node.Parent
+	for parent != nil && ast.IsParenthesizedExpression(parent) {
+		node = parent
+		parent = parent.Parent
+	}
+	if parent == nil {
+		return false
+	}
+
+	switch parent.Kind {
+	case ast.KindConditionalExpression:
+		return parent.AsConditionalExpression().Condition == node
+	case ast.KindDoStatement:
+		return parent.AsDoStatement().Expression == node
+	case ast.KindForStatement:
+		return parent.AsForStatement().Condition == node
+	case ast.KindIfStatement:
+		return parent.AsIfStatement().Expression == node
+	case ast.KindWhileStatement:
+		return parent.AsWhileStatement().Expression == node
+	case ast.KindPrefixUnaryExpression:
+		return parent.AsPrefixUnaryExpression().Operator == ast.KindExclamationToken
+	case ast.KindCallExpression:
+		return isAssertionArgument(node)
+	}
+
+	if ast.IsLogicalExpression(parent) {
+		parentExpression := parent.AsBinaryExpression()
+		return (parentExpression.OperatorToken.Kind == ast.KindAmpersandAmpersandToken && parentExpression.Left == node) ||
+			isOnlyUsedForTruthiness(parent, isAssertionArgument)
+	}
+
+	return false
 }
 
 func toStaticValue(t *checker.Type) (any, bool) { //nolint:unparam // the value return is reserved for follow-up checks; current callers only need the static-ness signal
@@ -861,27 +997,28 @@ var NoUnnecessaryConditionRule = rule.Rule{
 		// 4. Allow indeterminate types (any, unknown, T, T[K]) since we can't determine nullishness
 		checkOptionalChain := func(node *ast.Node) {
 			var expression *ast.Node
-			var hasQuestionDot bool
+			var questionDotToken *ast.Node
+			var effectiveTypeName string
 
 			// Extract the expression and check if this is optional chaining
 			switch node.Kind {
 			case ast.KindPropertyAccessExpression:
 				propAccess := node.AsPropertyAccessExpression()
 				expression = propAccess.Expression
-				hasQuestionDot = propAccess.QuestionDotToken != nil
+				questionDotToken = propAccess.QuestionDotToken
 			case ast.KindElementAccessExpression:
 				elemAccess := node.AsElementAccessExpression()
 				expression = elemAccess.Expression
-				hasQuestionDot = elemAccess.QuestionDotToken != nil
+				questionDotToken = elemAccess.QuestionDotToken
 			case ast.KindCallExpression:
 				callExpr := node.AsCallExpression()
 				expression = callExpr.Expression
-				hasQuestionDot = callExpr.QuestionDotToken != nil
+				questionDotToken = callExpr.QuestionDotToken
 			default:
 				return
 			}
 
-			if !hasQuestionDot {
+			if questionDotToken == nil {
 				return
 			}
 
@@ -1101,6 +1238,8 @@ var NoUnnecessaryConditionRule = rule.Rule{
 							// If we have literal keys, check if all of them have non-nullish property types
 							if isLiteralKey && len(literalKeys) > 0 {
 								allNonNullish := true
+								var representativeType *checker.Type
+								var propertyTypeNames []string
 								for _, key := range literalKeys {
 									prop := checker.Checker_getPropertyOfType(ctx.TypeChecker, nonNullishBase, key)
 									if prop == nil {
@@ -1113,16 +1252,21 @@ var NoUnnecessaryConditionRule = rule.Rule{
 										allNonNullish = false
 										break
 									}
+									if representativeType == nil {
+										representativeType = propType
+									}
+									propertyTypeName := ctx.TypeChecker.TypeToString(propType)
+									if !slices.Contains(propertyTypeNames, propertyTypeName) {
+										propertyTypeNames = append(propertyTypeNames, propertyTypeName)
+									}
 								}
 								if allNonNullish {
-									// All literal keys have non-nullish types
-									// Get the actual property type for the first key (they're all non-nullish)
-									prop := checker.Checker_getPropertyOfType(ctx.TypeChecker, nonNullishBase, literalKeys[0])
-									if prop != nil {
-										exprType = ctx.TypeChecker.GetTypeOfSymbol(prop)
-									} else {
-										exprType = ctx.TypeChecker.GetTypeAtLocation(expression)
-									}
+									// The representative type is sufficient for the nullishness check because
+									// every possible property was checked above. Keep every distinct property
+									// type for the diagnostic rather than claiming the first key's type is the
+									// type of the whole element access.
+									exprType = representativeType
+									effectiveTypeName = truncateTypeNameForDiagnostic(strings.Join(propertyTypeNames, " | "))
 								} else {
 									exprType = ctx.TypeChecker.GetTypeAtLocation(expression)
 								}
@@ -1182,25 +1326,6 @@ var NoUnnecessaryConditionRule = rule.Rule{
 						if exprType == nil {
 							return
 						}
-					}
-				} else if isPropertyAccess(expression) || isElementAccess(expression) {
-					// Handle property/element access on call expression result
-					// e.g., foo?.().bar?.baz or foo?.bar?.().baz
-					var innerExpr *ast.Node
-					if isPropertyAccess(expression) {
-						innerExpr = expression.AsPropertyAccessExpression().Expression
-					} else {
-						innerExpr = expression.AsElementAccessExpression().Expression
-					}
-
-					// Check if the inner expression is a call expression
-					if innerExpr != nil && isCallExpr(innerExpr) {
-						exprType = getTypeFromCallProperty(innerExpr, expression)
-						if exprType == nil {
-							return
-						}
-					} else {
-						exprType = getResolvedType(expression)
 					}
 				} else {
 					exprType = getResolvedType(expression)
@@ -1265,7 +1390,27 @@ var NoUnnecessaryConditionRule = rule.Rule{
 			}
 
 			if !isNullishType(exprType) {
-				ctx.ReportNode(node, buildNeverOptionalChainMessage())
+				typeName := effectiveTypeName
+				if typeName == "" {
+					typeName = typeNameForNodeDiagnostic(ctx.TypeChecker, exprType, expression)
+				}
+				ctx.ReportDiagnosticWithSuggestions(buildTypedValueDiagnostic(
+					buildNeverOptionalChainMessage(),
+					utils.TrimNodeTextRange(ctx.SourceFile, questionDotToken),
+					utils.TrimNodeTextRange(ctx.SourceFile, expression),
+					typeName,
+				), func() []rule.RuleSuggestion {
+					replacement := ""
+					if node.Kind == ast.KindPropertyAccessExpression {
+						replacement = "."
+					}
+					return []rule.RuleSuggestion{{
+						Message: buildSuggestRemoveOptionalChainMessage(),
+						FixesArr: []rule.RuleFix{
+							rule.RuleFixReplace(ctx.SourceFile, questionDotToken, replacement),
+						},
+					}}
+				})
 			}
 		}
 
@@ -1351,6 +1496,47 @@ var NoUnnecessaryConditionRule = rule.Rule{
 			}
 		}
 
+		isAssertionArgument := func(argument *ast.Node) bool {
+			if !opts.CheckTypePredicates || argument.Parent == nil || argument.Parent.Kind != ast.KindCallExpression {
+				return false
+			}
+
+			callNode := argument.Parent
+			callExpr := callNode.AsCallExpression()
+			if callExpr.Arguments == nil {
+				return false
+			}
+
+			argumentIndex := 0
+			found := false
+			for _, arg := range callExpr.Arguments.Nodes {
+				if arg == nil {
+					continue
+				}
+				if arg.Kind == ast.KindSpreadElement {
+					break
+				}
+				if arg == argument {
+					found = true
+					break
+				}
+				argumentIndex++
+			}
+			if !found {
+				return false
+			}
+
+			signature := checker.Checker_getResolvedSignature(ctx.TypeChecker, callNode, nil, checker.CheckModeNormal)
+			if signature == nil {
+				return false
+			}
+			predicate := ctx.TypeChecker.GetTypePredicateOfSignature(signature)
+			return predicate != nil &&
+				checker.TypePredicate_kind(predicate) == checker.TypePredicateKindAssertsIdentifier &&
+				checker.TypePredicate_t(predicate) == nil &&
+				int(checker.TypePredicate_parameterIndex(predicate)) == argumentIndex
+		}
+
 		var checkNode func(expression *ast.Node, isUnaryNotArgument bool, reportNode *ast.Node)
 		checkNode = func(expression *ast.Node, isUnaryNotArgument bool, reportNode *ast.Node) {
 			if expression == nil {
@@ -1378,7 +1564,9 @@ var NoUnnecessaryConditionRule = rule.Rule{
 				binExpr := expression.AsBinaryExpression()
 				if opKind := binExpr.OperatorToken.Kind; opKind != ast.KindQuestionQuestionToken &&
 					(opKind == ast.KindAmpersandAmpersandToken || opKind == ast.KindBarBarToken) {
-					checkNode(binExpr.Right, false, nil)
+					if isOnlyUsedForTruthiness(expression, isAssertionArgument) {
+						checkNode(binExpr.Right, false, nil)
+					}
 					return
 				}
 			}
@@ -1400,26 +1588,114 @@ var NoUnnecessaryConditionRule = rule.Rule{
 
 			flags := checker.Type_flags(nodeType)
 			if isNeverType(flags) {
-				ctx.ReportNode(reportNode, buildNeverMessage())
+				ctx.ReportDiagnostic(buildTypedValueDiagnostic(
+					buildNeverMessage(),
+					utils.TrimNodeTextRange(ctx.SourceFile, reportNode),
+					utils.TrimNodeTextRange(ctx.SourceFile, expression),
+					typeNameForNodeDiagnostic(ctx.TypeChecker, nodeType, expression),
+				))
 				return
 			}
 
 			isTruthy, isFalsy := checkTypeCondition(nodeType)
 			if isFalsy {
+				message := buildAlwaysFalsyMessage()
 				if isUnaryNotArgument {
-					ctx.ReportNode(reportNode, buildAlwaysTruthyMessage())
-				} else {
-					ctx.ReportNode(reportNode, buildAlwaysFalsyMessage())
+					message = buildAlwaysTruthyMessage()
 				}
+				ctx.ReportDiagnostic(buildTypedValueDiagnostic(
+					message,
+					utils.TrimNodeTextRange(ctx.SourceFile, reportNode),
+					utils.TrimNodeTextRange(ctx.SourceFile, expression),
+					typeNameForNodeDiagnostic(ctx.TypeChecker, nodeType, expression),
+				))
 				return
 			}
 			if isTruthy {
+				message := buildAlwaysTruthyMessage()
 				if isUnaryNotArgument {
-					ctx.ReportNode(reportNode, buildAlwaysFalsyMessage())
-				} else {
-					ctx.ReportNode(reportNode, buildAlwaysTruthyMessage())
+					message = buildAlwaysFalsyMessage()
 				}
+				ctx.ReportDiagnostic(buildTypedValueDiagnostic(
+					message,
+					utils.TrimNodeTextRange(ctx.SourceFile, reportNode),
+					utils.TrimNodeTextRange(ctx.SourceFile, expression),
+					typeNameForNodeDiagnostic(ctx.TypeChecker, nodeType, expression),
+				))
 			}
+		}
+
+		getNullishCoalescingType := func(node *ast.Node) (*checker.Type, bool) {
+			nodeType := getResolvedType(node)
+			node = ast.SkipParentheses(node)
+			if !ast.IsAssignmentTarget(node) {
+				return nodeType, false
+			}
+			if !noUncheckedIndexedAccess {
+				// Assignment-target types omit control-flow narrowing in TypeScript Go.
+				if nodeType != nil && node.Kind == ast.KindElementAccessExpression {
+					nodeType = checker.Checker_getFlowTypeOfReference(ctx.TypeChecker, node, nodeType)
+				}
+				return nodeType, false
+			}
+
+			var readType *checker.Type
+			switch node.Kind {
+			case ast.KindPropertyAccessExpression:
+				access := node.AsPropertyAccessExpression()
+				name := access.Name()
+				if name == nil || name.Kind == ast.KindPrivateIdentifier {
+					return nodeType, false
+				}
+				baseType := getResolvedType(access.Expression)
+				if baseType == nil || checker.Checker_getPropertyOfType(ctx.TypeChecker, baseType, ast.GetTextOfPropertyName(name)) != nil {
+					return nodeType, false
+				}
+				readType = checker.Checker_getTypeOfPropertyOrIndexSignatureOfType(ctx.TypeChecker, baseType, ast.GetTextOfPropertyName(name))
+			case ast.KindElementAccessExpression:
+				access := node.AsElementAccessExpression()
+				if access.ArgumentExpression == nil {
+					return nodeType, false
+				}
+				baseType := getResolvedType(access.Expression)
+				keyType := getResolvedType(access.ArgumentExpression)
+				if baseType == nil || keyType == nil {
+					return nodeType, false
+				}
+				readType = checker.Checker_getIndexedAccessTypeOrUndefined(ctx.TypeChecker, baseType, keyType, checker.AccessFlagsExpressionPosition, nil, nil)
+			}
+			if readType == nil {
+				return nodeType, false
+			}
+
+			// Assignment-target types omit unchecked-index undefined and flow narrowing.
+			// Recover the read type so both missing and already-initialized entries are checked.
+			return checker.Checker_getFlowTypeOfReference(ctx.TypeChecker, node, readType), true
+		}
+
+		hasPossiblyNonNullishIndexedRead := func(node *ast.Node) bool {
+			node = ast.SkipParentheses(node)
+			if node.Kind != ast.KindElementAccessExpression || !ast.IsAssignmentTarget(node) {
+				return false
+			}
+			access := node.AsElementAccessExpression()
+			objectType := getResolvedType(access.Expression)
+			keyType := getResolvedType(access.ArgumentExpression)
+			if objectType == nil || keyType == nil || !utils.IsUnionType(keyType) {
+				return false
+			}
+
+			// Union-key writes intersect property types. Read lookup handles both
+			// declared properties and index signatures, then flow analysis preserves
+			// narrowing of the indexed value even when the key remains a union.
+			readType := checker.Checker_getIndexedAccessTypeOrUndefined(ctx.TypeChecker, objectType, keyType, checker.AccessFlagsExpressionPosition, nil, nil)
+			if readType == nil {
+				return false
+			}
+			flowType := checker.Checker_getFlowTypeOfReference(ctx.TypeChecker, node, readType)
+			return slices.ContainsFunc(utils.UnionTypeParts(flowType), func(part *checker.Type) bool {
+				return !isAlwaysNullishType(part)
+			})
 		}
 
 		checkNodeForNullish := func(node *ast.Node) {
@@ -1427,7 +1703,7 @@ var NoUnnecessaryConditionRule = rule.Rule{
 				return
 			}
 
-			nodeType := getResolvedType(node)
+			nodeType, recoveredReadType := getNullishCoalescingType(node)
 			if nodeType == nil || isConditionalAlwaysNecessary(nodeType) {
 				return
 			}
@@ -1441,20 +1717,36 @@ var NoUnnecessaryConditionRule = rule.Rule{
 			flags := checker.Type_flags(nodeType)
 			switch {
 			case isNeverType(flags):
-				ctx.ReportNode(node, buildNeverMessage())
+				ctx.ReportDiagnostic(buildTypedValueDiagnostic(
+					buildNeverMessage(),
+					utils.TrimNodeTextRange(ctx.SourceFile, node),
+					utils.TrimNodeTextRange(ctx.SourceFile, node),
+					typeNameForNodeDiagnostic(ctx.TypeChecker, nodeType, node),
+				))
 				return
-			case isAlwaysNullishType(nodeType):
-				ctx.ReportNode(node, buildAlwaysNullishMessage())
+			case isAlwaysNullishType(nodeType) && !hasPossiblyNonNullishIndexedRead(node):
+				ctx.ReportDiagnostic(buildTypedValueDiagnostic(
+					buildAlwaysNullishMessage(),
+					utils.TrimNodeTextRange(ctx.SourceFile, node),
+					utils.TrimNodeTextRange(ctx.SourceFile, node),
+					typeNameForNodeDiagnostic(ctx.TypeChecker, nodeType, node),
+				))
 				return
 			}
 
-			if !isNullishType(nodeType) && !isNullableMemberExpression(node) {
+			// A recovered read type already accounts for optionality and control-flow narrowing.
+			if !isNullishType(nodeType) && (recoveredReadType || !isNullableMemberExpression(node)) {
 				node = ast.SkipParentheses(node)
 
 				if noUncheckedIndexedAccess ||
 					(!isArrayIndexExpression(node) &&
 						!(hasOptionalChain(node) && optionChainContainsOptionArrayIndex(node))) {
-					ctx.ReportNode(node, buildNeverNullishMessage())
+					ctx.ReportDiagnostic(buildTypedValueDiagnostic(
+						buildNeverNullishMessage(),
+						utils.TrimNodeTextRange(ctx.SourceFile, node),
+						utils.TrimNodeTextRange(ctx.SourceFile, node),
+						typeNameForNodeDiagnostic(ctx.TypeChecker, nodeType, node),
+					))
 				}
 			}
 		}
@@ -1468,7 +1760,18 @@ var NoUnnecessaryConditionRule = rule.Rule{
 
 			if _, ok := toStaticValue(leftType); ok {
 				if _, ok := toStaticValue(rightType); ok {
-					ctx.ReportNode(node, buildLiteralBinaryExpressionMessage())
+					primaryRange := utils.TrimNodeTextRange(ctx.SourceFile, node)
+					if ast.IsBinaryExpression(node) {
+						primaryRange = utils.TrimNodeTextRange(ctx.SourceFile, node.AsBinaryExpression().OperatorToken)
+					}
+					ctx.ReportDiagnostic(buildComparisonDiagnostic(
+						buildLiteralBinaryExpressionMessage(),
+						primaryRange,
+						typeNameForDiagnostic(ctx.TypeChecker, leftType),
+						utils.TrimNodeTextRange(ctx.SourceFile, left),
+						typeNameForDiagnostic(ctx.TypeChecker, rightType),
+						utils.TrimNodeTextRange(ctx.SourceFile, right),
+					))
 					return
 				}
 			}
@@ -1531,10 +1834,15 @@ var NoUnnecessaryConditionRule = rule.Rule{
 				(rightFlags == checker.TypeFlagsUndefined && !isComparable(leftType, checker.TypeFlagsUndefined|checker.TypeFlagsVoid)) ||
 				(leftFlags == checker.TypeFlagsNull && !isComparable(rightType, checker.TypeFlagsNull)) ||
 				(rightFlags == checker.TypeFlagsNull && !isComparable(leftType, checker.TypeFlagsNull)) {
+				primaryRange := utils.TrimNodeTextRange(ctx.SourceFile, node)
+				if ast.IsBinaryExpression(node) {
+					primaryRange = utils.TrimNodeTextRange(ctx.SourceFile, node.AsBinaryExpression().OperatorToken)
+				}
 				ctx.ReportDiagnostic(buildNoOverlapDiagnostic(
-					ctx.TypeChecker.TypeToString(leftType),
+					primaryRange,
+					typeNameForDiagnostic(ctx.TypeChecker, leftType),
 					left.Loc,
-					ctx.TypeChecker.TypeToString(rightType),
+					typeNameForDiagnostic(ctx.TypeChecker, rightType),
 					right.Loc,
 				))
 			}
@@ -1625,11 +1933,23 @@ var NoUnnecessaryConditionRule = rule.Rule{
 					return
 				}
 				if argType := utils.GetConstrainedTypeAtLocation(ctx.TypeChecker, arg); argType != nil && argType == predicateType {
-					ctx.ReportNode(arg, buildTypeGuardAlreadyIsTypeMessage())
+					argRange := utils.TrimNodeTextRange(ctx.SourceFile, arg)
+					ctx.ReportDiagnostic(buildTypeGuardDiagnostic(
+						argRange,
+						argRange,
+						typeNameForDiagnostic(ctx.TypeChecker, argType),
+						typeNameForDiagnostic(ctx.TypeChecker, predicateType),
+					))
 				}
 			case checker.TypePredicateKindIdentifier:
 				if argType := utils.GetConstrainedTypeAtLocation(ctx.TypeChecker, arg); argType != nil && argType == predicateType {
-					ctx.ReportNode(arg, buildTypeGuardAlreadyIsTypeMessage())
+					argRange := utils.TrimNodeTextRange(ctx.SourceFile, arg)
+					ctx.ReportDiagnostic(buildTypeGuardDiagnostic(
+						argRange,
+						argRange,
+						typeNameForDiagnostic(ctx.TypeChecker, argType),
+						typeNameForDiagnostic(ctx.TypeChecker, predicateType),
+					))
 				}
 			}
 		}
@@ -1955,12 +2275,10 @@ func normalizeAllowConstantLoopConditions(value any) string {
 // Used for array methods like:
 // - [1, 2, 3].filter(() => true) // always truthy, returns all elements
 // - [1, 2, 3].find(() => false)  // always falsy, returns undefined
+//
+// funcNode is the predicate argument, which need not be an inline function: a
+// reference to one (`[1, 2].filter(pred)`) is analyzed through its call signatures.
 func checkPredicateFunction(ctx rule.RuleContext, funcNode *ast.Node, checkTypeGuards bool) {
-	isFunction := funcNode.Kind&(ast.KindArrowFunction|ast.KindFunctionExpression|ast.KindFunctionDeclaration) != 0
-	if !isFunction {
-		return
-	}
-
 	funcType := ctx.TypeChecker.GetTypeAtLocation(funcNode)
 	signatures := ctx.TypeChecker.GetCallSignatures(funcType)
 
@@ -1990,7 +2308,18 @@ func checkPredicateFunction(ctx rule.RuleContext, funcNode *ast.Node, checkTypeG
 									// Check if paramType is assignable to predicateType
 									// If so, the type guard is unnecessary
 									if checker.Checker_isTypeAssignableTo(ctx.TypeChecker, paramType, predicateType) {
-										ctx.ReportNode(funcNode, buildTypeGuardAlreadyIsTypeMessage())
+										primaryRange := utils.TrimNodeTextRange(ctx.SourceFile, funcNode)
+										typeRange := primaryRange
+										if declaration := param.ValueDeclaration; declaration != nil && ast.GetSourceFileOfNode(declaration) == ctx.SourceFile {
+											typeRange = utils.TrimNodeTextRange(ctx.SourceFile, declaration)
+											primaryRange = typeRange
+										}
+										ctx.ReportDiagnostic(buildTypeGuardDiagnostic(
+											primaryRange,
+											typeRange,
+											typeNameForDiagnostic(ctx.TypeChecker, paramType),
+											typeNameForDiagnostic(ctx.TypeChecker, predicateType),
+										))
 										return
 									}
 								}
@@ -2019,19 +2348,34 @@ func checkPredicateFunction(ctx rule.RuleContext, funcNode *ast.Node, checkTypeG
 			// Literal functions: () => true, () => false, function() { return true }
 			// Function references: truthy, falsy (identifier)
 			isLiteralFunction := funcNode.Kind == ast.KindArrowFunction || funcNode.Kind == ast.KindFunctionExpression
+			reportNode := funcNode
+			if isLiteralFunction && funcNode.Body() != nil {
+				reportNode = funcNode.Body()
+			}
+			reportRange := utils.TrimNodeTextRange(ctx.SourceFile, reportNode)
 
 			if isTruthy {
+				message := buildAlwaysTruthyFuncMessage()
 				if isLiteralFunction {
-					ctx.ReportNode(funcNode, buildAlwaysTruthyMessage())
-				} else {
-					ctx.ReportNode(funcNode, buildAlwaysTruthyFuncMessage())
+					message = buildAlwaysTruthyMessage()
 				}
+				ctx.ReportDiagnostic(buildTypedReturnDiagnostic(
+					message,
+					reportRange,
+					reportRange,
+					typeNameForNodeDiagnostic(ctx.TypeChecker, returnType, reportNode),
+				))
 			} else if isFalsy {
+				message := buildAlwaysFalsyFuncMessage()
 				if isLiteralFunction {
-					ctx.ReportNode(funcNode, buildAlwaysFalsyMessage())
-				} else {
-					ctx.ReportNode(funcNode, buildAlwaysFalsyFuncMessage())
+					message = buildAlwaysFalsyMessage()
 				}
+				ctx.ReportDiagnostic(buildTypedReturnDiagnostic(
+					message,
+					reportRange,
+					reportRange,
+					typeNameForNodeDiagnostic(ctx.TypeChecker, returnType, reportNode),
+				))
 			}
 		}
 	}

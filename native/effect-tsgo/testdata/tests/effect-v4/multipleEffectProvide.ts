@@ -18,6 +18,13 @@ class MyService3 extends Context.Service<MyService3>()("MyService3", {
   static Default = Layer.effect(this, this.make)
 }
 
+const provide = Effect.provide
+
+export const shouldReportConstantAlias = Effect.void.pipe(
+  provide(MyService1.Default),
+  provide(MyService2.Default)
+)
+
 export const shouldReport = Effect.void.pipe(
   Effect.provide(MyService1.Default),
   Effect.provide(MyService2.Default)
@@ -33,6 +40,17 @@ export const shouldReportSeparately = Effect.void.pipe(
 
 export const shouldReportSingle = Effect.void.pipe(
   Effect.provide(MyService1.Default),
+  Effect.provide(MyService2.Default),
+  Effect.provide(MyService3.Default)
+)
+
+export const shouldNotReportLocalProvide = Effect.void.pipe(
+  Effect.provide(MyService1.Default),
+  Effect.provide(MyService2.Default, { local: true })
+)
+
+export const shouldReportAfterLocalProvide = Effect.void.pipe(
+  Effect.provide(MyService1.Default, { local: true }),
   Effect.provide(MyService2.Default),
   Effect.provide(MyService3.Default)
 )

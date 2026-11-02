@@ -4,14 +4,11 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
 )
 
-var effectLayerModuleDescriptor = PackageSourceFileDescriptor{
-	PackageName:       "effect",
-	MatchesSourceFile: isLayerTypeSourceFile,
-}
+var effectLayerModuleDescriptor = newPackageSourceFileDescriptor("effect", isLayerTypeSourceFile)
 
 // LayerTypeId is the property key for Layer's variance struct.
 const LayerTypeId = "~effect/Layer"
@@ -47,7 +44,7 @@ func (tp *TypeParser) parseLayerVarianceStruct(t *checker.Type) *Layer {
 // Returns nil if the type is not a Layer.
 // The detection strategy is chosen based on the detected Effect version:
 // v4 uses direct symbol lookup, v3/unknown uses property iteration.
-func (tp *TypeParser) LayerType(t *checker.Type, atLocation *ast.Node) *Layer {
+func (tp *TypeParser) LayerType(t *checker.Type) *Layer {
 	if tp == nil || tp.checker == nil || t == nil {
 		return nil
 	}
@@ -100,7 +97,7 @@ func (tp *TypeParser) LayerType(t *checker.Type, atLocation *ast.Node) *Layer {
 
 		// Try each candidate as a layer variance struct
 		for _, prop := range candidates {
-			propType := c.GetTypeOfSymbolAtLocation(prop, atLocation)
+			propType := c.GetTypeOfSymbolAtLocation(prop, nil)
 			if result := tp.parseLayerVarianceStruct(propType); result != nil {
 				return result
 			}
@@ -111,8 +108,8 @@ func (tp *TypeParser) LayerType(t *checker.Type, atLocation *ast.Node) *Layer {
 }
 
 // IsLayerType returns true if the type has the Layer variance struct.
-func (tp *TypeParser) IsLayerType(t *checker.Type, atLocation *ast.Node) bool {
-	return tp.LayerType(t, atLocation) != nil
+func (tp *TypeParser) IsLayerType(t *checker.Type) bool {
+	return tp.LayerType(t) != nil
 }
 
 func isLayerTypeSourceFile(tp *TypeParser, c *checker.Checker, sf *ast.SourceFile) bool {
@@ -135,7 +132,7 @@ func isLayerTypeSourceFile(tp *TypeParser, c *checker.Checker, sf *ast.SourceFil
 		return false
 	}
 
-	return tp.LayerType(layerType, sf.AsNode()) != nil
+	return tp.LayerType(layerType) != nil
 }
 
 // IsNodeReferenceToEffectLayerModuleApi reports whether node resolves to a member

@@ -49,3 +49,16 @@ export const shouldNotTriggerString = Effect.succeed(1).pipe(
 export const shouldNotTriggerAsVoid = Effect.succeed(1).pipe(
   Effect.asVoid
 )
+
+// Should trigger: data-first Effect.map(self, () => {})
+export const shouldTriggerDataFirstEmptyBlock = Effect.map(Effect.succeed(1), () => {})
+
+// Should trigger: data-first Effect.map(self, () => void 0)
+export const shouldTriggerDataFirstVoid0 = Effect.map(Effect.succeed(1), () => void 0)
+
+// Should trigger with a fallback fix: the API reference is hidden behind a const alias.
+const mapAlias = Effect.map
+export const shouldTriggerAliasedMap = Effect.succeed(1).pipe(mapAlias(() => undefined))
+
+// Should NOT trigger: data-first Effect.map with a real transformation
+export const shouldNotTriggerDataFirstTransform = Effect.map(Effect.succeed(1), (n) => n * 2)

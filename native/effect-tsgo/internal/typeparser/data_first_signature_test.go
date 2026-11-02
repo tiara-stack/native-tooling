@@ -1,11 +1,12 @@
 package typeparser
 
 import (
+	"slices"
 	"strings"
 	"testing"
 
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
 )
 
 func TestDerivedPipeableSignature_Provide(t *testing.T) {
@@ -33,6 +34,7 @@ const provided = Effect.provide(program, MyService.Default, { local: true })
 	result := tp.DataFirstOrLastCall(call.AsNode())
 	if result == nil {
 		t.Fatal("expected provide call to normalize via derived signature comparison")
+		return
 	}
 	if result.SubjectIndex != 0 {
 		t.Fatalf("expected provide subject index 0, got %d", result.SubjectIndex)
@@ -62,6 +64,7 @@ const live = Layer.succeed(Service, make)
 	result := tp.DataFirstOrLastCall(call.AsNode())
 	if result == nil {
 		t.Fatal("expected Layer.succeed call to normalize via derived signature comparison")
+		return
 	}
 	if result.SubjectIndex != 1 {
 		t.Fatalf("expected Layer.succeed subject index 1, got %d", result.SubjectIndex)
@@ -113,6 +116,595 @@ export const live = Layer.succeed(MyService, make)
 	}
 }
 
+func TestPipingFlows_TypeArguments(t *testing.T) {
+	t.Parallel()
+
+	source := `
+import { pipe } from "effect"
+
+declare function transform<A, B>(self: A, f: (value: A) => B): B
+declare function transform<A, B>(f: (value: A) => B): (self: A) => B
+declare function identity<A>(value: A): A
+
+export const piped = pipe("value", transform<string, number>((value) => value.length))
+export const dataFirst = transform<string, number>("value", (value) => value.length)
+export const curried = transform<string, number>((value) => value.length)("value")
+export const called = identity<string>("value")
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileWithEffectV4Internal(t, source)
+	defer done()
+
+	for _, test := range []struct {
+		name string
+		want []string
+	}{
+		{name: "piped", want: []string{"string", "number"}},
+		{name: "dataFirst", want: []string{"string", "number"}},
+		{name: "curried", want: []string{"string", "number"}},
+		{name: "called", want: []string{"string"}},
+	} {
+		call := findVariableInitializerCallByName(t, sf, test.name)
+		flow := findFlowByNode(t, sf, tp.PipingFlows(sf, false), call.AsNode())
+		if len(flow.Transformations) == 0 {
+			t.Fatalf("%s transformation count = 0, want at least 1", test.name)
+		}
+		transformation := flow.Transformations[len(flow.Transformations)-1]
+		if transformation.TypeArguments == nil {
+			t.Fatalf("%s type arguments are nil", test.name)
+		}
+		got := make([]string, 0, len(transformation.TypeArguments.Nodes))
+		for _, typeArgument := range transformation.TypeArguments.Nodes {
+			got = append(got, strings.TrimSpace(nodeText(sf, typeArgument)))
+		}
+		if !slices.Equal(got, test.want) {
+			t.Fatalf("%s type arguments = %v, want %v", test.name, got, test.want)
+		}
+	}
+}
+
+func TestPipingFlows_DecomposesOnlyCurriedPipeableOverloads(t *testing.T) {
+	t.Parallel()
+
+	source := `
+import { Effect } from "effect"
+
+declare const program: Effect.Effect<number, string>
+
+export const caught = Effect.catch(() => Effect.succeed(0))(program)
+export const named = Effect.fn("named")(function*() {
+  return 1
+})
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileWithEffectV4Internal(t, source)
+	defer done()
+
+	caughtCall := findVariableInitializerCallByName(t, sf, "caught")
+	caughtFlow := tp.LongestPipingFlowAt(caughtCall.AsNode(), false)
+	if caughtFlow == nil {
+		t.Fatal("expected curried catch flow")
+	}
+	if got := strings.TrimSpace(nodeText(sf, caughtFlow.Subject.Node)); got != "program" {
+		t.Fatalf("caught subject = %q, want program", got)
+	}
+	assertSingleTransformation(t, sf, caughtFlow, TransformationKindCall, "Effect.catch", []string{"() => Effect.succeed(0)"})
+
+	namedCall := findVariableInitializerCallByName(t, sf, "named")
+	namedFlow := tp.LongestPipingFlowAt(namedCall.AsNode(), false)
+	if namedFlow == nil {
+		t.Fatal("expected named Effect.fn call flow")
+	}
+	assertSingleTransformation(t, sf, namedFlow, TransformationKindCall, `Effect.fn("named")`, nil)
+}
+
+func TestPipingFlows_TransformationOccurrencesAreUnique(t *testing.T) {
+	t.Parallel()
+
+	source := `
+import { Effect, pipe } from "effect"
+
+declare const base: Effect.Effect<number, string>
+
+export const piped = pipe(
+  base,
+  Effect.map((value) => value + 1),
+  Effect.flatMap((value) => Effect.succeed(value * 2))
+)
+
+export const nested = Effect.map(Effect.succeed(1), (value) => value + 1)
+
+export const effectFn = Effect.fn(
+  function*() {
+    return 1
+  },
+  Effect.map((value) => value + 1),
+  Effect.catch(() => Effect.succeed(0))
+)
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileWithEffectV4Internal(t, source)
+	defer done()
+
+	seen := make(map[*ast.Node]int)
+	for flowIndex, flow := range tp.PipingFlows(sf, true) {
+		for _, transformation := range flow.Transformations {
+			if previousFlowIndex, duplicate := seen[transformation.Callee]; duplicate {
+				t.Fatalf(
+					"transformation %q occurs in flows %d and %d",
+					nodeText(sf, transformation.Callee),
+					previousFlowIndex,
+					flowIndex,
+				)
+			}
+			seen[transformation.Callee] = flowIndex
+		}
+	}
+}
+
+func TestPipingFlows_SkipsParentheses(t *testing.T) {
+	t.Parallel()
+
+	source := `
+import { Effect, Option } from "effect"
+
+export const some = Effect.succeed(((Option.some(1))))
+export const none = Effect.succeed(((Option.none())))
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileWithEffectV4Internal(t, source)
+	defer done()
+
+	someCall := findVariableInitializerCallByName(t, sf, "some")
+	someFlow := findFlowByNode(t, sf, tp.PipingFlows(sf, false), someCall.AsNode())
+	if got := strings.TrimSpace(nodeText(sf, someFlow.Subject.Node)); got != "1" {
+		t.Fatalf("some subject = %q, want %q", got, "1")
+	}
+	if len(someFlow.Transformations) != 2 {
+		t.Fatalf("some transformation count = %d, want 2", len(someFlow.Transformations))
+	}
+	if got := strings.TrimSpace(nodeText(sf, someFlow.Transformations[0].Callee)); got != "Option.some" {
+		t.Fatalf("first some transformation = %q, want %q", got, "Option.some")
+	}
+	if got := strings.TrimSpace(nodeText(sf, someFlow.Transformations[1].Callee)); got != "Effect.succeed" {
+		t.Fatalf("second some transformation = %q, want %q", got, "Effect.succeed")
+	}
+
+	noneCall := findVariableInitializerCallByName(t, sf, "none")
+	noneFlow := findFlowByNode(t, sf, tp.PipingFlows(sf, false), noneCall.AsNode())
+	if got := strings.TrimSpace(nodeText(sf, noneFlow.Subject.Node)); got != "Option.none()" {
+		t.Fatalf("none subject = %q, want %q", got, "Option.none()")
+	}
+	assertSingleTransformation(t, sf, noneFlow, TransformationKindCall, "Effect.succeed", nil)
+}
+
+func TestLongestPipingFlowAt_ReturnsLongestNestedFlow(t *testing.T) {
+	t.Parallel()
+
+	source := `
+import { Effect } from "effect"
+
+declare const work: Effect.Effect<string>
+
+export const dataFirst = Effect.raceFirst(
+  Effect.flatMap(Effect.sleep("1 second"), () => Effect.fail("timeout")),
+  work
+)
+
+export const pipeable = Effect.raceFirst(
+  work,
+  ((Effect.sleep("2 seconds").pipe(
+    Effect.andThen(Effect.succeed("fallback"))
+  )))
+)
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileWithEffectV4Internal(t, source)
+	defer done()
+
+	dataFirstRace := findVariableInitializerCallByName(t, sf, "dataFirst")
+	if parsed := tp.DataFirstOrLastCall(dataFirstRace.AsNode()); parsed == nil || parsed.SubjectIndex != 0 {
+		t.Fatal("expected data-first Effect.raceFirst with omitted options to normalize around self")
+	}
+	dataFirstTimer := dataFirstRace.Arguments.Nodes[0]
+	dataFirstFlow := tp.LongestPipingFlowAt(dataFirstTimer, false)
+	if dataFirstFlow == nil {
+		t.Fatal("expected data-first timer sub-flow")
+	}
+	if dataFirstFlow.Node != dataFirstTimer {
+		t.Fatal("data-first sub-flow should be rooted at the requested node")
+	}
+	if got := transformationCallees(sf, dataFirstFlow); !slices.Equal(got, []string{"Effect.sleep", "Effect.flatMap"}) {
+		t.Fatalf("data-first transformations = %v", got)
+	}
+
+	pipeableRace := findVariableInitializerCallByName(t, sf, "pipeable")
+	pipeableTimer := pipeableRace.Arguments.Nodes[1]
+	pipeableFlow := tp.LongestPipingFlowAt(pipeableTimer, false)
+	if pipeableFlow == nil {
+		t.Fatal("expected parenthesized pipeable timer sub-flow")
+	}
+	if got := transformationCallees(sf, pipeableFlow); !slices.Equal(got, []string{"Effect.sleep", "Effect.andThen"}) {
+		t.Fatalf("pipeable transformations = %v", got)
+	}
+
+	outerFlow := tp.LongestPipingFlowAt(dataFirstRace.AsNode(), false)
+	if outerFlow == nil {
+		t.Fatal("expected complete outer flow")
+	}
+	if got := transformationCallees(sf, outerFlow); !slices.Equal(got, []string{"Effect.sleep", "Effect.flatMap", "Effect.raceFirst"}) {
+		t.Fatalf("outer transformations = %v", got)
+	}
+
+	prefix := outerFlow.CopyPrefix(2)
+	if prefix == nil {
+		t.Fatal("expected a two-transformation prefix")
+	}
+	if prefix.Subject != outerFlow.Subject {
+		t.Fatal("prefix should preserve the flow subject")
+	}
+	if len(prefix.Transformations) != 2 {
+		t.Fatalf("prefix transformation count = %d, want 2", len(prefix.Transformations))
+	}
+	if got := strings.TrimSpace(nodeText(sf, prefix.Transformations[1].Callee)); got != "Effect.flatMap" {
+		t.Fatalf("last prefix transformation = %q, want Effect.flatMap", got)
+	}
+	originalKind := outerFlow.Transformations[0].Kind
+	prefix.Transformations[0].Kind = TransformationKind("test")
+	if outerFlow.Transformations[0].Kind != originalKind {
+		t.Fatal("prefix transformations should have an independent backing slice")
+	}
+	if empty := outerFlow.CopyPrefix(0); empty == nil || len(empty.Transformations) != 0 {
+		t.Fatal("expected an empty prefix rooted at the flow subject")
+	}
+	if outerFlow.CopyPrefix(-1) != nil || outerFlow.CopyPrefix(len(outerFlow.Transformations)+1) != nil {
+		t.Fatal("out-of-bounds prefixes should return nil")
+	}
+	var nilFlow *PipingFlow
+	if nilFlow.CopyPrefix(0) != nil {
+		t.Fatal("a nil complete flow should return a nil prefix")
+	}
+}
+
+func transformationCallees(sf *ast.SourceFile, flow *PipingFlow) []string {
+	result := make([]string, 0, len(flow.Transformations))
+	for i := range flow.Transformations {
+		result = append(result, strings.TrimSpace(nodeText(sf, flow.Transformations[i].Callee)))
+	}
+	return result
+}
+
+func TestDataFirstOrLastCall_OptionMatchV4(t *testing.T) {
+	t.Parallel()
+
+	source := `
+import { Effect, Option } from "effect"
+
+declare const value: Option.Option<number>
+
+export const result = Option.match(value, {
+  onNone: () => Effect.fail("missing"),
+  onSome: Effect.succeed
+})
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileWithEffectV4Internal(t, source)
+	defer done()
+
+	call := findVariableInitializerCallByName(t, sf, "result")
+	result := tp.DataFirstOrLastCall(call.AsNode())
+	if result == nil {
+		t.Fatal("expected Option.match data-first call to normalize")
+	}
+	if result.SubjectIndex != 0 {
+		t.Fatalf("subject index = %d, want 0", result.SubjectIndex)
+	}
+	if got := strings.TrimSpace(nodeText(sf, result.Subject)); got != "value" {
+		t.Fatalf("subject = %q, want %q", got, "value")
+	}
+	if got := strings.TrimSpace(nodeText(sf, result.Callee)); got != "Option.match" {
+		t.Fatalf("callee = %q, want %q", got, "Option.match")
+	}
+	if len(result.Args) != 1 || !strings.HasPrefix(strings.TrimSpace(nodeText(sf, result.Args[0])), "{") {
+		t.Fatalf("expected handlers object as sole transformation argument")
+	}
+
+	flow := findFlowByNode(t, sf, tp.PipingFlows(sf, false), call.AsNode())
+	if got := strings.TrimSpace(nodeText(sf, flow.Subject.Node)); got != "value" {
+		t.Fatalf("flow subject = %q, want %q", got, "value")
+	}
+	assertSingleTransformation(t, sf, flow, TransformationKindDataFirst, "Option.match", []string{`{
+  onNone: () => Effect.fail("missing"),
+  onSome: Effect.succeed
+}`})
+}
+
+func TestDataFirstOrLastCall_AlphaEquivalentOverloads(t *testing.T) {
+	t.Parallel()
+
+	source := `
+interface Box<A> { readonly value: A }
+interface Pair<A, B> { readonly left: A; readonly right: B }
+
+declare function reordered<A, B, C = B>(self: Box<A>, options: {
+  readonly onEmpty: () => B
+  readonly onValue: (value: A) => C
+}): B | C
+declare function reordered<B, A, C = B>(options: {
+  readonly onValue: (value: A) => C
+  readonly onEmpty: () => B
+}): (self: Box<A>) => C | B
+
+declare function moved<A>(self: Box<A>, index: number): A
+declare function moved(index: number): <Value>(self: Box<Value>) => Value
+
+declare function mapped<A extends object, N extends string, B>(self: A, name: N, value: B): {
+  [K in N | keyof A]: K extends keyof A ? A[K] : B
+}
+declare function mapped<N extends string, A extends object, B>(name: N, value: B): (self: A) => {
+  [K in N | keyof A]: K extends keyof A ? A[K] : B
+}
+
+declare function distinctRoles<A, B>(self: Box<A>, f: (value: A) => B): Pair<A, B>
+declare function distinctRoles<A, B>(f: (value: B) => A): (self: Box<A>) => Pair<A, B>
+
+declare function differentBinders<T>(self: Box<T>, f: (value: T) => T): T | T
+declare function differentBinders<U, V>(f: (value: U) => V): (self: Box<U>) => U | V
+
+namespace Left { export interface Same<A> { readonly value: A } }
+namespace Right { export interface Same<A> { readonly value: A } }
+declare function differentSymbols<A>(self: Left.Same<A>, size: number): A
+declare function differentSymbols<A>(size: number): (self: Right.Same<A>) => A
+
+declare function differentDefault<A, B = A>(self: Box<A>, f: (value: A) => B): B
+declare function differentDefault<A, B = string>(f: (value: A) => B): (self: Box<A>) => B
+
+declare function differentReadonly<A, B>(self: Box<A>, options: { readonly f: (value: A) => B }): B
+declare function differentReadonly<A, B>(options: { f: (value: A) => B }): (self: Box<A>) => B
+
+declare function optionalSubject<A>(self: Box<A>, size: number): A
+declare function optionalSubject(size: number): <A>(self?: Box<A>) => A
+
+declare const box: Box<number>
+declare const left: Left.Same<number>
+declare const object: { readonly a: number }
+
+export const reorderedResult = reordered(box, {
+  onEmpty: () => "empty",
+  onValue: (value) => value
+})
+export const movedResult = moved(box, 0)
+export const mappedResult = mapped(object, "b", true)
+export const distinctRolesResult = distinctRoles(box, String)
+export const differentBindersResult = differentBinders(box, (value) => value)
+export const differentSymbolsResult = differentSymbols(left, 1)
+export const differentDefaultResult = differentDefault(box, String)
+export const differentReadonlyResult = differentReadonly(box, { f: String })
+export const optionalSubjectResult = optionalSubject(box, 1)
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileInternal(t, source)
+	defer done()
+
+	for _, name := range []string{"reorderedResult", "movedResult", "mappedResult"} {
+		call := findVariableInitializerCallByName(t, sf, name)
+		result := tp.DataFirstOrLastCall(call.AsNode())
+		if result == nil {
+			t.Errorf("expected %s to normalize", name)
+			continue
+		}
+		if result.SubjectIndex != 0 {
+			t.Errorf("%s subject index = %d, want 0", name, result.SubjectIndex)
+		}
+	}
+
+	for _, name := range []string{
+		"distinctRolesResult",
+		"differentBindersResult",
+		"differentSymbolsResult",
+		"differentDefaultResult",
+		"differentReadonlyResult",
+		"optionalSubjectResult",
+	} {
+		call := findVariableInitializerCallByName(t, sf, name)
+		if result := tp.DataFirstOrLastCall(call.AsNode()); result != nil {
+			t.Errorf("expected %s not to normalize", name)
+		}
+	}
+}
+
+func TestDataFirstOrLastCall_CallableAlias(t *testing.T) {
+	t.Parallel()
+
+	source := `
+type Pipeable = (self: string) => number
+
+declare function operation(self: string, size: number): number
+declare function operation(size: number): Pipeable
+
+export const result = operation("value", 1)
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileInternal(t, source)
+	defer done()
+
+	call := findVariableInitializerCallByName(t, sf, "result")
+	result := tp.DataFirstOrLastCall(call.AsNode())
+	if result == nil {
+		t.Fatal("expected a pipeable overload returned through a callable alias to normalize")
+	}
+	if result.SubjectIndex != 0 {
+		t.Fatalf("subject index = %d, want 0", result.SubjectIndex)
+	}
+}
+
+func TestDataFirstOrLastCall_InferredParameterTypes(t *testing.T) {
+	t.Parallel()
+
+	source := `
+declare function operation(self: string, size): number
+declare function operation(size): (self: string) => number
+
+export const result = operation("value", 1)
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileInternal(t, source)
+	defer done()
+
+	call := findVariableInitializerCallByName(t, sf, "result")
+	if result := tp.DataFirstOrLastCall(call.AsNode()); result == nil || result.SubjectIndex != 0 {
+		t.Fatal("expected overloads with inferred any parameter types to normalize")
+	}
+}
+
+func TestPipeableSignatureShapeWithoutExplicitDeclarations(t *testing.T) {
+	t.Parallel()
+
+	source := `
+declare function operation(self: string, size: number): number
+declare function operation(size: number): (self: string) => number
+
+export const result = operation("value", 1)
+`
+
+	c, tp, sf, done := compileAndGetCheckerAndSourceFileInternal(t, source)
+	defer done()
+	call := findVariableInitializerCallByName(t, sf, "result")
+	resolved := rawSignature(c.GetResolvedSignature(call.AsNode()))
+	candidates := c.GetSignaturesOfType(tp.GetTypeAtLocation(call.Expression), checker.SignatureKindCall)
+	if resolved == nil || len(candidates) != 2 {
+		t.Fatal("expected both overload signatures")
+	}
+	pipeable := rawSignature(candidates[0])
+	if len(pipeable.Parameters()) != 1 {
+		pipeable = rawSignature(candidates[1])
+	}
+
+	syntheticDataFirst := checker.Checker_newCallSignature(
+		c, resolved.TypeParameters(), resolved.ThisParameter(), resolved.Parameters(), c.GetReturnTypeOfSignature(resolved),
+	)
+	syntheticPipeable := checker.Checker_newCallSignature(
+		c, pipeable.TypeParameters(), pipeable.ThisParameter(), pipeable.Parameters(), c.GetReturnTypeOfSignature(pipeable),
+	)
+	if !ast.NodeIsSynthesized(syntheticDataFirst.Declaration()) || !ast.NodeIsSynthesized(syntheticPipeable.Declaration()) {
+		t.Fatal("expected signatures with no source declaration site")
+	}
+	if !MatchesPipeableSignature(c, syntheticDataFirst, syntheticPipeable, 0, nil) {
+		t.Fatal("expected raw signature structures to match without declaration nodes")
+	}
+}
+
+func TestPipeableSignatureShapeDoesNotInstantiateTypes(t *testing.T) {
+	t.Parallel()
+
+	source := `
+interface Box<A> { readonly value: A }
+declare function operation<A, B>(self: Box<A>, f: (value: A) => B): B | A
+declare function operation<B, A>(f: (value: A) => B): (self: Box<A>) => A | B
+declare const box: Box<number>
+export const result = operation(box, String)
+`
+
+	c, tp, sf, done := compileAndGetCheckerAndSourceFileInternal(t, source)
+	defer done()
+	call := findVariableInitializerCallByName(t, sf, "result")
+	resolved := c.GetResolvedSignature(call.AsNode())
+	candidates := c.GetSignaturesOfType(tp.GetTypeAtLocation(call.Expression), checker.SignatureKindCall)
+	var pipeable *checker.Signature
+	for _, candidate := range candidates {
+		raw := rawSignature(candidate)
+		if raw != nil && len(raw.Parameters()) == 1 {
+			pipeable = candidate
+			break
+		}
+	}
+	if resolved == nil || pipeable == nil {
+		t.Fatal("expected data-first and pipeable signatures")
+	}
+	if !pipeableSignatureShapesMatch(c, resolved, pipeable, 0) {
+		t.Fatal("expected signatures to be alpha-equivalent")
+	}
+	if !MatchesPipeableSignature(c, resolved, pipeable, 0, nil) {
+		t.Fatal("expected full matcher to recognize the signatures")
+	}
+	before := c.TotalInstantiationCount
+	for range 100 {
+		if !comparePipeableSignatureTypes(c, rawSignature(resolved), rawSignature(pipeable), 0) {
+			t.Fatal("expected repeated raw type comparison to match")
+		}
+		if !pipeableSignatureShapesMatch(c, resolved, pipeable, 0) {
+			t.Fatal("expected cached signature comparison to match")
+		}
+		if !MatchesPipeableSignature(c, resolved, pipeable, 0, nil) {
+			t.Fatal("expected repeated full signature comparison to match")
+		}
+	}
+	if after := c.TotalInstantiationCount; after != before {
+		t.Fatalf("type instantiation count changed from %d to %d", before, after)
+	}
+}
+
+func TestPipeableSignatureShapeFailsClosedAtDepthBudget(t *testing.T) {
+	t.Parallel()
+
+	deepType := "number"
+	for range pipeableShapeMaxDepth + 2 {
+		deepType = "{ readonly value: " + deepType + " }"
+	}
+	source := `
+declare function operation(self: ` + deepType + `, size: number): number
+declare function operation(size: number): (self: ` + deepType + `) => number
+declare const value: ` + deepType + `
+export const result = operation(value, 1)
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileInternal(t, source)
+	defer done()
+	call := findVariableInitializerCallByName(t, sf, "result")
+	if result := tp.DataFirstOrLastCall(call.AsNode()); result != nil {
+		t.Fatal("expected over-budget signature shape to fail closed")
+	}
+}
+
+func TestDataFirstOrLastCall_RealAlphaEquivalentEffectApis(t *testing.T) {
+	t.Parallel()
+
+	source := `
+import { Exit, Option, Result, UndefinedOr } from "effect"
+
+declare const option: Option.Option<number>
+declare const result: Result.Result<number, string>
+declare const maybe: number | undefined
+declare const exit: Exit.Exit<number, string>
+
+export const optionGetOrElse = Option.getOrElse(option, () => "none")
+export const resultMatch = Result.match(result, {
+  onFailure: (error) => error.length,
+  onSuccess: (value) => value
+})
+export const undefinedOrMap = UndefinedOr.map(maybe, (value) => String(value))
+export const exitMatch = Exit.match(exit, {
+  onFailure: (cause) => String(cause),
+  onSuccess: (value) => value
+})
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileWithEffectV4Internal(t, source)
+	defer done()
+
+	for _, name := range []string{"optionGetOrElse", "resultMatch", "undefinedOrMap", "exitMatch"} {
+		call := findVariableInitializerCallByName(t, sf, name)
+		result := tp.DataFirstOrLastCall(call.AsNode())
+		if result == nil {
+			t.Errorf("expected %s to normalize", name)
+			continue
+		}
+		if result.SubjectIndex != 0 {
+			t.Errorf("%s subject index = %d, want 0", name, result.SubjectIndex)
+		}
+	}
+}
+
 func TestParseDataFirstCallAsPipeable_CatchAllV3(t *testing.T) {
 	t.Parallel()
 
@@ -133,6 +725,7 @@ export const shouldReportDataFirst = Effect.catchAll(
 	result := tp.DataFirstOrLastCall(call.AsNode())
 	if result == nil {
 		t.Fatal("expected data-first catchAll to normalize")
+		return
 	}
 	if strings.TrimSpace(nodeText(sf, result.Subject)) != "Effect.never" {
 		t.Fatalf("subject = %q, want %q", strings.TrimSpace(nodeText(sf, result.Subject)), "Effect.never")
@@ -153,6 +746,68 @@ export const shouldReportDataFirst = Effect.catchAll(
 		t.Fatalf("flow subject = %q, want %q", strings.TrimSpace(nodeText(sf, flow.Subject.Node)), "Effect.never")
 	}
 	assertSingleTransformation(t, sf, flow, TransformationKindDataFirst, "Effect.catchAll", []string{"() => Effect.log(\"error\")"})
+}
+
+func TestDataFirstOrLastCallRejectsDifferentReturnOrigins(t *testing.T) {
+	t.Parallel()
+
+	source := `
+type DataFirstResult<T> = { readonly dataFirst: T }
+type DataLastResult<T> = { readonly dataLast: T }
+
+declare function operation<T>(self: T, size: number): DataFirstResult<T>
+declare function operation(size: number): <T>(self: T) => DataLastResult<T>
+
+const result = operation("value", 2)
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileInternal(t, source)
+	defer done()
+
+	call := findVariableInitializerCallByName(t, sf, "result")
+	if result := tp.DataFirstOrLastCall(call.AsNode()); result != nil {
+		t.Fatal("expected overloads with different return origins not to normalize")
+	}
+}
+
+func TestDataFirstOrLastCallRejectsIncompatibleSubject(t *testing.T) {
+	t.Parallel()
+
+	source := `
+type Result = { readonly value: string }
+
+declare function operation(self: string, size: number): Result
+declare function operation(size: number): (self: boolean) => Result
+
+const result = operation("value", 2)
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileInternal(t, source)
+	defer done()
+
+	call := findVariableInitializerCallByName(t, sf, "result")
+	if result := tp.DataFirstOrLastCall(call.AsNode()); result != nil {
+		t.Fatal("expected overloads with an incompatible subject not to normalize")
+	}
+}
+
+func TestDataFirstOrLastCallRejectsAmbiguousSubjectIndex(t *testing.T) {
+	t.Parallel()
+
+	source := `
+declare function operation<A>(first: A, second: A): A
+declare function operation<A>(second: A): (first: A) => A
+
+const result = operation(1, 2)
+`
+
+	_, tp, sf, done := compileAndGetCheckerAndSourceFileInternal(t, source)
+	defer done()
+
+	call := findVariableInitializerCallByName(t, sf, "result")
+	if result := tp.DataFirstOrLastCall(call.AsNode()); result != nil {
+		t.Fatal("expected an ambiguous subject index not to normalize")
+	}
 }
 
 func logDerivedPipeableSignatureComparison(t *testing.T, tp *TypeParser, node *ast.Node) {
@@ -189,7 +844,7 @@ func logDerivedPipeableSignatureComparison(t *testing.T, tp *TypeParser, node *a
 
 	t.Logf("data-first resolved return type: %s", c.TypeToString(c.GetReturnTypeOfSignature(resolved)))
 	for _, subjectIndex := range subjectIndexes {
-		derived := derivePipeableSignatureFromDataFirst(c, resolved, subjectIndex)
+		derived := DerivePipeableSignatureFromDataFirst(c, resolved, subjectIndex)
 		if derived == nil {
 			t.Logf("subjectIndex=%d derived=nil", subjectIndex)
 			continue
@@ -223,15 +878,14 @@ func logDerivedPipeableSignatureComparison(t *testing.T, tp *TypeParser, node *a
 				}
 			}
 			t.Logf(
-				"derived=%s | candidate %d=%s | return=%s typeArgs=%d returnedArity=%v cand->derived=%v derived->cand=%v",
+				"derived=%s | candidate %d=%s | return=%s typeArgs=%d returnedArity=%v matches=%v",
 				signatureString(c, derived),
 				i,
 				signatureString(c, candidate),
 				c.TypeToString(candidateReturn),
 				len(candidate.TypeParameters()),
 				returnedArity,
-				checker.Checker_isSignatureAssignableTo(c, candidate, derived, false),
-				checker.Checker_isSignatureAssignableTo(c, derived, candidate, false),
+				MatchesPipeableSignature(c, resolved, candidate, subjectIndex, nil),
 			)
 		}
 	}
@@ -259,6 +913,7 @@ func assertSingleTransformation(t *testing.T, sf *ast.SourceFile, flow *PipingFl
 	t.Helper()
 	if flow == nil {
 		t.Fatal("flow is nil")
+		return
 	}
 	if len(flow.Transformations) != 1 {
 		t.Fatalf("transformation count = %d, want 1", len(flow.Transformations))

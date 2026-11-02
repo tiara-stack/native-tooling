@@ -35,6 +35,7 @@ built/
 
 # Local test baselines
 testdata/baselines/local/*
+internal/bundledeffect/testfixtures.tar.gz
 
 # Go compiled binaries and plugins
 *.exe
@@ -82,20 +83,6 @@ coverage/
 # Build artifacts
 custom-gcl*
 
-# Local native fork outputs
-/.cache/
-/.gocache/
-/go-build-cache/
-/go-build-cache-*/
-/GOCACHE/
-/tmp/
-/dist/
-typescript-go/.git/
-typescript-go/.cache/
-typescript-go/.gocache/
-typescript-go/go-build-cache/
-typescript-go/go-build-cache-*/
-
 # Docker image and development scripts
 Dockerfile
 _tools/docker-dev.sh
@@ -103,3 +90,11 @@ _tools/.perf-out/
 
 .lalph
 scripts/worktree-setup.sh
+
+# Tiara local native fork outputs
+/.cache/
+/.gocache/
+/go-build-cache*/
+/GOCACHE/
+/tmp/
+/dist/

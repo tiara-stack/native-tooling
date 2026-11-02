@@ -1,7 +1,9 @@
 package compiler
 
 import (
+	"cmp"
 	"context"
+	"os"
 	"slices"
 	"sync"
 
@@ -112,7 +114,16 @@ func (p *checkerPool) createCheckers() {
 		wg.RunAndWait()
 
 		p.fileAssociations = make(map[*ast.SourceFile]*checker.Checker, len(p.program.files))
-		for i, file := range p.program.files {
+		files := p.program.files
+		if checkerCount > 1 && os.Getenv("OXLINT_TSGOLINT_CHECKER_SCHEDULING") == "sorted" {
+			// Spread large files across checkers without changing program order.
+			// Preserve that order for files with equal node counts.
+			files = slices.Clone(files)
+			slices.SortStableFunc(files, func(a, b *ast.SourceFile) int {
+				return cmp.Compare(b.NodeCount, a.NodeCount)
+			})
+		}
+		for i, file := range files {
 			p.fileAssociations[file] = p.checkers[i%checkerCount]
 		}
 	})

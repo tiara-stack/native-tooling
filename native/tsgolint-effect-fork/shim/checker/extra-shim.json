@@ -6,6 +6,13 @@
   "ExtraMethods": {
     "Checker": [
       "getBaseConstraintOfType",
+      "getAssignmentReducedType",
+      "getUnionTypeEx",
+      "getTypeWithDefault",
+      "hasTypeFacts",
+      "extractDefinitelyFalsyTypes",
+      "removeDefinitelyFalsyTypes",
+      "isSpreadableProperty",
       "getDeclaredTypeOfSymbol",
       "getBaseTypes",
       "getSignaturesOfType",
@@ -21,9 +28,13 @@
       "isArrayType",
       "getTypeArguments",
       "getContextualType",
+      "getApparentTypeOfContextualType",
       "getAwaitedType",
       "getTypeOfSymbol",
       "getTypeOfPropertyOfType",
+      "getTypeOfPropertyOrIndexSignatureOfType",
+      "getIndexedAccessTypeOrUndefined",
+      "getFlowTypeOfReference",
       "getReturnTypeOfSignature",
       "getContextualTypeForArgumentAtIndex",
       "getResolvedSignature",
@@ -32,6 +43,7 @@
       "isTypeAssignableTo",
       "isTypeIdenticalTo",
       "IsDeprecatedDeclaration",
+      "isDeprecatedSymbol",
       "GetShorthandAssignmentValueSymbol",
       "getImmediateAliasedSymbol",
       "getDeclarationOfAliasSymbol",
@@ -52,6 +64,7 @@
     ],
     "TupleType": [
       "combinedFlags",
+      "minLength",
       "readonly"
     ],
     "Signature": [
@@ -61,6 +74,7 @@
     ],
     "Checker": [
       "numberType",
+      "stringType",
       "booleanType",
       "globalRegExpType"
     ],

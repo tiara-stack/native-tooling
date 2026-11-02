@@ -1243,6 +1243,9 @@ func CompilerOptionsAffectSemanticDiagnostics(
 	oldOptions *core.CompilerOptions,
 	newOptions *core.CompilerOptions,
 ) bool {
+	if !reflect.DeepEqual(oldOptions.Effect, newOptions.Effect) {
+		return true
+	}
 	return optionsHaveChanges(oldOptions, newOptions, func(option *CommandLineOption) bool {
 		return option.AffectsSemanticDiagnostics
 	})

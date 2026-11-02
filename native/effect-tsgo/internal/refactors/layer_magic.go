@@ -8,10 +8,10 @@ import (
 	"github.com/effect-ts/tsgo/internal/refactor"
 	"github.com/effect-ts/tsgo/internal/rewriter"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/astnav"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/ls"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/astnav"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/ls"
 )
 
 var LayerMagic = refactor.Refactor{
@@ -104,7 +104,7 @@ func tryBuildRefactor(ctx *refactor.Context, tp *typeparser.TypeParser, c *check
 	if outerType == nil {
 		return nil
 	}
-	layer := tp.LayerType(outerType, outerAs.Type)
+	layer := tp.LayerType(outerType)
 	if layer == nil {
 		return nil
 	}
@@ -123,7 +123,7 @@ func tryBuildRefactor(ctx *refactor.Context, tp *typeparser.TypeParser, c *check
 	}
 
 	// Extract outline graph
-	outlineGraph := layergraph.ExtractOutlineGraph(c, layerGraph)
+	outlineGraph := layergraph.ExtractOutlineGraph(ctx.TypeParser, c, layerGraph)
 	if outlineGraph == nil || outlineGraph.NodeCount() <= 1 {
 		return nil
 	}
@@ -150,19 +150,27 @@ func tryBuildRefactor(ctx *refactor.Context, tp *typeparser.TypeParser, c *check
 	return []ls.CodeAction{*action}
 }
 
-// buildLayerMagicBuild generates: firstLayer.pipe(Layer.provideMerge(...), Layer.provide(...), ...)
+// buildLayerMagicBuild generates a pipe from the first requested output layer, or Layer.empty
+// when the first layer does not provide a requested output.
 func buildLayerMagicBuild(tracker *rewriter.Tracker, ctx *refactor.Context, c *checker.Checker, oldNode *ast.Node, magicResult *layergraph.LayerMagicResult, layerIdentifier string) {
 	nodes := magicResult.Nodes
 	if len(nodes) == 0 {
 		return
 	}
 
-	// Clone the first node's expression
-	firstExpr := tracker.DeepCloneNode(nodes[0].Node)
+	var receiver *ast.Node
+	firstPipeArg := 0
+	if nodes[0].Merges {
+		receiver = tracker.DeepCloneNode(nodes[0].Node)
+		firstPipeArg = 1
+	} else {
+		receiver = tracker.NewPropertyAccessExpression(
+			tracker.NewIdentifier(layerIdentifier), nil, tracker.NewIdentifier("empty"), ast.NodeFlagsNone,
+		)
+	}
 
-	// Build pipe arguments for remaining nodes
 	var pipeArgs []*ast.Node
-	for _, mn := range nodes[1:] {
+	for _, mn := range nodes[firstPipeArg:] {
 		// Determine combinator name
 		var combinatorName string
 		switch {
@@ -188,9 +196,8 @@ func buildLayerMagicBuild(tracker *rewriter.Tracker, ctx *refactor.Context, c *c
 		pipeArgs = append(pipeArgs, call)
 	}
 
-	// firstExpr.pipe(args...)
 	pipeAccess := tracker.NewPropertyAccessExpression(
-		firstExpr, nil, tracker.NewIdentifier("pipe"), ast.NodeFlagsNone,
+		receiver, nil, tracker.NewIdentifier("pipe"), ast.NodeFlagsNone,
 	)
 	newDeclaration := tracker.NewCallExpression(
 		pipeAccess, nil, nil,
@@ -244,7 +251,7 @@ func tryPrepareRefactor(ctx *refactor.Context, tp *typeparser.TypeParser, c *che
 	}
 
 	// Extract outline graph
-	outlineGraph := layergraph.ExtractOutlineGraph(c, layerGraph)
+	outlineGraph := layergraph.ExtractOutlineGraph(ctx.TypeParser, c, layerGraph)
 	if outlineGraph == nil || outlineGraph.NodeCount() <= 1 {
 		return nil
 	}
@@ -277,7 +284,7 @@ func tryPrepareRefactor(ctx *refactor.Context, tp *typeparser.TypeParser, c *che
 	exprType := tp.GetTypeAtLocation(atLocation)
 	var previouslyProvided *checker.Type
 	if exprType != nil {
-		parsedLayer := tp.LayerType(exprType, atLocation)
+		parsedLayer := tp.LayerType(exprType)
 		if parsedLayer != nil {
 			previouslyProvided = parsedLayer.ROut
 		}

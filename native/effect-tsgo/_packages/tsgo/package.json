@@ -1,7 +1,8 @@
 {
   "name": "@effect/tsgo",
-  "version": "0.16.0",
-  "description": "Effect Language Service for TypeScript-Go — Effect-specific diagnostics and hover features.",
+  "version": "0.46.1",
+  "type": "module",
+  "description": "Effect Language Service for TypeScript-Go \u2014 Effect-specific diagnostics and hover features.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -14,7 +15,7 @@
     "access": "public",
     "provenance": true,
     "bin": {
-      "effect-tsgo": "./dist/effect-tsgo.js"
+      "effect-tsgo": "./dist/effect-tsgo.cjs"
     }
   },
   "scripts": {
@@ -23,11 +24,29 @@
     "test": "vitest run"
   },
   "bin": {
-    "effect-tsgo": "./src/cli.ts"
+    "effect-tsgo": "./src/cli/index.ts"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    "./lib/getExePath": {
+      "types": "./lib/getExePath.d.ts",
+      "default": "./lib/getExePath.js"
+    },
+    "./oxlint-presets": {
+      "types": "./oxlint-presets/index.d.ts",
+      "default": "./oxlint-presets/index.js"
+    },
+    "./oxlint-presets/*.json": {
+      "default": "./oxlint-presets/*.json"
+    }
   },
   "files": [
     "dist/",
-    "README.md"
+    "lib/",
+    "README.md",
+    "oxlint-presets/",
+    "oxlint-schema.json",
+    "schema.json"
   ],
   "optionalDependencies": {
     "@effect/tsgo-win32-x64": "workspace:*",
@@ -39,12 +58,12 @@
     "@effect/tsgo-darwin-arm64": "workspace:*"
   },
   "devDependencies": {
-    "@effect/platform-node": "^4.0.0-beta.83",
-    "@effect/platform-node-shared": "^4.0.0-beta.83",
+    "@effect/platform-node": "4.0.1",
+    "@effect/platform-node-shared": "4.0.1",
     "@types/node": "^24.3.0",
     "tsdown": "^0.20.1",
     "typescript": "^5.9.2",
-    "effect": "^4.0.0-beta.83",
+    "effect": "4.0.1",
     "vitest": "^3.2.1"
   }
 }

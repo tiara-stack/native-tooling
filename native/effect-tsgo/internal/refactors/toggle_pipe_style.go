@@ -4,13 +4,13 @@ import (
 	"strings"
 
 	"github.com/effect-ts/tsgo/internal/refactor"
-	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/astnav"
-	"github.com/microsoft/typescript-go/shim/ls"
 	"github.com/effect-ts/tsgo/internal/rewriter"
-	"github.com/microsoft/typescript-go/shim/lsp/lsproto"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/effect-ts/tsgo/internal/typeparser"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/astnav"
+	"github.com/microsoft/TypeScript/tsc/shim/ls"
+	"github.com/microsoft/TypeScript/tsc/shim/lsp/lsproto"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 var TogglePipeStyle = refactor.Refactor{
@@ -42,7 +42,7 @@ func runTogglePipeStyle(ctx *refactor.Context) []ls.CodeAction {
 			// pipe(subject, f1, f2) -> subject.pipe(f1, f2)
 			// Check that the subject's type is pipeable
 			subjectType := ctx.TypeParser.GetTypeAtLocation(pipeCall.Subject)
-			if !ctx.TypeParser.IsPipeableType(subjectType, pipeCall.Subject) {
+			if !ctx.TypeParser.IsPipeableType(subjectType) {
 				continue
 			}
 

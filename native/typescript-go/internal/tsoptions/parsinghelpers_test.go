@@ -15,6 +15,18 @@ func TestParseCompilerOptionNoMissingFields(t *testing.T) {
 		if !field.IsExported() {
 			continue
 		}
+		if field.Name == "Effect" {
+			// Plugin state is derived from plugins, not a directly parsed option.
+			if field.Tag.Get("json") != "-" {
+				t.Fatal("derived Effect state must not be serialized as a compiler option")
+			}
+			for _, name := range []string{"Effect", "effect"} {
+				if parseCompilerOptions(name, nil, &core.CompilerOptions{}) {
+					t.Fatalf("derived Effect state must not be parsed from %q", name)
+				}
+			}
+			continue
+		}
 
 		keyName := field.Name
 		// use the JSON key from the tag, if present

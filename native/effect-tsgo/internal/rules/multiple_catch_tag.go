@@ -6,11 +6,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 var MultipleCatchTag = rule.Rule{
@@ -131,10 +131,10 @@ func analyzeMultipleCatchTagCandidate(tp *typeparser.TypeParser, c *checker.Chec
 		return multipleCatchTagCandidate{}, false
 	}
 
-		errorChannel := catchTagReturnErrorChannel(tp, returnType, transformation.Args[1])
-		if errorChannel == nil {
-			return multipleCatchTagCandidate{}, false
-		}
+	errorChannel := catchTagReturnErrorChannel(tp, returnType)
+	if errorChannel == nil {
+		return multipleCatchTagCandidate{}, false
+	}
 
 	return multipleCatchTagCandidate{
 		transformation: transformation,
@@ -143,14 +143,14 @@ func analyzeMultipleCatchTagCandidate(tp *typeparser.TypeParser, c *checker.Chec
 	}, true
 }
 
-func catchTagReturnErrorChannel(tp *typeparser.TypeParser, returnType *checker.Type, atLocation *ast.Node) *checker.Type {
+func catchTagReturnErrorChannel(tp *typeparser.TypeParser, returnType *checker.Type) *checker.Type {
 	if tp == nil || returnType == nil {
 		return nil
 	}
-	if effectType := tp.EffectType(returnType, atLocation); effectType != nil {
+	if effectType := tp.EffectType(returnType); effectType != nil {
 		return effectType.E
 	}
-	if streamType := tp.StreamType(returnType, atLocation); streamType != nil {
+	if streamType := tp.StreamType(returnType); streamType != nil {
 		return streamType.E
 	}
 	return nil

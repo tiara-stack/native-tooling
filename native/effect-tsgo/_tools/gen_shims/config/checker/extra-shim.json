@@ -1,0 +1,27 @@
+{
+  "ExtraFunctions": ["forEachYieldExpression", "getMappedTypeModifiers"],
+  "ExtraMethods": {
+    "Checker": ["isTypeAssignableTo", "isArrayType", "isReadonlyArrayType", "getIndexInfosOfType", "getTypeArguments", "getLiteralTypeFromProperty", "getSymbolIfSameReference", "getSymbolOfDeclaration", "isReferenceToType", "newFunctionType", "newCallSignature", "isSymbolAssigned", "isPastLastAssignment", "evaluateEntity", "isConstantVariable", "isBlockScopedNameDeclaredBeforeUse", "checkExpressionWithContextualType", "isNoInferType", "isReadonlySymbol", "getTypeParameterModifiers", "getTypeParameterFromMappedType", "getConstraintTypeFromMappedType", "getNameTypeFromMappedType", "getTemplateTypeFromMappedType"]
+  },
+  "ExtraFields": {
+    "Checker": [
+      "getGlobalPromiseTypeChecked",
+      "emptyGenericType",
+      "symbolReferenceLinks",
+      "aliasSymbolLinks",
+      "moduleSymbolLinks",
+      "typeAliasLinks",
+      "declaredTypeLinks",
+      "typeNodeLinks"
+    ],
+    "IndexInfo": ["keyType", "valueType"],
+    "SymbolReferenceLinks": ["referenceKinds"],
+    "ValueSymbolLinks": ["resolvedType", "writeType"],
+    "AliasSymbolLinks": ["immediateTarget", "aliasTarget", "referenced"],
+    "ModuleSymbolLinks": ["resolvedExports", "exportsChecked"],
+    "TypeAliasLinks": ["declaredType"],
+    "DeclaredTypeLinks": ["declaredType"],
+    "SymbolNodeLinks": ["resolvedSymbol"],
+    "TypeNodeLinks": ["resolvedType"]
+  }
+}

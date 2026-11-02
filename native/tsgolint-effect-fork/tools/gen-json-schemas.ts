@@ -174,21 +174,21 @@ for (const schemaDir of schemaDirs) {
       content = content.replace(/\n{3,}/g, '\n\n');
 
       // 5. Add utils import if not present
-      if (!content.includes('"github.com/effect-ts/tsgo/tsgolint/internal/utils"')) {
+      if (!content.includes('"github.com/typescript-eslint/tsgolint/internal/utils"')) {
         if (content.includes('import "github.com/go-json-experiment/json"')) {
           content = content.replace(
             /^import "github\.com\/go-json-experiment\/json"/m,
-            'import "github.com/go-json-experiment/json"\nimport "github.com/effect-ts/tsgo/tsgolint/internal/utils"',
+            'import "github.com/go-json-experiment/json"\nimport "github.com/typescript-eslint/tsgolint/internal/utils"',
           );
         } else if (content.includes('import (')) {
           content = content.replace(
             /^import \(/m,
-            'import (\n\t"github.com/effect-ts/tsgo/tsgolint/internal/utils"',
+            'import (\n\t"github.com/typescript-eslint/tsgolint/internal/utils"',
           );
         } else {
           content = content.replace(
             /^(package \w+)\n/m,
-            '$1\n\nimport "github.com/effect-ts/tsgo/tsgolint/internal/utils"\n',
+            '$1\n\nimport "github.com/typescript-eslint/tsgolint/internal/utils"\n',
           );
         }
       }
@@ -284,22 +284,22 @@ func (j *ReturnAwaitOptions) UnmarshalJSON(value []byte) error {
           }
 
           // Add utils import if not present
-          if (!content.includes('"github.com/effect-ts/tsgo/tsgolint/internal/utils"')) {
+          if (!content.includes('"github.com/typescript-eslint/tsgolint/internal/utils"')) {
             if (content.includes('import "github.com/go-json-experiment/json"')) {
               content = content.replace(
                 /^import "github\.com\/go-json-experiment\/json"/m,
-                'import "github.com/go-json-experiment/json"\nimport "github.com/effect-ts/tsgo/tsgolint/internal/utils"',
+                'import "github.com/go-json-experiment/json"\nimport "github.com/typescript-eslint/tsgolint/internal/utils"',
               );
             } else if (content.includes('import (')) {
               content = content.replace(
                 /^import \(/m,
-                'import (\n\t"github.com/effect-ts/tsgo/tsgolint/internal/utils"',
+                'import (\n\t"github.com/typescript-eslint/tsgolint/internal/utils"',
               );
             } else {
               // Add new import block after package declaration
               content = content.replace(
                 /^(package \w+)\n/m,
-                '$1\n\nimport "github.com/effect-ts/tsgo/tsgolint/internal/utils"\n',
+                '$1\n\nimport "github.com/typescript-eslint/tsgolint/internal/utils"\n',
               );
             }
           }

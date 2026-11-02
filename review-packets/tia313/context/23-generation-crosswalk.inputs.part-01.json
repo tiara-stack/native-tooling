@@ -1,0 +1,278 @@
+{
+  "parent_packet": "review-packets/tia313/context/23-generation-crosswalk.json",
+  "collection": "inputs",
+  "part": 1,
+  "parts": 1,
+  "entries": [
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/go.mod",
+      "mode": "100644",
+      "blob": "e75a93f240ee807089ae24e290c31822cdb96a57",
+      "sha256": "1d70c04f4b0c0e313d6263061803b690e002038c4ec0c6b5e0e341eb9c34710b",
+      "bytes": 287,
+      "input_group": "G1",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G1.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/go.mod"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/main.go",
+      "mode": "100644",
+      "blob": "fd58b5fb0d98130bdca54e8fe3c6e15667b8d293",
+      "sha256": "8c8c223786e36ce70b4449c6e87405207408d70b648679ee5d06ad9f19b2f5da",
+      "bytes": 43453,
+      "input_group": "G1",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G1.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/main.go"
+    },
+    {
+      "path": "scripts/generate-native.mjs",
+      "mode": "100644",
+      "blob": "9e80e2327d82703ae99134ca7f0c206ea258f63d",
+      "sha256": "e850f07da779a640d9a23be72224e05d9902fca1375a56b3f2c1778fea1f0c6f",
+      "bytes": 4500,
+      "input_group": "G1",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G1.md",
+      "section": "scripts/generate-native.mjs"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/config/checker/extra-shim.json",
+      "mode": "100644",
+      "blob": "5aecc3d6abf4ec6301d5eea07943ba6b19001b50",
+      "sha256": "30d9dbd8f076189f9426a96560cf25d99d09e2740dc7ceae8c4f4437e2b37196",
+      "bytes": 1436,
+      "input_group": "G2",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G2.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/config/checker/extra-shim.json"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/config/fourslash/extra-shim.json",
+      "mode": "100644",
+      "blob": "f0b252522c282aa2d9d2cc8481454fb4b804bade",
+      "sha256": "273b6340c3785f3356d31ed41f25ca37b227e100de7d3223e2510195899d7fb3",
+      "bytes": 117,
+      "input_group": "G2",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G2.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/config/fourslash/extra-shim.json"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/config/ls/change/extra-shim.json",
+      "mode": "100644",
+      "blob": "ec88b9395a02beee2c7d59bbd6d647fd4d31b5a2",
+      "sha256": "a47b18838d3d9e5d1a5feab5d43e903938db6ef23b29e5afdc6ecc0a523aa61f",
+      "bytes": 67,
+      "input_group": "G2",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G2.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/config/ls/change/extra-shim.json"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/config/ls/extra-shim.json",
+      "mode": "100644",
+      "blob": "1b3ed841fd756268dc92951534d43d45e2fbb87d",
+      "sha256": "2844c364b9d1d119652fc38390142836ba700b6d7cc102a66f92dc03cd6b2196",
+      "bytes": 194,
+      "input_group": "G2",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G2.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/config/ls/extra-shim.json"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/checker/compatibility.go",
+      "mode": "100644",
+      "blob": "c9ba37f00645f1a18c1fca07f855fb22c442a547",
+      "sha256": "c3e043be60a50fd3229d4c7b3aa584365ea22cd2e2f9acdf13d4dbea7e1c9533",
+      "bytes": 322,
+      "input_group": "G3",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G3.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/checker/compatibility.go"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/compiler/compatibility.go",
+      "mode": "100644",
+      "blob": "9a52c562f1a2480aa472547cb82c6b524ca28b2a",
+      "sha256": "b158c6df670d51535c11ff4887ac9c2cb7c280d4b05ea586f046a2dac4bdda10",
+      "bytes": 576,
+      "input_group": "G3",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G3.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/compiler/compatibility.go"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/compiler/extra-shim.json",
+      "mode": "100644",
+      "blob": "27b41f956264a9c981560db8bfd40f4e4ab56719",
+      "sha256": "bb4c96450330adb5b2ec1b27550ef813a4a6b5220a5c7753f88058b9f824ffb0",
+      "bytes": 45,
+      "input_group": "G3",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G3.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/compiler/extra-shim.json"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/ls/change/compatibility.go",
+      "mode": "100644",
+      "blob": "e1edfa68519ffb3aec4f0eb6a679583cf6874913",
+      "sha256": "ab80bc1add1b115ab1054af7c1b4d710e2b791d9f9d2650bf71fae5b510367c6",
+      "bytes": 1360,
+      "input_group": "G3",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G3.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/ls/change/compatibility.go"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/ls/lsconv/compatibility.go",
+      "mode": "100644",
+      "blob": "cbef57af2941a3f62b87df18df395177e1859802",
+      "sha256": "444697c6dc600b37f892a6ee4186e67ee7d77b38df506cf816a9a4c248819793",
+      "bytes": 354,
+      "input_group": "G3",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G3.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/ls/lsconv/compatibility.go"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/project/compatibility.go",
+      "mode": "100644",
+      "blob": "1240d44e146e1618eb4a0fd15ed39e26c34f310e",
+      "sha256": "4190f494b02a904322569fa92d796b4c1f19834e7b21e351eff18c392230abb1",
+      "bytes": 628,
+      "input_group": "G3",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G3.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/project/compatibility.go"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/tsoptions/compatibility.go",
+      "mode": "100644",
+      "blob": "c575a7dee68f56f3c7087af561886da03de898be",
+      "sha256": "df288e1c80a1bb6c2cada888bf54dff39b92965001ae6600254ba6c81ee6a418",
+      "bytes": 1638,
+      "input_group": "G3",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G3.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/tsoptions/compatibility.go"
+    },
+    {
+      "path": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/tsoptions/extra-shim.json",
+      "mode": "100644",
+      "blob": "cb667a607b060fc386c3d833f4b0d5e4fc4909e4",
+      "sha256": "d28beee7c3bbc3fbed70d787b226bcc5d1e49dcbd1cfc2f1bb54f20f4758c18c",
+      "bytes": 96,
+      "input_group": "G3",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G3.md",
+      "section": "native/effect-tsgo/_tools/gen_shims/providers/typescript-go/tsoptions/extra-shim.json"
+    },
+    {
+      "path": "native/tsgolint-effect-fork/shim/ast/extra-shim.json",
+      "mode": "100644",
+      "blob": "64401032151e3973292c3513c3b85859575a258c",
+      "sha256": "1223f6cb16b05f7151a9898835932c0149401202804fb5bf968cc716ffc15b94",
+      "bytes": 205,
+      "input_group": "G4",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G4.md",
+      "section": "native/tsgolint-effect-fork/shim/ast/extra-shim.json"
+    },
+    {
+      "path": "native/tsgolint-effect-fork/shim/checker/extra-shim.json",
+      "mode": "100644",
+      "blob": "2fb95a1aea40c41b1f647c9386668487946e7de2",
+      "sha256": "83cbd18609cde9669ad652fcb551abeb9f4df23e0d7651f4e62d2324f92d3c03",
+      "bytes": 2405,
+      "input_group": "G4",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G4.md",
+      "section": "native/tsgolint-effect-fork/shim/checker/extra-shim.json"
+    },
+    {
+      "path": "native/tsgolint-effect-fork/shim/compiler/extra-shim.json",
+      "mode": "100644",
+      "blob": "b020b06461b8e7ec6495eea2f0570621f21d6282",
+      "sha256": "eab044fc4ce423a1e2d5498c323bc7dd8ef22fd64ecec0bb416fd444dbc08ec4",
+      "bytes": 147,
+      "input_group": "G4",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G4.md",
+      "section": "native/tsgolint-effect-fork/shim/compiler/extra-shim.json"
+    },
+    {
+      "path": "native/tsgolint-effect-fork/shim/project/extra-shim.json",
+      "mode": "100644",
+      "blob": "548a677171198f63e13eedf5957fb2f257ae3431",
+      "sha256": "35c973db3a6c200e6b40dc89d3774871646b35a494f07da660d543e53f10568d",
+      "bytes": 170,
+      "input_group": "G4",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G4.md",
+      "section": "native/tsgolint-effect-fork/shim/project/extra-shim.json"
+    },
+    {
+      "path": "native/tsgolint-effect-fork/shim/tsoptions/extra-shim.json",
+      "mode": "100644",
+      "blob": "4d7294b6404f2dc1b784633b0fc0fe2f5c5ff258",
+      "sha256": "28c0612033aec3a8f1f6c84d74b000aaf8d29407f06318c2e862c1b9566fceb0",
+      "bytes": 138,
+      "input_group": "G4",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G4.md",
+      "section": "native/tsgolint-effect-fork/shim/tsoptions/extra-shim.json"
+    },
+    {
+      "path": "native/tsgolint-effect-fork/shim/vfs/extra-shim.json",
+      "mode": "100644",
+      "blob": "805d3ae7b767f262a0e9d8db1ef1a00ddd6322b3",
+      "sha256": "902a20030dcb6e95ee91dc05d3c1c553e806afd814bcef4545af06f91b9df861",
+      "bytes": 136,
+      "input_group": "G4",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G4.md",
+      "section": "native/tsgolint-effect-fork/shim/vfs/extra-shim.json"
+    },
+    {
+      "path": "native/patches/typescript-go/001-config-contract.patch",
+      "mode": "100644",
+      "blob": "ebe478f05741610098973611a2bb3ff624229317",
+      "sha256": "474b819fe81da9ddfe5e4a8f24845219d21ddc364fa8e502eca0b0d8987c080b",
+      "bytes": 4201,
+      "input_group": "G5",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G5.md",
+      "section": "native/patches/typescript-go/001-config-contract.patch"
+    },
+    {
+      "path": "native/sources.json",
+      "mode": "100644",
+      "blob": "198ebe11cf27bb34e46adf042c0ceb277538c991",
+      "sha256": "65955a791859af5cbd467c021e6bcf71e8c7175d5d61d83a12d99f57f17f395f",
+      "bytes": 569,
+      "input_group": "G5",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G5.md",
+      "section": "native/sources.json"
+    },
+    {
+      "path": "native/typescript-go/go.mod",
+      "mode": "100644",
+      "blob": "7b558347ea8feae47da8dc8e5aa1391ea1f56edc",
+      "sha256": "99609eb25dc74df0206ecab2f65191e2fa5bdf01f740534f5348cdea755fd29f",
+      "bytes": 15009,
+      "input_group": "G5",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G5.md",
+      "section": "native/typescript-go/go.mod"
+    },
+    {
+      "path": "native/typescript-go/go.sum",
+      "mode": "100644",
+      "blob": "7c8a1974076241193c4724077abac9f0b71288f5",
+      "sha256": "f56e1eb56cc1f61c3801f862a4afa26f4b43295436eb405228bedb0f7e707468",
+      "bytes": 2871,
+      "input_group": "G5",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G5.md",
+      "section": "native/typescript-go/go.sum"
+    },
+    {
+      "path": "native/typescript-go/internal/core/compileroptions.go",
+      "mode": "100644",
+      "blob": "2053e6bde8410df3c87d1b3bed9b01d21442744e",
+      "sha256": "44f931dfc954b17a2a693ef2ab0bc5116d98745dab403dd9699b5a2c7f765f1d",
+      "bytes": 27885,
+      "input_group": "G5",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G5.md",
+      "section": "native/typescript-go/internal/core/compileroptions.go"
+    },
+    {
+      "path": "native/typescript-go/internal/tsoptions/tsconfigparsing.go",
+      "mode": "100644",
+      "blob": "3a612d16f69c0488711dab9c412be65fffdfadef",
+      "sha256": "331894b8f85ed8b9251bb7f7367f8ec0db1ba7d1f536b36aa6c49ea43015d809",
+      "bytes": 74611,
+      "input_group": "G5",
+      "packet": "review-packets/tia313/context/20-generation-inputs-G5.md",
+      "section": "native/typescript-go/internal/tsoptions/tsconfigparsing.go"
+    }
+  ]
+}

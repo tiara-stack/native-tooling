@@ -807,7 +807,6 @@ myAsyncFunction();
 			Options: rule_tester.OptionsFromJSON[NoFloatingPromisesOptions](`{"allowForKnownSafeCalls": ["myAsyncFunction"]}`),
 		},
 		{
-			Skip: true,
 			Code: `
       interface CustomNode<P> {
         getNextNode: () => CustomNode<P>;
@@ -1922,6 +1921,9 @@ async function test() {
 				{
 					MessageId: "floatingVoid",
 					Line:      3,
+					Column:    25,
+					EndLine:   3,
+					EndColumn: 42,
 					Suggestions: []rule_tester.InvalidTestCaseSuggestion{
 						{
 							MessageId: "floatingFixVoid",
@@ -1946,6 +1948,9 @@ async function test() {
 				{
 					MessageId: "floatingVoid",
 					Line:      4,
+					Column:    32,
+					EndLine:   4,
+					EndColumn: 49,
 					Suggestions: []rule_tester.InvalidTestCaseSuggestion{
 						{
 							MessageId: "floatingFixVoid",
@@ -1981,6 +1986,9 @@ async function test() {
 				{
 					MessageId: "floatingVoid",
 					Line:      3,
+					Column:    4,
+					EndLine:   3,
+					EndColumn: 21,
 					Suggestions: []rule_tester.InvalidTestCaseSuggestion{
 						{
 							MessageId: "floatingFixVoid",
@@ -2007,6 +2015,9 @@ async function test() {
 				{
 					MessageId: "floatingVoid",
 					Line:      4,
+					Column:    9,
+					EndLine:   4,
+					EndColumn: 26,
 					Suggestions: []rule_tester.InvalidTestCaseSuggestion{
 						{
 							MessageId: "floatingFixVoid",
@@ -2033,6 +2044,9 @@ async function test() {
 				{
 					MessageId: "floatingVoid",
 					Line:      5,
+					Column:    9,
+					EndLine:   5,
+					EndColumn: 26,
 					Suggestions: []rule_tester.InvalidTestCaseSuggestion{
 						{
 							MessageId: "floatingFixVoid",
@@ -2069,6 +2083,9 @@ async function test() {
 				{
 					MessageId: "floating",
 					Line:      3,
+					Column:    8,
+					EndLine:   3,
+					EndColumn: 25,
 					Suggestions: []rule_tester.InvalidTestCaseSuggestion{
 						{
 							MessageId: "floatingFixAwait",
@@ -3681,6 +3698,9 @@ Promise.resolve().catch(definitelyCallable);
 				{
 					MessageId: "floatingUselessRejectionHandlerVoid",
 					Line:      4,
+					Column:    1,
+					EndLine:   4,
+					EndColumn: 44,
 					Suggestions: []rule_tester.InvalidTestCaseSuggestion{
 						{
 							MessageId: "floatingFixVoid",
@@ -4323,6 +4343,9 @@ Promise.reject().finally(() => {});
 				{
 					MessageId: "floatingVoid",
 					Line:      2,
+					Column:    1,
+					EndLine:   2,
+					EndColumn: 35,
 					Suggestions: []rule_tester.InvalidTestCaseSuggestion{
 						{
 							MessageId: "floatingFixVoid",
@@ -5606,7 +5629,6 @@ await Promise.reject('foo').then(...[], () => {});
 			},
 		},
 		{
-			Skip: true,
 			Code: `
         interface CustomNode<P> {
           getNextNode: () => CustomNode<P>;
@@ -5683,6 +5705,32 @@ await Promise.reject('foo').then(...[], () => {});
 					},
 				},
 			},
+		},
+		{
+			Code: `
+Promise.reject().catch(undefined).finally(() => {});
+      `,
+			Errors: []rule_tester.InvalidTestCaseError{{
+				MessageId: "floatingUselessRejectionHandlerVoid",
+				Line:      2,
+				Column:    1,
+				EndLine:   2,
+				EndColumn: 52,
+				Suggestions: []rule_tester.InvalidTestCaseSuggestion{
+					{
+						MessageId: "floatingFixVoid",
+						Output: `
+void Promise.reject().catch(undefined).finally(() => {});
+      `,
+					},
+					{
+						MessageId: "floatingFixAwait",
+						Output: `
+await Promise.reject().catch(undefined).finally(() => {});
+      `,
+					},
+				},
+			}},
 		},
 	})
 }

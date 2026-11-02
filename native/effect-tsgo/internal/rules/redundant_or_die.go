@@ -4,11 +4,11 @@ import (
 	"github.com/effect-ts/tsgo/etscore"
 	"github.com/effect-ts/tsgo/internal/rule"
 	"github.com/effect-ts/tsgo/internal/typeparser"
-	"github.com/microsoft/typescript-go/shim/ast"
-	"github.com/microsoft/typescript-go/shim/checker"
-	"github.com/microsoft/typescript-go/shim/core"
-	tsdiag "github.com/microsoft/typescript-go/shim/diagnostics"
-	"github.com/microsoft/typescript-go/shim/scanner"
+	"github.com/microsoft/TypeScript/tsc/shim/ast"
+	"github.com/microsoft/TypeScript/tsc/shim/checker"
+	"github.com/microsoft/TypeScript/tsc/shim/core"
+	tsdiag "github.com/microsoft/TypeScript/tsc/shim/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/shim/scanner"
 )
 
 var RedundantOrDie = rule.Rule{
@@ -89,7 +89,7 @@ func analyzeRedundantOrDieFlowCandidate(tp *typeparser.TypeParser, sf *ast.Sourc
 	}
 
 	lastTransform := flow.Transformations[len(flow.Transformations)-1]
-	if lastTransform.Node == nil || lastTransform.Callee == nil {
+	if lastTransform.Callee == nil {
 		return redundantOrDieCandidate{}, nil, nil, false
 	}
 	if !tp.IsNodeReferenceToEffectModuleApi(lastTransform.Callee, "orDie") {
@@ -116,7 +116,7 @@ func analyzeRedundantOrDieFlowCandidate(tp *typeparser.TypeParser, sf *ast.Sourc
 
 	return redundantOrDieCandidate{
 		yieldExpression: yieldExpr.AsNode(),
-		orDieNode:       lastTransform.Node,
+		orDieNode:       lastTransform.Callee,
 	}, genFn, genCallNode, true
 }
 

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Effect-TS/tsgo
 	branch = main
-	commit = 
+	commit = f1a7cad0292d9d315e7f87694f127f605711d55e
 	method = merge
 	cmdver = 0.4.9

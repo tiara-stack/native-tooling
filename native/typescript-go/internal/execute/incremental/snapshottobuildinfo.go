@@ -18,6 +18,7 @@ import (
 func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInfoFileName string) *BuildInfo {
 	buildInfo := &BuildInfo{
 		Version: core.Version(),
+		Effect:  snapshot.options.Effect,
 	}
 	to := &toBuildInfo{
 		snapshot:           snapshot,

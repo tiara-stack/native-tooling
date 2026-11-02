@@ -5,10 +5,16 @@ import (
 )
 
 // This is a var so it can be overridden by ldflags.
-var version = "7.0.0-dev"
+var version = "7.0.2"
+
+var versionSuffix string
 
 func Version() string {
-	return version
+	return version + versionSuffix
+}
+
+func SetVersionSuffix(s string) {
+	versionSuffix = s
 }
 
 var versionMajorMinor = func() string {

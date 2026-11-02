@@ -1,5 +1,602 @@
 # @effect/tsgo
 
+## 0.46.1
+
+### Patch Changes
+
+- 09644ee: `effect-tsgo diagnostics` now reports files it skipped because their tsconfig does not enable the `@effect/language-service` plugin, instead of only printing `Checked 0 files out of N files.` The JSON summary gains a matching `filesWithoutPlugin` count.
+  
+  ```
+  Checked 0 files out of 8 files.
+  Skipped 8 files because their tsconfig does not enable the @effect/language-service plugin.
+  0 errors, 0 warnings and 0 messages.
+  ```
+- dfa24e8: Fix `effectFnOpportunity` conversions to preserve enclosing expressions, sibling declarations, comments, literal spelling, and source formatting. Avoid suggesting conversions for function declarations referenced before their declaration.
+  
+  Wrap non-call pipe arguments in unary callbacks so they do not receive the converted function's arguments. For example, `.pipe(Effect.ignore)` becomes an `Effect.fn` pipeable `_ => Effect.ignore(_)`, while factory calls such as `Effect.map(f)` are retained.
+- 8d89b43: Deduplicate strictBooleanExpressions diagnostics when multiple union members display the same type name.
+- 7611be0: Preserve Effect plugin options in the Oxlint integration when `tsconfig.json` uses `extends`, whether the options are inherited or declared locally. For example, `effectFn: ["span", "inferred-span", "suggested-span"]` now enables the same `effect-fn-opportunity` reports as an inline configuration without `extends`.
+
+## 0.46.0
+
+### Minor Changes
+
+- 6db6fa6: Add the `catchIfTagToCatchTag` diagnostic and quick fix for replacing direct `_tag` equality predicates in `Effect.catchIf` with `Effect.catchTag`.
+- ae1ed02: Add the v4-only `catchRefailToTapError` diagnostic. It suggests `Effect.tapError` when an `Effect.catch` handler sequences an effect with `Effect.andThen` or a zero-argument `Effect.flatMap` callback and then fails with the original, unmodified error. Generator handlers and selective catches are excluded.
+- 437b17e: Retain the latest three stable Oxlint releases and the Oxlint runtimes required by the latest three stable Vite+ releases, including their compiler dependencies. Add versioned compatibility profiles so CI tests every distinct retained runtime pair.
+  
+  The refreshed upstream metadata supports Oxlint 1.77.0, 1.79.0, 1.80.0, 1.81.0, and 1.82.0, covering Vite+ 0.2.9, 0.3.0, and 0.3.1, and advances TypeScript next to 7.1.0-dev.20260911.1.
+- 223f9fa: Add the `flatMapIgnoredParamToAndThen` diagnostic and quick fix for replacing zero-parameter `Effect.flatMap` callbacks that return an existing constant Effect value with `Effect.andThen`. Existing diagnostics now also recognize Effect APIs referenced through constant aliases, and their quick fixes rebuild the replacement API from the source file's imported module name without modifying the shared alias.
+- 7173762: Add a `strict` diagnostic preset that promotes every default-enabled diagnostic to an error. Expose the complete preset catalog consistently through TypeScript setup and the generated Oxlint presets.
+- 9652243: Warn when `diagnosticSeverity` contains an unknown Effect rule name, including in overrides and inherited configurations. For example, `"floatingEfect": "error"` now reports `effect(unknownRuleName)` instead of being silently ignored.
+  
+  The check uses the fully merged configuration. Set `"unknownRuleName": "off"` to disable it or `"unknownRuleName": "error"` to raise its severity. Local keys are underlined in tsconfig; inherited keys without local syntax produce a diagnostic without a source location.
+
+### Patch Changes
+
+- f110e11: Restore compatibility with TypeScript 7.1.0-dev.20260924.1 by updating diagnostic generation and plugin parsing patches, adapting single-file diagnostic requests to the upstream snapshot API, and regenerating compiler shims and Nix inputs.
+- 7c0ddbc: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260920.1), which ships [`TypeScript`](https://github.com/microsoft/TypeScript/commit/f29aeb9f825d96feea27841f3f7342dbf0df68a8) commit `f29aeb9f825d96feea27841f3f7342dbf0df68a8`, and update the repository toolchain to Go 1.27.
+
+## 0.45.0
+
+### Minor Changes
+
+- 066c4b0: Add the opt-in `schemaSync` diagnostic to prefer Effect-based Schema decoding and encoding over `decodeSync`, `decodeUnknownSync`, `encodeSync`, and `encodeUnknownSync` in any context. It recommends the corresponding Effect v3 or v4 method and is enabled by the `effect-native` preset.
+
+### Patch Changes
+
+- bc87c9f: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260909.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/f3b04fe05642d53b4ff126a4af05fe2587b43748) commit `f3b04fe05642d53b4ff126a4af05fe2587b43748`, and update the TypeScript latest tag to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2).
+
+## 0.44.0
+
+### Minor Changes
+
+- a64e17d: Add `obsoleteMatchImport` diagnostic (`TS377127`) to warn when importing `@effect/match` in projects targeting Effect v4. In Effect v4, pattern matching is built directly into `effect` (`import { Match } from "effect"` or `import * as Match from "effect/Match"`).
+- 63331b6: Add `obsoleteSchemaImport` diagnostic (`TS377128`) to warn when importing `@effect/schema` or `@effect/schema/*` in projects targeting Effect v4. In Effect v4, Schema is built directly into `effect` (`import { Schema } from "effect"` or `import * as Schema from "effect/Schema"`).
+- 29733f1: Add the `timeoutCatchTagToTimeoutOrElse` diagnostic and quick fixes for Effect v4. Suggest `Effect.timeoutOrElse` for `Effect.timeout` followed by `Effect.catchTag("TimeoutError", ...)`, and `Effect.timeoutOption` for the corresponding Some/None pattern. Only suggest a rewrite when the input error channel excludes `TimeoutError` and the handler does not use the caught error.
+
+### Patch Changes
+
+- a05d76b: Reuse the normalized piping-flow shape and sequence matchers across existing diagnostics.
+- d990b0a: Fix `cryptoRandomUUID` and `cryptoRandomUUIDInEffect` diagnostic messages and rule descriptions in Effect v4 to recommend the Effect `Crypto` module instead of `Random`. In Effect v4, `Random` does not provide `randomUUID` and uses non-cryptographic `Math.random`, whereas cryptographic UUID generation is provided by `Crypto.Crypto` (such as `yield* crypto.randomUUIDv4`).
+- 7993db9: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260908.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/1f70213d4922b434345f639b441681e470c7cfc1) commit `1f70213d4922b434345f639b441681e470c7cfc1`, and update the TypeScript latest tag to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2).
+
+## 0.43.0
+
+### Minor Changes
+
+- 956b8d6: Extend `nodeBuiltinImport` to recommend Effect-native alternatives for `console`, `timers`, `timers/promises`, `stream`, `stream/promises`, and `stream/web`, including their `node:` forms.
+  
+  For Effect v4, also flag `crypto` and `node:crypto` imports and recommend `Crypto` from `effect`. For example, `import { randomUUID } from "node:crypto"` is now diagnosed; use the `Crypto` service's `randomUUIDv4` effect instead. Effect v3 crypto imports remain allowed because that version has no corresponding Crypto service.
+  
+  Correct the Effect v4 `child_process` recommendation to point to `effect/unstable/process`. The rule remains disabled by default; configure `nodeBuiltinImport` with error severity to prohibit covered imports.
+
+## 0.42.0
+
+### Minor Changes
+
+- 7565750: Add the `matchEffectToMapBoth` style diagnostic and quick fix for replacing `Effect.matchEffect` handlers that return `Effect.fail` and `Effect.succeed` with `Effect.mapBoth`.
+- a09feae: Add the `catchAllTagDispatchToCatchTag` style diagnostic and quick fix for replacing manual tagged-error dispatch with `Effect.catchTag` or `Effect.catchTags`.
+- 2d501a2: Add the `provideLayerSucceedToProvideService` diagnostic and quick fix for replacing inline `Layer.succeed` and `Layer.effect` provision with direct service provision.
+- 46c6e68: Add the `matchEffectToMatch` style diagnostic and quick fix for replacing `Effect.matchEffect` or `Effect.matchCauseEffect` whose handlers only return `Effect.succeed` with their non-effectful counterparts.
+  
+  Make lazy-expression parsing synchronous and non-generator by default, with flags for callers that explicitly accept thunks, async functions, or generators.
+- 59c5fff: Adopt the piping flow parser in more diagnostics.
+  
+  - `promiseInEffectSuccess`: an explicit promise-success annotation (type arguments on `Effect.succeed`/`as`/`map`/`zipWith`) now suppresses the diagnostic from any position in the surrounding pipe, not only the last argument. `base.pipe(Effect.as<Promise<number>>(promiseValue), Effect.as(promiseValue))` no longer reports, matching the reversed order that was already accepted.
+  - `allOfMapToForEach`: now also detects the data-last form expressed through piping flows, e.g. `pipe(values.map(effectful), Effect.all)` and `pipe(values.map(effectful), Effect.all, Effect.asVoid)`, which were previously invisible to the call-expression walk. These matches are diagnostic-only: the existing quick fix remains limited to the standalone `Effect.all(xs.map(f), options?)` call it can safely rewrite.
+  - The piping flow parser now keeps the type arguments of parenthesized pipe arguments, e.g. `pipe(x, (Effect.as<...>(v)))`.
+  - The piping flow parser now normalizes curried pipeable applications, so `Effect.catch(handler)(effect)` has `effect` as its subject, `Effect.catch` as its callee, and `handler` as its transformation argument. The normalization is limited to calls whose signatures verify that they are the pipeable counterpart of a data-first overload of the same combinator, leaving unrelated curried APIs such as `Effect.fn("name")(body)` unchanged.
+- db28a74: Add the `runOfExitToRunExit` diagnostic, which replaces `Effect.runPromise` applied to `Effect.exit` with the dedicated `Effect.runPromiseExit` runner.
+
+### Patch Changes
+
+- 348021d: Update TypeScript next to 7.1.0-dev.20260906.1 and adapt diagnostics snapshot cleanup to its new API while preserving compatibility with stable TypeScript.
+- 928506b: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260907.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/1f70213d4922b434345f639b441681e470c7cfc1) commit `1f70213d4922b434345f639b441681e470c7cfc1`, and update the TypeScript latest tag to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2). Refresh the Oxlint configuration schema from the selected package.
+
+## 0.41.0
+
+### Minor Changes
+
+- d095234: Normalize piping-flow transformations around their callee, arguments, and explicit type arguments without exposing a representation-dependent transformation node. Add shared rewriter operations for replacing transformations and flow prefixes while preserving data-first, data-last, `pipe(...)`, and `.pipe(...)` source forms.
+- d3efa70: Remove the AST location parameter from type-only `TypeParser` operations. Effect, Layer, Stream, Schema, service, Context.Tag, Scope, and related type predicates now derive instantiated property types directly from the supplied checker type.
+
+### Patch Changes
+
+- 1d0dfb8: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260903.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/cf7b9361a33fa0c8e1afa3cf45fde29c9ab23ec0) commit `cf7b9361a33fa0c8e1afa3cf45fde29c9ab23ec0`, and update the TypeScript latest tag to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2).
+
+## 0.40.0
+
+### Minor Changes
+
+- 815273c: Add the Effect v4 `raceFirstWithSleepToTimeout` style diagnostic, which suggests `Effect.timeoutOrElse` when a first-completion race has exactly one `Effect.sleep`- or `Effect.delay`-based timer arm.
+  
+  Reclassify `acquireReleaseDisposable` as style and `unsafeEffectTypeAssertion` as correctness.
+
+### Patch Changes
+
+- c1ac8e5: Avoid reporting the `schemaNumber` diagnostic when `Schema.Number` is refined with the built-in `isFinite` or `isInt` checks, including pipe-style refinements.
+- 0fba9d1: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260902.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/43a90f4c105bc9db7cb7aa299beddafbabe1d23e) commit `43a90f4c105bc9db7cb7aa299beddafbabe1d23e`, and update the TypeScript latest tag to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2).
+
+## 0.39.1
+
+### Patch Changes
+
+- c2e4353: Update the TypeScript next tag to [`7.1.0-dev.20260901.1`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260901.1), update Oxlint to `1.81.0`, and refresh the generated configuration schemas. Support SchemaStore's draft-07 nullable schema representation when injecting the Effect language-service plugin schema.
+
+## 0.39.0
+
+### Minor Changes
+
+- 7e30dc9: Add the `acquireReleaseDisposable` rule to replace manual disposal finalizers passed to `Effect.acquireRelease` with `Effect.acquireDisposable`.
+- f134c31: Add the `optionMatchToFromOption` diagnostic and quick fix for Option-to-Effect conversions that can use `Effect.fromOption`.
+  
+  The rule recognizes supported `Option.match` call styles and `Option.isSome` / `Option.isNone` conditional expressions whose branches only wrap the value with `Effect.succeed` or produce `Effect.fail`. It suggests the one-argument `Effect.fromOption` form for the default `Cause.NoSuchElementError`, and preserves custom failures in a lazy callback.
+- 90c884e: Expose piping-flow extraction through the `etsgoapi` Go API.
+  
+  The type parser already understands "piping flows" — a subject expression followed by an ordered list of transformations, unifying the `pipe(...)`, pipeable `.pipe(...)`, data-first, data-last and `Effect.fn` forms — but that analysis was only reachable from internal packages. `etsgoapi.TypeParser` now surfaces it so external Go integrations can consume it without importing `internal/...`.
+  
+  ```go
+  tp := etsgoapi.NewTypeParser(program, checker)
+  for _, flow := range tp.PipingFlows(sourceFile, true /* includeEffectFn */) {
+  	// flow.Subject.Node / flow.Subject.OutType — the starting expression and its type
+  	for _, step := range flow.Transformations {
+  		// step.Kind (pipe | pipeable | dataFirst | dataLast | call | effectFn | effectFnUntraced)
+  		// step.Callee / step.Args / step.OutType
+  	}
+  }
+  ```
+  
+  Adds the public `PipingFlow`, `PipingFlowSubject`, `PipingFlowTransformation` and `TransformationKind` types alongside the new `(*TypeParser).PipingFlows` method.
+- 804c2a9: Add the `flatMapConditionalToFilterOrFail` diagnostic and quick fix, which replaces identity-succeed `Effect.flatMap` conditionals with `Effect.filterOrFail` or `Effect.filterOrElse`.
+- 4e14641: Add the `preferSucceedSomeOrNone` diagnostic and autofix for replacing `Effect.succeed(Option.none())` and `Effect.succeed(Option.some(value))`, including equivalent pipe forms, with `Effect.succeedNone` and `Effect.succeedSome(value)`.
+
+### Patch Changes
+
+- fcc641e: Keep the Nix TypeScript source pin synchronized with the TypeScript next metadata so Nix builds compile generated shims against the matching compiler revision.
+- 36f2524: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260831.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/9a8581c393a38961489cc8409ae4dfbe97fc25ec) commit `9a8581c393a38961489cc8409ae4dfbe97fc25ec`, and update the TypeScript latest tag to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2).
+
+## 0.38.0
+
+### Minor Changes
+
+- 773b245: Add the `allOfMapToForEach` style diagnostic, which suggests replacing
+  `Effect.all(values.map(callback), options)` with the equivalent
+  `Effect.forEach(values, callback, options)` form.
+- fe7a29e: Add the `catchAllDieToOrDie` style diagnostic, which suggests replacing
+  `Effect.catch` or `Effect.catchAll` with `Effect.orDie` when the catch-all
+  handler forwards its typed failure unchanged to `Effect.die`.
+- 32c575a: Add the `catchConditionalRefailToCatchIf` diagnostic for conditional `Effect.catch` and `Effect.catchCause` handlers that re-fail their untouched input, suggesting `Effect.catchIf`, `Effect.catchCauseIf`, or `Effect.catchTag` as appropriate.
+- 41ec458: Detect the data-first form of `effectMapVoid` by driving detection off piping flows.
+  
+  `effectMapVoid` previously matched only the data-last / pipeable form of the pattern, so a data-first `Effect.map(self, () => {})` was missed. Detection now runs over the piping-flow transformations, which normalize the subject away, so both forms are reported uniformly and the quick fix rewrites each one correctly.
+  
+  For example, the data-first call:
+  
+  ```ts
+  Effect.map(Effect.succeed(1), () => {})
+  ```
+  
+  is now flagged and fixed to:
+  
+  ```ts
+  Effect.asVoid(Effect.succeed(1))
+  ```
+  
+  while the existing data-last form (`pipe(self, Effect.map(() => {}))`) continues to be fixed to a bare `Effect.asVoid`.
+- 1ab4380: Improve dual function detection by matching alpha-equivalent data-first and pipeable overload declarations without instantiating their generic signatures.
+  
+  For example, data-first calls such as `Option.match(value, handlers)` now normalize to the same piping-flow representation as `value.pipe(Option.match(handlers))`, even when the overloads reorder generic parameters or return a generic union.
+- 2ae20c4: Refactor the `mapSomeToAsSome` mapper detection onto the shared `UnwrapIdentityForwarder` helper. The diagnostic and quick fix now also recognize identity-forwarding function expressions:
+  
+  ```ts
+  // now triggers, alongside Effect.map(Option.some) and Effect.map((v) => Option.some(v))
+  numberEffect.pipe(
+    Effect.map(function (value) {
+      return Option.some(value)
+    })
+  )
+  ```
+  
+  Annotated or optional mapper parameters and explicit type arguments on the inner `Option.some` call still do not trigger, since they can intentionally widen the resulting `Option` type.
+- 2a02aae: Add the `mapSomeToAsSome` diagnostic and quick fix, which replaces `Effect.map(Option.some)` and its exact eta-expanded form with `Effect.asSome` in pipeable and data-first flows.
+
+### Patch Changes
+
+- 68a603e: Bound CI Go caches with a resolved cache identity
+  
+  `repoctl upstream resolve` now emits a Go cache identity derived from `upstream.json`: the `typescript` component owns and saves its Go caches, `oxlint-tsgolint` restores the compiler objects already cached by the typescript jobs under its TypeScript dependency version (Go's build cache is content-addressed, so the shared compiler packages hit directly), and the Rust-based `oxlint` component skips Go caching entirely instead of saving a duplicate GOCACHE snapshot.
+  
+  The go-build cache key no longer includes the commit SHA, so a multi-GB cache entry is written once per dependency state instead of on every push to main, and non-materialized setups are restore-only. Previously each push saved ~15GB of duplicate GOCACHE snapshots, evicting every other cache in the repository (GitHub caps repository caches at 10GB) and forcing all validation jobs to run cold.
+  
+  The generated shim cache key now also hashes `_patches/typescript/**`, so patch changes for the migrated TypeScript compiler repository invalidate cached shims correctly.
+- e30bbdb: Fix `supportedEffect` metadata for two rules whose declaration disagreed with their actual behavior:
+  
+  - `genericEffectServices` declared `["v3", "v4"]` but is gated to run only on Effect v3 projects. It now declares `["v3"]`, so v4 users no longer enable a rule that can never fire.
+  - `schemaSyncInEffect` declared `["v3"]` but fully supports Effect v4 (suggesting `decodeEffect`/`encodeEffect` variants). It now declares `["v3", "v4"]`.
+  
+  `metadata.json` and the generated rule docs were regenerated accordingly. No diagnostic behavior changed.
+- 24cbb0d: Fix `repoctl upstream update` failing when a TypeScript commit is reachable from both supported provider repositories.
+  
+  Previously, `resolveTypeScriptProvider` and `readRemoteTypeScriptGitlink` in `_tools/repoctl/src/upstream.ts` errored out with `TypeScript commit <sha> matched 2 supported repositories` whenever a single revision existed in both `microsoft/TypeScript` (the canonical upstream) and the legacy `microsoft/typescript-go` fork. This blocked the daily "Update Upstreams" workflow for revisions shared between the two.
+  
+  Both functions now prefer `microsoft/TypeScript` when it matches and fall back to `microsoft/typescript-go` otherwise. A "no supported repository matched" error is still raised when neither matches.
+- 7a07115: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260826.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/5739027c9a7df24e27123f453a50c011b37717b6) commit `5739027c9a7df24e27123f453a50c011b37717b6`, and update the TypeScript latest tag to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2).
+
+## 0.37.0
+
+### Minor Changes
+
+- afb17ac: Support both the legacy `microsoft/typescript-go` compiler and the migrated
+  `microsoft/TypeScript/tsc` compiler behind the canonical TypeScript shim
+  namespace.
+
+### Patch Changes
+
+- a3af171: Build the Nix package from the migrated TypeScript monorepo source and update the pinned compiler revision correctly.
+- eba879b: Suppress the `unnecessaryPipeChain` diagnostic when merging chained pipe calls would exceed the available overload arity.
+- 83b8e2a: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260824.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/e9e477458d7b975ed5e43117fb85f6bc87363a6a) commit `e9e477458d7b975ed5e43117fb85f6bc87363a6a`, and update the TypeScript latest tag to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2). Refresh the Oxlint configuration schema from the selected package.
+
+## 0.36.5
+
+### Patch Changes
+
+- 9ddab5d: Report unsupported target package versions with the current `@effect/tsgo` version and the supported alternatives.
+- 922903b: Document the target package versions supported by each published release.
+- ca311a5: Exclude type-only heritage nodes from execution flow graphs across supported TypeScript versions.
+- 7c54018: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260813.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/34ffe2a2531a226da0046d213899ae0b721229b0) commit `34ffe2a2531a226da0046d213899ae0b721229b0`, and update the TypeScript latest tag to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2).
+
+## 0.36.4
+
+### Patch Changes
+
+- 7a616ec: Allow declaration emit with `noEmitOnError` when all diagnostics are ignored Effect diagnostics.
+
+## 0.36.3
+
+### Patch Changes
+
+- 73f7f28: Refresh patched binaries when an updated `@effect/tsgo` package provides a different replacement artifact.
+- 9190801: Update Effect v4 dependencies and embedded test fixtures to `4.0.0-beta.107`.
+
+## 0.36.2
+
+### Patch Changes
+
+- 8362acc: Extend the walker-rule prefilter to call expressions.
+  
+  A call expression's type is its resolved signature's return type, and both the signature and that return type are already cached from the main check phase. `NodeCouldBeStrictEffect` now consults them for call nodes and skips the expensive flow-analysis re-check when the declared return type conclusively cannot be a strict Effect. Signature-less calls, optional chains, and every inconclusive return type stay conservative, and `promiseInEffectSuccess` no longer computes a location type for calls only to discard it. Emitted diagnostics are unchanged; on a large Effect monorepo build this removes a further ~4.6% of wall time on top of the reference-node prefilter, bringing the total Effect diagnostics overhead versus a pristine tsgo build of the same commit down to ~17%.
+- 9020153: Skip diagnostic rules below the minimum visible severity before executing them.
+  
+  In `tsc` CLI mode without `includeSuggestionsInTsc`, suggestion- and message-severity diagnostics are dropped from the output after rules run. The rule runner now receives the minimum severity the caller can surface and skips such rules up front, avoiding their type-checker queries entirely. A rule below the threshold still runs when any directive in the file references it (for example `// @effect-diagnostics ruleName:error` or a wildcard), since directives can raise its severity and must be tracked for `unusedDirective` reporting. Emitted diagnostics are unchanged; on a large Effect monorepo build this removes roughly 1–2s of check time.
+- 257af25: Skip flow-analysis type queries for references that conclusively cannot be an Effect.
+  
+  The `effectInFailure` and `promiseInEffectSuccess` rules walk every node of a file and query its flow type just to test whether it is a strict Effect type. The new `TypeParser.NodeCouldBeStrictEffect` prefilter inspects the referenced symbol's declared type first — flow narrowing can only refine the declared type, so a declared type that conclusively contains no possibly-Effect constituent (primitives, plain objects with a different type name, unions thereof) can never produce a strict Effect flow type, and the expensive query is skipped. The predicate is conservative: `any`/`unknown`, type parameters, conditionals, symbol-less types, and deep unions always fall through to the full query. Emitted diagnostics are unchanged; on a large Effect monorepo build this removes ~10% of build wall time (~2.7s of ~26.8s).
+
+## 0.36.1
+
+### Patch Changes
+
+- 4db1d4b: Preserve existing indentation and newline styles when setup updates JSON configuration files.
+- c154a04: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260808.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/24fabe95acba758c05fcb349bf427a3a0c8ad676) commit `24fabe95acba758c05fcb349bf427a3a0c8ad676`, and update the TypeScript latest tag to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2).
+
+## 0.36.0
+
+### Minor Changes
+
+- 8423f68: Add recommended and category-specific shared configurations for Oxlint.
+
+## 0.35.0
+
+### Minor Changes
+
+- f25821b: Generate detailed upstream update pull request descriptions with explicit version changes and the TypeScript-Go commits introduced by the update.
+
+### Patch Changes
+
+- 3fe06c8: Avoid false positive TS2731 diagnostics for symbol-valued interpolations in tagged template literals when Effect diagnostic rules traverse the template expression.
+- 989964b: Prevent `preferTypedSchemaDecoder` from panicking when a decoder input is produced by a preceding call or pipe transformation.
+- 86c30b1: Persist Effect plugin options in TypeScript build information so incremental builds recheck semantic diagnostics when extended tsconfig plugin settings change.
+- b8e7314: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260806.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/86cc4767d4ebadb9b7845d0ab8eb2b05785c3fee) commit `86cc4767d4ebadb9b7845d0ab8eb2b05785c3fee`, and update the TypeScript latest tag to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2).
+
+## 0.34.0
+
+### Minor Changes
+
+- 974513e: Add a non-interactive `setup` workflow with explicit project, integration, diagnostic, editor, preview, and apply options. Setup now also recommends running the package manager install command whenever it changes `package.json`.
+
+### Patch Changes
+
+- ba4ec9a: Cache generated TypeScript-Go shims by their effective inputs during local repository setup and CI runs.
+- 6d0ffda: Remove unused internal helpers and add dead-code analysis to the repository lint workflow.
+- 892021a: Use absolute GitHub URLs for links in the published README so documentation links remain clickable on npm.
+
+## 0.33.0
+
+### Minor Changes
+
+- ae0d537: Add the `preferTypedSchemaDecoder` style suggestion, which recommends typed Schema decoder APIs when an input is assignable to the schema's encoded type.
+
+### Patch Changes
+
+- 42534d2: Reuse Go build cache entries across shim generation by preparing package-loading inputs at stable, content-addressed paths.
+- cfea036: Update Effect v4 dependencies and embedded test fixtures to `4.0.0-beta.104`, update Schema class completions for the `Error` and `TaggedError` renames, and suppress auto-imports from blocked Effect internal modules.
+- ec0b11f: Update the TypeScript next tag to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260805.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/12318e599d21f516defea3b20e5d44b9369da723) commit `12318e599d21f516defea3b20e5d44b9369da723`, and update the TypeScript latest tag to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2).
+
+## 0.32.1
+
+### Patch Changes
+
+- 479f268: Avoid installing redundant Oxlint dependencies when Vite+ is present and identify already-patched components in skip messages.
+
+## 0.32.0
+
+### Minor Changes
+
+- 52ec481: Normalize upstream metadata into versioned TypeScript, Oxlint, and oxlint-tsgolint components, including the versions required by Vite+. Repository setup and validation now operate on unique component versions instead of named upstream profiles.
+- 7447a69: Patch Oxlint's TypeScript declarations with the `effecttsgo` plugin and rule names.
+
+## 0.31.0
+
+### Minor Changes
+
+- 9cfdd81: Add a `yield*` quick fix for floating Effects in yieldable Effect contexts, and preserve narrowed wrapper error references when converting hand-rolled reason dispatch to `Effect.catchReason` or `Effect.catchReasons`.
+
+## 0.30.0
+
+### Minor Changes
+
+- f155e33: Ship an Effect-aware Oxlint configuration schema and configure existing `.oxlintrc.json` files to use it when enabling the Oxlint integration. Keep the bundled TypeScript and Oxlint base schemas synchronized through the upstream update workflow.
+
+## 0.29.0
+
+### Minor Changes
+
+- 02035a1: Add TypeScript and Oxlint integration selection to `effect-tsgo setup`, including supported Oxlint dependency pinning and integration-aware prepare scripts.
+- 9e21c6c: Split release builds for TSC, tsgolint, and the Oxlint native binding so Go artifacts can be cross-compiled on Linux independently of the platform-specific Rust builds.
+
+## 0.28.0
+
+### Minor Changes
+
+- 0ee639c: Expose Effect code actions as lazy Oxlint suggestions through the renamed `etsoxlintrunner` integration.
+
+## 0.27.1
+
+### Patch Changes
+
+- 421bda3: Install Oxlint cross-compilation targets for its pinned Rust toolchain.
+
+## 0.27.0
+
+### Minor Changes
+
+- 8d18239: Render related Effect diagnostics as labeled Oxlint source ranges and link Oxlint diagnostics to the corresponding Effect rule documentation.
+
+### Patch Changes
+
+- 7c504fe: Cache compiled Rust artifacts across Oxlint validation and release builds.
+- 0fc7aa9: Allow the automated version pull request to stay synchronized with main.
+- 7ef9550: Safely replace stale automation pull request branches with force-with-lease.
+- c026ccf: Update the next profile to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260803.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/5b1047d10d32e7d5b446be4de56b126ff42f82bb) commit `5b1047d10d32e7d5b446be4de56b126ff42f82bb`, and update the latest profile to [`typescript@latest`](https://www.npmjs.com/package/typescript/v/7.0.2).
+
+## 0.26.7
+
+### Patch Changes
+
+- 452eca4: Increase the release profile build timeout to 45 minutes.
+
+## 0.26.6
+
+### Patch Changes
+
+- 23c0f3e: Migrate release automation to Changesets v3 and pnpm 10.
+
+## 0.26.5
+
+### Patch Changes
+
+- 0450ae7: Run Node command shims through the Windows shell so Oxlint release builds can install and build their dependencies.
+
+## 0.26.4
+
+### Patch Changes
+
+- ce6cc3c: Install cross-compilation targets for the Rust toolchain pinned by Oxlint during release builds.
+
+## 0.26.3
+
+### Patch Changes
+
+- c6dde57: Force patch files to use LF line endings so TypeScript-Go patches apply on Windows release runners.
+
+## 0.26.2
+
+### Patch Changes
+
+- b131307: Enable long Git paths before Windows release builds check out recursive submodules.
+- af50d36: Fix Windows release builds that invoke Node package-manager command shims.
+
+## 0.26.1
+
+### Patch Changes
+
+- 0bf0586: Enable Oxlint type-aware mode in generated rule configuration examples.
+
+## 0.26.0
+
+### Minor Changes
+
+- 701a607: Add the `abortControllerInEffect` diagnostic for global `AbortController` construction inside Effect generator contexts, suggesting `Effect.abortSignal` for Effect-managed cancellation.
+- 58d2eb9: Add the V4-only `catchTagToCatchReason` diagnostic and identity-preserving quick fixes for `Effect.catchTag` handlers that re-fail unmatched `reason._tag` branches.
+- bb09f28: Add the `catchChainToFirstSuccessOf` diagnostic for consecutive error-independent `Effect.catch` fallbacks whose error channel is preserved by `Effect.firstSuccessOf`.
+- 643022d: Expose `@effect/tsgo/lib/getExePath`, which resolves the packaged `tsc` or `tsc-next` executable matching the installed native TypeScript version.
+- 7bbafe4: Generate drift-checked documentation pages for every Effect diagnostic, including annotated previews, metadata, and Language Service and Oxlint configuration examples.
+- 41d08c6: Generate native tsgolint adapters and Oxlint registrations that expose Effect diagnostics as qualified `effecttsgo/*` rules, and package the supported tsgolint executables and Oxlint N-API bindings for release.
+- c048582: Add the `preferUnsafeConstructor` diagnostic and quickfix: `Effect.runSync` applied directly to a pure effect-package constructor call (e.g. `Effect.runSync(Scope.make())`) is reported when the same module exports a type-equivalent synchronous `*Unsafe` sibling, with a fix rewriting to `Scope.makeUnsafe()` while preserving arguments and type arguments.
+- 7af1a90: Add the `promiseInEffectSuccess` diagnostic for Promise types that enter Effect success channels instead of being awaited.
+- 087df5f: Rename the public Go integration package from `etsapi` to `etsgoapi`.
+- 087df5f: Centralize next, latest, and Oxlint upstream pins in one profile manifest, and bundle that manifest with each platform package for TypeScript binary compatibility.
+
+### Patch Changes
+
+- 1c7dc94: Improve diagnostic performance by caching module export identity checks.
+- c9b4499: Create package tags and GitHub Releases with changelog notes when publishing npm packages.
+- 4813687: Make shim generation reproducible from canonical configuration and optional overlays, and standardize the TypeScript-Go patch layout.
+- 5f4fd3e: Update to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260730.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/37357ae666e7af11989d4ba416a763f2da590dee) commit `37357ae666e7af11989d4ba416a763f2da590dee`.
+
+## 0.25.0
+
+### Minor Changes
+
+- f52d65a: Add the `schemaLiteralNonFinite` diagnostic for statically known `NaN` and infinite values passed to Effect v4 Schema literal constructors.
+- 0062f79: Add the `floatingEffectInVitest` diagnostic for Effects returned from non-Effect-aware Vitest tests and hooks.
+
+### Patch Changes
+
+- c746cc7: Ensure the packaged diagnostics binary is executable immediately before launch instead of relying on file permissions preserved during publishing.
+- 53ca7a4: Ensure `get-exe-path` marks the Effect Language Service binary as executable before returning its path.
+- 88c37c4: Fix `namespaceImportPackages` completions for namespace reexports such as `Effect`, generating `import * as Effect from "effect/Effect"` instead of `import { Effect } from "effect"`.
+- b2f5040: Update Effect v4 package references and embedded test fixtures to `4.0.0-beta.101`.
+- f75c9b9: Update to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260726.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/8d29e62f3585c2fb5179e4412895aa3a8f40b9f5) commit `8d29e62f3585c2fb5179e4412895aa3a8f40b9f5`.
+
+## 0.24.3
+
+### Patch Changes
+
+- bd05925: Preserve executable permissions on packaged Unix binaries so the diagnostics command can launch them after installation.
+- 6c171c9: Document using the Effect LSP for type-aware linting.
+- b91f3e8: Avoid `effectInVoidSuccess` introducing TS2589 for assignments with recursive expected types and non-Effect values.
+- 874bd2e: Ignore Effect v4 local `Effect.provide(..., { local: true })` calls when reporting chained provides with the `multipleEffectProvide` diagnostic.
+- edf29c9: Update to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260722.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/01cbcdd8643cfa17cc8156b60849559c56324601) commit `01cbcdd8643cfa17cc8156b60849559c56324601`.
+
+## 0.24.2
+
+### Patch Changes
+
+- fb9e78b: Return enhanced Effect quickinfo when hovering the asterisk or trailing space in a `yield*` expression.
+- 9dd9de9: Update to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260719.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/61aabc2f45771d716e83af114154ae58b64a9705) commit `61aabc2f45771d716e83af114154ae58b64a9705`.
+
+## 0.24.1
+
+### Patch Changes
+
+- fd7a8bb: Avoid excessive type-depth diagnostics when matching data-first and pipeable overloads with complex return types.
+
+## 0.24.0
+
+### Minor Changes
+
+- 7c6a940: Add the off-by-default `preferSchemaTypeProperty` diagnostic and quick fix for replacing `Schema.Schema.Type<typeof X>` with `typeof X.Type`.
+
+## 0.23.0
+
+### Minor Changes
+
+- 3d62271: Add the `syncToSucceed` diagnostic and quick fix, which replaces `Effect.sync` thunks returning stable constant values with `Effect.succeed`.
+
+### Patch Changes
+
+- 8128a86: Avoid excessive type-depth diagnostics when checking complex non-Effect types such as the return type of Remeda's `chunk` function.
+- ee2ca99: Update to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260715.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/448614f8f409cbd8afb535b26c20f1a0020bc10d) commit `448614f8f409cbd8afb535b26c20f1a0020bc10d`.
+
+## 0.22.0
+
+### Minor Changes
+
+- f839997: Add the `schemaOpaqueInstanceMember` diagnostic to prevent instance members in classes extending `Schema.Opaque`.
+
+### Patch Changes
+
+- 7419aeb: Fix staticcheck nil pointer warnings in tests.
+- 97d0011: Update to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260714.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/8a749379d556f1bb4044218a1f94bc90fbfb6a03) commit `8a749379d556f1bb4044218a1f94bc90fbfb6a03`.
+
+## 0.21.0
+
+### Minor Changes
+
+- dc7e706: Add the off-by-default `missingPipeableSignature` diagnostic for auditing exported fixed-arity functions without corresponding pipeable overloads.
+
+## 0.20.0
+
+### Minor Changes
+
+- e534733: Add an `effect-tsgo diagnostics` command for reporting Effect diagnostics from a file or TypeScript project. The command supports pretty, text, JSON, and GitHub Actions output, severity filtering, progress reporting, strict warning handling, and inline language-service configuration.
+
+### Patch Changes
+
+- 55d6cf8: Enable `skipLibCheck` in the Effect test harness to avoid type-checking bundled declaration files that are not under test.
+- 4f212fb: Start layer magic compositions from `Layer.empty` when the first layer does not provide a requested output service.
+- 79768a1: Ship the generated schema and configure `tsconfig.json` to use the installed local copy during setup, fixing #346.
+- 070a8ac: Update `effect-tsgo setup` to configure the current TypeScript Go VS Code settings, including the workspace TypeScript SDK path and additional SDK locations.
+- 228f6d5: Update to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260713.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/168e7015edf98244febc8f4ae450b673b5d195d7) commit `168e7015edf98244febc8f4ae450b673b5d195d7`.
+
+## 0.19.0
+
+### Minor Changes
+
+- 16a52e5: Add the `flatMapToMap` diagnostic and quick fix, which replaces `Effect.flatMap` callbacks that only wrap their result with `Effect.succeed` with `Effect.map`. The diagnostic supports pipe, pipeable, data-first, and data-last forms.
+
+## 0.18.1
+
+### Patch Changes
+
+- d6cdab2: Allow `effect-tsgo patch` to skip TypeScript package aliases that do not include package metadata needed for native binary matching.
+
+## 0.18.0
+
+### Minor Changes
+
+- 308652f: Add `effect-tsgo patch --typescript-package <name>` and automatically fall back from `typescript` to `@typescript/native` when resolving the native TypeScript package to patch.
+
+## 0.17.0
+
+### Minor Changes
+
+- 74a7ccb: Modernize release workflow publishing and GitHub Actions runtimes.
+
+## 0.16.4
+
+### Patch Changes
+
+- d7f6e86: Expose additional generated shims for TypeScript-Go language-service and checker internals, and add an `etsapi` helper for rendering structural schema statements from a resolved type.
+- 082a955: Update TypeScript-Go automation so `main` tracks `typescript@next`, while release `tsc` binaries are built from a generated `generated/latest` branch pinned to `typescript@latest`.
+- 98bbce0: Fix layer magic ordering for unrelated layers so layers that only require services are composed after layers that provide no services.
+- 5cfbe23: Update to [`typescript@next`](https://www.npmjs.com/package/typescript/v/7.1.0-dev.20260708.3), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/52168999f3dcfc9205432d47f6f600051f02f1a2) commit `52168999f3dcfc9205432d47f6f600051f02f1a2`.
+- d46803d: Publish TypeScript upstream metadata beside packaged binaries and select the patched binary whose TypeScript git head matches the installed `typescript` package, with `effect-tsgo patch --force` as an explicit fallback.
+
+## 0.16.3
+
+### Patch Changes
+
+- 633fbd6: Update to [`@typescript/native-preview@7.0.0-dev.20260707.2`](https://www.npmjs.com/package/@typescript/native-preview/v/7.0.0-dev.20260707.2), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/9977d6d38fcc78de8ae71770f3aa08256e6cc861) commit `9977d6d38fcc78de8ae71770f3aa08256e6cc861`.
+
+## 0.16.2
+
+### Patch Changes
+
+- 0b9960d: Fix checker panics on `import.defer(...)` calls and bindingless import clauses.
+
+  `import.defer` parses as a meta property, and the checker debug-asserts (panics) when asked for its symbol or type while it is used as an import-call callee. Rules resolving arbitrary call callees (e.g. `catchUnfailableEffect`, `globalFetch`, `globalTimers`) crashed tsc and the LSP on files containing:
+
+  ```ts
+  import.defer("./module");
+  ```
+
+  Symbol resolution now goes through a guarded `TypeParser.GetSymbolAtLocation` wrapper that skips meta properties, and all rule/refactor/LSP call sites were audited to use it. `TypeParser.GetTypeAtLocation` gained the same meta-property guard, plus a guard for import clauses without a default binding (`import { A } from "x"`), which previously hit a nil-symbol panic that was silently recovered.
+
+  Also adds rule sweep stress tests that run the every-node diagnostics (`anyUnknownInErrorContext`, `effectInFailure`) over the typescript-go compiler test corpus, the effect-v4 fixtures, and effect's own package sources under a watchdog, failing on panics or non-termination.
+
+## 0.16.1
+
+### Patch Changes
+
+- c45a407: Fix `internal/effecttest` LSP test helpers broken by the `typescript-go` update: the untyped `SendRequestWorker` now returns the response result as a raw `json.Value`, so the inlay hint, diagnostic, and code action helpers decode it via `RequestInfo.UnmarshalResult` instead of type-asserting the typed response struct.
+- e094fda: Make the EffectLinks checker patch apply across newer typescript-go commits by anchoring it to stable Checker fields.
+- cb7d6bc: Avoid suggesting `unnecessaryEffectGen` when a single-return generator contains nested `yield*` expressions.
+- 64343c5: Fix the release workflow embedding a stale `EffectVersion` in the published `tsc` binary. The version bump from the changeset release PR only lands on `main`, while the `tsc` binary builds from `generated/stable`; the workflow now syncs `_packages/tsgo/package.json` from the release merge commit and re-runs `_tools/version-prepare.sh` before building. All release checkouts are also pinned to the merge commit SHA instead of the moving `main` ref so the release is deterministic.
+- abfa2ef: Update to [`@typescript/native-preview@7.0.0-dev.20260703.1`](https://www.npmjs.com/package/@typescript/native-preview/v/7.0.0-dev.20260703.1), which ships [`typescript-go`](https://github.com/microsoft/typescript-go/commit/acfaa5bcc8631d3c51ad65a8562a656c8d6a4bd5) commit `acfaa5bcc8631d3c51ad65a8562a656c8d6a4bd5`.
+
 ## 0.16.0
 
 ### Minor Changes

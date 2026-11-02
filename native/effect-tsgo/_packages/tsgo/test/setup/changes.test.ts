@@ -1,8 +1,23 @@
 import { describe, it, expect } from "vitest"
 import * as Option from "effect/Option"
-import { computeChanges } from "../../src/setup/changes.js"
-import { assess } from "../../src/setup/assessment.js"
-import type { Assessment } from "../../src/setup/types.js"
+import { computeChanges } from "../../src/cli/setup/changes.js"
+import { assess } from "../../src/cli/setup/assessment.js"
+import type { Assessment } from "../../src/cli/setup/types.js"
+
+const TEST_TYPESCRIPT_VERSION = "7.1.0-dev.test"
+const TEST_SCHEMA_PATH = "./node_modules/@effect/tsgo/schema.json"
+const TEST_OXLINT_SCHEMA_PATH = "./node_modules/@effect/tsgo/oxlint-schema.json"
+
+const applyTextChanges = (
+  text: string,
+  changes: ReadonlyArray<{ span: { start: number; length: number }; newText: string }>
+) => [...changes]
+  .sort((left, right) => right.span.start - left.span.start)
+  .reduce(
+    (result, change) =>
+      result.slice(0, change.span.start) + change.newText + result.slice(change.span.start + change.span.length),
+    text
+  )
 
 /**
  * Helper to create an Assessment.Input and run assess() + computeChanges()
@@ -10,10 +25,14 @@ import type { Assessment } from "../../src/setup/types.js"
 function runComputeChanges(opts: {
   packageJsonText?: string
   tsconfigText?: string
+  oxlintConfigText?: string | null
   vscodeSettingsText?: string | null
   editors?: ReadonlyArray<"vscode" | "nvim" | "emacs">
   lspVersion?: { dependencyType: "dependencies" | "devDependencies"; version: string } | null
-  nativePreviewVersion?: { dependencyType: "dependencies" | "devDependencies"; version: string; packageName?: string } | null
+  typescriptVersion?: { dependencyType: "dependencies" | "devDependencies"; version: string; packageName?: string } | null
+  oxlintVersion?: { dependencyType: "dependencies" | "devDependencies"; version: string } | null
+  oxlintTsgolintVersion?: { dependencyType: "dependencies" | "devDependencies"; version: string } | null
+  integrations?: ReadonlyArray<"typescript" | "oxlint">
   prepareScript?: boolean
   vscodeTargetSettings?: Record<string, unknown> | null
   diagnosticSeverities?: Record<string, "off" | "suggestion" | "message" | "warning" | "error"> | null
@@ -35,6 +54,9 @@ function runComputeChanges(opts: {
   const input: Assessment.Input = {
     packageJson: { fileName: "/test/package.json", text: packageJsonText },
     tsconfig: { fileName: "/test/tsconfig.json", text: tsconfigText },
+    oxlintConfig: opts.oxlintConfigText != null
+      ? Option.some({ fileName: "/test/.oxlintrc.json", text: opts.oxlintConfigText })
+      : Option.none(),
     vscodeSettings: opts.vscodeSettingsText != null
       ? Option.some({ fileName: "/test/.vscode/settings.json", text: opts.vscodeSettingsText })
       : Option.none()
@@ -46,11 +68,15 @@ function runComputeChanges(opts: {
     ? (opts.lspVersion === null ? Option.none() : Option.some(opts.lspVersion))
     : Option.some({ dependencyType: "devDependencies" as const, version: "0.0.4" })
 
-  const nativePreviewVersion = opts.nativePreviewVersion !== undefined
-    ? (opts.nativePreviewVersion === null ? Option.none() : Option.some(opts.nativePreviewVersion))
+  const typescriptVersion = opts.typescriptVersion !== undefined
+    ? (opts.typescriptVersion === null ? Option.none() : Option.some(opts.typescriptVersion))
     : Option.match(lspVersion, {
       onNone: () => Option.none(),
-      onSome: (lsp) => Option.some({ dependencyType: lsp.dependencyType, version: "latest" })
+      onSome: (lsp) => Option.some({
+        dependencyType: lsp.dependencyType,
+        version: TEST_TYPESCRIPT_VERSION,
+        packageName: "typescript"
+      })
     })
 
   const vscodeTargetSettings = opts.vscodeTargetSettings !== undefined
@@ -60,16 +86,32 @@ function runComputeChanges(opts: {
   const target = {
     packageJson: {
       lspVersion,
-      nativePreviewVersion,
-      prepareScript: opts.prepareScript ?? true
+      typescriptVersion,
+      oxlintVersion: opts.oxlintVersion === undefined
+        ? assessment.packageJson.oxlintVersion
+        : opts.oxlintVersion === null ? Option.none() : Option.some(opts.oxlintVersion),
+      oxlintTsgolintVersion: opts.oxlintTsgolintVersion === undefined
+        ? assessment.packageJson.oxlintTsgolintVersion
+        : opts.oxlintTsgolintVersion === null ? Option.none() : Option.some(opts.oxlintTsgolintVersion),
+      prepareScript: opts.prepareScript ?? true,
+      managePrepareScript: true,
+      integrations: opts.integrations ?? (Option.isSome(lspVersion) ? ["typescript" as const] : [])
     },
     tsconfig: {
+      schemaPath: Option.match(lspVersion, {
+        onNone: () => Option.none(),
+        onSome: () => Option.some(TEST_SCHEMA_PATH)
+      }),
       diagnosticSeverities: opts.diagnosticSeverities === undefined
         ? Option.none()
         : opts.diagnosticSeverities === null
         ? Option.none()
-        : Option.some(opts.diagnosticSeverities)
+        : Option.some(opts.diagnosticSeverities),
+      manageIntegration: true
     },
+    oxlintrcSchemaPath: (opts.integrations ?? []).includes("oxlint") && Option.isSome(assessment.oxlintConfig)
+      ? Option.some(TEST_OXLINT_SCHEMA_PATH)
+      : Option.none(),
     vscodeSettings: vscodeTargetSettings,
     editors: opts.editors ?? ["vscode"]
   }
@@ -140,29 +182,6 @@ describe("computeChanges", () => {
     ).not.toThrow()
   })
 
-  it("should assess @typescript/native-preview from dependencies", () => {
-    const packageJsonText = JSON.stringify({
-      name: "test-project",
-      version: "1.0.0",
-      dependencies: {
-        "@typescript/native-preview": "^7.0.0-dev.20260327"
-      }
-    }, null, 2)
-
-    const input: Assessment.Input = {
-      packageJson: { fileName: "/test/package.json", text: packageJsonText },
-      tsconfig: { fileName: "/test/tsconfig.json", text: "{}" },
-      vscodeSettings: Option.none()
-    }
-
-    const assessment = assess(input)
-
-    expect(assessment.packageJson.nativePreviewVersion).toEqual(Option.some({
-      dependencyType: "dependencies",
-      version: "^7.0.0-dev.20260327"
-    }))
-  })
-
   it("should assess typescript >= 7 from dependencies as the native backend", () => {
     const packageJsonText = JSON.stringify({
       name: "test-project",
@@ -175,16 +194,293 @@ describe("computeChanges", () => {
     const input: Assessment.Input = {
       packageJson: { fileName: "/test/package.json", text: packageJsonText },
       tsconfig: { fileName: "/test/tsconfig.json", text: "{}" },
+      oxlintConfig: Option.none(),
       vscodeSettings: Option.none()
     }
 
     const assessment = assess(input)
 
-    expect(assessment.packageJson.nativePreviewVersion).toEqual(Option.some({
+    expect(assessment.packageJson.typescriptVersion).toEqual(Option.some({
       dependencyType: "dependencies",
       version: "^7.0.1-rc",
       packageName: "typescript"
     }))
+  })
+
+  it("should assess @typescript/native after typescript as the native backend", () => {
+    const packageJsonText = JSON.stringify({
+      name: "test-project",
+      version: "1.0.0",
+      devDependencies: {
+        "@typescript/native": "npm:typescript@^7.0.2",
+        "typescript": "npm:@typescript/typescript6@^6.0.2"
+      }
+    }, null, 2)
+
+    const input: Assessment.Input = {
+      packageJson: { fileName: "/test/package.json", text: packageJsonText },
+      tsconfig: { fileName: "/test/tsconfig.json", text: "{}" },
+      oxlintConfig: Option.none(),
+      vscodeSettings: Option.none()
+    }
+
+    const assessment = assess(input)
+
+    expect(assessment.packageJson.typescriptVersion).toEqual(Option.some({
+      dependencyType: "devDependencies",
+      version: "npm:typescript@^7.0.2",
+      packageName: "@typescript/native"
+    }))
+  })
+
+  it("should assess Oxlint dependencies independently", () => {
+    const assessment = assess({
+      packageJson: {
+        fileName: "/test/package.json",
+        text: JSON.stringify({
+          dependencies: { oxlint: "^1.0.0" },
+          devDependencies: { "oxlint-tsgolint": "^7.0.0" }
+        })
+      },
+      tsconfig: { fileName: "/test/tsconfig.json", text: "{}" },
+      oxlintConfig: Option.none(),
+      vscodeSettings: Option.none()
+    })
+
+    expect(assessment.packageJson.oxlintVersion).toEqual(Option.some({
+      dependencyType: "dependencies",
+      version: "^1.0.0"
+    }))
+    expect(assessment.packageJson.oxlintTsgolintVersion).toEqual(Option.some({
+      dependencyType: "devDependencies",
+      version: "^7.0.0"
+    }))
+  })
+
+  it.each(["dependencies", "devDependencies"] as const)(
+    "should assess vite-plus from %s",
+    (dependencyType) => {
+      const assessment = assess({
+        packageJson: {
+          fileName: "/test/package.json",
+          text: JSON.stringify({ [dependencyType]: { "vite-plus": "^0.2.8" } })
+        },
+        tsconfig: { fileName: "/test/tsconfig.json", text: "{}" },
+        oxlintConfig: Option.none(),
+        vscodeSettings: Option.none()
+      })
+
+      expect(assessment.packageJson.vitePlusVersion).toEqual(Option.some({
+        dependencyType,
+        version: "^0.2.8"
+      }))
+    }
+  )
+
+  it("should pin both Oxlint dependencies when enabling the integration", () => {
+    const result = runComputeChanges({
+      integrations: ["oxlint"],
+      typescriptVersion: null,
+      oxlintVersion: { dependencyType: "devDependencies", version: "1.77.0" },
+      oxlintTsgolintVersion: { dependencyType: "devDependencies", version: "7.0.2001" }
+    })
+    const packageJsonChange = result.codeActions
+      .flatMap((action) => action.changes)
+      .find((change) => change.fileName === "/test/package.json")
+    const insertedText = packageJsonChange?.textChanges.map((change) => change.newText).join("\n") ?? ""
+
+    expect(insertedText).toContain('"oxlint": "1.77.0"')
+    expect(insertedText).toContain('"oxlint-tsgolint": "7.0.2001"')
+    expect(insertedText).toContain("effect-tsgo patch --no-typescript --oxlint")
+  })
+
+  it.each(["dependencies", "devDependencies"] as const)(
+    "should not add Oxlint dependencies when vite-plus is in %s",
+    (dependencyType) => {
+      const packageJsonText = JSON.stringify({
+        name: "test-project",
+        [dependencyType]: {
+          "vite-plus": "^0.2.8"
+        }
+      }, null, 2)
+      const result = runComputeChanges({
+        packageJsonText,
+        integrations: ["oxlint"],
+        typescriptVersion: null,
+        oxlintVersion: { dependencyType, version: "1.77.0" },
+        oxlintTsgolintVersion: { dependencyType, version: "7.0.2001" }
+      })
+      const packageJsonChange = result.codeActions
+        .flatMap((action) => action.changes)
+        .find((change) => change.fileName === "/test/package.json")
+      const updated = applyTextChanges(packageJsonText, packageJsonChange?.textChanges ?? [])
+
+      const parsed = JSON.parse(updated)
+      expect(parsed[dependencyType]["vite-plus"]).toBe("^0.2.8")
+      expect(parsed.dependencies?.oxlint).toBeUndefined()
+      expect(parsed.dependencies?.["oxlint-tsgolint"]).toBeUndefined()
+      expect(parsed.devDependencies?.oxlint).toBeUndefined()
+      expect(parsed.devDependencies?.["oxlint-tsgolint"]).toBeUndefined()
+      expect(updated).toContain("effect-tsgo patch --no-typescript --oxlint")
+    }
+  )
+
+  it("should continue to pin explicit Oxlint dependencies alongside vite-plus", () => {
+    const packageJsonText = JSON.stringify({
+      name: "test-project",
+      devDependencies: {
+        "vite-plus": "^0.2.8",
+        "oxlint": "1.76.0",
+        "oxlint-tsgolint": "7.0.2000"
+      }
+    }, null, 2)
+    const result = runComputeChanges({
+      packageJsonText,
+      integrations: ["oxlint"],
+      typescriptVersion: null,
+      oxlintVersion: { dependencyType: "devDependencies", version: "1.77.0" },
+      oxlintTsgolintVersion: { dependencyType: "devDependencies", version: "7.0.2001" }
+    })
+    const packageJsonChange = result.codeActions
+      .flatMap((action) => action.changes)
+      .find((change) => change.fileName === "/test/package.json")
+    const updated = JSON.parse(applyTextChanges(packageJsonText, packageJsonChange?.textChanges ?? []))
+
+    expect(updated.devDependencies.oxlint).toBe("1.77.0")
+    expect(updated.devDependencies["oxlint-tsgolint"]).toBe("7.0.2001")
+  })
+
+  it("should prepend the Effect Oxlint schema to an existing .oxlintrc.json", () => {
+    const oxlintConfigText = JSON.stringify({
+      plugins: ["typescript"],
+      rules: { "no-debugger": "error" }
+    }, null, 2)
+    const result = runComputeChanges({
+      oxlintConfigText,
+      integrations: ["oxlint"],
+      typescriptVersion: null,
+      oxlintVersion: { dependencyType: "devDependencies", version: "1.77.0" },
+      oxlintTsgolintVersion: { dependencyType: "devDependencies", version: "7.0.2001" }
+    })
+    const oxlintConfigChange = result.codeActions
+      .flatMap((action) => action.changes)
+      .find((change) => change.fileName === "/test/.oxlintrc.json")
+
+    expect(oxlintConfigChange).toBeDefined()
+    const updated = JSON.parse(applyTextChanges(oxlintConfigText, oxlintConfigChange!.textChanges))
+    expect(Object.keys(updated)[0]).toBe("$schema")
+    expect(updated.$schema).toBe(TEST_OXLINT_SCHEMA_PATH)
+    expect(updated.rules).toEqual({ "no-debugger": "error" })
+  })
+
+  it("should replace an existing .oxlintrc.json schema when enabling Oxlint", () => {
+    const oxlintConfigText = JSON.stringify({
+      $schema: "./node_modules/oxlint/configuration_schema.json",
+      rules: {}
+    }, null, 2)
+    const result = runComputeChanges({
+      oxlintConfigText,
+      integrations: ["oxlint"],
+      typescriptVersion: null,
+      oxlintVersion: { dependencyType: "devDependencies", version: "1.77.0" },
+      oxlintTsgolintVersion: { dependencyType: "devDependencies", version: "7.0.2001" }
+    })
+    const oxlintConfigChange = result.codeActions
+      .flatMap((action) => action.changes)
+      .find((change) => change.fileName === "/test/.oxlintrc.json")
+
+    expect(oxlintConfigChange).toBeDefined()
+    const updated = JSON.parse(applyTextChanges(oxlintConfigText, oxlintConfigChange!.textChanges))
+    expect(updated.$schema).toBe(TEST_OXLINT_SCHEMA_PATH)
+  })
+
+  it("should leave .oxlintrc.json unchanged when Oxlint is not selected", () => {
+    const result = runComputeChanges({
+      oxlintConfigText: JSON.stringify({ rules: {} }),
+      integrations: ["typescript"]
+    })
+
+    expect(result.codeActions.flatMap((action) => action.changes)
+      .some((change) => change.fileName === "/test/.oxlintrc.json")).toBe(false)
+  })
+
+  it("should remove TypeScript configuration for an Oxlint-only setup", () => {
+    const result = runComputeChanges({
+      tsconfigText: JSON.stringify({
+        $schema: "./node_modules/@effect/tsgo/schema.json",
+        compilerOptions: {
+          plugins: [{ name: "@effect/language-service" }]
+        }
+      }, null, 2),
+      integrations: ["oxlint"],
+      typescriptVersion: null,
+      oxlintVersion: { dependencyType: "devDependencies", version: "1.77.0" },
+      oxlintTsgolintVersion: { dependencyType: "devDependencies", version: "7.0.2001" }
+    })
+    const tsconfigChange = result.codeActions
+      .flatMap((action) => action.changes)
+      .find((change) => change.fileName === "/test/tsconfig.json")
+    const changedText = tsconfigChange?.textChanges.map((change) => change.newText).join("\n") ?? ""
+
+    expect(tsconfigChange).toBeDefined()
+    expect(changedText).not.toContain("@effect/language-service")
+  })
+
+  it("should insert a new $schema as the first tsconfig property", () => {
+    const tsconfigText = JSON.stringify({
+      extends: "./tsconfig.base.json",
+      compilerOptions: { strict: true }
+    }, null, 2)
+    const result = runComputeChanges({ tsconfigText })
+    const tsconfigChange = result.codeActions
+      .flatMap((action) => action.changes)
+      .find((change) => change.fileName === "/test/tsconfig.json")
+
+    expect(tsconfigChange).toBeDefined()
+    const updated = JSON.parse(applyTextChanges(tsconfigText, tsconfigChange!.textChanges))
+    expect(Object.keys(updated)[0]).toBe("$schema")
+  })
+
+  it("should preserve an unrelated tsconfig $schema when disabling TypeScript", () => {
+    const result = runComputeChanges({
+      tsconfigText: JSON.stringify({
+        $schema: "https://json.schemastore.org/tsconfig",
+        compilerOptions: {
+          plugins: [{ name: "@effect/language-service" }]
+        }
+      }, null, 2),
+      lspVersion: null,
+      integrations: []
+    })
+    const tsconfigChange = result.codeActions
+      .flatMap((action) => action.changes)
+      .find((change) => change.fileName === "/test/tsconfig.json")
+
+    expect(tsconfigChange).toBeDefined()
+    expect(applyTextChanges(JSON.stringify({
+      $schema: "https://json.schemastore.org/tsconfig",
+      compilerOptions: {
+        plugins: [{ name: "@effect/language-service" }]
+      }
+    }, null, 2), tsconfigChange!.textChanges)).toContain("https://json.schemastore.org/tsconfig")
+  })
+
+  it("should remove the Effect schema when compilerOptions is missing", () => {
+    const tsconfigText = JSON.stringify({
+      $schema: TEST_SCHEMA_PATH,
+      extends: "./tsconfig.base.json"
+    }, null, 2)
+    const result = runComputeChanges({
+      tsconfigText,
+      lspVersion: null,
+      integrations: []
+    })
+    const tsconfigChange = result.codeActions
+      .flatMap((action) => action.changes)
+      .find((change) => change.fileName === "/test/tsconfig.json")
+
+    expect(tsconfigChange).toBeDefined()
+    expect(applyTextChanges(tsconfigText, tsconfigChange!.textChanges)).not.toContain("$schema")
   })
 
   it("should not assess typescript < 7 as the native backend", () => {
@@ -199,39 +495,16 @@ describe("computeChanges", () => {
     const input: Assessment.Input = {
       packageJson: { fileName: "/test/package.json", text: packageJsonText },
       tsconfig: { fileName: "/test/tsconfig.json", text: "{}" },
+      oxlintConfig: Option.none(),
       vscodeSettings: Option.none()
     }
 
     const assessment = assess(input)
 
-    expect(assessment.packageJson.nativePreviewVersion).toEqual(Option.none())
+    expect(assessment.packageJson.typescriptVersion).toEqual(Option.none())
   })
 
-  it("should prefer @typescript/native-preview over typescript >= 7 when both are installed", () => {
-    const packageJsonText = JSON.stringify({
-      name: "test-project",
-      version: "1.0.0",
-      dependencies: {
-        "@typescript/native-preview": "^7.0.0-dev.20260327",
-        "typescript": "^7.0.1-rc"
-      }
-    }, null, 2)
-
-    const input: Assessment.Input = {
-      packageJson: { fileName: "/test/package.json", text: packageJsonText },
-      tsconfig: { fileName: "/test/tsconfig.json", text: "{}" },
-      vscodeSettings: Option.none()
-    }
-
-    const assessment = assess(input)
-
-    expect(assessment.packageJson.nativePreviewVersion).toEqual(Option.some({
-      dependencyType: "dependencies",
-      version: "^7.0.0-dev.20260327"
-    }))
-  })
-
-  it("should add @typescript/native-preview when installing the LSP if it is missing", () => {
+  it("should add typescript when installing the LSP if a native backend is missing", () => {
     const result = runComputeChanges({
       packageJsonText: JSON.stringify({
         name: "test-project",
@@ -239,29 +512,11 @@ describe("computeChanges", () => {
         devDependencies: {}
       }, null, 2),
       lspVersion: { dependencyType: "devDependencies", version: "0.0.4" },
-      nativePreviewVersion: { dependencyType: "devDependencies", version: "latest" },
-      prepareScript: false,
-      editors: []
-    })
-
-    const packageJsonChange = result.codeActions
-      .flatMap((action) => action.changes)
-      .find((change) => change.fileName === "/test/package.json")
-
-    expect(packageJsonChange).toBeDefined()
-    expect(packageJsonChange?.textChanges.some((change) => change.newText.includes("@typescript/native-preview"))).toBe(true)
-    expect(result.codeActions[0]?.description).toContain("Add @typescript/native-preview@latest to devDependencies")
-  })
-
-  it("should add the typescript backend (not @typescript/native-preview) when it is the selected native backend", () => {
-    const result = runComputeChanges({
-      packageJsonText: JSON.stringify({
-        name: "test-project",
-        version: "1.0.0",
-        devDependencies: {}
-      }, null, 2),
-      lspVersion: { dependencyType: "devDependencies", version: "0.0.4" },
-      nativePreviewVersion: { dependencyType: "devDependencies", version: "^7.0.1-rc", packageName: "typescript" },
+      typescriptVersion: {
+        dependencyType: "devDependencies",
+        version: TEST_TYPESCRIPT_VERSION,
+        packageName: "typescript"
+      },
       prepareScript: false,
       editors: []
     })
@@ -272,8 +527,29 @@ describe("computeChanges", () => {
 
     expect(packageJsonChange).toBeDefined()
     expect(packageJsonChange?.textChanges.some((change) => change.newText.includes('"typescript"'))).toBe(true)
-    expect(packageJsonChange?.textChanges.some((change) => change.newText.includes("@typescript/native-preview"))).toBe(false)
-    expect(result.codeActions[0]?.description).toContain("Add typescript@^7.0.1-rc to devDependencies")
+    expect(result.codeActions[0]?.description).toContain(`Add typescript@${TEST_TYPESCRIPT_VERSION} to devDependencies`)
+  })
+
+  it("should add the selected typescript backend", () => {
+    const result = runComputeChanges({
+      packageJsonText: JSON.stringify({
+        name: "test-project",
+        version: "1.0.0",
+        devDependencies: {}
+      }, null, 2),
+      lspVersion: { dependencyType: "devDependencies", version: "0.0.4" },
+      typescriptVersion: { dependencyType: "devDependencies", version: "npm:typescript@^7.0.2", packageName: "@typescript/native" },
+      prepareScript: false,
+      editors: []
+    })
+
+    const packageJsonChange = result.codeActions
+      .flatMap((action) => action.changes)
+      .find((change) => change.fileName === "/test/package.json")
+
+    expect(packageJsonChange).toBeDefined()
+    expect(packageJsonChange?.textChanges.some((change) => change.newText.includes('"@typescript/native"'))).toBe(true)
+    expect(result.codeActions[0]?.description).toContain("Add @typescript/native@npm:typescript@^7.0.2 to devDependencies")
   })
 
   it("should not throw when updating an existing prepare script from the legacy command", () => {
@@ -373,6 +649,21 @@ describe("computeChanges", () => {
           expect(change.isNewFile).toBe(false)
         }
       }
+    })
+
+    it("should serialize array settings when modifying existing vscode settings", () => {
+      const result = runComputeChanges({
+        vscodeSettingsText: JSON.stringify({ "editor.formatOnSave": true }, null, 2),
+        vscodeTargetSettings: {
+          "js/ts.tsdk.additionalLocations": ["./node_modules/typescript/bin"]
+        }
+      })
+
+      const vscodeChange = result.codeActions
+        .flatMap((action) => action.changes)
+        .find((change) => change.fileName.includes("settings.json"))
+
+      expect(vscodeChange?.textChanges[0]?.newText).toContain('["./node_modules/typescript/bin"]')
     })
   })
 
@@ -478,11 +769,40 @@ describe("computeChanges", () => {
   })
 
   describe("post-apply messages", () => {
+    const installMessage = "`package.json` changed. Run your package manager's install command " +
+      "(for example, `pnpm install`, `npm install`, `yarn install`, or `bun install`)."
+
+    it("should recommend installing when package.json changes", () => {
+      const result = runComputeChanges({})
+
+      expect(result.messages).toContain(installMessage)
+    })
+
+    it("should not recommend installing when package.json is unchanged", () => {
+      const packageJsonText = JSON.stringify({
+        name: "test-project",
+        version: "1.0.0",
+        devDependencies: {
+          "@effect/tsgo": "0.0.4",
+          "typescript": TEST_TYPESCRIPT_VERSION
+        },
+        scripts: {
+          prepare: "effect-tsgo patch --typescript --no-oxlint"
+        }
+      }, null, 2)
+      const result = runComputeChanges({ packageJsonText })
+
+      expect(result.codeActions.some((action) =>
+        action.changes.some((change) => change.fileName === "/test/package.json")
+      )).toBe(false)
+      expect(result.messages).not.toContain(installMessage)
+    })
+
     it("should include patch message when installing", () => {
       const result = runComputeChanges({})
 
       expect(result.messages).toContain(
-        "Run `effect-tsgo patch` to complete the installation."
+        "Run `effect-tsgo patch --typescript --no-oxlint` to complete the installation."
       )
     })
 
@@ -503,7 +823,7 @@ describe("computeChanges", () => {
       })
 
       expect(result.messages).toContain(
-        "Run `effect-tsgo unpatch` to restore the original TypeScript-Go binary."
+        "Run `effect-tsgo unpatch --typescript --no-oxlint` to restore the original integrations."
       )
     })
 
@@ -556,7 +876,7 @@ describe("computeChanges", () => {
 
       const rendered = tsconfigAction!.changes.flatMap((c) => c.textChanges.map((tc) => tc.newText)).join("")
       expect(rendered).toContain("$schema")
-      expect(rendered).toContain("raw.githubusercontent.com")
+      expect(rendered).toContain(TEST_SCHEMA_PATH)
     })
 
     it("should update $schema when creating compilerOptions on a tsconfig with wrong $schema", () => {
@@ -574,7 +894,7 @@ describe("computeChanges", () => {
       expect(tsconfigAction!.description).toContain("Update $schema")
 
       const rendered = tsconfigAction!.changes.flatMap((c) => c.textChanges.map((tc) => tc.newText)).join("")
-      expect(rendered).toContain("raw.githubusercontent.com")
+      expect(rendered).toContain(TEST_SCHEMA_PATH)
       expect(rendered).not.toContain("example.com")
     })
 
@@ -663,6 +983,100 @@ describe("computeChanges", () => {
       expect(tsconfigAction).toBeDefined()
       const rendered = tsconfigAction!.changes.flatMap((change) => change.textChanges.map((textChange) => textChange.newText)).join("\n")
       expect(rendered).not.toContain("diagnosticSeverity")
+    })
+  })
+
+  describe("JSON indentation", () => {
+    it.each([
+      ["two spaces", "  ", "\n"],
+      ["four spaces", "    ", "\n"],
+      ["tabs", "\t", "\n"],
+      ["CRLF newlines", "  ", "\r\n"]
+    ])("should preserve %s in package.json", (_, indentation, newLine) => {
+      const packageJsonText = [
+        "{",
+        `${indentation}"name": "test-project",`,
+        `${indentation}"devDependencies": {`,
+        `${indentation.repeat(2)}"typescript": "${TEST_TYPESCRIPT_VERSION}"`,
+        `${indentation}}`,
+        "}"
+      ].join(newLine)
+      const result = runComputeChanges({
+        packageJsonText,
+        typescriptVersion: null,
+        prepareScript: false,
+        editors: [],
+        vscodeTargetSettings: null
+      })
+      const change = result.codeActions
+        .flatMap((action) => action.changes)
+        .find((change) => change.fileName === "/test/package.json")
+      const updated = applyTextChanges(packageJsonText, change?.textChanges ?? [])
+
+      expect(updated).toContain(`${newLine}${indentation.repeat(2)}"@effect/tsgo": "0.0.4"`)
+      expect(() => JSON.parse(updated)).not.toThrow()
+    })
+
+    it.each([
+      ["two spaces", "  "],
+      ["four spaces", "    "],
+      ["tabs", "\t"]
+    ])("should preserve %s in tsconfig.json", (_, indentation) => {
+      const tsconfigText = [
+        "{",
+        `${indentation}"compilerOptions": {`,
+        `${indentation.repeat(2)}"strict": true`,
+        `${indentation}}`,
+        "}"
+      ].join("\n")
+      const result = runComputeChanges({
+        tsconfigText,
+        prepareScript: false,
+        editors: [],
+        vscodeTargetSettings: null
+      })
+      const change = result.codeActions
+        .flatMap((action) => action.changes)
+        .find((change) => change.fileName === "/test/tsconfig.json")
+      const updated = applyTextChanges(tsconfigText, change?.textChanges ?? [])
+
+      expect(updated).toContain(`\n${indentation}"$schema"`)
+      expect(updated).toContain(`\n${indentation.repeat(2)}"plugins"`)
+      expect(updated).toContain(`\n${indentation.repeat(4)}"name": "@effect/language-service"`)
+      expect(() => JSON.parse(updated)).not.toThrow()
+    })
+
+    it.each([
+      { layout: "inline", lines: ["  \"devDependencies\": {}"] },
+      { layout: "multiline", lines: ["  \"devDependencies\": {", "  }"] }
+    ])("should indent properties added to an $layout empty object", ({ lines }) => {
+      const packageJsonText = [
+        "{",
+        "  \"name\": \"test-project\",",
+        ...lines,
+        "}"
+      ].join("\n")
+      const result = runComputeChanges({
+        packageJsonText,
+        prepareScript: false,
+        editors: [],
+        vscodeTargetSettings: null
+      })
+      const change = result.codeActions
+        .flatMap((action) => action.changes)
+        .find((change) => change.fileName === "/test/package.json")
+      const updated = applyTextChanges(packageJsonText, change?.textChanges ?? [])
+
+      expect(updated).toBe([
+        "{",
+        "  \"name\": \"test-project\",",
+        "  \"devDependencies\": {",
+        `    "typescript": "${TEST_TYPESCRIPT_VERSION}",`,
+        "    \"@effect/tsgo\": \"0.0.4\"",
+        "  }",
+        "}"
+      ].join("\n"))
+      expect(() => JSON.parse(updated)).not.toThrow()
     })
   })
 })

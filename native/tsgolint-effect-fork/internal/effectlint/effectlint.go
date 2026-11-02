@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"unicode"
 
+	"github.com/effect-ts/tsgo/etscore"
+	effectrule "github.com/effect-ts/tsgo/internal/rule"
 	effectrunner "github.com/effect-ts/tsgo/internal/rulerunner"
 	effectrules "github.com/effect-ts/tsgo/internal/rules"
 	"github.com/effect-ts/tsgo/tsgolint/internal/rule"
@@ -20,8 +22,12 @@ type RuleSpec struct {
 }
 
 var All = func() []RuleSpec {
-	specs := make([]RuleSpec, 0, len(effectrules.All))
-	for _, effectRule := range effectrules.All {
+	specs := make([]RuleSpec, 0, len(publicEffectRuleNames))
+	for _, effectName := range publicEffectRuleNames {
+		effectRule := effectrule.ByName(effectrules.All, effectName)
+		if effectRule == nil {
+			panic("missing public Effect rule: " + effectName)
+		}
 		specs = append(specs, RuleSpec{
 			HeadlessName: snakeCase(effectRule.Name),
 			EffectName:   effectRule.Name,
@@ -86,7 +92,7 @@ func RunSelected(
 			continue
 		}
 
-		diagnostics, err := effectrunner.Run(ctx, program, c, file, effectConfig, []string{effectName})
+		diagnostics, err := effectrunner.Run(ctx, program, c, file, effectConfig, []string{effectName}, etscore.SeverityMessage)
 		if err != nil {
 			return fmt.Errorf("run Effect diagnostic %s for %s: %w", effectName, file.FileName(), err)
 		}

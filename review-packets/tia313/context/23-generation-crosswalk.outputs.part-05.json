@@ -1,0 +1,308 @@
+{
+  "parent_packet": "review-packets/tia313/context/23-generation-crosswalk.json",
+  "collection": "outputs",
+  "part": 5,
+  "parts": 5,
+  "entries": [
+    {
+      "path": "native/effect-tsgo/shim/_backport/vfs/iovfs/go.mod",
+      "mode": "100644",
+      "blob": "988f7d88fd575c63e3b3493418b14997a24f0d3d",
+      "sha256": "917d451be8151f0614bfc2a131f3459227641e7562772596bd7c11387abac24e",
+      "bytes": 133,
+      "relative_output": "_backport/vfs/iovfs/go.mod",
+      "family": "vfs/iovfs",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-06.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/vfs/iovfs/shim.go",
+      "mode": "100644",
+      "blob": "a9e8e21021784fb87214d2f9fc4772ea61b28350",
+      "sha256": "d0e6f12156955e1065bf8cbda44300a43c9522e5de18a3facc0ad33a45ef38b5",
+      "bytes": 413,
+      "relative_output": "_backport/vfs/iovfs/shim.go",
+      "family": "vfs/iovfs",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-06.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/vfs/iovfs/go.mod",
+      "mode": "100644",
+      "blob": "b7773a5b7b57ba0cb7c06830b811a841095a51f6",
+      "sha256": "15f77386e99c3197b8c1d351f0afd9d394d6523b5f02385ee265fa0dfb672bf8",
+      "bytes": 117,
+      "relative_output": "vfs/iovfs/go.mod",
+      "family": "vfs/iovfs",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-06.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/vfs/iovfs/shim.go",
+      "mode": "100644",
+      "blob": "e80acec0be22d1841782bc347cd106699efe6cb4",
+      "sha256": "9c61c049420653246d2a6c2af9c0ef56a3ca5377153c692d1793a2e7d5865792",
+      "bytes": 417,
+      "relative_output": "vfs/iovfs/shim.go",
+      "family": "vfs/iovfs",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-06.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/vfs/osvfs/go.mod",
+      "mode": "100644",
+      "blob": "5f0283c3cb1d4f9230f49cde967bb4d737f86dd8",
+      "sha256": "dff35f1817edf38becbde6589814a8d02d450ce767ae4b177bc500183a78cd86",
+      "bytes": 133,
+      "relative_output": "_backport/vfs/osvfs/go.mod",
+      "family": "vfs/osvfs",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-07.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/vfs/osvfs/shim.go",
+      "mode": "100644",
+      "blob": "a5d90be062428df94b716f30e77a2a6fe058c604",
+      "sha256": "bcb85aad586c729e5de5e37828f5ae480295908d4201318185686021006d87ad",
+      "bytes": 465,
+      "relative_output": "_backport/vfs/osvfs/shim.go",
+      "family": "vfs/osvfs",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-07.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/vfs/osvfs/go.mod",
+      "mode": "100644",
+      "blob": "9e7bee223576123285c51fcca014953671b56981",
+      "sha256": "d03036b7f28d855e76c64dca93a1c85f078a12afedec4adfddd8d9a8695219a4",
+      "bytes": 117,
+      "relative_output": "vfs/osvfs/go.mod",
+      "family": "vfs/osvfs",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-07.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/vfs/osvfs/shim.go",
+      "mode": "100644",
+      "blob": "353279305de861f9a9a54f96dc076229f72b84c9",
+      "sha256": "787bfeed4c0770f3e68b9702d5e95fbbb01cbd743862a3c898c32e7ba96204ca",
+      "bytes": 473,
+      "relative_output": "vfs/osvfs/shim.go",
+      "family": "vfs/osvfs",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-07.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/vfs/vfstest/go.mod",
+      "mode": "100644",
+      "blob": "9efb8e1067e3b9f6b66ee82d30f447eb31d9e24b",
+      "sha256": "1d5c48c4d6930523ea3f035a07eea9bcf8b368ee0a098e0c56f65c639c98ff96",
+      "bytes": 137,
+      "relative_output": "_backport/vfs/vfstest/go.mod",
+      "family": "vfs/vfstest",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-07.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/_backport/vfs/vfstest/shim.go",
+      "mode": "100644",
+      "blob": "def300ef67d5df26c6c937461e5783c2bcdeef79",
+      "sha256": "383ebd33a65e982dfc1c5e816b7b9d03f5da518d9cbbaad354140d845411ff9c",
+      "bytes": 565,
+      "relative_output": "_backport/vfs/vfstest/shim.go",
+      "family": "vfs/vfstest",
+      "category": "O3",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-07.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/vfs/vfstest/go.mod",
+      "mode": "100644",
+      "blob": "0a4a792a32c3625176a594315925c2cfd5364797",
+      "sha256": "842cd1738490686d600dcb23bebed1a064bd658daafd8c6955d5508e653477a4",
+      "bytes": 119,
+      "relative_output": "vfs/vfstest/go.mod",
+      "family": "vfs/vfstest",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-07.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "path": "native/effect-tsgo/shim/vfs/vfstest/shim.go",
+      "mode": "100644",
+      "blob": "db73644873e23511be6c2e8608061bc4f02e7d70",
+      "sha256": "f8447ab50d562866bcd3bf5a2fb90bf2fb638520749877785026621a2b14616b",
+      "bytes": 573,
+      "relative_output": "vfs/vfstest/shim.go",
+      "family": "vfs/vfstest",
+      "category": "O2",
+      "producer_groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "packet": "review-packets/tia313/context/21-generation-outputs-07.md",
+      "consumer_categories": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  ]
+}

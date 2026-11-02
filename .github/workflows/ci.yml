@@ -79,7 +79,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.26.x"
+          go-version: "1.27.x"
           cache: true
           cache-dependency-path: |
             native/effect-tsgo/go.sum
@@ -111,6 +111,9 @@ jobs:
 
       - name: Build native tooling
         run: vp run -w native:build
+
+      - name: Verify native compiler and diagnostic protocol
+        run: vp run -w native:test:backend
 
       - name: Stage native binaries
         run: vp run -w native:stage

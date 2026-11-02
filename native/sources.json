@@ -1,0 +1,18 @@
+{
+  "effectTsgo": {
+    "version": "0.46.1",
+    "repository": "https://github.com/Effect-TS/tsgo",
+    "commit": "f1a7cad0292d9d315e7f87694f127f605711d55e"
+  },
+  "typescriptGo": {
+    "version": "7.0.2",
+    "repository": "https://github.com/microsoft/typescript-go",
+    "commit": "2bd066d87f5bafd315be9f40889d0a60b9e58e0b",
+    "typeScriptFixtures": "4d4f005c8541e0255a9d8791205fdce326e462bc"
+  },
+  "tsgolint": {
+    "version": "7.0.2003",
+    "repository": "https://github.com/oxc-project/tsgolint",
+    "commit": "eb9339115edde6811ca94c3433adf69ea9852880"
+  }
+}

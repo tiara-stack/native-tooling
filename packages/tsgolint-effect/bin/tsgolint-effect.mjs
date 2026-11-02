@@ -32,10 +32,23 @@ if (result.error) {
 process.exit(result.status ?? 1);
 
 function resolveBinary() {
+  const explicitPath = [process.env.TIARA_TSGOLINT_EFFECT_PATH].find((path) =>
+    Boolean(path && existsSync(path)),
+  );
+  if (explicitPath) return explicitPath;
+
+  const sourceRoot = resolve(packageRoot, "../..");
+  if (existsSync(join(sourceRoot, "native", "tsgolint-effect-fork", "go.mod"))) {
+    const sourceBinary = join(sourceRoot, "native", "tsgolint-effect-fork", executableName);
+    if (existsSync(sourceBinary)) return sourceBinary;
+    throw new Error(
+      "Repository-local tsgolint-effect is not built. Run pnpm native:build:tsgolint.",
+    );
+  }
+
   /** @type {string[]} */
   const candidates = [];
   for (const candidate of [
-    process.env.TIARA_TSGOLINT_EFFECT_PATH,
     platformPackageName ? resolvePackageBinary(platformPackageName) : undefined,
     join(packageRoot, "vendor", `${process.platform}-${process.arch}`, executableName),
     findUp(process.cwd(), join("native", "tsgolint-effect-fork", executableName)),
