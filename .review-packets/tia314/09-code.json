@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -10,14 +10,16 @@
     "path": ".coderabbit.yaml",
     "view": "parent-relative custom diff",
     "before": {
+     "path": ".coderabbit.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "28c19494f97326a510fbee7179c2b757d0ef947a"
+     "blob": "28c19494f97326a510fbee7179c2b757d0ef947a",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": ".coderabbit.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "d1da63034c2388e099a29ea642040356f848ad42"
+     "blob": "d1da63034c2388e099a29ea642040356f848ad42",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "7b43811da58cfbf92cde721bfa8926f52b096efd9767c520178192aeb0f7c417",
     "canonical_patch_sha256": "4edfe41deedee4b04ed535de3cbd3f432faf7252d1ebaf8dadab753f15fde205",
@@ -26,11 +28,19 @@
    "fragment": {
     "part": 9,
     "parts": 14,
-    "line_start": 3404,
-    "line_end": 3939,
-    "sha256": "ff311c3e2dfd74d4fe0e8fee3920d940678917632aa8a710b4bbad591c68c065"
+    "line_start": 3396,
+    "line_end": 3922,
+    "sha256": "30f97247cdb879a24fa847d5a322cff70e633bf61f012b06613a0f3cfc631fd1"
    },
    "canonical_patch_lines": [
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/test_v5_parent_config/package.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/test_v5_parent_config/snapshots.toml\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/test_v5_parent_config/snapshots/directory_local_config.global.md\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/test_v5_parent_config/snapshots/directory_local_config.local.md\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/test_v5_parent_config/snapshots/explicit_config.md\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/test_v5_parent_config/sub/example.test.ts\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/test_v5_parent_config/vite.config.ts\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/test_v5_preview/browser.test.js\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/test_v5_preview/defines.test.js\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/test_v5_preview/package.json\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/test_v5_preview/snapshots.toml\"\n",
@@ -549,24 +559,7 @@
     "+    - \"!packages/vite-plus-effect-fork/docs/guide/global-cli.md\"\n",
     "+    - \"!packages/vite-plus-effect-fork/docs/guide/ide-integration.md\"\n",
     "+    - \"!packages/vite-plus-effect-fork/docs/guide/implode.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/index.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/install.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/lint.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/local-cli.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/migrate-rules.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/migrate.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/monorepo.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/run.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/test.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/troubleshooting.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/upgrade-project.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/upgrade.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/guide/vitest-v5.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/package.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/pnpm-lock.yaml\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/pnpm-workspace.yaml\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/public/_redirects\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/docs/vite.config.ts\"\n"
+    "+    - \"!packages/vite-plus-effect-fork/docs/guide/index.md\"\n"
    ]
   }
  ]

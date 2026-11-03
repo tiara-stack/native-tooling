@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -10,14 +10,16 @@
     "path": "pnpm-lock.yaml",
     "view": "parent-relative custom diff",
     "before": {
+     "path": "pnpm-lock.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "89b4ac7fe15166b604895e306b33be74176a1da9"
+     "blob": "89b4ac7fe15166b604895e306b33be74176a1da9",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": "pnpm-lock.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "6fe834caacf610083141f9c71f000cd4e67aabd9"
+     "blob": "6fe834caacf610083141f9c71f000cd4e67aabd9",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "a04f805b9a939e7d027e31d02988ed83139272923b3955eb702eed4203d3109c",
     "canonical_patch_sha256": "e9978eb6413a17cc071f7a1cdface073cfb8f93160661e1bd33978c4def397c1",
@@ -27,8 +29,8 @@
     "part": 1,
     "parts": 4,
     "line_start": 1,
-    "line_end": 1162,
-    "sha256": "c4021bf9458c6c8598e2a9dd3db54d47a3d7fa65e70978dd5a9e653b2730eab0"
+    "line_end": 1161,
+    "sha256": "fae6cb866e8141947fd7ba68eb686d603355b117e4a84eec9464fb0012acde9f"
    },
    "canonical_patch_lines": [
     "diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml\n",
@@ -1191,8 +1193,7 @@
     "+    peerDependencies:\n",
     "+      vite: '*'\n",
     "+\n",
-    "+  '@vitejs/devtools@0.7.6':\n",
-    "+    resolution: {integrity: sha512-ys4jy3cP+OibJRyM7cKXJPukb89Q0MbYUVAWjTyQlaboEi4EjOwAkbh9467Dk+ycMH3F/B9DrmXJAMBT4504xA==}\n"
+    "+  '@vitejs/devtools@0.7.6':\n"
    ]
   }
  ]

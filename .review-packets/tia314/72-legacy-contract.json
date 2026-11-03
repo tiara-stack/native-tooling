@@ -1,18 +1,91 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "legacy-contract",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
+  {
+   "target": {
+    "id": "T0340",
+    "path": "packages/vite-plus/dist/test/suite.js",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/dist/test/suite.js",
+     "mode": "100644",
+     "blob": "eb6590faf82bf6b6bc4dad59943f6108b68952d9",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/dist/test/suite.js",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "eb6590faf82bf6b6bc4dad59943f6108b68952d9",
+    "preimage_mode": "100644",
+    "preimage_sha256": "1489c1243a8a29879a7dc26cee0049e36630197aabdd2de6d9ea25ead8c566cf",
+    "hook_context": [
+     {
+      "start_line": 1,
+      "end_line": 1,
+      "text": "export * from 'vitest/suite';"
+     }
+    ],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/build.ts",
+     "packages/vite-plus/package.json",
+     "packages/effect-vitest/src/internal/internal.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0349",
+    "path": "packages/vite-plus/dist/tsconfig-fvpxgUq2.js",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/dist/tsconfig-fvpxgUq2.js",
+     "mode": "100644",
+     "blob": "6f5a048c4324cb0bf3258aaaf0ff35894b3c0e3c",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/dist/tsconfig-fvpxgUq2.js",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "6f5a048c4324cb0bf3258aaaf0ff35894b3c0e3c",
+    "preimage_mode": "100644",
+    "preimage_sha256": "f4277de2bf3cfb80c7f02e4eb5bad86e3430bef04fbe6b2e3f9d5c2e93c1483a",
+    "hook_context": [
+     {
+      "start_line": 4213,
+      "end_line": 4234,
+      "text": "\tif (isMonorepo) return false;\n\treturn promptGitInit(options);\n}\nfunction defaultInteractive() {\n\treturn !process.env.CI && process.stdin.isTTY;\n}\n//#endregion\n//#region src/utils/tsconfig.ts\n/**\n* Check if tsconfig.json has compilerOptions.baseUrl set.\n* oxlint's TypeScript checker (tsgolint) does not support baseUrl,\n* so typeAware/typeCheck must be disabled when it is present.\n*/\nfunction hasBaseUrlInTsconfigFile(filePath) {\n\ttry {\n\t\treturn parse(fs.readFileSync(filePath, \"utf-8\"))?.compilerOptions?.baseUrl != null;\n\t} catch {\n\t\treturn false;\n\t}\n}\nconst TSCONFIG_FILE_RE = /^tsconfig(\\.[\\w-]+)?\\.json$/i;\nfunction findTsconfigFiles(projectPath) {"
+     }
+    ],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
   {
    "target": {
     "id": "T0350",
     "path": "packages/vite-plus/dist/tsgolint-path-B-yOos8p.js",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/dist/tsgolint-path-B-yOos8p.js",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "e2f4ea61f1ff39bd256279decfdc1af99a085649"
+     "blob": "e2f4ea61f1ff39bd256279decfdc1af99a085649",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -45,9 +118,10 @@
     "path": "packages/vite-plus/dist/tsgolint-path.d.ts",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/dist/tsgolint-path.d.ts",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "161771e8da2620d06f59f308683a321421be9847"
+     "blob": "161771e8da2620d06f59f308683a321421be9847",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -80,9 +154,10 @@
     "path": "packages/vite-plus/dist/tsgolint-path.js",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/dist/tsgolint-path.js",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "133ed4a04807709112750ffd05079efabdcacb41"
+     "blob": "133ed4a04807709112750ffd05079efabdcacb41",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -115,9 +190,10 @@
     "path": "packages/vite-plus/dist/wrap-ansi-DNjkuBEp.js",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/dist/wrap-ansi-DNjkuBEp.js",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "13d8406a5dd7ce3a9035370b8ab29d12fb77ef30"
+     "blob": "13d8406a5dd7ce3a9035370b8ab29d12fb77ef30",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -144,9 +220,10 @@
     "path": "packages/vite-plus/dist/wrap-ansi-DUi52C6W.js",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/dist/wrap-ansi-DUi52C6W.js",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "60a5e5e542a7538b9558f52bd15971e60a1c1756"
+     "blob": "60a5e5e542a7538b9558f52bd15971e60a1c1756",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -173,9 +250,10 @@
     "path": "packages/vite-plus/docs/_data/team.ts",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/docs/_data/team.ts",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "8835832aa264d538f3683d25278b932ebc3d924e"
+     "blob": "8835832aa264d538f3683d25278b932ebc3d924e",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -202,9 +280,10 @@
     "path": "packages/vite-plus/docs/package.json",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/docs/package.json",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "0a04318a97fb5e654e3114f56da503b8188e5f55"
+     "blob": "0a04318a97fb5e654e3114f56da503b8188e5f55",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -231,9 +310,10 @@
     "path": "packages/vite-plus/docs/pnpm-lock.yaml",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/docs/pnpm-lock.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "8f487e55aeccab648ea9378ebfa5e2bcca2c44d4"
+     "blob": "8f487e55aeccab648ea9378ebfa5e2bcca2c44d4",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -260,9 +340,10 @@
     "path": "packages/vite-plus/docs/pnpm-workspace.yaml",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/docs/pnpm-workspace.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "88ad9faed4364dde2840633123916651c2ab0777"
+     "blob": "88ad9faed4364dde2840633123916651c2ab0777",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -289,9 +370,10 @@
     "path": "packages/vite-plus/docs/public/checkmark.svg",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/docs/public/checkmark.svg",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "4d0d244f7d3fd82929107da0e3f2385e85716932"
+     "blob": "4d0d244f7d3fd82929107da0e3f2385e85716932",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -318,9 +400,10 @@
     "path": "packages/vite-plus/docs/public/cta-background.jpg",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/docs/public/cta-background.jpg",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "ca73a8541b8d3a39684854e28018f85714913b8e"
+     "blob": "ca73a8541b8d3a39684854e28018f85714913b8e",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -347,9 +430,10 @@
     "path": "packages/vite-plus/docs/public/favicon.svg",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/docs/public/favicon.svg",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "f8a50ff7b1b1333a0c2251d46ee45ea1660277d8"
+     "blob": "f8a50ff7b1b1333a0c2251d46ee45ea1660277d8",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -376,9 +460,10 @@
     "path": "packages/vite-plus/docs/public/icon.svg",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/docs/public/icon.svg",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "a4ce2286bb191ddc112fec8928bad21d1a3a4213"
+     "blob": "a4ce2286bb191ddc112fec8928bad21d1a3a4213",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -405,9 +490,10 @@
     "path": "packages/vite-plus/docs/public/logo.svg",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/docs/public/logo.svg",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "4dacb70e689200c1857fad66361cc3c353811ce5"
+     "blob": "4dacb70e689200c1857fad66361cc3c353811ce5",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null
@@ -434,9 +520,10 @@
     "path": "packages/vite-plus/docs/public/og.jpg",
     "view": "removed contract",
     "before": {
+     "path": "packages/vite-plus/docs/public/og.jpg",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "4283b7106eefd969944117628ba16f377609317f"
+     "blob": "4283b7106eefd969944117628ba16f377609317f",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": null,
     "actual_sha256": null

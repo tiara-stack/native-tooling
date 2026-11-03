@@ -1,6 +1,6 @@
 {
   "ticket": "TIA-314",
-  "implementation_commit": "ce7c7319ac3f52525e80247abac68b38c513a5f3",
+  "implementation_commit": "e950c30522144df372973a1ac91b8b59c7fd41e6",
   "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
   "upstream": {
     "repository": "https://github.com/voidzero-dev/vite-plus",
@@ -9,18 +9,18 @@
   },
   "policy": "Exclude only unchanged pinned upstream source. Keep Tiara overlays, root package/version/lock/config changes, generated artifacts, generation inputs and affected consumers. Pinned upstream metadata remains provenance context. Review mixed source as Tiara overlays against the pin.",
   "counts": {
-    "raw_changed_paths": 6937,
+    "raw_changed_paths": 6940,
     "authorized_import_exclusions": 6420,
-    "review_target_paths": 517,
+    "review_target_paths": 520,
     "mixed_or_custom_source_paths": 13,
     "skipped_reviewable_paths": 0,
     "reviewed_paths": 0,
-    "pending_review_target_paths": 517,
-    "source_adaptation_paths": 436,
-    "hosted_metadata_paths": 81,
+    "pending_review_target_paths": 520,
+    "source_adaptation_paths": 438,
+    "hosted_metadata_paths": 82,
     "changed_existing_scope_metadata_paths": 1
   },
-  "review_state": "436 source-epoch adaptations retain qualified prior OCR attribution. Delivery preparation changes this scope binding and adds hosted metadata; those new metadata changes await incremental review. This inventory is not a fresh semantic review certificate.",
+  "review_state": "438 source adaptations:424unchanged bodies retain original attribution;13new/changed source paths and current delivery metadata require assigned re-entry. This inventory is not a current semantic review certificate.",
   "custom_overlay_patch_sha256": "0092edde3a8815aa7d9fcdd9d6e4b88f54c1c9caafe50a213767e0b1c6b112bc",
   "authorized_import_exclusions": [
     {
@@ -40349,6 +40349,14 @@
       "mode": "raw diff"
     },
     {
+      "path": "scripts/lib/declaration-source-maps.mjs",
+      "mode": "custom downstream package declaration normalization/interface"
+    },
+    {
+      "path": "scripts/lib/declaration-source-maps.d.mts",
+      "mode": "custom downstream package declaration normalization/interface"
+    },
+    {
       "path": ".review-packets/tia314/01-code.json",
       "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
     },
@@ -40653,6 +40661,10 @@
       "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
     },
     {
+      "path": ".review-packets/tia314/77-generated-map.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
       "path": ".review-packets/tia314/README.md",
       "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
     },
@@ -40707,7 +40719,7 @@
     ],
     "Markdown_qualification": "Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.",
     "OCR_carry": "Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.",
-    "final_main_source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+    "final_main_source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
     "identical_queue_squash_tree": "34d345e35d45df8fc931cfd2aa7312fbe0ae5a99"
   },
   "generated_output_review_policy": {
@@ -40807,11 +40819,11 @@
     }
   ],
   "hosted_delivery": {
-    "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+    "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
     "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
-    "source_adaptations": 436,
+    "source_adaptations": 438,
     "stock_exclusions": 6420,
-    "packet_metadata_files": 81,
+    "packet_metadata_files": 82,
     "packet_paths": [
       ".review-packets/tia314/01-code.json",
       ".review-packets/tia314/02-code.json",
@@ -40889,6 +40901,7 @@
       ".review-packets/tia314/74-context.json",
       ".review-packets/tia314/75-context.json",
       ".review-packets/tia314/76-context.json",
+      ".review-packets/tia314/77-generated-map.json",
       ".review-packets/tia314/README.md",
       ".review-packets/tia314/index.json",
       ".review-packets/tia314/hosted-config.yaml",
@@ -40896,7 +40909,7 @@
       ".review-packets/tia314/initial-description.md"
     ],
     "encoding": "Existing canonical UTF-8 JSON string arrays, exact target identities and bounded contexts; generated shared transforms plus every mapping; no unchanged stock algorithm audit.",
-    "current_metadata_review_pending": 82,
+    "current_metadata_review_pending": 83,
     "no_circular_digest": "Packet body hashes are not embedded here. Actual metadata head is bound by the coordinator after commit."
   }
 }

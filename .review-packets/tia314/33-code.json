@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -11,22 +11,36 @@
     "view": "parent-relative custom diff",
     "before": null,
     "after": {
+     "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "660723c0326aa6dcba0dd451d7ef81049ad2e133"
+     "blob": "16485212feed36a7dc9c9e66d791796ed95ef934",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
-    "actual_sha256": "34b3650162a7aceb595ae7ea2b0c361d0fa11e1427058ea312e8cbbcffaa4edb",
-    "canonical_patch_sha256": "03263e10bc4aa0e2b6f3564744287b754ec94515266e5feb3ef4c0f42fd100f6",
-    "canonical_patch_bytes": 2203684
+    "actual_sha256": "9bb917e77d819f067dcaf3a55235dc4c6c08f7e0a3a1706f6419fd757da3b176",
+    "canonical_patch_sha256": "2eef0ce99fba48ff3fe4736ab9ee68828e735a935c19af51794817673bd22115",
+    "canonical_patch_bytes": 2224497
    },
    "fragment": {
     "part": 18,
     "parts": 42,
-    "line_start": 15237,
-    "line_end": 16104,
-    "sha256": "d646797a97bf81f0dead315844c97854ce75621b5f6efab90b916b2d6ae16926"
+    "line_start": 15227,
+    "line_end": 16091,
+    "sha256": "698568836d1d8b392a1bb557b6ceed98bff4195884d865a78ffb1d241d5555be"
    },
    "canonical_patch_lines": [
+    "+      \"pin_sha256\": \"003c15171be15132bfa7cd7aaae84b998cbf1a9f8ccb1e29b15463e9e0425800\",\n",
+    "+      \"head_sha256\": \"003c15171be15132bfa7cd7aaae84b998cbf1a9f8ccb1e29b15463e9e0425800\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/migration_oxlintrc_jsonc/snapshots.toml\",\n",
+    "+      \"base_sha256\": null,\n",
+    "+      \"pin_sha256\": \"d349ce4319e9ca699ca79a6ba2f1b12c9988f8412726654cb859120ed695614e\",\n",
+    "+      \"head_sha256\": \"d349ce4319e9ca699ca79a6ba2f1b12c9988f8412726654cb859120ed695614e\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/migration_oxlintrc_jsonc/snapshots/migration_oxlintrc_jsonc.md\",\n",
+    "+      \"base_sha256\": null,\n",
+    "+      \"pin_sha256\": \"9266a7d405d6ad81a62ef4c4f315785e1c44db59218e5dbb028a639e65f146f7\",\n",
     "+      \"head_sha256\": \"9266a7d405d6ad81a62ef4c4f315785e1c44db59218e5dbb028a639e65f146f7\"\n",
     "+    },\n",
     "+    {\n",
@@ -878,23 +892,7 @@
     "+    {\n",
     "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/migration_standalone_npm/snapshots/migration_standalone_npm.md\",\n",
     "+      \"base_sha256\": null,\n",
-    "+      \"pin_sha256\": \"739a6f0f945bd48dfaec6bb7af5e987c7d731972eb3c16f38d534d238e1fb177\",\n",
-    "+      \"head_sha256\": \"739a6f0f945bd48dfaec6bb7af5e987c7d731972eb3c16f38d534d238e1fb177\"\n",
-    "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/migration_standalone_pnpm/.gitignore\",\n",
-    "+      \"base_sha256\": null,\n",
-    "+      \"pin_sha256\": \"4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97\",\n",
-    "+      \"head_sha256\": \"4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97\"\n",
-    "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/migration_standalone_pnpm/package.json\",\n",
-    "+      \"base_sha256\": null,\n",
-    "+      \"pin_sha256\": \"07908810064aa31ef00cdc67e50bb94320532e68855bd3165e781be61c04af26\",\n",
-    "+      \"head_sha256\": \"07908810064aa31ef00cdc67e50bb94320532e68855bd3165e781be61c04af26\"\n",
-    "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/migration_standalone_pnpm/snapshots.toml\",\n"
+    "+      \"pin_sha256\": \"739a6f0f945bd48dfaec6bb7af5e987c7d731972eb3c16f38d534d238e1fb177\",\n"
    ]
   }
  ]

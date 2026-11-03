@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -10,14 +10,16 @@
     "path": ".coderabbit.yaml",
     "view": "parent-relative custom diff",
     "before": {
+     "path": ".coderabbit.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "28c19494f97326a510fbee7179c2b757d0ef947a"
+     "blob": "28c19494f97326a510fbee7179c2b757d0ef947a",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": ".coderabbit.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "d1da63034c2388e099a29ea642040356f848ad42"
+     "blob": "d1da63034c2388e099a29ea642040356f848ad42",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "7b43811da58cfbf92cde721bfa8926f52b096efd9767c520178192aeb0f7c417",
     "canonical_patch_sha256": "4edfe41deedee4b04ed535de3cbd3f432faf7252d1ebaf8dadab753f15fde205",
@@ -26,11 +28,22 @@
    "fragment": {
     "part": 11,
     "parts": 14,
-    "line_start": 4483,
-    "line_end": 4991,
-    "sha256": "04cf22c1ce3a7cfcc32ec99b08b2a40d4364b3a71245564fb0a3332d4803fb7c"
+    "line_start": 4472,
+    "line_end": 4979,
+    "sha256": "7a84074c3c31cf47aad6538c1e8d8228fcbe1e488aee4d31736a15f674e46eef"
    },
    "canonical_patch_lines": [
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm10-with-workspace/steps.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm10/package.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm10/snap.txt\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm10/steps.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm11-with-workspace/package.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm11-with-workspace/packages/app/package.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm11-with-workspace/packages/utils/package.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm11-with-workspace/pnpm-workspace.yaml\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm11-with-workspace/snap.txt\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm11-with-workspace/steps.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm11/package.json\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm11/snap.txt\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-pnpm11/steps.json\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-remove-yarn4-with-workspace/package.json\"\n",
@@ -527,19 +540,7 @@
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-json/.lintstagedrc.json\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-json/package.json\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-json/snap.txt\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-json/steps.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-merge-fail/.lintstagedrc.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-merge-fail/package.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-merge-fail/snap.txt\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-merge-fail/steps.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-merge-fail/vite.config.ts\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-not-support/.lintstagedrc\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-not-support/.lintstagedrc.yaml\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-not-support/lint-staged.config.mjs\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-not-support/package.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-not-support/snap.txt\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-not-support/steps.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-staged-exists/.lintstagedrc.json\"\n"
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-lintstagedrc-json/steps.json\"\n"
    ]
   }
  ]

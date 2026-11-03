@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -10,14 +10,16 @@
     "path": ".coderabbit.yaml",
     "view": "parent-relative custom diff",
     "before": {
+     "path": ".coderabbit.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "28c19494f97326a510fbee7179c2b757d0ef947a"
+     "blob": "28c19494f97326a510fbee7179c2b757d0ef947a",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": ".coderabbit.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "d1da63034c2388e099a29ea642040356f848ad42"
+     "blob": "d1da63034c2388e099a29ea642040356f848ad42",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "7b43811da58cfbf92cde721bfa8926f52b096efd9767c520178192aeb0f7c417",
     "canonical_patch_sha256": "4edfe41deedee4b04ed535de3cbd3f432faf7252d1ebaf8dadab753f15fde205",
@@ -26,11 +28,12 @@
    "fragment": {
     "part": 2,
     "parts": 14,
-    "line_start": 534,
-    "line_end": 950,
-    "sha256": "6ccc323f16d4e3d1b6f784067d7390bddaf360e233cedd0554f6d41c8625381c"
+    "line_start": 533,
+    "line_end": 948,
+    "sha256": "3a10f08088f66e1d07977727dcb4b9b4996bb2f8d40222431dc2ec0a21de5660"
    },
    "canonical_patch_lines": [
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/check_lint_fail/snapshots/check_force_color_zero.md\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/check_lint_fail/snapshots/check_lint_fail.md\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/check_lint_fail/snapshots/check_no_color.md\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/check_lint_fail/src/index.js\"\n",
@@ -445,9 +448,7 @@
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_env_package_manager_mismatch/snapshots/env_pin_warns_when_package_manager_differs.md\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_env_package_manager_mismatch/snapshots/env_use_does_not_warn_for_different_default.md\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_env_package_manager_mismatch/snapshots/env_use_warns_when_package_manager_differs.md\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_env_package_manager_modes/print-doctor-configuration.cjs\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_env_package_manager_modes/snapshots.toml\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_env_package_manager_modes/snapshots/command_env_doctor_package_manager_modes.md\"\n"
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_env_package_manager_modes/print-doctor-configuration.cjs\"\n"
    ]
   }
  ]

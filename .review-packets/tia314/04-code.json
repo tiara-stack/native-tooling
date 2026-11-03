@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -10,14 +10,16 @@
     "path": ".coderabbit.yaml",
     "view": "parent-relative custom diff",
     "before": {
+     "path": ".coderabbit.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "28c19494f97326a510fbee7179c2b757d0ef947a"
+     "blob": "28c19494f97326a510fbee7179c2b757d0ef947a",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": ".coderabbit.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "d1da63034c2388e099a29ea642040356f848ad42"
+     "blob": "d1da63034c2388e099a29ea642040356f848ad42",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "7b43811da58cfbf92cde721bfa8926f52b096efd9767c520178192aeb0f7c417",
     "canonical_patch_sha256": "4edfe41deedee4b04ed535de3cbd3f432faf7252d1ebaf8dadab753f15fde205",
@@ -26,11 +28,14 @@
    "fragment": {
     "part": 4,
     "parts": 14,
-    "line_start": 1368,
-    "line_end": 1777,
-    "sha256": "654c9ed14fa754932194b46e66576969fbab747cf0fba42ef742e97914cc05a6"
+    "line_start": 1365,
+    "line_end": 1774,
+    "sha256": "15a726884cecf0d677ce2e40ad34131fcf49a1a992869a54c51e0f174e478687"
    },
    "canonical_patch_lines": [
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_publish_yarn1/snapshots/command_publish_yarn1.md\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_publish_yarn4/package.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_publish_yarn4/snapshots.toml\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_publish_yarn4/snapshots/command_publish_yarn4.md\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_rebuild_pnpm11/package.json\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_rebuild_pnpm11/snapshots.toml\"\n",
@@ -437,10 +442,7 @@
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/create_from_nonworkspace_subdir/snapshots.toml\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/create_from_nonworkspace_subdir/snapshots/create_from_nonworkspace_subdir.md\"\n",
     "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/create_generator_monorepo/assert_noninteractive.mjs\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/create_generator_monorepo/package.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/create_generator_monorepo/pnpm-workspace.yaml\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/create_generator_monorepo/snapshots.toml\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/create_generator_monorepo/snapshots/create_generator_monorepo.md\"\n"
+    "+    - \"!packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/create_generator_monorepo/package.json\"\n"
    ]
   }
  ]

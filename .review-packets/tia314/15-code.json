@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -11,9 +11,10 @@
     "view": "parent-relative custom diff",
     "before": null,
     "after": {
+     "path": "docs/review/TIA-314/custom-source.patch",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "a93743ef9ed23d846c38137eee9c31564f85e90f"
+     "blob": "a93743ef9ed23d846c38137eee9c31564f85e90f",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "0092edde3a8815aa7d9fcdd9d6e4b88f54c1c9caafe50a213767e0b1c6b112bc",
     "canonical_patch_sha256": "16d01cbbb07954f3928692c3ae47f36cc4fbfd6a025da125fbaac0a474cf74fe",

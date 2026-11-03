@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -10,14 +10,16 @@
     "path": ".coderabbit.yaml",
     "view": "parent-relative custom diff",
     "before": {
+     "path": ".coderabbit.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "28c19494f97326a510fbee7179c2b757d0ef947a"
+     "blob": "28c19494f97326a510fbee7179c2b757d0ef947a",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": ".coderabbit.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "d1da63034c2388e099a29ea642040356f848ad42"
+     "blob": "d1da63034c2388e099a29ea642040356f848ad42",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "7b43811da58cfbf92cde721bfa8926f52b096efd9767c520178192aeb0f7c417",
     "canonical_patch_sha256": "4edfe41deedee4b04ed535de3cbd3f432faf7252d1ebaf8dadab753f15fde205",
@@ -26,11 +28,26 @@
    "fragment": {
     "part": 13,
     "parts": 14,
-    "line_start": 5484,
-    "line_end": 6052,
-    "sha256": "5d7aef516463154892d5394d04a453b0add29e535cdddad8647a9fbee031c351"
+    "line_start": 5469,
+    "line_end": 6035,
+    "sha256": "fb231d24ff394ebe1cc3e53fd7e4175eda4c2251d7d17875c9481cbe3067f3af"
    },
    "canonical_patch_lines": [
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-todo/command-pack-watch-restart/steps.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-todo/command-pack-watch-restart/vite.config.ts\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-todo/command-pack-watch-restart/wait-for-dist.sh\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-todo/command-pack-watch-restart/wait-for-dist2.sh\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-todo/exit-non-zero-on-cmd-not-exists/package.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-todo/exit-non-zero-on-cmd-not-exists/snap.txt\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-todo/exit-non-zero-on-cmd-not-exists/steps.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-todo/pnpm-install-with-options/package.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-todo/pnpm-install-with-options/snap.txt\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests-todo/pnpm-install-with-options/steps.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/.shared/mock-npm-registry.mjs\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/bin-oxfmt-wrapper/package.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/bin-oxfmt-wrapper/snap.txt\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/bin-oxfmt-wrapper/steps.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/bin-oxlint-wrapper/package.json\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/bin-oxlint-wrapper/snap.txt\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/bin-oxlint-wrapper/steps.json\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/build-vite-env/index.html\"\n",
@@ -582,24 +599,7 @@
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/test-panicked-fix/steps.json\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/test-vi-mock-hoist/package.json\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/test-vi-mock-hoist/snap.txt\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/test-vi-mock-hoist/src/dep.ts\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/test-vi-mock-hoist/src/vi-mock-hoist.test.ts\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/test-vi-mock-hoist/steps.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-config-task/package.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-config-task/snap.txt\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-config-task/steps.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-config-task/vite.config.ts\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async-test/my-vitest-plugin.ts\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async-test/package.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async-test/snap.txt\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async-test/src/index.test.ts\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async-test/steps.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async-test/vite.config.ts\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async/index.html\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async/my-plugin.ts\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async/package.json\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async/snap.txt\"\n",
-    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async/steps.json\"\n"
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/test-vi-mock-hoist/src/dep.ts\"\n"
    ]
   }
  ]

@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -10,14 +10,16 @@
     "path": "pnpm-lock.yaml",
     "view": "parent-relative custom diff",
     "before": {
+     "path": "pnpm-lock.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "89b4ac7fe15166b604895e306b33be74176a1da9"
+     "blob": "89b4ac7fe15166b604895e306b33be74176a1da9",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": "pnpm-lock.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "6fe834caacf610083141f9c71f000cd4e67aabd9"
+     "blob": "6fe834caacf610083141f9c71f000cd4e67aabd9",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "a04f805b9a939e7d027e31d02988ed83139272923b3955eb702eed4203d3109c",
     "canonical_patch_sha256": "e9978eb6413a17cc071f7a1cdface073cfb8f93160661e1bd33978c4def397c1",
@@ -26,11 +28,12 @@
    "fragment": {
     "part": 2,
     "parts": 4,
-    "line_start": 1163,
-    "line_end": 2354,
-    "sha256": "95ee93aded5a38e2c37a39c57201377302f3f5eda4dc15e64b2c7edea553df2b"
+    "line_start": 1162,
+    "line_end": 2348,
+    "sha256": "1b4d36cb29e87548ebbe90b29cd8bd4b0e72010cbf1e8916314e4f184a896f19"
    },
    "canonical_patch_lines": [
+    "+    resolution: {integrity: sha512-ys4jy3cP+OibJRyM7cKXJPukb89Q0MbYUVAWjTyQlaboEi4EjOwAkbh9467Dk+ycMH3F/B9DrmXJAMBT4504xA==}\n",
     "+    hasBin: true\n",
     "+    peerDependencies:\n",
     "+      '@vitejs/devtools-oxc': ^0.7.6\n",
@@ -1216,13 +1219,7 @@
     "+    hasBin: true\n",
     "+\n",
     "+  serialize-error@12.0.0:\n",
-    "+    resolution: {integrity: sha512-ZYkZLAvKTKQXWuh5XpBw7CdbSzagarX39WyZ2H07CDLC5/KfsRGlIXV8d4+tfqX1M7916mRqR1QfNHSij+c9Pw==}\n",
-    "+    engines: {node: '>=18'}\n",
-    "+\n",
-    "+  setimmediate@1.0.5:\n",
-    "+    resolution: {integrity: sha512-MATJdZp8sLqDl/68LfQmbP8zKPLQNV6BIZoIgrscFDQ+RsvK/BxeDQOgyxKKoh0y/8h3BqVFnCqQ/gd+reiIXA==}\n",
-    "+\n",
-    "+  shebang-command@2.0.0:\n"
+    "+    resolution: {integrity: sha512-ZYkZLAvKTKQXWuh5XpBw7CdbSzagarX39WyZ2H07CDLC5/KfsRGlIXV8d4+tfqX1M7916mRqR1QfNHSij+c9Pw==}\n"
    ]
   }
  ]

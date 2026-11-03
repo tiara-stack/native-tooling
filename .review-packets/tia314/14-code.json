@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -10,14 +10,16 @@
     "path": ".coderabbit.yaml",
     "view": "parent-relative custom diff",
     "before": {
+     "path": ".coderabbit.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "28c19494f97326a510fbee7179c2b757d0ef947a"
+     "blob": "28c19494f97326a510fbee7179c2b757d0ef947a",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": ".coderabbit.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "d1da63034c2388e099a29ea642040356f848ad42"
+     "blob": "d1da63034c2388e099a29ea642040356f848ad42",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "7b43811da58cfbf92cde721bfa8926f52b096efd9767c520178192aeb0f7c417",
     "canonical_patch_sha256": "4edfe41deedee4b04ed535de3cbd3f432faf7252d1ebaf8dadab753f15fde205",
@@ -26,11 +28,28 @@
    "fragment": {
     "part": 14,
     "parts": 14,
-    "line_start": 6053,
+    "line_start": 6036,
     "line_end": 6440,
-    "sha256": "4364feb22a1625d02af1c5aaa03d5332c3d400afc2f05542e20079b5482ea32e"
+    "sha256": "736330e02641f252ee4e19b68c73410546e0a8c198b3c0b039ba5921f934995d"
    },
    "canonical_patch_lines": [
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/test-vi-mock-hoist/src/vi-mock-hoist.test.ts\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/test-vi-mock-hoist/steps.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-config-task/package.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-config-task/snap.txt\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-config-task/steps.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-config-task/vite.config.ts\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async-test/my-vitest-plugin.ts\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async-test/package.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async-test/snap.txt\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async-test/src/index.test.ts\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async-test/steps.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async-test/vite.config.ts\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async/index.html\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async/my-plugin.ts\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async/package.json\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async/snap.txt\"\n",
+    "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async/steps.json\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-async/vite.config.ts\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-exec-build/build.mjs\"\n",
     "+    - \"!packages/vite-plus-effect-fork/packages/cli/snap-tests/vite-plugins-exec-build/index.html\"\n",
@@ -428,9 +447,10 @@
     "view": "parent-relative custom diff",
     "before": null,
     "after": {
+     "path": ".gitattributes",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "268a8b1636262f1322129e8b8c94693901c41bd7"
+     "blob": "268a8b1636262f1322129e8b8c94693901c41bd7",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "db946feec18d7b57d2fdd668aa1880347f38ea2564df00505d7e943d26163b29",
     "canonical_patch_sha256": "f2a6594c9f3b5758150d4edf3c608ad8df1bafc4b5e8d3b78de1a243c3bcb355",
@@ -464,14 +484,16 @@
     "path": ".github/workflows/ci.yml",
     "view": "parent-relative custom diff",
     "before": {
+     "path": ".github/workflows/ci.yml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "6c16287b5344e9cf9cb9cc25fcca5b8397068105"
+     "blob": "6c16287b5344e9cf9cb9cc25fcca5b8397068105",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": ".github/workflows/ci.yml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "51971a5e958ea257f01b921e02bdf3977fb4796d"
+     "blob": "51971a5e958ea257f01b921e02bdf3977fb4796d",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "f0c6361dce5a767bd8968cd0366dbb0b6d0893225aa664aa3a9f5457810fad3a",
     "canonical_patch_sha256": "92340fd503b937730b89a0c715ed7e79b0d4358b6b8796aeb6ec6f05db6959aa",
@@ -567,14 +589,16 @@
     "path": ".github/workflows/publish.yml",
     "view": "parent-relative custom diff",
     "before": {
+     "path": ".github/workflows/publish.yml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "292c9b6c102e8213eace3ce84e35718d297edcc0"
+     "blob": "292c9b6c102e8213eace3ce84e35718d297edcc0",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": ".github/workflows/publish.yml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "caa52af064c96fe890db552271edada61306eb32"
+     "blob": "caa52af064c96fe890db552271edada61306eb32",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "6b3635366da91cebbfcd4a8b33c8c96bb7e9a635e4ec22eb99e20c8c4681d226",
     "canonical_patch_sha256": "6167554836d27f16084a4f7f03f631e635d13f5ad6a763d78420e39a688f90f3",
@@ -666,14 +690,16 @@
     "path": ".github/workflows/vite-plus.yml",
     "view": "parent-relative custom diff",
     "before": {
+     "path": ".github/workflows/vite-plus.yml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "cef16512209db4b8ebb3f7f68a548f74c3886d82"
+     "blob": "cef16512209db4b8ebb3f7f68a548f74c3886d82",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": ".github/workflows/vite-plus.yml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "5e11d3861e0cfa9d246842d6727092649db33f6a"
+     "blob": "5e11d3861e0cfa9d246842d6727092649db33f6a",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "80dde983ae8e6d331b216f2b6f53eafcbfadde756ec6c95fed4d24a4b7a77241",
     "canonical_patch_sha256": "d18b924231e36bd7af23e4552ca8069245c3b282566154e566eb13e5fbe3ed89",
@@ -770,14 +796,16 @@
     "path": "README.md",
     "view": "parent-relative custom diff",
     "before": {
+     "path": "README.md",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "c9c02bbfc503ed3575edd07b29249c2e9125711a"
+     "blob": "c9c02bbfc503ed3575edd07b29249c2e9125711a",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": "README.md",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "46d5822a69a0281634defa1e2e22ecf9fdd2d9bb"
+     "blob": "46d5822a69a0281634defa1e2e22ecf9fdd2d9bb",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "3df76b3d0ff631d4853d49dbac89812635853639f14c5f68610628d8ed9992a8",
     "canonical_patch_sha256": "d76f850b97253d816baaa21f79ccc7550c3ff51b271215bf071d46be732291aa",

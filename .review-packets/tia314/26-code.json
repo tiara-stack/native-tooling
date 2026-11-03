@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -11,22 +11,32 @@
     "view": "parent-relative custom diff",
     "before": null,
     "after": {
+     "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "660723c0326aa6dcba0dd451d7ef81049ad2e133"
+     "blob": "16485212feed36a7dc9c9e66d791796ed95ef934",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
-    "actual_sha256": "34b3650162a7aceb595ae7ea2b0c361d0fa11e1427058ea312e8cbbcffaa4edb",
-    "canonical_patch_sha256": "03263e10bc4aa0e2b6f3564744287b754ec94515266e5feb3ef4c0f42fd100f6",
-    "canonical_patch_bytes": 2203684
+    "actual_sha256": "9bb917e77d819f067dcaf3a55235dc4c6c08f7e0a3a1706f6419fd757da3b176",
+    "canonical_patch_sha256": "2eef0ce99fba48ff3fe4736ab9ee68828e735a935c19af51794817673bd22115",
+    "canonical_patch_bytes": 2224497
    },
    "fragment": {
     "part": 11,
     "parts": 42,
-    "line_start": 9126,
-    "line_end": 10001,
-    "sha256": "be8cb19f58b69174463f953221a858dce49d1222717a7451d9bd087b5a301553"
+    "line_start": 9120,
+    "line_end": 9995,
+    "sha256": "b8f9abe5352ddf511b925cf062f7280bfff1a35ad6d2bed4c739ff3269341b9b"
    },
    "canonical_patch_lines": [
+    "+      \"head_sha256\": \"4a2dc60b04ef955e46517316ecb61a5dfe97d201e6afaa1fab8a785bdc71b39b\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_update_catalog_protocol_legacy_key/.gitignore\",\n",
+    "+      \"base_sha256\": null,\n",
+    "+      \"pin_sha256\": \"4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97\",\n",
+    "+      \"head_sha256\": \"4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97\"\n",
+    "+    },\n",
+    "+    {\n",
     "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_update_catalog_protocol_legacy_key/package.json\",\n",
     "+      \"base_sha256\": null,\n",
     "+      \"pin_sha256\": \"98a06ab01f6519213c40cb85df3560c0a2e604b88f856aaad89c3ca76bdaa9a3\",\n",
@@ -893,16 +903,7 @@
     "+    {\n",
     "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_why_yarn4/package.json\",\n",
     "+      \"base_sha256\": null,\n",
-    "+      \"pin_sha256\": \"ddb3977698f3a4c7df0f48ed1030ec4943bb70b07e32bdb8539e5ad5e13123f0\",\n",
-    "+      \"head_sha256\": \"ddb3977698f3a4c7df0f48ed1030ec4943bb70b07e32bdb8539e5ad5e13123f0\"\n",
-    "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_why_yarn4/snapshots.toml\",\n",
-    "+      \"base_sha256\": null,\n",
-    "+      \"pin_sha256\": \"b9c78da1fa1697e4f4e3a275559f9c4528d21968a294dabc21b5abd9b2399437\",\n",
-    "+      \"head_sha256\": \"b9c78da1fa1697e4f4e3a275559f9c4528d21968a294dabc21b5abd9b2399437\"\n",
-    "+    },\n",
-    "+    {\n"
+    "+      \"pin_sha256\": \"ddb3977698f3a4c7df0f48ed1030ec4943bb70b07e32bdb8539e5ad5e13123f0\",\n"
    ]
   }
  ]

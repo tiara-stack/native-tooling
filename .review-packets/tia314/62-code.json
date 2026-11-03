@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -10,14 +10,16 @@
     "path": "pnpm-lock.yaml",
     "view": "parent-relative custom diff",
     "before": {
+     "path": "pnpm-lock.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "89b4ac7fe15166b604895e306b33be74176a1da9"
+     "blob": "89b4ac7fe15166b604895e306b33be74176a1da9",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
     },
     "after": {
+     "path": "pnpm-lock.yaml",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "6fe834caacf610083141f9c71f000cd4e67aabd9"
+     "blob": "6fe834caacf610083141f9c71f000cd4e67aabd9",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
     "actual_sha256": "a04f805b9a939e7d027e31d02988ed83139272923b3955eb702eed4203d3109c",
     "canonical_patch_sha256": "e9978eb6413a17cc071f7a1cdface073cfb8f93160661e1bd33978c4def397c1",
@@ -26,11 +28,23 @@
    "fragment": {
     "part": 4,
     "parts": 4,
-    "line_start": 3623,
+    "line_start": 3611,
     "line_end": 5062,
-    "sha256": "883a92bc17eff72e9db4bb57fada985f0b68a70d111657dbe05ce24369a20a8a"
+    "sha256": "59d72433a4e686101f4dca57cdc2b5e83c9731e06adc88f21bb1a320f55d527a"
    },
    "canonical_patch_lines": [
+    "+    optional: true\n",
+    "+\n",
+    "+  '@yuku-parser/binding-android-arm64@0.9.5':\n",
+    "+    optional: true\n",
+    "+\n",
+    "+  '@yuku-parser/binding-darwin-arm64@0.9.5':\n",
+    "+    optional: true\n",
+    "+\n",
+    "+  '@yuku-parser/binding-darwin-x64@0.9.5':\n",
+    "+    optional: true\n",
+    "+\n",
+    "+  '@yuku-parser/binding-freebsd-x64@0.9.5':\n",
     "+    optional: true\n",
     "+\n",
     "+  '@yuku-parser/binding-linux-arm-gnu@0.9.5':\n",

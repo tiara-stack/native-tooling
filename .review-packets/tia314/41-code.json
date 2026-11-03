@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "612306d6d19225524e5a6e90c8ca58f38dcb3016",
+ "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -11,22 +11,49 @@
     "view": "parent-relative custom diff",
     "before": null,
     "after": {
+     "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "kind": "blob",
-     "blob": "660723c0326aa6dcba0dd451d7ef81049ad2e133"
+     "blob": "16485212feed36a7dc9c9e66d791796ed95ef934",
+     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
     },
-    "actual_sha256": "34b3650162a7aceb595ae7ea2b0c361d0fa11e1427058ea312e8cbbcffaa4edb",
-    "canonical_patch_sha256": "03263e10bc4aa0e2b6f3564744287b754ec94515266e5feb3ef4c0f42fd100f6",
-    "canonical_patch_bytes": 2203684
+    "actual_sha256": "9bb917e77d819f067dcaf3a55235dc4c6c08f7e0a3a1706f6419fd757da3b176",
+    "canonical_patch_sha256": "2eef0ce99fba48ff3fe4736ab9ee68828e735a935c19af51794817673bd22115",
+    "canonical_patch_bytes": 2224497
    },
    "fragment": {
     "part": 26,
     "parts": 42,
-    "line_start": 22268,
-    "line_end": 23287,
-    "sha256": "203f1d3af524ab6ea87d9e7a4fd8f2da3d262f288431dee8827268ebb0e25105"
+    "line_start": 22245,
+    "line_end": 23265,
+    "sha256": "8ba39255a98fc4b34cb9c4712270823d64a1e285e9078b7805ce2a566f8beeb4"
    },
    "canonical_patch_lines": [
+    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_global_cli/src/commands/env/setup.rs\",\n",
+    "+      \"base_sha256\": null,\n",
+    "+      \"pin_sha256\": \"7d2372d38f652bcd5a3fda6fc86ae4129aec8ac01c9fddb4bcb7e647f2793127\",\n",
+    "+      \"head_sha256\": \"7d2372d38f652bcd5a3fda6fc86ae4129aec8ac01c9fddb4bcb7e647f2793127\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_global_cli/src/commands/env/setup/unix.rs\",\n",
+    "+      \"base_sha256\": null,\n",
+    "+      \"pin_sha256\": \"76e00cd8020a7c202857549d632066c27f755cf79492dd524bd53699156bab06\",\n",
+    "+      \"head_sha256\": \"76e00cd8020a7c202857549d632066c27f755cf79492dd524bd53699156bab06\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_global_cli/src/commands/env/spec.rs\",\n",
+    "+      \"base_sha256\": null,\n",
+    "+      \"pin_sha256\": \"2ddce38c71c582c2391caa92efdfcccaeef46dc71102c2c1fb3fc595a74462e3\",\n",
+    "+      \"head_sha256\": \"2ddce38c71c582c2391caa92efdfcccaeef46dc71102c2c1fb3fc595a74462e3\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_global_cli/src/commands/env/unpin.rs\",\n",
+    "+      \"base_sha256\": null,\n",
+    "+      \"pin_sha256\": \"b3e4d9d37270c1b736f9d35f131f9e5dfe8746376c3effa70130d42e93127c9c\",\n",
+    "+      \"head_sha256\": \"b3e4d9d37270c1b736f9d35f131f9e5dfe8746376c3effa70130d42e93127c9c\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_global_cli/src/commands/env/use.rs\",\n",
+    "+      \"base_sha256\": null,\n",
     "+      \"pin_sha256\": \"7850ff856cfd1876fe1a8cb54d92d3ff680f4c8e396737aab4c59d6e649d27b4\",\n",
     "+      \"head_sha256\": \"7850ff856cfd1876fe1a8cb54d92d3ff680f4c8e396737aab4c59d6e649d27b4\"\n",
     "+    },\n",
@@ -1021,32 +1048,7 @@
     "+      \"head_sha256\": \"202dd3cc40e693776a253f03736bce75f8676d1b9b579a91ec76a5d92cab67de\"\n",
     "+    },\n",
     "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/docs/.gitignore\",\n",
-    "+      \"base_sha256\": \"724fa83ff9da2c85372cb88f186b3b4bc7e359774f1f1ac5c4165b00b5cfc521\",\n",
-    "+      \"pin_sha256\": \"4f9278d2735581c46a1afa71e3e0c6a501b0dc4dce2c013a2ba4807c88d5a035\",\n",
-    "+      \"head_sha256\": \"4f9278d2735581c46a1afa71e3e0c6a501b0dc4dce2c013a2ba4807c88d5a035\"\n",
-    "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/docs/.vitepress/config.mts\",\n",
-    "+      \"base_sha256\": \"28e51af5fb104145d7ce4cbec262d41c5faefeed25c2523ade58f177a9846a87\",\n",
-    "+      \"pin_sha256\": \"b0899bd920d2b70c32b4152a4a508bf6211507e4adf1ecfd37b297743a4108fe\",\n",
-    "+      \"head_sha256\": \"b0899bd920d2b70c32b4152a4a508bf6211507e4adf1ecfd37b297743a4108fe\"\n",
-    "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/docs/.vitepress/env.d.ts\",\n",
-    "+      \"base_sha256\": \"725af38a7134340987bc32ac22b2e170aec0d60df9a9b9280b7e24ba4bd1e37e\",\n",
-    "+      \"pin_sha256\": \"6ced823d13252ee9eaf05a94cec092a34ce031745d827c1b4abab104643a8e5c\",\n",
-    "+      \"head_sha256\": \"6ced823d13252ee9eaf05a94cec092a34ce031745d827c1b4abab104643a8e5c\"\n",
-    "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/docs/.vitepress/scripts/copy-installers.mjs\",\n",
-    "+      \"base_sha256\": null,\n",
-    "+      \"pin_sha256\": \"71890b8da22942e628eb5d0bf6c59c93333a3f7531b5065fcb8027bb1ab2b72d\",\n",
-    "+      \"head_sha256\": \"71890b8da22942e628eb5d0bf6c59c93333a3f7531b5065fcb8027bb1ab2b72d\"\n",
-    "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/docs/.vitepress/site-origin.ts\",\n",
-    "+      \"base_sha256\": null,\n"
+    "+      \"path\": \"packages/vite-plus-effect-fork/docs/.gitignore\",\n"
    ]
   }
  ]
