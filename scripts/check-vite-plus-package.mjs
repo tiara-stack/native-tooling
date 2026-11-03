@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { access, readFile, readdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = dirname(fileURLToPath(new URL("../package.json", import.meta.url)));
 const packageRoot = join(root, "packages/vite-plus");
@@ -42,6 +42,29 @@ assert.equal(helper.peerDependencies["@tiara-stack/vite-plus"], `>=${pkg.version
 assert.equal(helper.peerDependencies.effect, "^4.0.1");
 assert.equal(helper.peerDependencies.vitest, ">=5.0.0 <6.0.0");
 assert.equal(helper.peerDependenciesMeta.vitest.optional, true);
+
+const missingDeclarationMaps = [];
+for (const name of ["effect-vitest", "oxlint-effect", "tsgo-effect", "tsgolint-effect"]) {
+  const directory = join(root, "packages", name);
+  const manifest = JSON.parse(await readFile(join(directory, "package.json"), "utf8"));
+  const declarations = exportPaths(manifest.exports).filter((path) => /\.d\.[cm]?ts$/.test(path));
+  assert.ok(declarations.length, `${name} must export its declarations`);
+  for (const declaration of declarations) {
+    const path = join(directory, declaration);
+    const text = await readFile(path, "utf8");
+    for (const [, reference] of text.matchAll(/^\/\/[#@]\s*sourceMappingURL=(\S+)\s*$/gm)) {
+      const map = new URL(reference, pathToFileURL(path));
+      if (map.protocol !== "file:") continue;
+      try {
+        await access(map);
+      } catch (error) {
+        if (error.code !== "ENOENT") throw error;
+        missingDeclarationMaps.push(`${name}/${declaration}: ${reference}`);
+      }
+    }
+  }
+}
+assert.deepEqual(missingDeclarationMaps, [], "Exported declarations reference missing source maps");
 
 for (const [directory, manifest] of [
   [packageRoot, pkg],

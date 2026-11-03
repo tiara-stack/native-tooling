@@ -5,11 +5,34 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { test } from "node:test";
+import { removeMissingDeclarationMapReferences } from "../lib/declaration-source-maps.mjs";
 
 const generator = fileURLToPath(new URL("../sync-effect-vitest.mjs", import.meta.url));
 const upstreamReadme = fileURLToPath(
   new URL("../../packages/effect-smol-fork/packages/vitest/README.md", import.meta.url),
 );
+
+test("package normalization removes only missing local declaration-map references", async () => {
+  const root = mkdtempSync(join(tmpdir(), "declaration-source-maps-"));
+  try {
+    const declaration = "export declare const value: number;\n";
+    const valid = `${declaration}//# sourceMappingURL=present.d.cts.map\n`;
+    const inline = `${declaration}//# sourceMappingURL=data:application/json;base64,e30=\n`;
+    const javascript = "export const value = 1;\n//# sourceMappingURL=missing.mjs.map\n";
+    writeFileSync(join(root, "missing.d.mts"), `${declaration}//# sourceMappingURL=missing.map\n`);
+    writeFileSync(join(root, "present.d.cts"), valid);
+    writeFileSync(join(root, "present.d.cts.map"), "{}");
+    writeFileSync(join(root, "inline.d.ts"), inline);
+    writeFileSync(join(root, "index.mjs"), javascript);
+    await removeMissingDeclarationMapReferences(root);
+    assert.equal(readFileSync(join(root, "missing.d.mts"), "utf8"), declaration);
+    assert.equal(readFileSync(join(root, "present.d.cts"), "utf8"), valid);
+    assert.equal(readFileSync(join(root, "inline.d.ts"), "utf8"), inline);
+    assert.equal(readFileSync(join(root, "index.mjs"), "utf8"), javascript);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
 
 function fixture(runner) {
   const root = mkdtempSync(join(tmpdir(), "effect-vitest-sync-"));

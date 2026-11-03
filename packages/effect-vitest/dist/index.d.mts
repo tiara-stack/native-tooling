@@ -234,4 +234,3 @@ export declare const makeMethods: <ExtraContext>(it: V.TestAPI<ExtraContext>) =>
  */
 export declare const describeWrapped: (name: string, f: (it: Vitest.Methods) => void) => V.SuiteCollector;
 //#endregion
-//# sourceMappingURL=index.d.mts.map

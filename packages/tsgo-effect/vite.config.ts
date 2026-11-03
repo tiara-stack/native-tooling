@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite-plus";
+import { removeMissingDeclarationMapReferences } from "../../scripts/lib/declaration-source-maps.mjs";
 
 export default defineConfig({
   pack: {
@@ -12,6 +13,11 @@ export default defineConfig({
     },
     dts: {
       generator: "tsc",
+      sourcemap: false,
+    },
+    hooks: {
+      "build:done": () =>
+        removeMissingDeclarationMapReferences(fileURLToPath(new URL("dist", import.meta.url))),
     },
   },
   lint: {
