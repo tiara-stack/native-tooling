@@ -625,3 +625,125 @@ test(
     }
   },
 );
+
+for (const signal of ["SIGINT", "SIGTERM"]) {
+  for (const phase of [
+    "resolve-config",
+    "child-write",
+    "child-published",
+    "root-published",
+    "spawn",
+    "cleanup",
+  ]) {
+    test(`native lint adapter handles ${signal} during ${phase}`, () => {
+      const fixture = adapterFixture();
+      try {
+        const preloader = join(fixture.directory, "signal.mjs");
+        writeFileSync(
+          preloader,
+          [
+            'import fs from "node:fs/promises";',
+            'import cp from "node:child_process";',
+            'import { syncBuiltinESMExports } from "node:module";',
+            `const phase = ${JSON.stringify(phase)}, signal = ${JSON.stringify(signal)};`,
+            "const original = { open: fs.open, rename: fs.rename, unlink: fs.unlink, spawn: cp.spawn };",
+            "let interrupted = false;",
+            "async function interrupt() {",
+            "  if (interrupted) return;",
+            "  interrupted = true; process.kill(process.pid, signal);",
+            "  await new Promise((done) => setTimeout(done, 100));",
+            "}",
+            'const owned = (path) => String(path).includes(".tiara-oxlint-");',
+            "fs.open = async (path, ...args) => {",
+            "  const handle = await original.open(path, ...args);",
+            "  const write = handle.writeFile.bind(handle);",
+            "  handle.writeFile = async (...args) => {",
+            "    const result = await write(...args);",
+            '    if (phase === "child-write" && owned(path) && !String(path).endsWith("-root.json.writing")) await interrupt();',
+            "    return result;",
+            "  };",
+            "  return handle;",
+            "};",
+            "fs.rename = async (from, to) => {",
+            "  const result = await original.rename(from, to);",
+            '  if (owned(to) && ((phase === "child-published" && !String(to).endsWith("-root.json")) || (phase === "root-published" && String(to).endsWith("-root.json")))) await interrupt();',
+            "  return result;",
+            "};",
+            "fs.unlink = async (path) => {",
+            '  if (phase === "cleanup" && owned(path)) await interrupt();',
+            "  return original.unlink(path);",
+            "};",
+            "cp.spawn = (...args) => {",
+            "  const child = original.spawn(...args);",
+            '  if (phase === "spawn") process.kill(process.pid, signal);',
+            "  return child;",
+            "};",
+            "syncBuiltinESMExports();",
+          ].join("\n"),
+        );
+        writeFileSync(
+          join(fixture.directory, "vite.config.ts"),
+          (phase === "resolve-config"
+            ? `process.kill(process.pid, ${JSON.stringify(signal)}); await new Promise((done) => setTimeout(done, 100));\n`
+            : "") +
+            'export default { lint: { extends: [{ rules: { "no-console": "warn" } }] } };\n',
+        );
+        const result = spawnSync(process.execPath, ["--import", preloader, adapter], {
+          cwd: fixture.directory,
+          encoding: "utf8",
+          env: { ...fixture.env, TIARA_TEST_EXIT: "7" },
+          timeout: 10000,
+        });
+        assert.equal(result.error, undefined, result.stderr);
+        assert.deepEqual(temporaryConfigs(fixture.directory), []);
+        assert.equal(result.signal, null, result.stderr);
+        if (phase === "cleanup") {
+          assert.equal(result.status, 7, result.stderr);
+          assert.equal(existsSync(fixture.record), true);
+        } else if (phase === "spawn") {
+          assert.ok([7, signal === "SIGINT" ? 130 : 143].includes(result.status));
+        } else {
+          assert.equal(result.status, signal === "SIGINT" ? 130 : 143, result.stderr);
+          assert.equal(existsSync(fixture.record), false);
+        }
+      } finally {
+        rmSync(fixture.directory, { recursive: true, force: true });
+      }
+    });
+  }
+}
+
+test("native lint adapter forwards SIGINT to an active native reader before cleanup", async () => {
+  const fixture = adapterFixture();
+  let child;
+  let exited;
+  try {
+    writeFileSync(
+      join(fixture.directory, "vite.config.ts"),
+      'export default { lint: { extends: [{ rules: { "no-console": "warn" } }] } };\n',
+    );
+    child = spawn(process.execPath, [adapter, "--lsp"], {
+      cwd: fixture.directory,
+      env: fixture.env,
+      stdio: ["ignore", "ignore", "pipe"],
+    });
+    let stderr = "";
+    child.stderr.on("data", (bytes) => {
+      stderr += bytes;
+    });
+    exited = new Promise((done, reject) => {
+      child.once("error", reject);
+      child.once("exit", (code, signal) => done({ code, signal }));
+    });
+    await waitFor(() => existsSync(fixture.record));
+    child.kill("SIGINT");
+    assert.deepEqual(await exited, { code: 130, signal: null }, stderr);
+    assert.deepEqual(temporaryConfigs(fixture.directory), []);
+  } finally {
+    if (child && child.exitCode === null) {
+      child.kill("SIGTERM");
+      await exited;
+    }
+    rmSync(fixture.directory, { recursive: true, force: true });
+  }
+});

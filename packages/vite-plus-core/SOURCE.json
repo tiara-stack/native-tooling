@@ -14605,7 +14605,7 @@
     "crates/vp_trampoline/src/cmdline.rs": "d836be8b88ff26e2bb6fd1e96d64e9e8cc319dad031bc9116d238ea9897026f8",
     "crates/vp_trampoline/src/main.rs": "c28b77426b62090a3f889592fa4f009ff1d3e6b5afb0dfb6414a4a49854a3979",
     "crates/vp_trampoline/src/win.rs": "495959eb5e2dc003effc991eb21e0e2213f11d47311faa4d8e685ebfdf0b1f33",
-    "packages/cli/bin/tiara-oxlint.mjs": "0dda0364e9cf28c14712d18134792a4c47ac92eaf26fcbb72457c893a507edf0",
+    "packages/cli/bin/tiara-oxlint.mjs": "12ec88e88dfe902551ef816381a34a18084345644f35455f8c09ac7fa2cb252a",
     "packages/cli/bin/vp": "a44bf8b7327c9e98e6efe20d246dad893ef5565d69d10ff202d5c75ba76d14b3",
     "packages/cli/bin/vpr": "1ee0e64efcfb4faed356f511a899ca0cfdae1c11c1509c5f927ee926e9040150",
     "packages/cli/binding/Cargo.toml": "dc05475b357b8b9e66456da3f44bdf058aba75cc3ea6b158f5d6fe38705fc188",
@@ -15997,21 +15997,21 @@
     ],
     "packageManagerLaunch": "project-scoped private Corepack shims",
     "directPackInput": {
-      "baseline_ref": "f8920e2401de3249832cc1f276e34bf92c53d52d",
+      "baseline_ref": "98f7bd9cacc913b54d6b81b19f5798cde2b5c8b3",
       "baseline_path": "packages/vite-plus/SOURCE.json",
-      "baseline_manifest_sha256": "9f5e1f25ac42d82be287cc03b9e7d9c3ddfb5427fb42a6356dfecac3d9ef94b3",
+      "baseline_manifest_sha256": "ee3198d4abaa368926b9122638a39d80dea5755a19d332e3aa89e628b489557f",
       "changed_inputs": {
         "packages/cli/bin/tiara-oxlint.mjs": {
-          "before": "2a768f6ff83c383921cd6ad67e7a85d06440622da4b637f5b30c238ed89aaf58",
-          "after": "0dda0364e9cf28c14712d18134792a4c47ac92eaf26fcbb72457c893a507edf0"
+          "before": "0dda0364e9cf28c14712d18134792a4c47ac92eaf26fcbb72457c893a507edf0",
+          "after": "12ec88e88dfe902551ef816381a34a18084345644f35455f8c09ac7fa2cb252a"
         }
       },
       "compiled_outputs": "All359exact; direct executable input is not compiled into them.",
       "evidence": {
-        "path": "/opt/data/worktrees/native-tooling/t3-62588537/.tmp/TIA-314/cli-hosted-repair-r7/producer-impact.json",
-        "sha256": "a6eacc0bf9093d9e8e6cae3d8bbbc6fb562af8389159b548d6fce590f7421180"
+        "path": "/opt/data/worktrees/native-tooling/t3-62588537/.tmp/TIA-314/ocr-signal-repair-r13/producer-impact.json",
+        "sha256": "a299ed05159d51d47501a3db457e4e8a0ac617b45960779b54a65bf97bea39d6"
       },
-      "qualification": "Existing completed source/native compilation is unchanged reuse. Actual new pack/sync consumes the changed executable. No native or JavaScript/type rebuild claimed."
+      "qualification": "Only the direct-packed executable changes. Its bin path, resolve-lint interface, compilation entrypoints, nested lock and dependencies remain exact. New startup/exit regression code is not a compilation input. Actual scoped sync/pack and lifecycle consumers are required; this is producer reuse, not a clean CI build."
     }
   }
 }

@@ -169,6 +169,7 @@ async function prepareViteConfig(path) {
     return config;
   }
   const config = await refresh();
+  if (closing) return;
   const options = [];
   for (const [key, value] of Object.entries(config.lint?.options ?? {})) {
     const flag = "--" + key.replace(/[A-Z]/g, (letter) => "-" + letter.toLowerCase());
@@ -186,32 +187,43 @@ async function prepareViteConfig(path) {
   preparedArgs = [...options, "--config", rootFile, ...remaining];
 }
 
+let child;
+const handlers = new Map(
+  ["SIGINT", "SIGTERM"].map((signal) => [
+    signal,
+    () => {
+      closing = true;
+      if (child) child.kill(signal);
+      else process.exitCode = 128 + constants.signals[signal];
+    },
+  ]),
+);
+// Own interruption before creating snapshots and until cleanup has settled.
+for (const [signal, handler] of handlers) process.on(signal, handler);
 try {
   if (configPath && viteNames.includes(basename(configPath)))
     await prepareViteConfig(resolve(configPath));
-  const child = spawn(native, preparedArgs, { stdio: "inherit", env: process.env });
-  const handlers = new Map(
-    ["SIGINT", "SIGTERM"].map((signal) => [signal, () => child.kill(signal)]),
-  );
-  for (const [signal, handler] of handlers) process.on(signal, handler);
-  try {
+  if (!closing) {
+    child = spawn(native, preparedArgs, { stdio: "inherit", env: process.env });
     const result = await new Promise((done, reject) => {
       child.once("error", reject);
       child.once("exit", (code, signal) => done({ code, signal }));
     });
     process.exitCode = result.code ?? 128 + (constants.signals[result.signal] ?? 1);
-  } finally {
-    for (const [signal, handler] of handlers) process.off(signal, handler);
   }
 } finally {
   closing = true;
   for (const path of watched) unwatchFile(path);
-  await updates;
-  await Promise.all(
-    [...temporary].map((file) =>
-      unlink(file).catch((error) => {
-        if (error.code !== "ENOENT") throw error;
-      }),
-    ),
-  );
+  try {
+    await updates;
+    await Promise.all(
+      [...temporary].map((file) =>
+        unlink(file).catch((error) => {
+          if (error.code !== "ENOENT") throw error;
+        }),
+      ),
+    );
+  } finally {
+    for (const [signal, handler] of handlers) process.off(signal, handler);
+  }
 }
