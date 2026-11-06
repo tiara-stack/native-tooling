@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import {
+  mkdirSync,
   mkdtempSync,
   readFileSync,
   readdirSync,
@@ -22,6 +23,7 @@ for (const configuration of [false, true, "type-aware", "type-aware-cli"]) {
     `native LSP applies Vite config initially and on refresh, workspace/configuration=${configuration}`,
     { timeout: 40000 },
     async () => {
+      mkdirSync(join(root, ".tmp"), { recursive: true });
       const directory = mkdtempSync(join(root, ".tmp/lsp-handoff-"));
       const uri = pathToFileURL(directory).href;
       const typed = String(configuration).startsWith("type-aware");

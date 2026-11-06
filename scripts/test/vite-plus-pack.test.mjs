@@ -1,6 +1,14 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -11,6 +19,7 @@ const pack =
   join(root, "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts");
 for (const kind of ["null", "legacy", "path", "options-only", "oxc", "oxc-legacy"]) {
   test(`declaration compiler selection respects ${kind}`, () => {
+    mkdirSync(join(root, ".tmp"), { recursive: true });
     const directory = mkdtempSync(join(root, ".tmp/dts-native-"));
     try {
       const compiler = join(directory, "tsgo.mjs"),
