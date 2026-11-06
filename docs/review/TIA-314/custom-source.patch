@@ -18,10 +18,10 @@ index 0000000000..9356e6a14c
 +	cmdver = 0.4.9
 diff --git aworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs bworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs
 new file mode 100755
-index 0000000000..408f1ffe82
+index 0000000000..78de3ae84a
 --- /dev/null
 +++ bworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs
-@@ -0,0 +1,217 @@
+@@ -0,0 +1,229 @@
 +#!/usr/bin/env node
 +import { spawn } from "node:child_process";
 +import { createHash, randomUUID } from "node:crypto";
@@ -193,6 +193,7 @@ index 0000000000..408f1ffe82
 +    return config;
 +  }
 +  const config = await refresh();
++  if (closing) return;
 +  const options = [];
 +  for (const [key, value] of Object.entries(config.lint?.options ?? {})) {
 +    const flag = "--" + key.replace(/[A-Z]/g, (letter) => "-" + letter.toLowerCase());
@@ -210,34 +211,45 @@ index 0000000000..408f1ffe82
 +  preparedArgs = [...options, "--config", rootFile, ...remaining];
 +}
 +
++let child;
++const handlers = new Map(
++  ["SIGINT", "SIGTERM"].map((signal) => [
++    signal,
++    () => {
++      closing = true;
++      if (child) child.kill(signal);
++      else process.exitCode = 128 + constants.signals[signal];
++    },
++  ]),
++);
++// Own interruption before creating snapshots and until cleanup has settled.
++for (const [signal, handler] of handlers) process.on(signal, handler);
 +try {
 +  if (configPath && viteNames.includes(basename(configPath)))
 +    await prepareViteConfig(resolve(configPath));
-+  const child = spawn(native, preparedArgs, { stdio: "inherit", env: process.env });
-+  const handlers = new Map(
-+    ["SIGINT", "SIGTERM"].map((signal) => [signal, () => child.kill(signal)]),
-+  );
-+  for (const [signal, handler] of handlers) process.on(signal, handler);
-+  try {
++  if (!closing) {
++    child = spawn(native, preparedArgs, { stdio: "inherit", env: process.env });
 +    const result = await new Promise((done, reject) => {
 +      child.once("error", reject);
 +      child.once("exit", (code, signal) => done({ code, signal }));
 +    });
 +    process.exitCode = result.code ?? 128 + (constants.signals[result.signal] ?? 1);
-+  } finally {
-+    for (const [signal, handler] of handlers) process.off(signal, handler);
 +  }
 +} finally {
 +  closing = true;
 +  for (const path of watched) unwatchFile(path);
-+  await updates;
-+  await Promise.all(
-+    [...temporary].map((file) =>
-+      unlink(file).catch((error) => {
-+        if (error.code !== "ENOENT") throw error;
-+      }),
-+    ),
-+  );
++  try {
++    await updates;
++    await Promise.all(
++      [...temporary].map((file) =>
++        unlink(file).catch((error) => {
++          if (error.code !== "ENOENT") throw error;
++        }),
++      ),
++    );
++  } finally {
++    for (const [signal, handler] of handlers) process.off(signal, handler);
++  }
 +}
 diff --git apinned/packages/cli/package.json bworking/packages/vite-plus-effect-fork/packages/cli/package.json
 index ea09ecb84f..9284730d47 100644
