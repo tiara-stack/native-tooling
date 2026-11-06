@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "eb392e52d245e87982ccc951ad7b638325693e07",
+ "source_epoch": "4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,19 +13,19 @@
     "after": {
      "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "blob": "c83bc33ac651d1b3a37a522eeccfab6192f56bd6",
-     "ref": "eb392e52d245e87982ccc951ad7b638325693e07"
+     "blob": "b31776b3fd3a934f04b6bba8464a046b5df7e7c1",
+     "ref": "4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f"
     },
-    "actual_sha256": "62980713f78162a57d43d8e91ecd4d0ad139b749933ec547bc46065142c5c474",
-    "canonical_patch_sha256": "d535753a945cae04e2b8a2ae9d600c0badb3ef7899d21dd80945753ade6e822a",
-    "canonical_patch_bytes": 2227293
+    "actual_sha256": "900b9927e670837bd1318782cbb7bb2ae958d224ef94079d82c52e379edb554e",
+    "canonical_patch_sha256": "efb79b79ca4f1081dae958f05275d8e88c8d70559362a768b9957e3b4f034c7b",
+    "canonical_patch_bytes": 2227703
    },
    "fragment": {
     "part": 42,
     "parts": 42,
     "line_start": 40150,
-    "line_end": 40929,
-    "sha256": "b48ab1149e05e6b669d21c8599c3af3b16a49b6dcb7a1a1a1fa19ead389d7f24"
+    "line_end": 40939,
+    "sha256": "f095d34a3765d44eb76f0deec84613a8d0477053124363ae1fed63db9dab345e"
    },
    "canonical_patch_lines": [
     "+    },\n",
@@ -560,6 +560,14 @@
     "+      \"mode\": \"hosted delivery metadata; decoded source coverage and selection require verification\"\n",
     "+    },\n",
     "+    {\n",
+    "+      \"path\": \".review-packets/tia314/78-code.json\",\n",
+    "+      \"mode\": \"hosted delivery metadata; decoded source coverage and selection require verification\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \".review-packets/tia314/79-code.json\",\n",
+    "+      \"mode\": \"hosted delivery metadata; decoded source coverage and selection require verification\"\n",
+    "+    },\n",
+    "+    {\n",
     "+      \"path\": \".review-packets/tia314/README.md\",\n",
     "+      \"mode\": \"hosted delivery metadata; decoded source coverage and selection require verification\"\n",
     "+    },\n",
@@ -614,7 +622,7 @@
     "+    ],\n",
     "+    \"Markdown_qualification\": \"Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.\",\n",
     "+    \"OCR_carry\": \"Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.\",\n",
-    "+    \"final_main_source_epoch\": \"d66300261e57366cbea6a8e8ea0a99ce8632d548\",\n",
+    "+    \"final_main_source_epoch\": \"eb392e52d245e87982ccc951ad7b638325693e07\",\n",
     "+    \"identical_queue_squash_tree\": \"34d345e35d45df8fc931cfd2aa7312fbe0ae5a99\"\n",
     "+  },\n",
     "+  \"generated_output_review_policy\": {\n",
@@ -714,11 +722,11 @@
     "+    }\n",
     "+  ],\n",
     "+  \"hosted_delivery\": {\n",
-    "+    \"source_epoch\": \"d66300261e57366cbea6a8e8ea0a99ce8632d548\",\n",
+    "+    \"source_epoch\": \"eb392e52d245e87982ccc951ad7b638325693e07\",\n",
     "+    \"base\": \"e088d5c9784d2779684d02524fab62a0fa5e656a\",\n",
     "+    \"source_adaptations\": 440,\n",
     "+    \"stock_exclusions\": 6420,\n",
-    "+    \"packet_metadata_files\": 82,\n",
+    "+    \"packet_metadata_files\": 84,\n",
     "+    \"packet_paths\": [\n",
     "+      \".review-packets/tia314/01-code.json\",\n",
     "+      \".review-packets/tia314/02-code.json\",\n",
@@ -797,6 +805,8 @@
     "+      \".review-packets/tia314/75-context.json\",\n",
     "+      \".review-packets/tia314/76-context.json\",\n",
     "+      \".review-packets/tia314/77-generated-map.json\",\n",
+    "+      \".review-packets/tia314/78-code.json\",\n",
+    "+      \".review-packets/tia314/79-code.json\",\n",
     "+      \".review-packets/tia314/README.md\",\n",
     "+      \".review-packets/tia314/index.json\",\n",
     "+      \".review-packets/tia314/hosted-config.yaml\",\n",
@@ -804,7 +814,7 @@
     "+      \".review-packets/tia314/initial-description.md\"\n",
     "+    ],\n",
     "+    \"encoding\": \"Existing canonical UTF-8 JSON string arrays, exact target identities and bounded contexts; generated shared transforms plus every mapping; no unchanged stock algorithm audit.\",\n",
-    "+    \"current_metadata_review_pending\": 83,\n",
+    "+    \"current_metadata_review_pending\": 85,\n",
     "+    \"no_circular_digest\": \"Packet body hashes are not embedded here. Actual metadata head is bound by the coordinator after commit.\"\n",
     "+  }\n",
     "+}\n"
@@ -825,7 +835,7 @@
      "path": "package.json",
      "mode": "100644",
      "blob": "236258207e180836ecdac5e9484e4a99ad25ca32",
-     "ref": "eb392e52d245e87982ccc951ad7b638325693e07"
+     "ref": "4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f"
     },
     "actual_sha256": "fb453917e9b65d2f4e4c7a91b51e1cf0cd956699808b89652c54a71727d0b282",
     "canonical_patch_sha256": "1a3285dd3a0516f88813836fc3c100551ad885cb6b63e6683695221afd6af2fd",
@@ -889,7 +899,7 @@
      "path": "packages/effect-vitest/vite.config.ts",
      "mode": "100644",
      "blob": "ef9255c15835b6317e12ca7011382d0efbb8aa47",
-     "ref": "eb392e52d245e87982ccc951ad7b638325693e07"
+     "ref": "4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f"
     },
     "actual_sha256": "294a7b7290644d43eee9c0debc5b66197cd36d4b791c056d0bc728f11cc6baa4",
     "canonical_patch_sha256": "407ebbcdaa68421272484ec2b2805843d74fa062ccbaee9edeadcabffc13b656",
@@ -945,7 +955,7 @@
      "path": "packages/oxlint-effect/vite.config.ts",
      "mode": "100644",
      "blob": "8b20cb42b74780de187b04c81e35b8a935daef10",
-     "ref": "eb392e52d245e87982ccc951ad7b638325693e07"
+     "ref": "4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f"
     },
     "actual_sha256": "25cc82cf16cfd1c6e95ce8268f36a46a14473d1c5d61ae367501a0ccf56f4812",
     "canonical_patch_sha256": "31dfa7162c250ad3c0a378dc5b610f605eb9b366a22fb3af4657d83dc52eb38a",
@@ -1001,7 +1011,7 @@
      "path": "packages/tsgo-effect/vite.config.ts",
      "mode": "100644",
      "blob": "8b20cb42b74780de187b04c81e35b8a935daef10",
-     "ref": "eb392e52d245e87982ccc951ad7b638325693e07"
+     "ref": "4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f"
     },
     "actual_sha256": "25cc82cf16cfd1c6e95ce8268f36a46a14473d1c5d61ae367501a0ccf56f4812",
     "canonical_patch_sha256": "37c9380aa3d721420417526cf74ff240323644a5eb2d27948d1cbf3420cb8d52",
@@ -1057,7 +1067,7 @@
      "path": "packages/tsgolint-effect/vite.config.ts",
      "mode": "100644",
      "blob": "8b20cb42b74780de187b04c81e35b8a935daef10",
-     "ref": "eb392e52d245e87982ccc951ad7b638325693e07"
+     "ref": "4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f"
     },
     "actual_sha256": "25cc82cf16cfd1c6e95ce8268f36a46a14473d1c5d61ae367501a0ccf56f4812",
     "canonical_patch_sha256": "fae54b4cf2e004c738bb53f60ab0268027bdc08c6acd302fa45761f8fb461a59",
@@ -1108,7 +1118,7 @@
      "path": "packages/vite-plus-effect-fork/.gitrepo",
      "mode": "100644",
      "blob": "9356e6a14cc33e234214c27c9d619fae097db8a4",
-     "ref": "eb392e52d245e87982ccc951ad7b638325693e07"
+     "ref": "4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f"
     },
     "actual_sha256": "61beb052d23c47ce33fc4dcf01c48c3dce80de85b5753e93bb23660c532873aa",
     "canonical_patch_sha256": "569eb4efcc8c744e890319ac4b0fdad96d8d676bc311eb2166c09936ba6ea2a9",
