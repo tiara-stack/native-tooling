@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
+ "source_epoch": "67d0071a9d0f22791793fe56ab7f714432e5db49",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,27 +13,27 @@
     "after": {
      "path": "docs/review/TIA-314/custom-source.patch",
      "mode": "100644",
-     "blob": "a93743ef9ed23d846c38137eee9c31564f85e90f",
-     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
+     "blob": "62633e124b5c7f3dc2a14de0c993c0268a87f4c5",
+     "ref": "67d0071a9d0f22791793fe56ab7f714432e5db49"
     },
-    "actual_sha256": "0092edde3a8815aa7d9fcdd9d6e4b88f54c1c9caafe50a213767e0b1c6b112bc",
-    "canonical_patch_sha256": "16d01cbbb07954f3928692c3ae47f36cc4fbfd6a025da125fbaac0a474cf74fe",
-    "canonical_patch_bytes": 48589
+    "actual_sha256": "8a25940d0c43a0dac647a79f217263bb9a2e52a8181cacbd187aad80624f20f2",
+    "canonical_patch_sha256": "12e27ea70b88ca89306bcb691d425e58569807799df0f3181450124c64605068",
+    "canonical_patch_bytes": 48723
    },
    "fragment": {
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 1120,
-    "sha256": "16d01cbbb07954f3928692c3ae47f36cc4fbfd6a025da125fbaac0a474cf74fe"
+    "line_end": 1124,
+    "sha256": "12e27ea70b88ca89306bcb691d425e58569807799df0f3181450124c64605068"
    },
    "canonical_patch_lines": [
     "diff --git a/docs/review/TIA-314/custom-source.patch b/docs/review/TIA-314/custom-source.patch\n",
     "new file mode 100644\n",
-    "index 0000000000..a93743ef9e\n",
+    "index 0000000000..62633e124b\n",
     "--- /dev/null\n",
     "+++ b/docs/review/TIA-314/custom-source.patch\n",
-    "@@ -0,0 +1,1114 @@\n",
+    "@@ -0,0 +1,1118 @@\n",
     "+diff --git aworking/packages/vite-plus-effect-fork/.gitrepo bworking/packages/vite-plus-effect-fork/.gitrepo\n",
     "+new file mode 100644\n",
     "+index 0000000000..9356e6a14c\n",
@@ -537,12 +537,12 @@
     "+       OXLINT_TSGOLINT_PATH: oxlintTsgolintPath,\n",
     "+       // oxlint loads vite.config.ts only to read the `lint` block, so skip the\n",
     "+       // user's Vite plugin factory (lazyPlugins) while it evaluates the config.\n",
-    "+diff --git aworking/packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts\n",
+    "+diff --git apinned/packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts\n",
     "+new file mode 100644\n",
-    "+index 0000000000..3ebe96c567\n",
+    "+index 0000000000..3baf29693f\n",
     "+--- /dev/null\n",
     "++++ bworking/packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts\n",
-    "+@@ -0,0 +1,69 @@\n",
+    "+@@ -0,0 +1,73 @@\n",
     "++import { spawnSync } from 'node:child_process';\n",
     "++import { existsSync, readFileSync } from 'node:fs';\n",
     "++import { createRequire } from 'node:module';\n",
@@ -604,8 +604,12 @@
     "++  while (true) {\n",
     "++    const manifest = join(directory, 'package.json');\n",
     "++    if (existsSync(manifest)) {\n",
-    "++      const pkg = JSON.parse(readFileSync(manifest, 'utf8'));\n",
-    "++      if (pkg.name === '@tiara-stack/native-tooling-monorepo') return directory;\n",
+    "++      try {\n",
+    "++        const pkg = JSON.parse(readFileSync(manifest, 'utf8'));\n",
+    "++        if (pkg?.name === '@tiara-stack/native-tooling-monorepo') return directory;\n",
+    "++      } catch {\n",
+    "++        // Unrelated malformed or unreadable manifests do not identify a source root.\n",
+    "++      }\n",
     "++    }\n",
     "++    const parent = dirname(directory);\n",
     "++    if (parent === directory) return undefined;\n",

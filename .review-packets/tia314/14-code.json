@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
+ "source_epoch": "67d0071a9d0f22791793fe56ab7f714432e5db49",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -19,7 +19,7 @@
      "path": ".coderabbit.yaml",
      "mode": "100644",
      "blob": "d1da63034c2388e099a29ea642040356f848ad42",
-     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
+     "ref": "67d0071a9d0f22791793fe56ab7f714432e5db49"
     },
     "actual_sha256": "7b43811da58cfbf92cde721bfa8926f52b096efd9767c520178192aeb0f7c417",
     "canonical_patch_sha256": "4edfe41deedee4b04ed535de3cbd3f432faf7252d1ebaf8dadab753f15fde205",
@@ -450,7 +450,7 @@
      "path": ".gitattributes",
      "mode": "100644",
      "blob": "268a8b1636262f1322129e8b8c94693901c41bd7",
-     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
+     "ref": "67d0071a9d0f22791793fe56ab7f714432e5db49"
     },
     "actual_sha256": "db946feec18d7b57d2fdd668aa1880347f38ea2564df00505d7e943d26163b29",
     "canonical_patch_sha256": "f2a6594c9f3b5758150d4edf3c608ad8df1bafc4b5e8d3b78de1a243c3bcb355",
@@ -492,23 +492,23 @@
     "after": {
      "path": ".github/workflows/ci.yml",
      "mode": "100644",
-     "blob": "51971a5e958ea257f01b921e02bdf3977fb4796d",
-     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
+     "blob": "9ec11cbb3c90f61b0a937828b1b9b536fa4005b4",
+     "ref": "67d0071a9d0f22791793fe56ab7f714432e5db49"
     },
-    "actual_sha256": "f0c6361dce5a767bd8968cd0366dbb0b6d0893225aa664aa3a9f5457810fad3a",
-    "canonical_patch_sha256": "92340fd503b937730b89a0c715ed7e79b0d4358b6b8796aeb6ec6f05db6959aa",
-    "canonical_patch_bytes": 2160
+    "actual_sha256": "166903de58540a566c44bc1dca2b849ed2b61a231e1477a0487591d339703fb6",
+    "canonical_patch_sha256": "3ee345380ee0ebf2e7032a5c20bba72df7ed5274bfe2a33363dc4d30c1e8970e",
+    "canonical_patch_bytes": 2307
    },
    "fragment": {
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 74,
-    "sha256": "92340fd503b937730b89a0c715ed7e79b0d4358b6b8796aeb6ec6f05db6959aa"
+    "line_end": 77,
+    "sha256": "3ee345380ee0ebf2e7032a5c20bba72df7ed5274bfe2a33363dc4d30c1e8970e"
    },
    "canonical_patch_lines": [
     "diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml\n",
-    "index 6c16287b53..51971a5e95 100644\n",
+    "index 6c16287b53..9ec11cbb3c 100644\n",
     "--- a/.github/workflows/ci.yml\n",
     "+++ b/.github/workflows/ci.yml\n",
     "@@ -69,12 +69,10 @@ jobs:\n",
@@ -527,7 +527,7 @@
     " \n",
     "       - name: Setup Go\n",
     "         uses: actions/setup-go@v5\n",
-    "@@ -94,23 +92,17 @@ jobs:\n",
+    "@@ -94,32 +92,35 @@ jobs:\n",
     "         with:\n",
     "           workspaces: native/oxc-oxlint-effect-fork\n",
     " \n",
@@ -556,9 +556,12 @@
     "+        run: pnpm native:build\n",
     " \n",
     "       - name: Verify native compiler and diagnostic protocol\n",
-    "         run: vp run -w native:test:backend\n",
-    "@@ -119,7 +111,16 @@ jobs:\n",
-    "         run: vp run -w native:test:oxlint\n",
+    "-        run: vp run -w native:test:backend\n",
+    "+        run: pnpm exec vp run -w native:test:backend\n",
+    " \n",
+    "       - name: Verify Effect rules through the native Oxlint CLI\n",
+    "-        run: vp run -w native:test:oxlint\n",
+    "+        run: pnpm exec vp run -w native:test:oxlint\n",
     " \n",
     "       - name: Stage native binaries\n",
     "-        run: vp run -w native:stage\n",
@@ -597,23 +600,23 @@
     "after": {
      "path": ".github/workflows/publish.yml",
      "mode": "100644",
-     "blob": "caa52af064c96fe890db552271edada61306eb32",
-     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
+     "blob": "4787799a543835711513a572d4f51d2572ab618a",
+     "ref": "67d0071a9d0f22791793fe56ab7f714432e5db49"
     },
-    "actual_sha256": "6b3635366da91cebbfcd4a8b33c8c96bb7e9a635e4ec22eb99e20c8c4681d226",
-    "canonical_patch_sha256": "6167554836d27f16084a4f7f03f631e635d13f5ad6a763d78420e39a688f90f3",
-    "canonical_patch_bytes": 2467
+    "actual_sha256": "8bf231bc33457422a777dda5d9eb82d66d468716a0f21cc13d665345b9f955ec",
+    "canonical_patch_sha256": "d6e36af08860b822acdfbf5ae8a58de161494a0b6d84a4bf3f4226478547bcf0",
+    "canonical_patch_bytes": 3400
    },
    "fragment": {
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 70,
-    "sha256": "6167554836d27f16084a4f7f03f631e635d13f5ad6a763d78420e39a688f90f3"
+    "line_end": 78,
+    "sha256": "d6e36af08860b822acdfbf5ae8a58de161494a0b6d84a4bf3f4226478547bcf0"
    },
    "canonical_patch_lines": [
     "diff --git a/.github/workflows/publish.yml b/.github/workflows/publish.yml\n",
-    "index 292c9b6c10..caa52af064 100644\n",
+    "index 292c9b6c10..4787799a54 100644\n",
     "--- a/.github/workflows/publish.yml\n",
     "+++ b/.github/workflows/publish.yml\n",
     "@@ -45,12 +45,10 @@ jobs:\n",
@@ -632,7 +635,7 @@
     " \n",
     "       - name: Setup Go\n",
     "         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}\n",
-    "@@ -73,19 +71,15 @@ jobs:\n",
+    "@@ -73,27 +71,30 @@ jobs:\n",
     "         with:\n",
     "           workspaces: native/oxc-oxlint-effect-fork\n",
     " \n",
@@ -657,7 +660,8 @@
     " \n",
     "       - name: Verify native compiler and diagnostic protocol\n",
     "         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}\n",
-    "@@ -93,7 +87,14 @@ jobs:\n",
+    "-        run: vp run -w native:test:backend\n",
+    "+        run: pnpm exec vp run -w native:test:backend\n",
     " \n",
     "       - name: Stage native binaries\n",
     "         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}\n",
@@ -673,7 +677,7 @@
     " \n",
     "       - name: Verify package binary resolution\n",
     "         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}\n",
-    "@@ -106,7 +107,7 @@ jobs:\n",
+    "@@ -106,12 +107,12 @@ jobs:\n",
     " \n",
     "       - name: Run native headless smoke test\n",
     "         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}\n",
@@ -681,7 +685,14 @@
     "+        run: pnpm native:smoke\n",
     " \n",
     "       - name: Dry-run staged publish\n",
-    "         if: ${{ github.event_name == 'workflow_dispatch' && inputs['dry-run'] }}\n"
+    "         if: ${{ github.event_name == 'workflow_dispatch' && inputs['dry-run'] }}\n",
+    "-        run: vp pm stage publish -r --filter \"${{ inputs['package-filter'] }}\" --access public --provenance --tag \"${{ inputs.tag }}\" --dry-run -- --no-git-checks\n",
+    "+        run: pnpm exec vp pm stage publish -r --filter \"${{ inputs['package-filter'] }}\" --access public --provenance --tag \"${{ inputs.tag }}\" --dry-run -- --no-git-checks\n",
+    " \n",
+    "       - name: Stage packages for npm trusted publishing\n",
+    "         if: ${{ github.event_name != 'workflow_dispatch' || !inputs['dry-run'] }}\n",
+    "-        run: vp pm stage publish -r --filter \"${{ inputs['package-filter'] || './packages/*' }}\" --access public --provenance --tag \"${{ inputs.tag || 'latest' }}\" -- --no-git-checks\n",
+    "+        run: pnpm exec vp pm stage publish -r --filter \"${{ inputs['package-filter'] || './packages/*' }}\" --access public --provenance --tag \"${{ inputs.tag || 'latest' }}\" -- --no-git-checks\n"
    ]
   },
   {
@@ -699,7 +710,7 @@
      "path": ".github/workflows/vite-plus.yml",
      "mode": "100644",
      "blob": "5e11d3861e0cfa9d246842d6727092649db33f6a",
-     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
+     "ref": "67d0071a9d0f22791793fe56ab7f714432e5db49"
     },
     "actual_sha256": "80dde983ae8e6d331b216f2b6f53eafcbfadde756ec6c95fed4d24a4b7a77241",
     "canonical_patch_sha256": "d18b924231e36bd7af23e4552ca8069245c3b282566154e566eb13e5fbe3ed89",
@@ -804,23 +815,23 @@
     "after": {
      "path": "README.md",
      "mode": "100644",
-     "blob": "46d5822a69a0281634defa1e2e22ecf9fdd2d9bb",
-     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
+     "blob": "0f9d3fd5e13a19aaada5e7a13379df4627e82c1e",
+     "ref": "67d0071a9d0f22791793fe56ab7f714432e5db49"
     },
-    "actual_sha256": "3df76b3d0ff631d4853d49dbac89812635853639f14c5f68610628d8ed9992a8",
-    "canonical_patch_sha256": "d76f850b97253d816baaa21f79ccc7550c3ff51b271215bf071d46be732291aa",
-    "canonical_patch_bytes": 4360
+    "actual_sha256": "43b5605742f4d0d6a4883fb00ad2c4542634752f1bb2eb5bd77c7a28da2f5f3d",
+    "canonical_patch_sha256": "3c0e720a453a19fed51ce5f87b35d22e642b61ffe240b18e1e59322c4d80271a",
+    "canonical_patch_bytes": 4662
    },
    "fragment": {
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 92,
-    "sha256": "d76f850b97253d816baaa21f79ccc7550c3ff51b271215bf071d46be732291aa"
+    "line_end": 100,
+    "sha256": "3c0e720a453a19fed51ce5f87b35d22e642b61ffe240b18e1e59322c4d80271a"
    },
    "canonical_patch_lines": [
     "diff --git a/README.md b/README.md\n",
-    "index c9c02bbfc5..46d5822a69 100644\n",
+    "index c9c02bbfc5..0f9d3fd5e1 100644\n",
     "--- a/README.md\n",
     "+++ b/README.md\n",
     "@@ -8,6 +8,7 @@ This repo owns the native forks and publishable npm package boundaries for:\n",
@@ -899,7 +910,15 @@
     " \n",
     " ## Publishing Shape\n",
     " \n",
-    "@@ -125,7 +142,7 @@ vp pm stage approve <stage-id>\n",
+    "@@ -110,6 +127,7 @@ publisher entry:\n",
+    " - package: `@tiara-stack/oxlint-effect`\n",
+    " - package: `@tiara-stack/effect-vitest`\n",
+    " - package: `@tiara-stack/vite-plus`\n",
+    "+- package: `@tiara-stack/vite-plus-core`\n",
+    " - owner/repository: `tiara-stack/native-tooling`\n",
+    " - workflow file: `publish.yml`\n",
+    " - environment: `npm`\n",
+    "@@ -125,7 +143,7 @@ vp pm stage approve <stage-id>\n",
     " ```\n",
     " \n",
     " The `patches/` directory contains the current consumer-side pnpm patches for\n",

@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
+ "source_epoch": "67d0071a9d0f22791793fe56ab7f714432e5db49",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,12 +13,12 @@
     "after": {
      "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "blob": "16485212feed36a7dc9c9e66d791796ed95ef934",
-     "ref": "e950c30522144df372973a1ac91b8b59c7fd41e6"
+     "blob": "8bf0c596b1bab5395054c60a7d2f8c13eda0232f",
+     "ref": "67d0071a9d0f22791793fe56ab7f714432e5db49"
     },
-    "actual_sha256": "9bb917e77d819f067dcaf3a55235dc4c6c08f7e0a3a1706f6419fd757da3b176",
-    "canonical_patch_sha256": "2eef0ce99fba48ff3fe4736ab9ee68828e735a935c19af51794817673bd22115",
-    "canonical_patch_bytes": 2224497
+    "actual_sha256": "8de58248c5c70a25a97b0f99524bf4d6d5082e966e58e61ccd2525ab33ffebc6",
+    "canonical_patch_sha256": "37dec5531e51fbaef3b2231a25f6b7d60670b3194ed0492581ae59590f02da7d",
+    "canonical_patch_bytes": 2225029
    },
    "fragment": {
     "part": 5,
