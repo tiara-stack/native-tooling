@@ -1,5 +1,5 @@
 import { F as withFilter } from "./shared/define-config-C7HCoqY8.mjs";
-//#region ../../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/@rolldown+pluginutils@1.0.1/node_modules/@rolldown/pluginutils/dist/filter/index.d.mts
+//#region ../../../../../../build-virtual-store/@rolldown+pluginutils@1.0.1/node_modules/@rolldown/pluginutils/dist/filter/index.d.mts
 //#region src/filter/composable-filters.d.ts
 type StringOrRegExp = string | RegExp;
 type PluginModuleType = 'js' | 'jsx' | 'ts' | 'tsx' | 'json' | 'text' | 'base64' | 'dataurl' | 'binary' | 'empty' | (string & {});

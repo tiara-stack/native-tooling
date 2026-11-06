@@ -1,5 +1,5 @@
 import { ft as __commonJSMin } from "./node.js";
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/parse.js
+//#region ../../../../../build-virtual-store/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/parse.js
 var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var openParentheses = "(".charCodeAt(0);
 	var closeParentheses = ")".charCodeAt(0);
@@ -230,7 +230,7 @@ var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	};
 }));
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/walk.js
+//#region ../../../../../build-virtual-store/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/walk.js
 var require_walk = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = function walk(nodes, cb, bubble) {
 		var i = 0, max = nodes.length, node, result;
@@ -243,7 +243,7 @@ var require_walk = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	};
 }));
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/stringify.js
+//#region ../../../../../build-virtual-store/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/stringify.js
 var require_stringify = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	function stringifyNode(node, custom) {
 		var type = node.type;
@@ -276,7 +276,7 @@ var require_stringify = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = stringify;
 }));
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/unit.js
+//#region ../../../../../build-virtual-store/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/unit.js
 var require_unit = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var minus = "-".charCodeAt(0);
 	var plus = "+".charCodeAt(0);
@@ -343,7 +343,7 @@ var require_unit = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	};
 }));
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/index.js
+//#region ../../../../../build-virtual-store/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/index.js
 var require_lib = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var parse = require_parse();
 	var walk = require_walk();

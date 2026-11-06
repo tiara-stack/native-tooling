@@ -1,5 +1,5 @@
 import { n as __toESM, t as require_binding } from "./shared/binding-BY0qR5iS.mjs";
-import { c as PluginContextData, n as bindingifyPlugin } from "./shared/bindingify-input-options-DtiZdigx.mjs";
+import { c as PluginContextData, n as bindingifyPlugin } from "./shared/bindingify-input-options-DPBybJV1.mjs";
 import { parentPort, workerData } from "node:worker_threads";
 //#region src/parallel-plugin-worker.ts
 var import_binding = /* @__PURE__ */ __toESM(require_binding(), 1);

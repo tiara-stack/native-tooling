@@ -567,7 +567,7 @@ interface ResolvedForwardConsoleOptions {
   logLevels: ForwardConsoleLogLevel[];
 }
 //#endregion
-//#region ../../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/http-proxy-3@1.23.3_supports-color@8.1.1/node_modules/http-proxy-3/dist/lib/http-proxy/index.d.ts
+//#region ../../../../../../build-virtual-store/http-proxy-3@1.23.3_supports-color@8.1.1/node_modules/http-proxy-3/dist/lib/http-proxy/index.d.ts
 interface ProxyTargetDetailed {
   host: string;
   port: number;
@@ -755,7 +755,7 @@ declare class ProxyServer<TIncomingMessage extends typeof http.IncomingMessage =
   after: <PT extends ProxyType>(type: PT, passName: string, cb: PassFunctions<TIncomingMessage, TServerResponse, TError>[PT]) => void;
 }
 //#endregion
-//#region ../../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/http-proxy-3@1.23.3_supports-color@8.1.1/node_modules/http-proxy-3/dist/lib/http-proxy/passes/ws-incoming.d.ts
+//#region ../../../../../../build-virtual-store/http-proxy-3@1.23.3_supports-color@8.1.1/node_modules/http-proxy-3/dist/lib/http-proxy/passes/ws-incoming.d.ts
 declare function numOpenSockets(): number;
 declare namespace index_d_exports {
   export { ErrorCallback, ProxyServer, ProxyTarget, ProxyTargetUrl, ServerOptions$3 as ServerOptions, createProxyServer as createProxy, createProxyServer, createProxyServer as createServer, ProxyServer as default, numOpenSockets };
@@ -3130,7 +3130,7 @@ type ResolveIdFn = (environment: PartialEnvironment, id: string, importer?: stri
  */
 export declare function createIdResolver(config: ResolvedConfig, options?: Partial<InternalResolveOptions>): ResolveIdFn;
 //#endregion
-//#region ../../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/postcss-load-config@6.0.1_jiti@2.7.0_postcss@8.5.28_tsx@4.23.15_yaml@2.9.1/node_modules/postcss-load-config/src/index.d.ts
+//#region ../../../../../../build-virtual-store/postcss-load-config@6.0.1_jiti@2.7.0_postcss@8.5.28_tsx@4.23.15_yaml@2.9.1/node_modules/postcss-load-config/src/index.d.ts
 type ConfigPlugin = Transformer | PostCSS.Plugin | Processor;
 interface Config {
   parser?: string | ProcessOptions['parser'] | false;

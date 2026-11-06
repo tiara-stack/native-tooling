@@ -1,5 +1,5 @@
 import "@vite/env";
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/nanoid@5.1.16/node_modules/nanoid/non-secure/index.js
+//#region ../../../../../build-virtual-store/nanoid@5.1.16/node_modules/nanoid/non-secure/index.js
 let urlAlphabet = "useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict";
 let nanoid = (size = 21) => {
 	let id = "";

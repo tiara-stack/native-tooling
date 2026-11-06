@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { sourceEnvironment } from "./lib/vite-plus-source-environment.mjs";
 
 const root = dirname(fileURLToPath(new URL("../package.json", import.meta.url)));
 const source = join(root, "packages/vite-plus-effect-fork");
@@ -166,16 +167,7 @@ function run(command, args, cwd) {
     {
       cwd,
       stdio: "inherit",
-      env: {
-        ...process.env,
-        COREPACK_ENABLE_PROJECT_SPEC: "1",
-        ...(process.env.TIARA_VITE_PLUS_PNPM_STORE_DIR
-          ? { PNPM_CONFIG_STORE_DIR: process.env.TIARA_VITE_PLUS_PNPM_STORE_DIR }
-          : {}),
-        ...(process.env.TIARA_VITE_PLUS_PNPM_VIRTUAL_STORE_DIR
-          ? { PNPM_CONFIG_VIRTUAL_STORE_DIR: process.env.TIARA_VITE_PLUS_PNPM_VIRTUAL_STORE_DIR }
-          : {}),
-      },
+      env: sourceEnvironment(root),
     },
   );
   if (result.error || result.status !== 0)

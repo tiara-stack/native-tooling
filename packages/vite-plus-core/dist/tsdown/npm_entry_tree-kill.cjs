@@ -1,4 +1,4 @@
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/tree-kill@1.2.2/node_modules/tree-kill/index.js
+//#region ../../../../../build-virtual-store/tree-kill@1.2.2/node_modules/tree-kill/index.js
 var require_tree_kill = /* @__PURE__ */ require("./npm_cjs_chunk_rolldown-runtime.cjs").__commonJSMin(((exports, module) => {
 	var childProcess = require("child_process");
 	var spawn = childProcess.spawn;

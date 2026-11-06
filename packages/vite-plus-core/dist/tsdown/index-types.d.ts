@@ -2,7 +2,7 @@ import { TransformOptions } from "lightningcss";
 import * as Rolldown from "@tiara-stack/vite-plus-core/rolldown";
 import { BuildOptions, ChecksOptions, ExternalOption, InputOptions, InternalModuleFormat, MinifyOptions, ModuleFormat, ModuleTypes, OutputAsset, OutputChunk, OutputOptions, Plugin, RolldownPlugin, TreeshakingOptions } from "@tiara-stack/vite-plus-core/rolldown";
 import { IsolatedDeclarationsOptions } from "@tiara-stack/vite-plus-core/rolldown/experimental";
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/hookable@6.1.1/node_modules/hookable/dist/index.d.mts
+//#region ../../../../../build-virtual-store/hookable@6.1.1/node_modules/hookable/dist/index.d.mts
 type HookCallback = (...arguments_: any) => Promise<void> | void;
 type HookKeys<T> = keyof T & string;
 type DeprecatedHook<T> = {
@@ -58,7 +58,7 @@ declare global {
   }
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/rolldown-plugin-dts@0.28.6_@typescript+native-preview@7.0.0-dev.20260605.1_oxc-resolver_d7b1f0f9db662f38e672c8f14bf9ba00/node_modules/rolldown-plugin-dts/dist/custom-language-CFzWzq69.d.mts
+//#region ../../../../../build-virtual-store/rolldown-plugin-dts@0.28.6_@typescript+native-preview@7.0.0-dev.20260605.1_oxc-resolver_d7b1f0f9db662f38e672c8f14bf9ba00/node_modules/rolldown-plugin-dts/dist/custom-language-CFzWzq69.d.mts
 //#region src/custom-language.d.ts
 /** @ts-ignore - TS 7 mismatch */
 type FileExtensionInfo = import("typescript").FileExtensionInfo;
@@ -81,7 +81,7 @@ interface CustomLanguage {
   createVolarPlugins?: Parameters<(typeof import("@volar/typescript"))["proxyCreateProgram"]>[2];
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/get-tsconfig@5.0.0-beta.6/node_modules/get-tsconfig/dist/index.d.mts
+//#region ../../../../../build-virtual-store/get-tsconfig@5.0.0-beta.6/node_modules/get-tsconfig/dist/index.d.mts
 declare namespace TsConfigJson {
   namespace CompilerOptions {
     type JSX = 'preserve' | 'react' | 'react-jsx' | 'react-jsxdev' | 'react-native';
@@ -944,7 +944,7 @@ type TsConfigJson = {
   references?: TsConfigJson.References[];
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/rolldown-plugin-dts@0.28.6_@typescript+native-preview@7.0.0-dev.20260605.1_oxc-resolver_d7b1f0f9db662f38e672c8f14bf9ba00/node_modules/rolldown-plugin-dts/dist/index.d.mts
+//#region ../../../../../build-virtual-store/rolldown-plugin-dts@0.28.6_@typescript+native-preview@7.0.0-dev.20260605.1_oxc-resolver_d7b1f0f9db662f38e672c8f14bf9ba00/node_modules/rolldown-plugin-dts/dist/index.d.mts
 //#region src/tsc/vue.d.ts
 interface VueLanguageOptions {
   /** @ts-ignore - optional dep */
@@ -1134,7 +1134,7 @@ interface TsgoOptions {
   path?: string;
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/@tsdown+exe@0.23.0_tsdown@0.23.0/node_modules/@tsdown/exe/dist/index.d.mts
+//#region ../../../../../build-virtual-store/@tsdown+exe@0.23.0_tsdown@0.23.0/node_modules/@tsdown/exe/dist/index.d.mts
 //#region src/platform.d.ts
 type ExePlatform = "win" | "darwin" | "linux";
 type ExeArch = "x64" | "arm64";
@@ -1182,7 +1182,7 @@ interface ExeExtensionOptions$1 {
   nodeDistIndexUrl?: string;
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/@tsdown+css@0.23.0_jiti@2.7.0_postcss-import@16.2.0_postcss@8.5.28__postcss-modules@9.0_9eb8cb267bbbb73fcfb5dbe1e056f9b1/node_modules/@tsdown/css/dist/index.d.mts
+//#region ../../../../../build-virtual-store/@tsdown+css@0.23.0_jiti@2.7.0_postcss-import@16.2.0_postcss@8.5.28__postcss-modules@9.0_9eb8cb267bbbb73fcfb5dbe1e056f9b1/node_modules/@tsdown/css/dist/index.d.mts
 //#region src/options.d.ts
 type LightningCSSOptions = Omit<TransformOptions<any>, "filename" | "code">;
 type CSSModulesLocalsConvention = "camelCase" | "camelCaseOnly" | "dashes" | "dashesOnly" | ((originalClassName: string, generatedClassName: string, inputFile: string) => string);
@@ -1338,7 +1338,7 @@ interface StylusPreprocessorOptions {
   [key: string]: any;
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_322c16727ed86a15fb2ecef349e911e9/node_modules/tsdown/dist/types-CYHmmaKd.d.mts
+//#region ../../../../../build-virtual-store/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_322c16727ed86a15fb2ecef349e911e9/node_modules/tsdown/dist/types-CYHmmaKd.d.mts
 //#region src/utils/types.d.ts
 type Overwrite<T, U> = Omit<T, keyof U> & U;
 type Awaitable<T> = T | Promise<T>;
@@ -2780,7 +2780,7 @@ type ResolvedConfig = Overwrite<MarkPartial<Omit<UserConfig, "workspace" | "from
   exe: false | ExeOptions;
 }>;
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_322c16727ed86a15fb2ecef349e911e9/node_modules/tsdown/dist/config-DR1wR8P-.d.mts
+//#region ../../../../../build-virtual-store/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_322c16727ed86a15fb2ecef349e911e9/node_modules/tsdown/dist/config-DR1wR8P-.d.mts
 //#region src/config/options.d.ts
 /**
  * Resolve user config into resolved configs
@@ -2801,7 +2801,7 @@ declare function defineConfig(options: UserConfig[]): UserConfig[];
 declare function defineConfig(options: UserConfigFn): UserConfigFn;
 declare function defineConfig(options: UserConfigExport): UserConfigExport;
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_322c16727ed86a15fb2ecef349e911e9/node_modules/tsdown/dist/index.d.mts
+//#region ../../../../../build-virtual-store/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_322c16727ed86a15fb2ecef349e911e9/node_modules/tsdown/dist/index.d.mts
 //#region src/build.d.ts
 /**
  * Build with tsdown.

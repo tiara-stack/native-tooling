@@ -1,5 +1,5 @@
-import { n as x, r as createDebug } from "./main-GtGXvAGN.js";
-import { g as tryParse, n as normalize$1, p as isGreaterOrEqual } from "./version-CQ98ZBpL-BXLNg3pw.js";
+import { n as x, r as createDebug } from "./main-RJSjZfzp.js";
+import { g as tryParse, n as normalize$1, p as isGreaterOrEqual } from "./version-CQ98ZBpL-jJD4zZs9.js";
 import { createRequire } from "node:module";
 import process from "node:process";
 import { styleText } from "node:util";
@@ -10,7 +10,7 @@ import { createReadStream, createWriteStream } from "node:fs";
 import { access, chmod, mkdir, rename, rm } from "node:fs/promises";
 import os from "node:os";
 import { createHash } from "node:crypto";
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_540e13d22e6879071cae9cd3610e4dea/node_modules/tsdown/dist/format-DLxyxnif.mjs
+//#region ../../../../../build-virtual-store/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_540e13d22e6879071cae9cd3610e4dea/node_modules/tsdown/dist/format-DLxyxnif.mjs
 function fsExists(path) {
 	return access(path).then(() => true, () => false);
 }
@@ -37,7 +37,7 @@ const factory = (...formats) => new Proxy(styleText.bind(void 0, formats), { get
 } });
 factory();
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_540e13d22e6879071cae9cd3610e4dea/node_modules/tsdown/dist/target-DgdLrXba.mjs
+//#region ../../../../../build-virtual-store/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_540e13d22e6879071cae9cd3610e4dea/node_modules/tsdown/dist/target-DgdLrXba.mjs
 const NODE_SEA_MIN_VERSION = "25.7.0";
 const NODE_SEA_MIN_VERSION_PARSED = {
 	major: 25,
@@ -46,7 +46,7 @@ const NODE_SEA_MIN_VERSION_PARSED = {
 };
 createDebug("tsdown:exe");
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/@tsdown+exe@0.23.0_tsdown@0.23.0/node_modules/@tsdown/exe/dist/index.mjs
+//#region ../../../../../build-virtual-store/@tsdown+exe@0.23.0_tsdown@0.23.0/node_modules/@tsdown/exe/dist/index.mjs
 function getCacheDir() {
 	const home = os.homedir();
 	if (process.platform === "win32") {

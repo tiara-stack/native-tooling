@@ -1,7 +1,7 @@
 import { t as renderCliDoc } from "./help-BmKpeOP9.js";
 import { i as log, o as printHeader, t as accent } from "./terminal-MKGAuy-p.js";
 import { y as version } from "./constants-BqJiMVVU.js";
-import { i as hasVitePlusDependency, n as detectPackageMetadata } from "./package-CxcH1qid.js";
+import { i as hasVitePlusDependency, n as detectPackageMetadata } from "./package-CTMTkwwC.js";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import fs from "node:fs";

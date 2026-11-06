@@ -7,6 +7,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { rolldownBuildRecord } from "./lib/vite-plus-build-record.mjs";
+import { sourceEnvironment } from "./lib/vite-plus-source-environment.mjs";
 
 const root = dirname(fileURLToPath(new URL("../package.json", import.meta.url)));
 const source = join(root, "packages/vite-plus-effect-fork");
@@ -120,6 +121,7 @@ for (const relative of [
   "scripts/build-vite-plus.mjs",
   "scripts/prepare-vite-plus.mjs",
   "scripts/lib/vite-plus-build-record.mjs",
+  "scripts/lib/vite-plus-source-environment.mjs",
 ]) {
   rootInputs[relative] = createHash("sha256")
     .update(await readFile(join(root, relative)))
@@ -161,7 +163,7 @@ function run(command, args, cwd) {
     {
       cwd,
       stdio: "inherit",
-      env: sourceEnvironment(),
+      env: sourceEnvironment(root),
     },
   );
   if (result.error || result.status !== 0)
@@ -177,7 +179,7 @@ function capture(command, args) {
     {
       cwd: source,
       encoding: "utf8",
-      env: sourceEnvironment(),
+      env: sourceEnvironment(root),
     },
   );
   if (result.error || result.status !== 0)
@@ -185,13 +187,4 @@ function capture(command, args) {
       `Reading ${command} build identity failed: ${result.error?.message ?? result.stderr}`,
     );
   return result.stdout.trim();
-}
-
-function sourceEnvironment() {
-  const env = { ...process.env, COREPACK_ENABLE_PROJECT_SPEC: "1" };
-  if (env.TIARA_VITE_PLUS_PNPM_STORE_DIR)
-    env.PNPM_CONFIG_STORE_DIR = env.TIARA_VITE_PLUS_PNPM_STORE_DIR;
-  if (env.TIARA_VITE_PLUS_PNPM_VIRTUAL_STORE_DIR)
-    env.PNPM_CONFIG_VIRTUAL_STORE_DIR = env.TIARA_VITE_PLUS_PNPM_VIRTUAL_STORE_DIR;
-  return env;
 }

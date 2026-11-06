@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import { u as styleText$1 } from "./style-DiMP8pYv-DIC5PXeH.js";
-import { c as globalLogger, n as version, t as enableDebug } from "./debug-CpC4hV25-Dnz9MN5W.js";
-import { n as x } from "./main-GtGXvAGN.js";
+import { c as globalLogger, n as version, t as enableDebug } from "./debug-CpC4hV25-Dv0qXBQO.js";
+import { n as x } from "./main-RJSjZfzp.js";
 import module from "node:module";
 import process$1 from "node:process";
 import { VERSION } from "@tiara-stack/vite-plus-core/rolldown";
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/cac@7.0.0/node_modules/cac/dist/index.js
+//#region ../../../../../build-virtual-store/cac@7.0.0/node_modules/cac/dist/index.js
 function toArr(any) {
 	return any == null ? [] : Array.isArray(any) ? any : [any];
 }
@@ -623,7 +623,7 @@ var CAC = class extends EventTarget {
 */
 const cac = (name = "") => new CAC(name);
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_322c16727ed86a15fb2ecef349e911e9/node_modules/tsdown/dist/run.mjs
+//#region ../../../../../build-virtual-store/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_322c16727ed86a15fb2ecef349e911e9/node_modules/tsdown/dist/run.mjs
 const cli = cac("tsdown");
 cli.help().version(version);
 cli.command("[...files]", "Bundle files", {
@@ -632,7 +632,7 @@ cli.command("[...files]", "Bundle files", {
 }).option("-c, --config <filename>", "Use a custom config file").option("--config-loader <loader>", "Config loader to use: auto, native, tsx, unrun", { default: "auto" }).option("--no-config", "Disable config file").option("-f, --format <format>", "Bundle format: esm, cjs, iife, umd", { default: "esm" }).option("--clean", "Clean output directory, --no-clean to disable").option("--deps.never-bundle <module>", "Mark dependencies as external").option("--minify", "Minify output").option("--devtools", "Enable devtools integration").option("--debug [feat]", "Show debug logs").option("--target <target>", "Bundle target, e.g \"es2015\", \"esnext\"").option("-l, --logLevel <level>", "Set log level: info, warn, error, silent").option("--fail-on-warn", "Fail on warnings", { default: true }).option("--no-write", "Disable writing files to disk, incompatible with watch mode").option("-d, --out-dir <dir>", "Output directory", { default: "dist" }).option("--treeshake", "Tree-shake bundle", { default: true }).option("--sourcemap", "Generate source map", { default: false }).option("--shims", "Enable cjs and esm shims ", { default: false }).option("--platform <platform>", "Target platform", { default: "node" }).option("--dts", "Generate dts files").option("--publint", "Enable publint", { default: false }).option("--attw", "Enable Are the types wrong integration", { default: false }).option("--unused", "Enable unused dependencies check", { default: false }).option("-w, --watch [path]", "Watch mode").option("--ignore-watch <path>", "Ignore custom paths in watch mode").option("--from-vite [vitest]", "Reuse config from Vite or Vitest").option("--report", "Size report", { default: true }).option("--env.* <value>", "Define compile-time env variables").option("--env-file <file>", "Load environment variables from a file, when used together with --env, variables in --env take precedence").option("--env-prefix <prefix>", "Prefix for env variables to inject into the bundle", { default: "TSDOWN_" }).option("--on-success <command>", "Command to run on success").option("--copy <dir>", "Copy files to output dir").option("--tsconfig <tsconfig>", "Set tsconfig path").option("--unbundle", "Unbundle mode").option("--root <dir>", "Root directory of input files").option("--exe", "Bundle as executable").option("-W, --workspace [dir]", "Enable workspace mode").option("--concurrency <count>", "Maximum number of Rolldown builds to run in parallel").option("-F, --filter <pattern>", "Filter configs (cwd or name), e.g. /pkg-name$/ or pkg-name").option("--exports", "Generate package exports for package.json").action(async (input, flags) => {
 	globalLogger.level = flags.logLevel || "info";
 	globalLogger.info(`${styleText$1.blue(`tsdown v${version}`)} powered by ${styleText$1["#ff7e17,yellow"](`rolldown v${VERSION}`)}`);
-	const { build } = await import("./build-JVmLFaZt-CNEUXy8W.js").then((n) => n.r).then((n) => n.r);
+	const { build } = await import("./build-JVmLFaZt-B97bUe6r.js").then((n) => n.r).then((n) => n.r);
 	if (input.length > 0) flags.entry = input;
 	await build(flags);
 });

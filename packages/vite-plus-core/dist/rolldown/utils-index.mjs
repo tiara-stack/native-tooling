@@ -1,6 +1,6 @@
-import { n as parseSync, t as parse } from "./shared/parse-Cx9Y3o34.mjs";
+import { n as parseSync, t as parse } from "./shared/parse-De9PCajd.mjs";
 import { a as minify, i as transformSync, o as minifySync, r as transform, t as TsconfigCache } from "./shared/resolve-tsconfig-DHwpIs5e.mjs";
-//#region ../../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/oxc-parser@0.151.0/node_modules/oxc-parser/src-js/generated/visit/walk.js
+//#region ../../../../../../build-virtual-store/oxc-parser@0.151.0/node_modules/oxc-parser/src-js/generated/visit/walk.js
 function walkNode(node, visitors) {
 	if (node == null) return;
 	if (Array.isArray(node)) {
@@ -2008,7 +2008,7 @@ function walkTSUnionType(node, visitors) {
 	exit !== null && exit(node);
 }
 //#endregion
-//#region ../../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/oxc-parser@0.151.0/node_modules/oxc-parser/src-js/generated/visit/type_ids.js
+//#region ../../../../../../build-virtual-store/oxc-parser@0.151.0/node_modules/oxc-parser/src-js/generated/visit/type_ids.js
 /** Mapping from node type name to node type ID */
 const NODE_TYPE_IDS_MAP = /* @__PURE__ */ new Map([
 	["DebuggerStatement", 0],
@@ -2178,7 +2178,7 @@ const NODE_TYPE_IDS_MAP = /* @__PURE__ */ new Map([
 	["TSUnionType", 164]
 ]);
 //#endregion
-//#region ../../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/oxc-parser@0.151.0/node_modules/oxc-parser/src-js/visit/visitor.js
+//#region ../../../../../../build-virtual-store/oxc-parser@0.151.0/node_modules/oxc-parser/src-js/visit/visitor.js
 let compiledVisitor;
 function createCompiledVisitor() {
 	compiledVisitor = [];

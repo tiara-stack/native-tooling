@@ -40,7 +40,7 @@ function promiseWithResolvers() {
 	};
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/@jridgewell+sourcemap-codec@1.6.0/node_modules/@jridgewell/sourcemap-codec/dist/sourcemap-codec.mjs
+//#region ../../../../../build-virtual-store/@jridgewell+sourcemap-codec@1.6.0/node_modules/@jridgewell/sourcemap-codec/dist/sourcemap-codec.mjs
 var comma = 44, chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", intToChar = /* @__PURE__ */ new Uint8Array(64), charToInt = /* @__PURE__ */ new Uint8Array(128);
 for (let i = 0; i < chars.length; i++) {
 	let c = chars.charCodeAt(i);
@@ -104,7 +104,7 @@ function sortComparator(a, b) {
 	return a[0] - b[0];
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/@jridgewell+trace-mapping@0.3.31/node_modules/@jridgewell/trace-mapping/dist/trace-mapping.mjs
+//#region ../../../../../build-virtual-store/@jridgewell+trace-mapping@0.3.31/node_modules/@jridgewell/trace-mapping/dist/trace-mapping.mjs
 var COLUMN = 0, SOURCES_INDEX = 1, SOURCE_LINE = 2, SOURCE_COLUMN = 3, NAMES_INDEX = 4, found = !1;
 function binarySearch(haystack, needle, low, high) {
 	for (; low <= high;) {
@@ -164,7 +164,7 @@ function traceSegmentInternal(segments, memo, line, column, bias) {
 	return found ? index = (bias === -1 ? upperBound : lowerBound)(segments, column, index) : bias === -1 && index++, index === -1 || index === segments.length ? -1 : index;
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/pathe@2.0.3/node_modules/pathe/dist/shared/pathe.M-eThtNZ.mjs
+//#region ../../../../../build-virtual-store/pathe@2.0.3/node_modules/pathe/dist/shared/pathe.M-eThtNZ.mjs
 const _DRIVE_LETTER_START_RE = /^[A-Za-z]:\//;
 function normalizeWindowsPath(input = "") {
 	return input && input.replace(/\\/g, "/").replace(_DRIVE_LETTER_START_RE, (r) => r.toUpperCase());
@@ -530,7 +530,7 @@ var HMRContext = class {
 	}
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/nanoid@5.1.16/node_modules/nanoid/non-secure/index.js
+//#region ../../../../../build-virtual-store/nanoid@5.1.16/node_modules/nanoid/non-secure/index.js
 let nanoid = (size = 21) => {
 	let id = "", i = size | 0;
 	for (; i-- > 0;) id += "useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict"[Math.random() * 64 | 0];

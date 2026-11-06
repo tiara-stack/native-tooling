@@ -1,5 +1,5 @@
 import { r as isPromiseLike, t as arraify } from "./shared/misc-DOSKtd97.mjs";
-//#region ../../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/@rolldown+pluginutils@1.0.1/node_modules/@rolldown/pluginutils/dist/filter-B_mD-HGz.mjs
+//#region ../../../../../../build-virtual-store/@rolldown+pluginutils@1.0.1/node_modules/@rolldown/pluginutils/dist/filter-B_mD-HGz.mjs
 const postfixRE = /[?#].*$/;
 function cleanUrl(url) {
 	return url.replace(postfixRE, "");

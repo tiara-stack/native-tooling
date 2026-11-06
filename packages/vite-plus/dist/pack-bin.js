@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { t as resolveTiaraNative } from "./tiara-native-DbeuJGA5.js";
-import { t as cac } from "./dist-BHNi_1Xm.js";
-import { o as resolveViteConfig } from "./resolve-vite-config-DHcnObjQ.js";
+import { t as cac } from "./dist-l10pUlWT.js";
+import { o as resolveViteConfig } from "./resolve-vite-config-CWZ-9h7v.js";
 import module from "node:module";
 import { buildWithConfigs, enableDebug, globalLogger, resolveUserConfig } from "vite/pack";
 //#region src/pack-bin.ts

@@ -1,9 +1,9 @@
 import { n as __toESM, t as require_binding } from "./shared/binding-BY0qR5iS.mjs";
 import { n as BuiltinPlugin, t as normalizedStringOrRegex } from "./shared/normalize-string-or-regex-F14uvr6D.mjs";
-import { u as transformToRollupOutput } from "./shared/bindingify-input-options-DtiZdigx.mjs";
-import { l as PluginDriver, s as validateOption, t as createBundlerOptions } from "./shared/create-bundler-option-DE7PdQ66.mjs";
+import { u as transformToRollupOutput } from "./shared/bindingify-input-options-DPBybJV1.mjs";
+import { l as PluginDriver, s as validateOption, t as createBundlerOptions } from "./shared/create-bundler-option-z9tfdr3B.mjs";
 import { i as unwrapBindingResult, r as normalizeBindingResult } from "./shared/error-C7pxws0W.mjs";
-import { n as parseSync$1, t as parse$1 } from "./shared/parse-Cx9Y3o34.mjs";
+import { n as parseSync$1, t as parse$1 } from "./shared/parse-De9PCajd.mjs";
 import { a as viteDynamicImportVarsPlugin, c as viteLoadFallbackPlugin, d as viteReporterPlugin, f as viteResolvePlugin, i as viteBuildImportAnalysisPlugin, l as viteModulePreloadPolyfillPlugin, n as isolatedDeclarationPlugin, o as viteImportGlobPlugin, p as viteWebWorkerPostPlugin, r as oxcRuntimePlugin, s as viteJsonPlugin, u as viteReactRefreshWrapperPlugin } from "./shared/constructors-xEvVj3lN.mjs";
 import { a as minify$1, i as transformSync$1, n as resolveTsconfig, o as minifySync$1, r as transform$1, t as TsconfigCache$1 } from "./shared/resolve-tsconfig-DHwpIs5e.mjs";
 import { pathToFileURL } from "node:url";
