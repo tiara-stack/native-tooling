@@ -1,6 +1,6 @@
 {
   "ticket": "TIA-314",
-  "implementation_commit": "dab2c10b87ec8683afa3741cca5ef76d58152510",
+  "implementation_commit": "0784ea178b10157c3b4d3adad98206425ace138e",
   "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
   "upstream": {
     "repository": "https://github.com/voidzero-dev/vite-plus",
@@ -22,7 +22,7 @@
     "historical_import_update_exclusions": 6420,
     "newly_mixed_import_paths": 1
   },
-  "review_state": "Immutable source-epoch snapshot: hosted R2 interface/generator/lifecycle repairs and affected validation complete; ordered independent local re-entry and current CI/hosted gates pending. Native/core/Rolldown compilation is exact qualified reuse; affected CLI JavaScript/declarations and scoped outputs are fresh.",
+  "review_state": "Immutable source-epoch snapshot: two test fixture bootstrap defects and three stale overlay locator digests repaired.20focused retained-runtime cases and source formatting pass. Producer7e8f/native/runtime inputs and artifacts remain unchanged qualified carry; ordered affected local review and current CI/hosted gates pending.",
   "custom_overlay_patch_sha256": "c36f120ceae1522b5744a5c274c2ac1ae79c0455bb9d5983d058db179183e879",
   "authorized_import_exclusions": [
     {
@@ -39164,7 +39164,7 @@
       "path": "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs",
       "base_sha256": null,
       "pin_sha256": null,
-      "head_sha256": "1ad3b4254141554efd7691b1a062d98dd9b482cbac3f01731769885a5dc2de54",
+      "head_sha256": "f89ba58d1e1693032cee92559bf75551a61e047b17ae6b632a69bde01ad84201",
       "mode": "Tiara overlay against approved pin"
     },
     {
@@ -39199,7 +39199,7 @@
       "path": "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
       "base_sha256": "d198749bd501756b19adc7fa6aa1295128e81b3b9340f9c9f947958417057d5d",
       "pin_sha256": "5038c8a643e0d5309dfe91b290d5c9ee2be211b286acc6c473760c6a80ba1f82",
-      "head_sha256": "7b62de433b64a391dfc1caae1f2dfdc66ec10d4309b6ad490a2efd73975ab764",
+      "head_sha256": "085672962a237ac23e6894845c1192f1bd2e643c9f7822f13ae7786185b7583f",
       "mode": "Tiara overlay against approved pin"
     },
     {
@@ -39213,7 +39213,7 @@
       "path": "packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts",
       "base_sha256": null,
       "pin_sha256": null,
-      "head_sha256": "a06e85c9ef525f46038cf0975f72007a9cc5449fb653e995c77a4b355e1297c1",
+      "head_sha256": "652ddef69fc1c1a934abaebf0513e85ad5ac092d4c73e2ac4f193b1f37e96c6c",
       "mode": "Tiara overlay against approved pin"
     },
     {
@@ -40799,7 +40799,7 @@
     ],
     "Markdown_qualification": "Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.",
     "OCR_carry": "Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.",
-    "final_main_source_epoch": "dab2c10b87ec8683afa3741cca5ef76d58152510",
+    "final_main_source_epoch": "0784ea178b10157c3b4d3adad98206425ace138e",
     "identical_queue_squash_tree": "34d345e35d45df8fc931cfd2aa7312fbe0ae5a99"
   },
   "generated_output_review_policy": {
@@ -40899,7 +40899,7 @@
     }
   ],
   "hosted_delivery": {
-    "source_epoch": "dab2c10b87ec8683afa3741cca5ef76d58152510",
+    "source_epoch": "0784ea178b10157c3b4d3adad98206425ace138e",
     "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
     "source_adaptations": 454,
     "stock_exclusions": 6419,

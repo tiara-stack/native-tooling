@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "dab2c10b87ec8683afa3741cca5ef76d58152510",
+ "source_epoch": "0784ea178b10157c3b4d3adad98206425ace138e",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -14,7 +14,7 @@
      "path": "scripts/test/vite-plus-native.test.mjs",
      "mode": "100644",
      "blob": "360830419a4244bbc577366776b36fca2fa3526b",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "320b2388800a23bee6f4c0af5a313b93827d3d30a1be0d1104cfe2c0ae880651",
     "canonical_patch_sha256": "4447c2fd3c195694a1fc58b485dff0047790ed4847a96bbd0941dfe43a416f6f",
@@ -834,30 +834,38 @@
     "after": {
      "path": "scripts/test/vite-plus-pack.test.mjs",
      "mode": "100644",
-     "blob": "be3ebfc84c39e162393d1982c518e81c8a62dbdf",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "blob": "97d0827add73c5035560e24afa78ebccc908fe4d",
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
-    "actual_sha256": "a23f0748dadf285c693f06389d58ef1ea068c7dd9bfc3d902fd0257dfca9d6fe",
-    "canonical_patch_sha256": "68d9766121a84d172c030ad4bec14bb01b9a56e913e108b106736383196a166c",
-    "canonical_patch_bytes": 3595
+    "actual_sha256": "d802340b71a3d5e705dc481881f733eb6fe639186baf98d91a34091efc13b619",
+    "canonical_patch_sha256": "46c2594186a35588a923cda963873820a0b6d2be76911d26c39853fa3475cf40",
+    "canonical_patch_bytes": 3686
    },
    "fragment": {
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 85,
-    "sha256": "68d9766121a84d172c030ad4bec14bb01b9a56e913e108b106736383196a166c"
+    "line_end": 94,
+    "sha256": "46c2594186a35588a923cda963873820a0b6d2be76911d26c39853fa3475cf40"
    },
    "canonical_patch_lines": [
     "diff --git a/scripts/test/vite-plus-pack.test.mjs b/scripts/test/vite-plus-pack.test.mjs\n",
     "new file mode 100644\n",
-    "index 0000000000..be3ebfc84c\n",
+    "index 0000000000..97d0827add\n",
     "--- /dev/null\n",
     "+++ b/scripts/test/vite-plus-pack.test.mjs\n",
-    "@@ -0,0 +1,79 @@\n",
+    "@@ -0,0 +1,88 @@\n",
     "+import assert from \"node:assert/strict\";\n",
     "+import { spawnSync } from \"node:child_process\";\n",
-    "+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from \"node:fs\";\n",
+    "+import {\n",
+    "+  existsSync,\n",
+    "+  mkdirSync,\n",
+    "+  mkdtempSync,\n",
+    "+  readFileSync,\n",
+    "+  readdirSync,\n",
+    "+  rmSync,\n",
+    "+  writeFileSync,\n",
+    "+} from \"node:fs\";\n",
     "+import { join } from \"node:path\";\n",
     "+import { fileURLToPath } from \"node:url\";\n",
     "+import test from \"node:test\";\n",
@@ -868,6 +876,7 @@
     "+  join(root, \"packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts\");\n",
     "+for (const kind of [\"null\", \"legacy\", \"path\", \"options-only\", \"oxc\", \"oxc-legacy\"]) {\n",
     "+  test(`declaration compiler selection respects ${kind}`, () => {\n",
+    "+    mkdirSync(join(root, \".tmp\"), { recursive: true });\n",
     "+    const directory = mkdtempSync(join(root, \".tmp/dts-native-\"));\n",
     "+    try {\n",
     "+      const compiler = join(directory, \"tsgo.mjs\"),\n",
@@ -946,7 +955,7 @@
      "path": "scripts/test/vite-plus-source-environment.test.mjs",
      "mode": "100644",
      "blob": "c86c4026da4eabc4fc606ecab15f1cfdc669c693",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "4161ce1fedfcb3487415227c071a67e3d67075fb0fc406d3337e04e0ba62061d",
     "canonical_patch_sha256": "6f96a423d52cb1c798927d7519632e489984ba0b503e56fad458e2831b06a3b5",

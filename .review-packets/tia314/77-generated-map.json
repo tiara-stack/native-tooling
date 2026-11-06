@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "generated-map",
- "source_epoch": "dab2c10b87ec8683afa3741cca5ef76d58152510",
+ "source_epoch": "0784ea178b10157c3b4d3adad98206425ace138e",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -14,7 +14,7 @@
      "path": "packages/vite-plus/docs/guide/upgrade-project.md",
      "mode": "100644",
      "blob": "5a87a72faf469ed4a878471e5ecda98765540cd9",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "69991baa20641edb5fa4fac2b2b6adb5f753af2c21d2e66f95dbaf8292032e3a"
    },
@@ -43,7 +43,7 @@
      "path": "packages/vite-plus/docs/guide/upgrade.md",
      "mode": "100644",
      "blob": "c85415ce304c5fba36476bea8e541a35468d7143",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "89df4851bcbece31daff5485bcc6866f413c811f7b5bfe736563a721e813a5f8"
    },
@@ -67,7 +67,7 @@
      "path": "packages/vite-plus/docs/guide/vitest-v5.md",
      "mode": "100644",
      "blob": "fc4f3452b4089807aebc3370e2aefc7f91fe497b",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "127663149bb7bef683bff167abf1f8da98fcb9c4cb452161b2b22bdc946f6042"
    },
@@ -96,7 +96,7 @@
      "path": "packages/vite-plus/package.json",
      "mode": "100644",
      "blob": "7d69620c877c3002d385136a6f379cd84bbff879",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "84d9b60b0fd4828be9047027d16a094ce3acaa08a37cdfa5966302bc2620c4c7"
    },
@@ -125,7 +125,7 @@
      "path": "packages/vite-plus/rules/vite-tools.yml",
      "mode": "100644",
      "blob": "7e438987fc9b82971e64d3d0402354aa18c43c46",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "a2a9bd835b872c020feb3d05103770ee0ac91f63131eaca13a8d54ac02c4d606"
    },
@@ -154,7 +154,7 @@
      "path": "packages/vite-plus/templates/generator/README.md",
      "mode": "100644",
      "blob": "7efb5b5aa4ef79681cba9fae3d80d788b7a9e1ac",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "051c8c20ad481e53f2f8f6a5476c5049974b4ab7ef30d5f63892a0918d48b092"
    },
@@ -183,7 +183,7 @@
      "path": "packages/vite-plus/templates/generator/bin/index.ts",
      "mode": "100644",
      "blob": "d9cc9e11fef0342ddc24b3c197df790d75eb86fb",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "06e6c9455270f4adcfadc3a69bac96904a973b4b4f8e98dbf27a135bb4ccd360"
    },
@@ -212,7 +212,7 @@
      "path": "packages/vite-plus/templates/monorepo/_gitignore",
      "mode": "100644",
      "blob": "1ba829c2464dca4a2bf562146d50ee559faae274",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "12225a35463f529fec2f755a7b4ef0e1c8c441e45fe6d5de89d41468c7dd68da"
    },
@@ -241,7 +241,7 @@
      "path": "packages/vite-plus/templates/monorepo/_yarnrc.yml",
      "mode": "100644",
      "blob": "81309ede16a7235e96a3f1834571a4ea23084219",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "48fe82374a7750c12faf51fee342d7b5fd69b418bbae1d432a1f35dd33852f7b"
    },
@@ -270,7 +270,7 @@
      "path": "packages/vite-plus/templates/monorepo/pnpm-workspace.yaml",
      "mode": "100644",
      "blob": "36f66d0eb43477898f699173385bbbd2f2e98cec",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "a4b525e135e1b9cf3089402e16cd445e2f044e4bd224b1ccc8294a251e6f52f9"
    },
@@ -299,7 +299,7 @@
      "path": "packages/vite-plus/templates/monorepo/vite.config.ts",
      "mode": "100644",
      "blob": "809a5f06de594b3588ae19cb99d09dc8a8a4ea30",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "234013bed59c687a563ddcec9d204dedd7c97427b118bf959e68f74fa05c6441"
    },

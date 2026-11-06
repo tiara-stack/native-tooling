@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "dab2c10b87ec8683afa3741cca5ef76d58152510",
+ "source_epoch": "0784ea178b10157c3b4d3adad98206425ace138e",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -19,7 +19,7 @@
      "path": "scripts/test/sync-effect-vitest.test.mjs",
      "mode": "100644",
      "blob": "dec9c2ece30ab6be4a6b6a2eb9f4b6c367ab28ca",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "6f657b3d5146cac5dd17a08ec18f524e9dfcd2f20793b6f8356f50822185ac8e",
     "canonical_patch_sha256": "1c1d5ac1a417ac93cd41e15803c20aab5a6a982896aecdc4ccfb39743d37f9ef",
@@ -328,7 +328,7 @@
      "path": "scripts/test/sync-vite-plus.test.mjs",
      "mode": "100644",
      "blob": "77caf80566b0ab63338bc4ff6c63aeb2c21550b2",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "13f48d5c00e1de904b67017b3402f173b9db2c5042151b78d42e923a793319c4",
     "canonical_patch_sha256": "4306fbf709195caa467c1bf7d1469b116509469feb046c96ae66db6d55bb4b8a",
@@ -605,7 +605,7 @@
      "path": "scripts/test/vite-plus-lsp-bridge.test.mjs",
      "mode": "100644",
      "blob": "212dafb30948d509dffd3692cfc50ec4b5c2416c",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
     "actual_sha256": "a3d7994d380a8c08838d680058319324c6ec9433cad7e3f20f7621b226a5660b",
     "canonical_patch_sha256": "37cce213f305e5936f3429cc9f3ec617a693d90df717c83504e1c68d69f0170e",
@@ -865,30 +865,31 @@
     "after": {
      "path": "scripts/test/vite-plus-lsp.test.mjs",
      "mode": "100644",
-     "blob": "3a58f626ce727a4f1017f0dc4c8ce50d4a283ff2",
-     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+     "blob": "000db98ab2ff1234dd2ea2adafd48ed2419cb35d",
+     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
     },
-    "actual_sha256": "2ec060668d51d7514da6ecedfe67d83235cbac33268ba7896a8b5afa3a78ce19",
-    "canonical_patch_sha256": "2321d2eec7a0dbbab747adcf2636dedfc3a9e9db90bb436b577ef5906c92841d",
-    "canonical_patch_bytes": 9610
+    "actual_sha256": "42aae66170ea5e378136c5920a916da9a0a1dd66380ba3b8c6c6f87e8bf5c746",
+    "canonical_patch_sha256": "3610cd733bb0d43f495a0826bc086200d15324f839f518e0d1a36fe64785a2db",
+    "canonical_patch_bytes": 9683
    },
    "fragment": {
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 228,
-    "sha256": "2321d2eec7a0dbbab747adcf2636dedfc3a9e9db90bb436b577ef5906c92841d"
+    "line_end": 230,
+    "sha256": "3610cd733bb0d43f495a0826bc086200d15324f839f518e0d1a36fe64785a2db"
    },
    "canonical_patch_lines": [
     "diff --git a/scripts/test/vite-plus-lsp.test.mjs b/scripts/test/vite-plus-lsp.test.mjs\n",
     "new file mode 100644\n",
-    "index 0000000000..3a58f626ce\n",
+    "index 0000000000..000db98ab2\n",
     "--- /dev/null\n",
     "+++ b/scripts/test/vite-plus-lsp.test.mjs\n",
-    "@@ -0,0 +1,222 @@\n",
+    "@@ -0,0 +1,224 @@\n",
     "+import assert from \"node:assert/strict\";\n",
     "+import { spawn } from \"node:child_process\";\n",
     "+import {\n",
+    "+  mkdirSync,\n",
     "+  mkdtempSync,\n",
     "+  readFileSync,\n",
     "+  readdirSync,\n",
@@ -910,6 +911,7 @@
     "+    `native LSP applies Vite config initially and on refresh, workspace/configuration=${configuration}`,\n",
     "+    { timeout: 40000 },\n",
     "+    async () => {\n",
+    "+      mkdirSync(join(root, \".tmp\"), { recursive: true });\n",
     "+      const directory = mkdtempSync(join(root, \".tmp/lsp-handoff-\"));\n",
     "+      const uri = pathToFileURL(directory).href;\n",
     "+      const typed = String(configuration).startsWith(\"type-aware\");\n",
