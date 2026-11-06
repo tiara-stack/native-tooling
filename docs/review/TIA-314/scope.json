@@ -1,6 +1,6 @@
 {
   "ticket": "TIA-314",
-  "implementation_commit": "e950c30522144df372973a1ac91b8b59c7fd41e6",
+  "implementation_commit": "9952b519018b0df3def4056f5673390ea4f83673",
   "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
   "upstream": {
     "repository": "https://github.com/voidzero-dev/vite-plus",
@@ -20,8 +20,8 @@
     "hosted_metadata_paths": 82,
     "changed_existing_scope_metadata_paths": 1
   },
-  "review_state": "438 source adaptations:424unchanged bodies retain original attribution;13new/changed source paths and current delivery metadata require assigned re-entry. This inventory is not a current semantic review certificate.",
-  "custom_overlay_patch_sha256": "0092edde3a8815aa7d9fcdd9d6e4b88f54c1c9caafe50a213767e0b1c6b112bc",
+  "review_state": "Native discovery and workflow repairs at9952 pass focused source/packed/runtime/TS5.9 checks. Existing scope and delivery bodies require rebind and ordered independent re-entry. CLI4 remains non-pass; no current-head semantic review certificate.",
+  "custom_overlay_patch_sha256": "8a25940d0c43a0dac647a79f217263bb9a2e52a8181cacbd187aad80624f20f2",
   "authorized_import_exclusions": [
     {
       "path": "packages/vite-plus-effect-fork/.claude/agents/cargo-workspace-merger.md",
@@ -40696,7 +40696,7 @@
     "parent_delta": "2inherited Rust-bridge/native-regression source paths plus44inherited review packet bindings",
     "authorized_import_exclusions_recomputed": 6420,
     "mixed_custom_overlay_paths_recomputed": 13,
-    "custom_overlay_patch_sha256": "0092edde3a8815aa7d9fcdd9d6e4b88f54c1c9caafe50a213767e0b1c6b112bc",
+    "custom_overlay_patch_sha256": "8a25940d0c43a0dac647a79f217263bb9a2e52a8181cacbd187aad80624f20f2",
     "producer_carry": {
       "root_driver_inputs": 3,
       "source_inputs": 4633,
