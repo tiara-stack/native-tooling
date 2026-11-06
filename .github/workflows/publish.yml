@@ -83,7 +83,7 @@ jobs:
 
       - name: Verify native compiler and diagnostic protocol
         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
-        run: pnpm exec vp run -w native:test:backend
+        run: pnpm native:test:backend
 
       - name: Stage native binaries
         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
