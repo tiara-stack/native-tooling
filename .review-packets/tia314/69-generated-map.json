@@ -1,12 +1,157 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "generated-map",
- "source_epoch": "5ecd568db620ea01f23465c064fe6b02cfa8377a",
+ "source_epoch": "dab2c10b87ec8683afa3741cca5ef76d58152510",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
    "target": {
-    "id": "T0279",
+    "id": "T0274",
+    "path": "packages/vite-plus/dist/test/browser-preview/context.d.ts",
+    "view": "generated transformation output",
+    "before": {
+     "path": "packages/vite-plus/dist/test/browser-preview/context.d.ts",
+     "mode": "100644",
+     "blob": "6732d1dbbfc81dfd2b5d78244ad1ed058a8c5159",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": {
+     "path": "packages/vite-plus/dist/test/browser-preview/context.d.ts",
+     "mode": "100644",
+     "blob": "004ed0bdeb935468ec62c17b7e1362088ea48bab",
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+    },
+    "actual_sha256": "3d1c46ffdb5e4d85f95544e994a7283c12a277fded4188565f5a5780f26b967a"
+   },
+   "input_output_consumer_mapping": {
+    "sha256": "3d1c46ffdb5e4d85f95544e994a7283c12a277fded4188565f5a5780f26b967a",
+    "git_mode": "100644",
+    "producer": "scripts/sync-vite-plus.mjs",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
+    "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/browser-preview/context.d.ts",
+    "source_sha256": "3d1c46ffdb5e4d85f95544e994a7283c12a277fded4188565f5a5780f26b967a"
+   },
+   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
+  },
+  {
+   "target": {
+    "id": "T0275",
+    "path": "packages/vite-plus/dist/test/browser-preview/context.js",
+    "view": "generated transformation output",
+    "before": {
+     "path": "packages/vite-plus/dist/test/browser-preview/context.js",
+     "mode": "100644",
+     "blob": "0e67c325b0da9a8f5d626a038c21d751b7216dd7",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": {
+     "path": "packages/vite-plus/dist/test/browser-preview/context.js",
+     "mode": "100644",
+     "blob": "48ae5148928d2a2c22d85ebe87dd762eca379b74",
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+    },
+    "actual_sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17"
+   },
+   "input_output_consumer_mapping": {
+    "sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17",
+    "git_mode": "100644",
+    "producer": "scripts/sync-vite-plus.mjs",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
+    "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/browser-preview/context.js",
+    "source_sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17"
+   },
+   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
+  },
+  {
+   "target": {
+    "id": "T0280",
+    "path": "packages/vite-plus/dist/test/browser/context.js",
+    "view": "generated transformation output",
+    "before": {
+     "path": "packages/vite-plus/dist/test/browser/context.js",
+     "mode": "100644",
+     "blob": "0e67c325b0da9a8f5d626a038c21d751b7216dd7",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": {
+     "path": "packages/vite-plus/dist/test/browser/context.js",
+     "mode": "100644",
+     "blob": "48ae5148928d2a2c22d85ebe87dd762eca379b74",
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+    },
+    "actual_sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17"
+   },
+   "input_output_consumer_mapping": {
+    "sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17",
+    "git_mode": "100644",
+    "producer": "scripts/sync-vite-plus.mjs",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
+    "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/browser/context.js",
+    "source_sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17"
+   },
+   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
+  },
+  {
+   "target": {
+    "id": "T0281",
+    "path": "packages/vite-plus/dist/test/browser/providers/playwright.d.ts",
+    "view": "generated transformation output",
+    "before": {
+     "path": "packages/vite-plus/dist/test/browser/providers/playwright.d.ts",
+     "mode": "100644",
+     "blob": "07b88c2d7cc41e927b36a0047ca8be63608636db",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": {
+     "path": "packages/vite-plus/dist/test/browser/providers/playwright.d.ts",
+     "mode": "100644",
+     "blob": "309267e18c33b57d28f029acfce8db6b0b32947d",
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+    },
+    "actual_sha256": "e6a70c418eb746b1a4f5e6f56a3d80f1d2b543412b48013ec08d5ddc094b8bd0"
+   },
+   "input_output_consumer_mapping": {
+    "sha256": "e6a70c418eb746b1a4f5e6f56a3d80f1d2b543412b48013ec08d5ddc094b8bd0",
+    "git_mode": "100644",
+    "producer": "scripts/sync-vite-plus.mjs",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
+    "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/browser/providers/playwright.d.ts",
+    "source_sha256": "e6a70c418eb746b1a4f5e6f56a3d80f1d2b543412b48013ec08d5ddc094b8bd0"
+   },
+   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
+  },
+  {
+   "target": {
+    "id": "T0282",
+    "path": "packages/vite-plus/dist/test/browser/providers/playwright/context.d.ts",
+    "view": "generated transformation output",
+    "before": {
+     "path": "packages/vite-plus/dist/test/browser/providers/playwright/context.d.ts",
+     "mode": "100644",
+     "blob": "ea9884bce42bda0bf12b0acc24f6170be751862f",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": {
+     "path": "packages/vite-plus/dist/test/browser/providers/playwright/context.d.ts",
+     "mode": "100644",
+     "blob": "1cf909b67881a9f4d2295b0e66eefe6def105455",
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
+    },
+    "actual_sha256": "83bad9d21072d06310fa23f193f5648e68f48ed97fe9c75d9c9ed3db62cae603"
+   },
+   "input_output_consumer_mapping": {
+    "sha256": "83bad9d21072d06310fa23f193f5648e68f48ed97fe9c75d9c9ed3db62cae603",
+    "git_mode": "100644",
+    "producer": "scripts/sync-vite-plus.mjs",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
+    "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/browser/providers/playwright/context.d.ts",
+    "source_sha256": "83bad9d21072d06310fa23f193f5648e68f48ed97fe9c75d9c9ed3db62cae603"
+   },
+   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
+  },
+  {
+   "target": {
+    "id": "T0283",
     "path": "packages/vite-plus/dist/test/browser/providers/playwright/context.js",
     "view": "generated transformation output",
     "before": {
@@ -19,7 +164,7 @@
      "path": "packages/vite-plus/dist/test/browser/providers/playwright/context.js",
      "mode": "100644",
      "blob": "48ae5148928d2a2c22d85ebe87dd762eca379b74",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17"
    },
@@ -27,7 +172,7 @@
     "sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/browser/providers/playwright/context.js",
     "source_sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17"
    },
@@ -35,7 +180,7 @@
   },
   {
    "target": {
-    "id": "T0280",
+    "id": "T0284",
     "path": "packages/vite-plus/dist/test/browser/providers/preview.d.ts",
     "view": "generated transformation output",
     "before": {
@@ -48,7 +193,7 @@
      "path": "packages/vite-plus/dist/test/browser/providers/preview.d.ts",
      "mode": "100644",
      "blob": "3d5f91e4c5bc323afe708fdf9bea1f95f476e982",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "a9feaaf8982aba4f901742086b91451fcd6e776790e8583c0a388ba61fca3719"
    },
@@ -56,7 +201,7 @@
     "sha256": "a9feaaf8982aba4f901742086b91451fcd6e776790e8583c0a388ba61fca3719",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/browser/providers/preview.d.ts",
     "source_sha256": "a9feaaf8982aba4f901742086b91451fcd6e776790e8583c0a388ba61fca3719"
    },
@@ -64,7 +209,7 @@
   },
   {
    "target": {
-    "id": "T0281",
+    "id": "T0285",
     "path": "packages/vite-plus/dist/test/browser/providers/preview/context.d.ts",
     "view": "generated transformation output",
     "before": {
@@ -77,7 +222,7 @@
      "path": "packages/vite-plus/dist/test/browser/providers/preview/context.d.ts",
      "mode": "100644",
      "blob": "1cf909b67881a9f4d2295b0e66eefe6def105455",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "83bad9d21072d06310fa23f193f5648e68f48ed97fe9c75d9c9ed3db62cae603"
    },
@@ -85,7 +230,7 @@
     "sha256": "83bad9d21072d06310fa23f193f5648e68f48ed97fe9c75d9c9ed3db62cae603",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/browser/providers/preview/context.d.ts",
     "source_sha256": "83bad9d21072d06310fa23f193f5648e68f48ed97fe9c75d9c9ed3db62cae603"
    },
@@ -93,7 +238,7 @@
   },
   {
    "target": {
-    "id": "T0282",
+    "id": "T0286",
     "path": "packages/vite-plus/dist/test/browser/providers/preview/context.js",
     "view": "generated transformation output",
     "before": {
@@ -106,7 +251,7 @@
      "path": "packages/vite-plus/dist/test/browser/providers/preview/context.js",
      "mode": "100644",
      "blob": "48ae5148928d2a2c22d85ebe87dd762eca379b74",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17"
    },
@@ -114,7 +259,7 @@
     "sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/browser/providers/preview/context.js",
     "source_sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17"
    },
@@ -122,7 +267,7 @@
   },
   {
    "target": {
-    "id": "T0287",
+    "id": "T0291",
     "path": "packages/vite-plus/dist/test/context.d.ts",
     "view": "generated transformation output",
     "before": {
@@ -135,7 +280,7 @@
      "path": "packages/vite-plus/dist/test/context.d.ts",
      "mode": "100644",
      "blob": "e01b8200b458a9616a766c461fb6c9004801259b",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "a8418c7ce83af644a13b392f46496cc49ba0aceb68c9f4596e76aef5a521ae05"
    },
@@ -143,7 +288,7 @@
     "sha256": "a8418c7ce83af644a13b392f46496cc49ba0aceb68c9f4596e76aef5a521ae05",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/context.d.ts",
     "source_sha256": "a8418c7ce83af644a13b392f46496cc49ba0aceb68c9f4596e76aef5a521ae05"
    },
@@ -151,7 +296,7 @@
   },
   {
    "target": {
-    "id": "T0288",
+    "id": "T0292",
     "path": "packages/vite-plus/dist/test/context.js",
     "view": "generated transformation output",
     "before": {
@@ -164,7 +309,7 @@
      "path": "packages/vite-plus/dist/test/context.js",
      "mode": "100644",
      "blob": "48ae5148928d2a2c22d85ebe87dd762eca379b74",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17"
    },
@@ -172,7 +317,7 @@
     "sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/context.js",
     "source_sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17"
    },
@@ -180,7 +325,7 @@
   },
   {
    "target": {
-    "id": "T0293",
+    "id": "T0297",
     "path": "packages/vite-plus/dist/test/internal/traces.js",
     "view": "generated transformation output",
     "before": null,
@@ -188,7 +333,7 @@
      "path": "packages/vite-plus/dist/test/internal/traces.js",
      "mode": "100644",
      "blob": "9ab32319677a1c12f01c0ae8df5a3ac0f805a3ca",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "ece1effa993e51b9b832e08d9ec6602cd5a101fbb734a3eed00ccb82a8d2bec7"
    },
@@ -196,7 +341,7 @@
     "sha256": "ece1effa993e51b9b832e08d9ec6602cd5a101fbb734a3eed00ccb82a8d2bec7",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/internal/traces.js",
     "source_sha256": "ece1effa993e51b9b832e08d9ec6602cd5a101fbb734a3eed00ccb82a8d2bec7"
    },
@@ -204,7 +349,7 @@
   },
   {
    "target": {
-    "id": "T0294",
+    "id": "T0298",
     "path": "packages/vite-plus/dist/test/locators.d.ts",
     "view": "generated transformation output",
     "before": {
@@ -217,7 +362,7 @@
      "path": "packages/vite-plus/dist/test/locators.d.ts",
      "mode": "100644",
      "blob": "1dba5250040b4379c4a3edf13d98936d4254852b",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "e0fb22b030f19f908e0f28f965b5377c74b311d035861d0bd83806bb2e3cea24"
    },
@@ -225,7 +370,7 @@
     "sha256": "e0fb22b030f19f908e0f28f965b5377c74b311d035861d0bd83806bb2e3cea24",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/locators.d.ts",
     "source_sha256": "e0fb22b030f19f908e0f28f965b5377c74b311d035861d0bd83806bb2e3cea24"
    },
@@ -233,7 +378,7 @@
   },
   {
    "target": {
-    "id": "T0295",
+    "id": "T0299",
     "path": "packages/vite-plus/dist/test/matchers.d.ts",
     "view": "generated transformation output",
     "before": {
@@ -246,7 +391,7 @@
      "path": "packages/vite-plus/dist/test/matchers.d.ts",
      "mode": "100644",
      "blob": "bb062c2f5f7754abd59eb92b86162635aa8ba64d",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "f9772f64c3dd58745a946bf3051e49d796dc367873ded068c3625d0345e5337f"
    },
@@ -254,7 +399,7 @@
     "sha256": "f9772f64c3dd58745a946bf3051e49d796dc367873ded068c3625d0345e5337f",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/matchers.d.ts",
     "source_sha256": "f9772f64c3dd58745a946bf3051e49d796dc367873ded068c3625d0345e5337f"
    },
@@ -262,7 +407,7 @@
   },
   {
    "target": {
-    "id": "T0296",
+    "id": "T0300",
     "path": "packages/vite-plus/dist/test/mocker.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -270,7 +415,7 @@
      "path": "packages/vite-plus/dist/test/mocker.d.ts",
      "mode": "100644",
      "blob": "ac2b3f5bf35fb54646cc7a7deff7b1183adadd80",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "cb59b39e18ae49759e255bbdcd0ac9d0578debd40f471bd1ab2c5240ee5f8f79"
    },
@@ -278,7 +423,7 @@
     "sha256": "cb59b39e18ae49759e255bbdcd0ac9d0578debd40f471bd1ab2c5240ee5f8f79",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/mocker.d.ts",
     "source_sha256": "cb59b39e18ae49759e255bbdcd0ac9d0578debd40f471bd1ab2c5240ee5f8f79"
    },
@@ -286,7 +431,7 @@
   },
   {
    "target": {
-    "id": "T0297",
+    "id": "T0301",
     "path": "packages/vite-plus/dist/test/mocker.js",
     "view": "generated transformation output",
     "before": null,
@@ -294,7 +439,7 @@
      "path": "packages/vite-plus/dist/test/mocker.js",
      "mode": "100644",
      "blob": "f7dc96a5710e59597243b8999ffad3e4d4cd0456",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "38ecb3bc5f2465c0468f3c6180da6162c0e1126bfdb07cacfc308d77a42686f2"
    },
@@ -302,7 +447,7 @@
     "sha256": "38ecb3bc5f2465c0468f3c6180da6162c0e1126bfdb07cacfc308d77a42686f2",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/mocker.js",
     "source_sha256": "38ecb3bc5f2465c0468f3c6180da6162c0e1126bfdb07cacfc308d77a42686f2"
    },
@@ -310,7 +455,7 @@
   },
   {
    "target": {
-    "id": "T0298",
+    "id": "T0302",
     "path": "packages/vite-plus/dist/test/plugins/browser-context.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -318,7 +463,7 @@
      "path": "packages/vite-plus/dist/test/plugins/browser-context.d.ts",
      "mode": "100644",
      "blob": "e01b8200b458a9616a766c461fb6c9004801259b",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "a8418c7ce83af644a13b392f46496cc49ba0aceb68c9f4596e76aef5a521ae05"
    },
@@ -326,7 +471,7 @@
     "sha256": "a8418c7ce83af644a13b392f46496cc49ba0aceb68c9f4596e76aef5a521ae05",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/browser-context.d.ts",
     "source_sha256": "a8418c7ce83af644a13b392f46496cc49ba0aceb68c9f4596e76aef5a521ae05"
    },
@@ -334,7 +479,7 @@
   },
   {
    "target": {
-    "id": "T0299",
+    "id": "T0303",
     "path": "packages/vite-plus/dist/test/plugins/browser-context.js",
     "view": "generated transformation output",
     "before": {
@@ -347,7 +492,7 @@
      "path": "packages/vite-plus/dist/test/plugins/browser-context.js",
      "mode": "100644",
      "blob": "48ae5148928d2a2c22d85ebe87dd762eca379b74",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17"
    },
@@ -355,7 +500,7 @@
     "sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/browser-context.js",
     "source_sha256": "64eec8ca85d8962634504663a08c7fa43b8d2089c86b98a18867683aae950f17"
    },
@@ -363,7 +508,7 @@
   },
   {
    "target": {
-    "id": "T0300",
+    "id": "T0304",
     "path": "packages/vite-plus/dist/test/plugins/browser-locators.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -371,7 +516,7 @@
      "path": "packages/vite-plus/dist/test/plugins/browser-locators.d.ts",
      "mode": "100644",
      "blob": "1dba5250040b4379c4a3edf13d98936d4254852b",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "e0fb22b030f19f908e0f28f965b5377c74b311d035861d0bd83806bb2e3cea24"
    },
@@ -379,7 +524,7 @@
     "sha256": "e0fb22b030f19f908e0f28f965b5377c74b311d035861d0bd83806bb2e3cea24",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/browser-locators.d.ts",
     "source_sha256": "e0fb22b030f19f908e0f28f965b5377c74b311d035861d0bd83806bb2e3cea24"
    },
@@ -387,7 +532,7 @@
   },
   {
    "target": {
-    "id": "T0301",
+    "id": "T0305",
     "path": "packages/vite-plus/dist/test/plugins/browser-playwright.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -395,7 +540,7 @@
      "path": "packages/vite-plus/dist/test/plugins/browser-playwright.d.ts",
      "mode": "100644",
      "blob": "3dd6967296e074af4337b0497f68c649c760b4f9",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "9c517c78d2ccfdb4ad1f6cc2499d88fb6ca4154c80fc10027ca95ec224639bf6"
    },
@@ -403,7 +548,7 @@
     "sha256": "9c517c78d2ccfdb4ad1f6cc2499d88fb6ca4154c80fc10027ca95ec224639bf6",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/browser-playwright.d.ts",
     "source_sha256": "9c517c78d2ccfdb4ad1f6cc2499d88fb6ca4154c80fc10027ca95ec224639bf6"
    },
@@ -411,7 +556,7 @@
   },
   {
    "target": {
-    "id": "T0302",
+    "id": "T0306",
     "path": "packages/vite-plus/dist/test/plugins/browser-preview.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -419,7 +564,7 @@
      "path": "packages/vite-plus/dist/test/plugins/browser-preview.d.ts",
      "mode": "100644",
      "blob": "2fb1a5bd1e9ff72c4e88e235b5cb9d7adac11b45",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "8d755d2323fad0a51bda0c2c71033c7a7322716b0966a49480415bf82842e117"
    },
@@ -427,7 +572,7 @@
     "sha256": "8d755d2323fad0a51bda0c2c71033c7a7322716b0966a49480415bf82842e117",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/browser-preview.d.ts",
     "source_sha256": "8d755d2323fad0a51bda0c2c71033c7a7322716b0966a49480415bf82842e117"
    },
@@ -435,7 +580,7 @@
   },
   {
    "target": {
-    "id": "T0304",
+    "id": "T0308",
     "path": "packages/vite-plus/dist/test/plugins/browser.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -443,7 +588,7 @@
      "path": "packages/vite-plus/dist/test/plugins/browser.d.ts",
      "mode": "100644",
      "blob": "30e16bb438c45f73a9d099ea0db0f1395f7c3142",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "185aaa94efa6f79d6dbb21be092efbd76862ce38e276f12ea5ba16609ef20b3b"
    },
@@ -451,7 +596,7 @@
     "sha256": "185aaa94efa6f79d6dbb21be092efbd76862ce38e276f12ea5ba16609ef20b3b",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/browser.d.ts",
     "source_sha256": "185aaa94efa6f79d6dbb21be092efbd76862ce38e276f12ea5ba16609ef20b3b"
    },
@@ -459,7 +604,7 @@
   },
   {
    "target": {
-    "id": "T0306",
+    "id": "T0310",
     "path": "packages/vite-plus/dist/test/plugins/mocker-automock.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -467,7 +612,7 @@
      "path": "packages/vite-plus/dist/test/plugins/mocker-automock.d.ts",
      "mode": "100644",
      "blob": "dd6ef0b430d13eb5d6c9e77211dfb06079a5cd2d",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "ef74b2d7a06d069153916b376b33fbbfa8e587fac81733e4351e368f00d32e1a"
    },
@@ -475,7 +620,7 @@
     "sha256": "ef74b2d7a06d069153916b376b33fbbfa8e587fac81733e4351e368f00d32e1a",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/mocker-automock.d.ts",
     "source_sha256": "ef74b2d7a06d069153916b376b33fbbfa8e587fac81733e4351e368f00d32e1a"
    },
@@ -483,7 +628,7 @@
   },
   {
    "target": {
-    "id": "T0307",
+    "id": "T0311",
     "path": "packages/vite-plus/dist/test/plugins/mocker-browser.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -491,7 +636,7 @@
      "path": "packages/vite-plus/dist/test/plugins/mocker-browser.d.ts",
      "mode": "100644",
      "blob": "9e7d5981585db66c053613f770701d76d938cf65",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "badba09e67ea6e4c174711fc3dce86dfb3016e8a8ca09b32f1824c2e1a064e95"
    },
@@ -499,7 +644,7 @@
     "sha256": "badba09e67ea6e4c174711fc3dce86dfb3016e8a8ca09b32f1824c2e1a064e95",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/mocker-browser.d.ts",
     "source_sha256": "badba09e67ea6e4c174711fc3dce86dfb3016e8a8ca09b32f1824c2e1a064e95"
    },
@@ -507,7 +652,7 @@
   },
   {
    "target": {
-    "id": "T0308",
+    "id": "T0312",
     "path": "packages/vite-plus/dist/test/plugins/mocker-node.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -515,7 +660,7 @@
      "path": "packages/vite-plus/dist/test/plugins/mocker-node.d.ts",
      "mode": "100644",
      "blob": "ac4024b707f0002657f61b1cea3915af3f6042bb",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "9c1f21882229fe7ccfdd15d8fa61bb343c37d4a3ccc134e98f5eb7f636f02452"
    },
@@ -523,7 +668,7 @@
     "sha256": "9c1f21882229fe7ccfdd15d8fa61bb343c37d4a3ccc134e98f5eb7f636f02452",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/mocker-node.d.ts",
     "source_sha256": "9c1f21882229fe7ccfdd15d8fa61bb343c37d4a3ccc134e98f5eb7f636f02452"
    },
@@ -531,7 +676,7 @@
   },
   {
    "target": {
-    "id": "T0309",
+    "id": "T0313",
     "path": "packages/vite-plus/dist/test/plugins/mocker-redirect.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -539,7 +684,7 @@
      "path": "packages/vite-plus/dist/test/plugins/mocker-redirect.d.ts",
      "mode": "100644",
      "blob": "624f7ec891af97b02de63a479994826300ceab11",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "cc3389d75c7cb945f8f08e4c9ff0dfd7110abaae2667ec3497997c20d914d30f"
    },
@@ -547,7 +692,7 @@
     "sha256": "cc3389d75c7cb945f8f08e4c9ff0dfd7110abaae2667ec3497997c20d914d30f",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/mocker-redirect.d.ts",
     "source_sha256": "cc3389d75c7cb945f8f08e4c9ff0dfd7110abaae2667ec3497997c20d914d30f"
    },
@@ -555,7 +700,7 @@
   },
   {
    "target": {
-    "id": "T0310",
+    "id": "T0314",
     "path": "packages/vite-plus/dist/test/plugins/mocker-register.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -563,7 +708,7 @@
      "path": "packages/vite-plus/dist/test/plugins/mocker-register.d.ts",
      "mode": "100644",
      "blob": "3cc11823cb06e95eff4601d23462f916c7ab4cc4",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "dd210a63c6f1a322534df6d0c2a96f0915adaa934e350b64f1ac784e7b9611c6"
    },
@@ -571,7 +716,7 @@
     "sha256": "dd210a63c6f1a322534df6d0c2a96f0915adaa934e350b64f1ac784e7b9611c6",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/mocker-register.d.ts",
     "source_sha256": "dd210a63c6f1a322534df6d0c2a96f0915adaa934e350b64f1ac784e7b9611c6"
    },
@@ -579,7 +724,7 @@
   },
   {
    "target": {
-    "id": "T0311",
+    "id": "T0315",
     "path": "packages/vite-plus/dist/test/plugins/mocker-transforms.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -587,7 +732,7 @@
      "path": "packages/vite-plus/dist/test/plugins/mocker-transforms.d.ts",
      "mode": "100644",
      "blob": "0719095241d8a601b5f7addc1c6e934d9882c2ea",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "b9c25ea4bdacc3beb642f3a36173bba9eb12f7654a7a50a99658bc6139f13332"
    },
@@ -595,7 +740,7 @@
     "sha256": "b9c25ea4bdacc3beb642f3a36173bba9eb12f7654a7a50a99658bc6139f13332",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/mocker-transforms.d.ts",
     "source_sha256": "b9c25ea4bdacc3beb642f3a36173bba9eb12f7654a7a50a99658bc6139f13332"
    },
@@ -603,7 +748,7 @@
   },
   {
    "target": {
-    "id": "T0312",
+    "id": "T0316",
     "path": "packages/vite-plus/dist/test/plugins/mocker.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -611,7 +756,7 @@
      "path": "packages/vite-plus/dist/test/plugins/mocker.d.ts",
      "mode": "100644",
      "blob": "ac2b3f5bf35fb54646cc7a7deff7b1183adadd80",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "cb59b39e18ae49759e255bbdcd0ac9d0578debd40f471bd1ab2c5240ee5f8f79"
    },
@@ -619,7 +764,7 @@
     "sha256": "cb59b39e18ae49759e255bbdcd0ac9d0578debd40f471bd1ab2c5240ee5f8f79",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/mocker.d.ts",
     "source_sha256": "cb59b39e18ae49759e255bbdcd0ac9d0578debd40f471bd1ab2c5240ee5f8f79"
    },
@@ -627,7 +772,7 @@
   },
   {
    "target": {
-    "id": "T0313",
+    "id": "T0317",
     "path": "packages/vite-plus/dist/test/plugins/pretty-format.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -635,7 +780,7 @@
      "path": "packages/vite-plus/dist/test/plugins/pretty-format.d.ts",
      "mode": "100644",
      "blob": "f418eb855fdabf5981696bebda98438ca5f83802",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "a8ce82e03692afcff1f7ece203365684384813cb1af566ae1bfdf86e889a6e36"
    },
@@ -643,7 +788,7 @@
     "sha256": "a8ce82e03692afcff1f7ece203365684384813cb1af566ae1bfdf86e889a6e36",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/pretty-format.d.ts",
     "source_sha256": "a8ce82e03692afcff1f7ece203365684384813cb1af566ae1bfdf86e889a6e36"
    },
@@ -651,7 +796,7 @@
   },
   {
    "target": {
-    "id": "T0317",
+    "id": "T0321",
     "path": "packages/vite-plus/dist/test/plugins/snapshot-environment.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -659,7 +804,7 @@
      "path": "packages/vite-plus/dist/test/plugins/snapshot-environment.d.ts",
      "mode": "100644",
      "blob": "5b13dec92f166ded5c64f56b03f244b68e571c95",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "93610a6724d6d3fc9d81be55dc162ae701aa98f6fae54e627d9ca2bb9a19946e"
    },
@@ -667,7 +812,7 @@
     "sha256": "93610a6724d6d3fc9d81be55dc162ae701aa98f6fae54e627d9ca2bb9a19946e",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/snapshot-environment.d.ts",
     "source_sha256": "93610a6724d6d3fc9d81be55dc162ae701aa98f6fae54e627d9ca2bb9a19946e"
    },
@@ -675,7 +820,7 @@
   },
   {
    "target": {
-    "id": "T0318",
+    "id": "T0322",
     "path": "packages/vite-plus/dist/test/plugins/snapshot-manager.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -683,7 +828,7 @@
      "path": "packages/vite-plus/dist/test/plugins/snapshot-manager.d.ts",
      "mode": "100644",
      "blob": "d744ef1312551f2c3a6261774f369c1748041128",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "406fda0fac3d4def7fda4199b6a92ef99bfa5bed119d4ba93ee3091ae5788bf3"
    },
@@ -691,7 +836,7 @@
     "sha256": "406fda0fac3d4def7fda4199b6a92ef99bfa5bed119d4ba93ee3091ae5788bf3",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/snapshot-manager.d.ts",
     "source_sha256": "406fda0fac3d4def7fda4199b6a92ef99bfa5bed119d4ba93ee3091ae5788bf3"
    },
@@ -699,7 +844,7 @@
   },
   {
    "target": {
-    "id": "T0319",
+    "id": "T0323",
     "path": "packages/vite-plus/dist/test/plugins/snapshot.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -707,7 +852,7 @@
      "path": "packages/vite-plus/dist/test/plugins/snapshot.d.ts",
      "mode": "100644",
      "blob": "09d2ca56ae67d27d3945770628788c2265003b1b",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "173927de0b8d5dd967055a3759b6c6545deb6ed0f029655afe054adacd2ced64"
    },
@@ -715,7 +860,7 @@
     "sha256": "173927de0b8d5dd967055a3759b6c6545deb6ed0f029655afe054adacd2ced64",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/snapshot.d.ts",
     "source_sha256": "173927de0b8d5dd967055a3759b6c6545deb6ed0f029655afe054adacd2ced64"
    },
@@ -723,7 +868,7 @@
   },
   {
    "target": {
-    "id": "T0320",
+    "id": "T0324",
     "path": "packages/vite-plus/dist/test/plugins/spy.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -731,7 +876,7 @@
      "path": "packages/vite-plus/dist/test/plugins/spy.d.ts",
      "mode": "100644",
      "blob": "059a6d1fa2c6601d51d13d6be29d01c9622ae0dd",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "a9ee217f1407a17060b4927051b5e97162756b3b45390529389fb90a28f29199"
    },
@@ -739,7 +884,7 @@
     "sha256": "a9ee217f1407a17060b4927051b5e97162756b3b45390529389fb90a28f29199",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/spy.d.ts",
     "source_sha256": "a9ee217f1407a17060b4927051b5e97162756b3b45390529389fb90a28f29199"
    },
@@ -747,7 +892,7 @@
   },
   {
    "target": {
-    "id": "T0321",
+    "id": "T0325",
     "path": "packages/vite-plus/dist/test/plugins/utils-constants.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -755,7 +900,7 @@
      "path": "packages/vite-plus/dist/test/plugins/utils-constants.d.ts",
      "mode": "100644",
      "blob": "809e5f8007c172ed914cd16799e3f7ebaf087c82",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "60f1e700cee0af73199ef32e51ca1bb750fcb8457fb62271c8afcc035653b474"
    },
@@ -763,7 +908,7 @@
     "sha256": "60f1e700cee0af73199ef32e51ca1bb750fcb8457fb62271c8afcc035653b474",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/utils-constants.d.ts",
     "source_sha256": "60f1e700cee0af73199ef32e51ca1bb750fcb8457fb62271c8afcc035653b474"
    },
@@ -771,7 +916,7 @@
   },
   {
    "target": {
-    "id": "T0322",
+    "id": "T0326",
     "path": "packages/vite-plus/dist/test/plugins/utils-diff.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -779,7 +924,7 @@
      "path": "packages/vite-plus/dist/test/plugins/utils-diff.d.ts",
      "mode": "100644",
      "blob": "10fdc227ef062521ce42e6991766f0db58a0b6e9",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "009cdb399847b3d2ae1c14f2642f61df7576985887fb33bb24a9a2437850ae13"
    },
@@ -787,7 +932,7 @@
     "sha256": "009cdb399847b3d2ae1c14f2642f61df7576985887fb33bb24a9a2437850ae13",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/utils-diff.d.ts",
     "source_sha256": "009cdb399847b3d2ae1c14f2642f61df7576985887fb33bb24a9a2437850ae13"
    },
@@ -795,7 +940,7 @@
   },
   {
    "target": {
-    "id": "T0323",
+    "id": "T0327",
     "path": "packages/vite-plus/dist/test/plugins/utils-display.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -803,7 +948,7 @@
      "path": "packages/vite-plus/dist/test/plugins/utils-display.d.ts",
      "mode": "100644",
      "blob": "4d8fd042364a69cfd6ffdd2239dcbd77f3779b76",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "be3b0300cbca580f1bf2f1ec49630e88fab66e1365bfe54277d7d395c417c878"
    },
@@ -811,7 +956,7 @@
     "sha256": "be3b0300cbca580f1bf2f1ec49630e88fab66e1365bfe54277d7d395c417c878",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/utils-display.d.ts",
     "source_sha256": "be3b0300cbca580f1bf2f1ec49630e88fab66e1365bfe54277d7d395c417c878"
    },
@@ -819,7 +964,7 @@
   },
   {
    "target": {
-    "id": "T0324",
+    "id": "T0328",
     "path": "packages/vite-plus/dist/test/plugins/utils-error.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -827,7 +972,7 @@
      "path": "packages/vite-plus/dist/test/plugins/utils-error.d.ts",
      "mode": "100644",
      "blob": "c5d16214497a09ced5f9479fa982ddcfd3d5a614",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "3f9c7fcce6069c9c7fef6e8af3b99aa1bbeb8167c2f2ca733bdf08bebc43cf2e"
    },
@@ -835,7 +980,7 @@
     "sha256": "3f9c7fcce6069c9c7fef6e8af3b99aa1bbeb8167c2f2ca733bdf08bebc43cf2e",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/utils-error.d.ts",
     "source_sha256": "3f9c7fcce6069c9c7fef6e8af3b99aa1bbeb8167c2f2ca733bdf08bebc43cf2e"
    },
@@ -843,7 +988,7 @@
   },
   {
    "target": {
-    "id": "T0325",
+    "id": "T0329",
     "path": "packages/vite-plus/dist/test/plugins/utils-helpers.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -851,7 +996,7 @@
      "path": "packages/vite-plus/dist/test/plugins/utils-helpers.d.ts",
      "mode": "100644",
      "blob": "8ee99f46e445035f4706c75c916ac9e43893d7ea",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "90bafc0fda874724b09a480c11110ff310d7101ab1f8e725f69865c4bac649f6"
    },
@@ -859,7 +1004,7 @@
     "sha256": "90bafc0fda874724b09a480c11110ff310d7101ab1f8e725f69865c4bac649f6",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/utils-helpers.d.ts",
     "source_sha256": "90bafc0fda874724b09a480c11110ff310d7101ab1f8e725f69865c4bac649f6"
    },
@@ -867,7 +1012,7 @@
   },
   {
    "target": {
-    "id": "T0326",
+    "id": "T0330",
     "path": "packages/vite-plus/dist/test/plugins/utils-offset.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -875,7 +1020,7 @@
      "path": "packages/vite-plus/dist/test/plugins/utils-offset.d.ts",
      "mode": "100644",
      "blob": "881b88c1a34e78a0ac1affef514f29e9678e1045",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "4941f4f7a0a7e6ec7a37cc9f570ed75789ecdc027c6d44d4ee092154ad772a58"
    },
@@ -883,7 +1028,7 @@
     "sha256": "4941f4f7a0a7e6ec7a37cc9f570ed75789ecdc027c6d44d4ee092154ad772a58",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/utils-offset.d.ts",
     "source_sha256": "4941f4f7a0a7e6ec7a37cc9f570ed75789ecdc027c6d44d4ee092154ad772a58"
    },
@@ -891,7 +1036,7 @@
   },
   {
    "target": {
-    "id": "T0327",
+    "id": "T0331",
     "path": "packages/vite-plus/dist/test/plugins/utils-resolver.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -899,7 +1044,7 @@
      "path": "packages/vite-plus/dist/test/plugins/utils-resolver.d.ts",
      "mode": "100644",
      "blob": "636cd4edf658e333d7b88b1ce6023581fb64a970",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "e0f2ca50b5eb072e000109c451ea6c0f62fd34e0c7b0032917a096657e5dcbe9"
    },
@@ -907,7 +1052,7 @@
     "sha256": "e0f2ca50b5eb072e000109c451ea6c0f62fd34e0c7b0032917a096657e5dcbe9",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/utils-resolver.d.ts",
     "source_sha256": "e0f2ca50b5eb072e000109c451ea6c0f62fd34e0c7b0032917a096657e5dcbe9"
    },
@@ -915,7 +1060,7 @@
   },
   {
    "target": {
-    "id": "T0328",
+    "id": "T0332",
     "path": "packages/vite-plus/dist/test/plugins/utils-serialize.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -923,7 +1068,7 @@
      "path": "packages/vite-plus/dist/test/plugins/utils-serialize.d.ts",
      "mode": "100644",
      "blob": "77f3b6da20ddf2c6ad8b40401842254c6e116302",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "4a80a148a2c87d48de9b663a5ef4472e37db917d2bbac81c75ee03cf864b9d85"
    },
@@ -931,7 +1076,7 @@
     "sha256": "4a80a148a2c87d48de9b663a5ef4472e37db917d2bbac81c75ee03cf864b9d85",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/utils-serialize.d.ts",
     "source_sha256": "4a80a148a2c87d48de9b663a5ef4472e37db917d2bbac81c75ee03cf864b9d85"
    },
@@ -939,7 +1084,7 @@
   },
   {
    "target": {
-    "id": "T0329",
+    "id": "T0333",
     "path": "packages/vite-plus/dist/test/plugins/utils-source-map-node.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -947,7 +1092,7 @@
      "path": "packages/vite-plus/dist/test/plugins/utils-source-map-node.d.ts",
      "mode": "100644",
      "blob": "728face4905af15893c71557b455ca6f2043057b",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "c2217eb4d6c73c1011eb8b45331137d8b7c0bb90dc9c17e8d01fc3e830758b55"
    },
@@ -955,7 +1100,7 @@
     "sha256": "c2217eb4d6c73c1011eb8b45331137d8b7c0bb90dc9c17e8d01fc3e830758b55",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/utils-source-map-node.d.ts",
     "source_sha256": "c2217eb4d6c73c1011eb8b45331137d8b7c0bb90dc9c17e8d01fc3e830758b55"
    },
@@ -963,7 +1108,7 @@
   },
   {
    "target": {
-    "id": "T0330",
+    "id": "T0334",
     "path": "packages/vite-plus/dist/test/plugins/utils-source-map.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -971,7 +1116,7 @@
      "path": "packages/vite-plus/dist/test/plugins/utils-source-map.d.ts",
      "mode": "100644",
      "blob": "5c1720c8f2b653ab63d0223d90c08efcbc2ea9da",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "6da6b09d62c4529ba323d29971c4c560feeda6f917ec7631c6d66f79e120e4b5"
    },
@@ -979,7 +1124,7 @@
     "sha256": "6da6b09d62c4529ba323d29971c4c560feeda6f917ec7631c6d66f79e120e4b5",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/utils-source-map.d.ts",
     "source_sha256": "6da6b09d62c4529ba323d29971c4c560feeda6f917ec7631c6d66f79e120e4b5"
    },
@@ -987,7 +1132,7 @@
   },
   {
    "target": {
-    "id": "T0331",
+    "id": "T0335",
     "path": "packages/vite-plus/dist/test/plugins/utils-timers.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -995,7 +1140,7 @@
      "path": "packages/vite-plus/dist/test/plugins/utils-timers.d.ts",
      "mode": "100644",
      "blob": "2bd9c9317852031a455b64d5677bbe2e83f2c08a",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "c1f5eb8c9ebafb6a79558818d17846599e6837ab005c51db01d040a8982b8a6d"
    },
@@ -1003,7 +1148,7 @@
     "sha256": "c1f5eb8c9ebafb6a79558818d17846599e6837ab005c51db01d040a8982b8a6d",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/utils-timers.d.ts",
     "source_sha256": "c1f5eb8c9ebafb6a79558818d17846599e6837ab005c51db01d040a8982b8a6d"
    },
@@ -1011,7 +1156,7 @@
   },
   {
    "target": {
-    "id": "T0332",
+    "id": "T0336",
     "path": "packages/vite-plus/dist/test/plugins/utils.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -1019,7 +1164,7 @@
      "path": "packages/vite-plus/dist/test/plugins/utils.d.ts",
      "mode": "100644",
      "blob": "811586bc0afec2acd499a3338cfbc0945b644534",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "eecaadb913c5c7705cab49571b75ef203c00e20733f9828569a283dfde316509"
    },
@@ -1027,7 +1172,7 @@
     "sha256": "eecaadb913c5c7705cab49571b75ef203c00e20733f9828569a283dfde316509",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/test/plugins/utils.d.ts",
     "source_sha256": "eecaadb913c5c7705cab49571b75ef203c00e20733f9828569a283dfde316509"
    },
@@ -1035,7 +1180,7 @@
   },
   {
    "target": {
-    "id": "T0341",
+    "id": "T0345",
     "path": "packages/vite-plus/dist/tiara-native-DbeuJGA5.js",
     "view": "generated transformation output",
     "before": null,
@@ -1043,7 +1188,7 @@
      "path": "packages/vite-plus/dist/tiara-native-DbeuJGA5.js",
      "mode": "100644",
      "blob": "86c4477e9a0e97d7117af3bc553882dbdde830fa",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "67ba2962b9f0b03b91456041fe8ce57686af06f24e18da70bb939a8d96530def"
    },
@@ -1051,7 +1196,7 @@
     "sha256": "67ba2962b9f0b03b91456041fe8ce57686af06f24e18da70bb939a8d96530def",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/tiara-native-DbeuJGA5.js",
     "source_sha256": "67ba2962b9f0b03b91456041fe8ce57686af06f24e18da70bb939a8d96530def"
    },
@@ -1059,7 +1204,7 @@
   },
   {
    "target": {
-    "id": "T0342",
+    "id": "T0346",
     "path": "packages/vite-plus/dist/tiara-native.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -1067,7 +1212,7 @@
      "path": "packages/vite-plus/dist/tiara-native.d.ts",
      "mode": "100644",
      "blob": "9d9c9619caa11fedd79f7dcfcffd4b2effbcec35",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "5216d31367540025b840e07dcde06336e308c5f6c212407c81ab566a0d131ff2"
    },
@@ -1075,7 +1220,7 @@
     "sha256": "5216d31367540025b840e07dcde06336e308c5f6c212407c81ab566a0d131ff2",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/tiara-native.d.ts",
     "source_sha256": "5216d31367540025b840e07dcde06336e308c5f6c212407c81ab566a0d131ff2"
    },
@@ -1083,7 +1228,7 @@
   },
   {
    "target": {
-    "id": "T0343",
+    "id": "T0347",
     "path": "packages/vite-plus/dist/tiara-native.js",
     "view": "generated transformation output",
     "before": null,
@@ -1091,7 +1236,7 @@
      "path": "packages/vite-plus/dist/tiara-native.js",
      "mode": "100644",
      "blob": "63f35ff053b19c3b2bbc13219eca68c528920118",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "33c357a27a2df0474a8c5f4ac02bf6da862ac899d31aa0e791d14ea77f488534"
    },
@@ -1099,7 +1244,7 @@
     "sha256": "33c357a27a2df0474a8c5f4ac02bf6da862ac899d31aa0e791d14ea77f488534",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/tiara-native.js",
     "source_sha256": "33c357a27a2df0474a8c5f4ac02bf6da862ac899d31aa0e791d14ea77f488534"
    },
@@ -1107,7 +1252,7 @@
   },
   {
    "target": {
-    "id": "T0344",
+    "id": "T0348",
     "path": "packages/vite-plus/dist/toolchain.d.ts",
     "view": "generated transformation output",
     "before": null,
@@ -1115,7 +1260,7 @@
      "path": "packages/vite-plus/dist/toolchain.d.ts",
      "mode": "100644",
      "blob": "7e1aa5ca92e3858e76aae2be432647bc47b367a9",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
     "actual_sha256": "3c8ca636c249df125e4ec91c8317eeba72ff46cc1c346d7d1b33104dce07c037"
    },
@@ -1123,7 +1268,7 @@
     "sha256": "3c8ca636c249df125e4ec91c8317eeba72ff46cc1c346d7d1b33104dce07c037",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/toolchain.d.ts",
     "source_sha256": "3c8ca636c249df125e4ec91c8317eeba72ff46cc1c346d7d1b33104dce07c037"
    },
@@ -1131,23 +1276,23 @@
   },
   {
    "target": {
-    "id": "T0345",
+    "id": "T0349",
     "path": "packages/vite-plus/dist/toolchain.js",
     "view": "generated transformation output",
     "before": null,
     "after": {
      "path": "packages/vite-plus/dist/toolchain.js",
      "mode": "100644",
-     "blob": "36cfa6f8a7bdf2dd2ef0f9dbffebf9ca0bb7c6dc",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "blob": "e06584d0cbc5cfb91c6fe9d421812ae8fab9b41d",
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
-    "actual_sha256": "f0c00d3032910534177273d7a0fd8bfabe6c32008c85bcff03c7801c51283fd0"
+    "actual_sha256": "10c44f816685f6921393c6f660719f626d6b886da125f54e50b551efc2852467"
    },
    "input_output_consumer_mapping": {
-    "sha256": "f0c00d3032910534177273d7a0fd8bfabe6c32008c85bcff03c7801c51283fd0",
+    "sha256": "10c44f816685f6921393c6f660719f626d6b886da125f54e50b551efc2852467",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/toolchain.js",
     "source_sha256": "10c44f816685f6921393c6f660719f626d6b886da125f54e50b551efc2852467"
    },
@@ -1155,276 +1300,25 @@
   },
   {
    "target": {
-    "id": "T0346",
+    "id": "T0350",
     "path": "packages/vite-plus/dist/toolchain.json",
     "view": "generated transformation output",
     "before": null,
     "after": {
      "path": "packages/vite-plus/dist/toolchain.json",
      "mode": "100644",
-     "blob": "4566e322a4d0aa2118dbcb14c5e53e644c609c41",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+     "blob": "ec7a1541c684e88218c9dbbf697cd9417c85c2b3",
+     "ref": "dab2c10b87ec8683afa3741cca5ef76d58152510"
     },
-    "actual_sha256": "bf0f79c851a0ccaaf6e76e0523d51b65f306cc44744c41099ddb7682c9cf5176"
+    "actual_sha256": "744bbf4a386d45dcedf038e6b34749867466d2ecfab2ddb818bc5fc996760a8b"
    },
    "input_output_consumer_mapping": {
-    "sha256": "bf0f79c851a0ccaaf6e76e0523d51b65f306cc44744c41099ddb7682c9cf5176",
+    "sha256": "744bbf4a386d45dcedf038e6b34749867466d2ecfab2ddb818bc5fc996760a8b",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "mapping": "Exact local built input with syntax/role-specific module and migration-output rewriting in scripts/lib/scoped-vite-plus.mjs; stock algorithms remain context.",
     "source": "packages/vite-plus-effect-fork/packages/cli/dist/toolchain.json",
     "source_sha256": "744bbf4a386d45dcedf038e6b34749867466d2ecfab2ddb818bc5fc996760a8b"
-   },
-   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
-  },
-  {
-   "target": {
-    "id": "T0347",
-    "path": "packages/vite-plus/dist/tsconfig-BrNZD5aQ.js",
-    "view": "generated transformation output",
-    "before": null,
-    "after": {
-     "path": "packages/vite-plus/dist/tsconfig-BrNZD5aQ.js",
-     "mode": "100644",
-     "blob": "609c5a97799e10212585f35e7902fa046c89107b",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
-    },
-    "actual_sha256": "c3ca9a096f68ae9311b66fe79079de24f34cc37679415b44915fa6ca638b5112"
-   },
-   "input_output_consumer_mapping": {
-    "sha256": "c3ca9a096f68ae9311b66fe79079de24f34cc37679415b44915fa6ca638b5112",
-    "git_mode": "100644",
-    "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/cli/dist/tsconfig-BrNZD5aQ.js",
-    "source_sha256": "c3ca9a096f68ae9311b66fe79079de24f34cc37679415b44915fa6ca638b5112"
-   },
-   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
-  },
-  {
-   "target": {
-    "id": "T0348",
-    "path": "packages/vite-plus/dist/tsconfig-CteVwe5T.js",
-    "view": "generated transformation output",
-    "before": null,
-    "after": {
-     "path": "packages/vite-plus/dist/tsconfig-CteVwe5T.js",
-     "mode": "100644",
-     "blob": "40298f89f8e212f355e63cc37bf3dacd1b194167",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
-    },
-    "actual_sha256": "804dfb748e50ce0a4f07cde3c9beab81e7aea4c6fd9c6ba99cdb38d6c0b1c42f"
-   },
-   "input_output_consumer_mapping": {
-    "sha256": "804dfb748e50ce0a4f07cde3c9beab81e7aea4c6fd9c6ba99cdb38d6c0b1c42f",
-    "git_mode": "100644",
-    "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/cli/dist/tsconfig-CteVwe5T.js",
-    "source_sha256": "49d0bdb50f75f6d66747d5e9ff8cf7e414d2aded3682a88bdbab9228d8ffa252"
-   },
-   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
-  },
-  {
-   "target": {
-    "id": "T0353",
-    "path": "packages/vite-plus/dist/types/customEvent.d.ts",
-    "view": "generated transformation output",
-    "before": {
-     "path": "packages/vite-plus/dist/types/customEvent.d.ts",
-     "mode": "100644",
-     "blob": "0bcb3e73c000b3651656c6f9a0b25035bbf07382",
-     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
-    },
-    "after": {
-     "path": "packages/vite-plus/dist/types/customEvent.d.ts",
-     "mode": "100644",
-     "blob": "ea384617fe003bb6a3805fea09c63299cd054a95",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
-    },
-    "actual_sha256": "62c8f6354794b6081401e19ff0579d9ecb46ad63ee76eeaadad73f795435713a"
-   },
-   "input_output_consumer_mapping": {
-    "sha256": "62c8f6354794b6081401e19ff0579d9ecb46ad63ee76eeaadad73f795435713a",
-    "git_mode": "100644",
-    "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/cli/dist/types/customEvent.d.ts",
-    "source_sha256": "62c8f6354794b6081401e19ff0579d9ecb46ad63ee76eeaadad73f795435713a"
-   },
-   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
-  },
-  {
-   "target": {
-    "id": "T0354",
-    "path": "packages/vite-plus/dist/types/hmrPayload.d.ts",
-    "view": "generated transformation output",
-    "before": {
-     "path": "packages/vite-plus/dist/types/hmrPayload.d.ts",
-     "mode": "100644",
-     "blob": "a081e8969e3b0ad4930123587019cbd4b29c94ea",
-     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
-    },
-    "after": {
-     "path": "packages/vite-plus/dist/types/hmrPayload.d.ts",
-     "mode": "100644",
-     "blob": "d57745486074b6b0b524ef8a19e59658b1ea4578",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
-    },
-    "actual_sha256": "fe24a1ac82b4cdf2fa6591fd196f97a872f4b85eda90c1774246bc0f6f87f355"
-   },
-   "input_output_consumer_mapping": {
-    "sha256": "fe24a1ac82b4cdf2fa6591fd196f97a872f4b85eda90c1774246bc0f6f87f355",
-    "git_mode": "100644",
-    "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/cli/dist/types/hmrPayload.d.ts",
-    "source_sha256": "fe24a1ac82b4cdf2fa6591fd196f97a872f4b85eda90c1774246bc0f6f87f355"
-   },
-   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
-  },
-  {
-   "target": {
-    "id": "T0355",
-    "path": "packages/vite-plus/dist/types/hot.d.ts",
-    "view": "generated transformation output",
-    "before": {
-     "path": "packages/vite-plus/dist/types/hot.d.ts",
-     "mode": "100644",
-     "blob": "8bf4a2b9f91a709d12615d2b88449a9003ac7b77",
-     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
-    },
-    "after": {
-     "path": "packages/vite-plus/dist/types/hot.d.ts",
-     "mode": "100644",
-     "blob": "9218ee4fb61a4f12e955e31452037d655996c87b",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
-    },
-    "actual_sha256": "8499d2e86e0b442746853087da96e2e8679ab1a3b2f33acbe1a338b2d7a74e79"
-   },
-   "input_output_consumer_mapping": {
-    "sha256": "8499d2e86e0b442746853087da96e2e8679ab1a3b2f33acbe1a338b2d7a74e79",
-    "git_mode": "100644",
-    "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/cli/dist/types/hot.d.ts",
-    "source_sha256": "8499d2e86e0b442746853087da96e2e8679ab1a3b2f33acbe1a338b2d7a74e79"
-   },
-   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
-  },
-  {
-   "target": {
-    "id": "T0356",
-    "path": "packages/vite-plus/dist/types/import-meta.d.ts",
-    "view": "generated transformation output",
-    "before": {
-     "path": "packages/vite-plus/dist/types/import-meta.d.ts",
-     "mode": "100644",
-     "blob": "7a4c02e7644a39dad331d9112d9d0610786a4b6c",
-     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
-    },
-    "after": {
-     "path": "packages/vite-plus/dist/types/import-meta.d.ts",
-     "mode": "100644",
-     "blob": "787d6634cea53f33a01ec5d2f2212d65dea380c2",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
-    },
-    "actual_sha256": "15fac438d6a281e5019185de9941365ffcd071220dd1da5718d2724fcd011574"
-   },
-   "input_output_consumer_mapping": {
-    "sha256": "15fac438d6a281e5019185de9941365ffcd071220dd1da5718d2724fcd011574",
-    "git_mode": "100644",
-    "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/cli/dist/types/import-meta.d.ts",
-    "source_sha256": "15fac438d6a281e5019185de9941365ffcd071220dd1da5718d2724fcd011574"
-   },
-   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
-  },
-  {
-   "target": {
-    "id": "T0357",
-    "path": "packages/vite-plus/dist/types/importGlob.d.ts",
-    "view": "generated transformation output",
-    "before": {
-     "path": "packages/vite-plus/dist/types/importGlob.d.ts",
-     "mode": "100644",
-     "blob": "2830aaa501f747c6bca0eb986b91581f2b810ed2",
-     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
-    },
-    "after": {
-     "path": "packages/vite-plus/dist/types/importGlob.d.ts",
-     "mode": "100644",
-     "blob": "0749ceb8001755746df54f6c001dae7787047932",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
-    },
-    "actual_sha256": "ea5005aff687f1588d48a8e595eca0806285c01b261b01fe5c7a8d4fc1b8346b"
-   },
-   "input_output_consumer_mapping": {
-    "sha256": "ea5005aff687f1588d48a8e595eca0806285c01b261b01fe5c7a8d4fc1b8346b",
-    "git_mode": "100644",
-    "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/cli/dist/types/importGlob.d.ts",
-    "source_sha256": "ea5005aff687f1588d48a8e595eca0806285c01b261b01fe5c7a8d4fc1b8346b"
-   },
-   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
-  },
-  {
-   "target": {
-    "id": "T0358",
-    "path": "packages/vite-plus/dist/types/importMeta.d.ts",
-    "view": "generated transformation output",
-    "before": {
-     "path": "packages/vite-plus/dist/types/importMeta.d.ts",
-     "mode": "100644",
-     "blob": "db5b81cab620d849c774313cd454c829915f3edc",
-     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
-    },
-    "after": {
-     "path": "packages/vite-plus/dist/types/importMeta.d.ts",
-     "mode": "100644",
-     "blob": "5377f8c932092b25c2bba115426ebec099479560",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
-    },
-    "actual_sha256": "9e34f450cf0605a4ed0a6a4aae6af9fb610107390ef33cfe133c2e268a48af4d"
-   },
-   "input_output_consumer_mapping": {
-    "sha256": "9e34f450cf0605a4ed0a6a4aae6af9fb610107390ef33cfe133c2e268a48af4d",
-    "git_mode": "100644",
-    "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/cli/dist/types/importMeta.d.ts",
-    "source_sha256": "9e34f450cf0605a4ed0a6a4aae6af9fb610107390ef33cfe133c2e268a48af4d"
-   },
-   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
-  },
-  {
-   "target": {
-    "id": "T0359",
-    "path": "packages/vite-plus/dist/types/metadata.d.ts",
-    "view": "generated transformation output",
-    "before": {
-     "path": "packages/vite-plus/dist/types/metadata.d.ts",
-     "mode": "100644",
-     "blob": "f9f6dd692df5863a4a4cd3723cad97bd968cc704",
-     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
-    },
-    "after": {
-     "path": "packages/vite-plus/dist/types/metadata.d.ts",
-     "mode": "100644",
-     "blob": "837fb6ffde69afb737d76b5063ae59b9a7f3ffd6",
-     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
-    },
-    "actual_sha256": "d13d9234c88d9f0acf6bd39a48b242fd6ac6d199ac4b5033ec79be80b162db62"
-   },
-   "input_output_consumer_mapping": {
-    "sha256": "d13d9234c88d9f0acf6bd39a48b242fd6ac6d199ac4b5033ec79be80b162db62",
-    "git_mode": "100644",
-    "producer": "scripts/sync-vite-plus.mjs",
-    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/cli/dist/types/metadata.d.ts",
-    "source_sha256": "d13d9234c88d9f0acf6bd39a48b242fd6ac6d199ac4b5033ec79be80b162db62"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   }

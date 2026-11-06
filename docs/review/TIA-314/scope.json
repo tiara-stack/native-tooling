@@ -1,6 +1,6 @@
 {
   "ticket": "TIA-314",
-  "implementation_commit": "5ecd568db620ea01f23465c064fe6b02cfa8377a",
+  "implementation_commit": "dab2c10b87ec8683afa3741cca5ef76d58152510",
   "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
   "upstream": {
     "repository": "https://github.com/voidzero-dev/vite-plus",
@@ -9,19 +9,21 @@
   },
   "policy": "Exclude only unchanged pinned upstream source. Keep Tiara overlays, root package/version/lock/config changes, generated artifacts, generation inputs and affected consumers. Pinned upstream metadata remains provenance context. Review mixed source as Tiara overlays against the pin.",
   "counts": {
-    "raw_changed_paths": 6946,
-    "authorized_import_exclusions": 6420,
-    "review_target_paths": 526,
-    "mixed_or_custom_source_paths": 13,
+    "raw_changed_paths": 6960,
+    "authorized_import_exclusions": 6419,
+    "review_target_paths": 541,
+    "mixed_or_custom_source_paths": 15,
     "skipped_reviewable_paths": 0,
     "reviewed_paths": 0,
-    "pending_review_target_paths": 526,
-    "source_adaptation_paths": 442,
-    "hosted_metadata_paths": 84,
-    "changed_existing_scope_metadata_paths": 1
+    "pending_review_target_paths": 541,
+    "source_adaptation_paths": 454,
+    "hosted_metadata_paths": 87,
+    "changed_existing_scope_metadata_paths": 1,
+    "historical_import_update_exclusions": 6420,
+    "newly_mixed_import_paths": 1
   },
-  "review_state": "Immutable source-epoch snapshot: signal handling owns cleanup before preparation and through final unlink. Startup cancellation skips native spawn; active child exit behavior is retained. Affected independent OCR/CLI/installed re-entry and both hosted conditions remain pending. Native and JavaScript/type compilation remain qualified unchanged reuse.",
-  "custom_overlay_patch_sha256": "8a25940d0c43a0dac647a79f217263bb9a2e52a8181cacbd187aad80624f20f2",
+  "review_state": "Immutable source-epoch snapshot: hosted R2 interface/generator/lifecycle repairs and affected validation complete; ordered independent local re-entry and current CI/hosted gates pending. Native/core/Rolldown compilation is exact qualified reuse; affected CLI JavaScript/declarations and scoped outputs are fresh.",
+  "custom_overlay_patch_sha256": "c36f120ceae1522b5744a5c274c2ac1ae79c0455bb9d5983d058db179183e879",
   "authorized_import_exclusions": [
     {
       "path": "packages/vite-plus-effect-fork/.claude/agents/cargo-workspace-merger.md",
@@ -37962,12 +37964,6 @@
       "head_sha256": "06e6c9455270f4adcfadc3a69bac96904a973b4b4f8e98dbf27a135bb4ccd360"
     },
     {
-      "path": "packages/vite-plus-effect-fork/packages/cli/templates/monorepo/_gitignore",
-      "base_sha256": "6246e2107c6c3cb74bda4fa9b6179756c49532561024a6b11e8fda04d5c3288d",
-      "pin_sha256": "5ad718641037d34a954d4e86ed9afc47a6e7c80c7d7aef228285f575ed7c147b",
-      "head_sha256": "5ad718641037d34a954d4e86ed9afc47a6e7c80c7d7aef228285f575ed7c147b"
-    },
-    {
       "path": "packages/vite-plus-effect-fork/packages/cli/templates/monorepo/_yarnrc.yml",
       "base_sha256": "6cb891fc2bc0c6890f9822c04ed7e8159c59d1747070023fc37d95565488bd69",
       "pin_sha256": "48fe82374a7750c12faf51fee342d7b5fd69b418bbae1d432a1f35dd33852f7b",
@@ -38566,6 +38562,10 @@
       "mode": "raw diff"
     },
     {
+      "path": ".gitignore",
+      "mode": "Tiara custom source/config diff"
+    },
+    {
       "path": "README.md",
       "mode": "raw diff"
     },
@@ -39157,6 +39157,10 @@
       "mode": "Tiara overlay against approved pin"
     },
     {
+      "path": "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint-lsp.mjs",
+      "mode": "Tiara overlay against approved pin"
+    },
+    {
       "path": "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs",
       "base_sha256": null,
       "pin_sha256": null,
@@ -39210,6 +39214,10 @@
       "base_sha256": null,
       "pin_sha256": null,
       "head_sha256": "a06e85c9ef525f46038cf0975f72007a9cc5449fb653e995c77a4b355e1297c1",
+      "mode": "Tiara overlay against approved pin"
+    },
+    {
+      "path": "packages/vite-plus-effect-fork/packages/cli/templates/monorepo/_gitignore",
       "mode": "Tiara overlay against approved pin"
     },
     {
@@ -39269,6 +39277,10 @@
       "mode": "raw diff"
     },
     {
+      "path": "packages/vite-plus/bin/tiara-oxlint-lsp.mjs",
+      "mode": "generated transformation mapping; stock algorithms context"
+    },
+    {
       "path": "packages/vite-plus/bin/tiara-oxlint.mjs",
       "mode": "raw diff"
     },
@@ -39289,12 +39301,12 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/agent-D7O7mSeO.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus/dist/agent-D0gTfAYS.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus/dist/agent-DWTzWYW1.js",
-      "mode": "generated transformation mapping; stock algorithms context"
+      "path": "packages/vite-plus/dist/agent-D7O7mSeO.js",
+      "mode": "raw diff"
     },
     {
       "path": "packages/vite-plus/dist/bin.d.ts",
@@ -39329,11 +39341,11 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/command-CZvBUM6J.js",
+      "path": "packages/vite-plus/dist/command-CiXubh0B.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus/dist/command-DTsDwt2S.js",
+      "path": "packages/vite-plus/dist/command-DYpHsDOs.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39361,6 +39373,10 @@
       "mode": "raw diff"
     },
     {
+      "path": "packages/vite-plus/dist/define-config-Bd4jRYpr.js",
+      "mode": "generated transformation mapping; stock algorithms context"
+    },
+    {
       "path": "packages/vite-plus/dist/define-config-BuMs_LKa.d.ts",
       "mode": "raw diff"
     },
@@ -39369,16 +39385,12 @@
       "mode": "raw diff"
     },
     {
+      "path": "packages/vite-plus/dist/define-config-C_KQOmd-.d.ts",
+      "mode": "generated transformation mapping; stock algorithms context"
+    },
+    {
       "path": "packages/vite-plus/dist/define-config-CrA3lZhQ.cjs",
       "mode": "raw diff"
-    },
-    {
-      "path": "packages/vite-plus/dist/define-config-CsJeEKBN.js",
-      "mode": "generated transformation mapping; stock algorithms context"
-    },
-    {
-      "path": "packages/vite-plus/dist/define-config-D6odUb-Y.d.ts",
-      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus/dist/define-config-DN3Lf_48.cjs",
@@ -39397,23 +39409,23 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/dist-CKz3vcoG.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus/dist/dist-BHNi_1Xm.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus/dist/dist-CrT8aBYV.js",
+      "path": "packages/vite-plus/dist/dist-BY8rUtnB.js",
       "mode": "generated transformation mapping; stock algorithms context"
+    },
+    {
+      "path": "packages/vite-plus/dist/dist-CKz3vcoG.js",
+      "mode": "raw diff"
     },
     {
       "path": "packages/vite-plus/dist/dist-CtM2JRbM.js",
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/dist-bEVYPg-3.js",
-      "mode": "generated transformation mapping; stock algorithms context"
-    },
-    {
-      "path": "packages/vite-plus/dist/dist-l10pUlWT.js",
+      "path": "packages/vite-plus/dist/dist-qj-fCx1Z.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39425,7 +39437,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/editor-DDjNBHmb.js",
+      "path": "packages/vite-plus/dist/editor-CgYujhxK.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39473,7 +39485,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/json-C9TY5YT1.js",
+      "path": "packages/vite-plus/dist/json-DEbQRTSu.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39577,19 +39589,19 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/package-CTMTkwwC.js",
-      "mode": "generated transformation mapping; stock algorithms context"
-    },
-    {
       "path": "packages/vite-plus/dist/package-CU2g7URl.js",
       "mode": "raw diff"
+    },
+    {
+      "path": "packages/vite-plus/dist/package-CxcH1qid.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus/dist/package-overrides-Dpn4scvN.js",
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/prompts-DIFlcnEQ.js",
+      "path": "packages/vite-plus/dist/prompts-CukK1Ina.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39601,11 +39613,11 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/resolve-vite-config-CBEuFE9y.js",
+      "path": "packages/vite-plus/dist/resolve-vite-config-C1csXN11.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus/dist/resolve-vite-config-CWZ-9h7v.js",
+      "path": "packages/vite-plus/dist/resolve-vite-config-DHcnObjQ.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39977,11 +39989,11 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/tsconfig-BrNZD5aQ.js",
+      "path": "packages/vite-plus/dist/tsconfig-DJTfGBSA.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus/dist/tsconfig-CteVwe5T.js",
+      "path": "packages/vite-plus/dist/tsconfig-Drny2b5n.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -40333,6 +40345,10 @@
       "mode": "Tiara custom source/config diff"
     },
     {
+      "path": "scripts/lib/scoped-vite-plus.mjs",
+      "mode": "Tiara custom source/config diff"
+    },
+    {
       "path": "scripts/lib/vite-plus-build-record.mjs",
       "mode": "raw diff"
     },
@@ -40353,8 +40369,24 @@
       "mode": "raw diff"
     },
     {
+      "path": "scripts/test/effect-vitest-consumer-lifetime.test.mjs",
+      "mode": "Tiara custom source/config diff"
+    },
+    {
       "path": "scripts/test/effect-vitest-consumer.mjs",
       "mode": "raw diff"
+    },
+    {
+      "path": "scripts/test/prepare-vite-plus.test.mjs",
+      "mode": "Tiara custom source/config diff"
+    },
+    {
+      "path": "scripts/test/scoped-vite-plus-migration.test.mjs",
+      "mode": "Tiara custom source/config diff"
+    },
+    {
+      "path": "scripts/test/scoped-vite-plus.test.mjs",
+      "mode": "Tiara custom source/config diff"
     },
     {
       "path": "scripts/test/sync-effect-vitest.test.mjs",
@@ -40365,8 +40397,20 @@
       "mode": "Tiara custom source/config diff"
     },
     {
+      "path": "scripts/test/vite-plus-lsp-bridge.test.mjs",
+      "mode": "Tiara custom source/config diff"
+    },
+    {
+      "path": "scripts/test/vite-plus-lsp.test.mjs",
+      "mode": "Tiara custom source/config diff"
+    },
+    {
       "path": "scripts/test/vite-plus-native.test.mjs",
       "mode": "raw diff"
+    },
+    {
+      "path": "scripts/test/vite-plus-pack.test.mjs",
+      "mode": "Tiara custom source/config diff"
     },
     {
       "path": "scripts/test/vite-plus-source-environment.test.mjs",
@@ -40689,6 +40733,18 @@
       "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
     },
     {
+      "path": ".review-packets/tia314/80-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/81-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/82-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
       "path": ".review-packets/tia314/README.md",
       "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
     },
@@ -40743,7 +40799,7 @@
     ],
     "Markdown_qualification": "Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.",
     "OCR_carry": "Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.",
-    "final_main_source_epoch": "5ecd568db620ea01f23465c064fe6b02cfa8377a",
+    "final_main_source_epoch": "dab2c10b87ec8683afa3741cca5ef76d58152510",
     "identical_queue_squash_tree": "34d345e35d45df8fc931cfd2aa7312fbe0ae5a99"
   },
   "generated_output_review_policy": {
@@ -40843,11 +40899,12 @@
     }
   ],
   "hosted_delivery": {
-    "source_epoch": "5ecd568db620ea01f23465c064fe6b02cfa8377a",
+    "source_epoch": "dab2c10b87ec8683afa3741cca5ef76d58152510",
     "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
-    "source_adaptations": 442,
-    "stock_exclusions": 6420,
-    "packet_metadata_files": 84,
+    "source_adaptations": 454,
+    "stock_exclusions": 6419,
+    "historical_stock_update_exclusions": 6420,
+    "packet_metadata_files": 87,
     "packet_paths": [
       ".review-packets/tia314/01-code.json",
       ".review-packets/tia314/02-code.json",
@@ -40928,6 +40985,9 @@
       ".review-packets/tia314/77-generated-map.json",
       ".review-packets/tia314/78-code.json",
       ".review-packets/tia314/79-code.json",
+      ".review-packets/tia314/80-code.json",
+      ".review-packets/tia314/81-code.json",
+      ".review-packets/tia314/82-code.json",
       ".review-packets/tia314/README.md",
       ".review-packets/tia314/index.json",
       ".review-packets/tia314/hosted-config.yaml",
@@ -40935,7 +40995,15 @@
       ".review-packets/tia314/initial-description.md"
     ],
     "encoding": "Existing canonical UTF-8 JSON string arrays, exact target identities and bounded contexts; generated shared transforms plus every mapping; no unchanged stock algorithm audit.",
-    "current_metadata_review_pending": 85,
+    "current_metadata_review_pending": 88,
     "no_circular_digest": "Packet body hashes are not embedded here. Actual metadata head is bound by the coordinator after commit."
+  },
+  "import_exclusion_accounting": {
+    "historical_stock_update_paths": 6420,
+    "fully_pure_current_paths": 6419,
+    "new_mixed_paths": [
+      "packages/vite-plus-effect-fork/packages/cli/templates/monorepo/_gitignore"
+    ],
+    "boundary": "Imported portion remains excluded context; the new Tiara overlay is reviewable against the approved pin."
   }
 }
