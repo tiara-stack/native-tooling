@@ -3,14 +3,14 @@ import { t as documentationUrl$1 } from "../documentation-DqcZSthV.js";
 import { t as renderCliDoc } from "../help-BmKpeOP9.js";
 import { a as muted, i as log, o as printHeader, r as formatDuration, s as success, t as accent } from "../terminal-MKGAuy-p.js";
 import { u as VITE_PLUS_NAME } from "../constants-BqJiMVVU.js";
-import { i as readJsonFile, n as editJsonFile } from "../json-DJ0KlQ20.js";
-import { o as fetchNpmResource, r as getScopeFromPackageName, s as getNpmRegistry, t as checkNpmPackageExists } from "../package-BCV9Hn01.js";
-import { i as hasViteConfig, o as resolveViteConfig, r as findWorkspaceRoot, t as findViteConfig } from "../resolve-vite-config-Pui04nGg.js";
-import { C as multiselect, D as text, E as spinner, O as require_picocolors, S as log$1, T as select, a as resolveGitInit, c as selectPackageManager, d as readYamlFile, h as resolveApproveBuildTargets, i as promptGitHooks, k as isCancel, m as detectGatedBuilds, n as defaultInteractive, o as runViteFmt, p as approveBuilds, r as downloadPackageManager$1, s as runViteInstall, t as cancelAndExit, u as editYamlFile, v as DependencyType, x as intro, y as PackageManager } from "../prompts-2mo0giRb.js";
-import { n as require_semver } from "../dist-DK_IMiwa.js";
-import { a as selectAgentTargets, c as writeCopilotSetupWorkflow, d as templatesDir, l as displayRelative, r as detectExistingAgentTargetPaths, s as writeAgentInstructions, t as COPILOT_AGENT_ID } from "../agent-CaELp1zW.js";
-import { B as addFrameworkShim, F as updateWorkspaceConfig, H as hasFrameworkShim, K as promptTsupMigration, L as findGitRoot, M as detectWorkspace$1, N as isBingoTemplate, P as updatePackageJsonWithDeps, R as initGitRepository, V as detectFramework, W as detectTsupProject, Y as detectPrettierProject, Z as promptPrettierMigration, _ as installGitHooks, a as selectEditors, b as injectCreateDefaultTemplate, c as rewriteMonorepoProject, et as detectEslintProject, h as setPackageManager, j as supportsCatalog, l as rewriteStandaloneProject, n as detectExistingEditors, o as writeEditorConfigs, rt as promptEslintMigration, s as rewriteMonorepo, y as shouldSkipStagedMigrationForHooks } from "../editor-6JhEMKFR.js";
-import { n as runCommandSilently, t as runCommand$1 } from "../command-VbBeIe3y.js";
+import { i as readJsonFile, n as editJsonFile } from "../json-DEbQRTSu.js";
+import { o as fetchNpmResource, r as getScopeFromPackageName, s as getNpmRegistry, t as checkNpmPackageExists } from "../package-CxcH1qid.js";
+import { i as hasViteConfig, o as resolveViteConfig, r as findWorkspaceRoot, t as findViteConfig } from "../resolve-vite-config-DHcnObjQ.js";
+import { C as multiselect, D as text, E as spinner, O as require_picocolors, S as log$1, T as select, a as resolveGitInit, c as selectPackageManager, d as readYamlFile, h as resolveApproveBuildTargets, i as promptGitHooks, k as isCancel, m as detectGatedBuilds, n as defaultInteractive, o as runViteFmt, p as approveBuilds, r as downloadPackageManager$1, s as runViteInstall, t as cancelAndExit, u as editYamlFile, v as DependencyType, x as intro, y as PackageManager } from "../prompts-CukK1Ina.js";
+import { n as require_semver } from "../dist-BY8rUtnB.js";
+import { a as selectAgentTargets, c as writeCopilotSetupWorkflow, d as templatesDir, l as displayRelative, r as detectExistingAgentTargetPaths, s as writeAgentInstructions, t as COPILOT_AGENT_ID } from "../agent-D0gTfAYS.js";
+import { B as addFrameworkShim, F as updateWorkspaceConfig, H as hasFrameworkShim, K as promptTsupMigration, L as findGitRoot, M as detectWorkspace$1, N as isBingoTemplate, P as updatePackageJsonWithDeps, R as initGitRepository, V as detectFramework, W as detectTsupProject, Y as detectPrettierProject, Z as promptPrettierMigration, _ as installGitHooks, a as selectEditors, b as injectCreateDefaultTemplate, c as rewriteMonorepoProject, et as detectEslintProject, h as setPackageManager, j as supportsCatalog, l as rewriteStandaloneProject, n as detectExistingEditors, o as writeEditorConfigs, rt as promptEslintMigration, s as rewriteMonorepo, y as shouldSkipStagedMigrationForHooks } from "../editor-CgYujhxK.js";
+import { n as runCommandSilently, t as runCommand$1 } from "../command-DYpHsDOs.js";
 import { t as unwrapCliParseOutcome } from "../cli-parse-DHE8NrBU.js";
 import path from "node:path";
 import { getVpDirs, parseCreateArgs, removeConfigKey, runCommand, upsertJsonConfig, vitePlusHeader } from "../../binding/index.js";
@@ -97,8 +97,8 @@ function prependToPathToEnvs(extraPath, envs) {
 	return envs;
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/nanotar@0.3.0/node_modules/nanotar/dist/index.mjs
-var import_semver = /* @__PURE__ */ __toESM(require_semver(), 1);
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/nanotar@0.3.0/node_modules/nanotar/dist/index.mjs
+var import_semver = /* @__PURE__ */ __toESM(require_semver());
 const tarItemTypeMap = {
 	"0": "file",
 	"1": "hardLink",
@@ -1097,7 +1097,7 @@ async function getConfiguredDefaultTemplate(startDir) {
 	}
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/validate-npm-package-name@7.0.2/node_modules/validate-npm-package-name/lib/builtin-modules.json
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/validate-npm-package-name@7.0.2/node_modules/validate-npm-package-name/lib/builtin-modules.json
 var require_builtin_modules = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = [
 		"_http_agent",
@@ -1175,7 +1175,7 @@ var require_builtin_modules = /* @__PURE__ */ __commonJSMin(((exports, module) =
 	];
 }));
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/@nkzw+safe-word-list@3.1.0/node_modules/@nkzw/safe-word-list/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/@nkzw+safe-word-list@3.1.0/node_modules/@nkzw/safe-word-list/index.js
 var import_lib = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const builtins = require_builtin_modules();
 	var scopedPackagePattern = /* @__PURE__ */ new RegExp("^(?:@([^/]+?)[/])?([^/]+?)$");

@@ -60,9 +60,9 @@ function findSourceRoot(start) {
 	let directory = resolve(start);
 	while (true) {
 		const manifest = join(directory, "package.json");
-		if (existsSync(manifest)) {
-			if (JSON.parse(readFileSync(manifest, "utf8")).name === "@tiara-stack/native-tooling-monorepo") return directory;
-		}
+		if (existsSync(manifest)) try {
+			if (JSON.parse(readFileSync(manifest, "utf8"))?.name === "@tiara-stack/native-tooling-monorepo") return directory;
+		} catch {}
 		const parent = dirname(directory);
 		if (parent === directory) return void 0;
 		directory = parent;

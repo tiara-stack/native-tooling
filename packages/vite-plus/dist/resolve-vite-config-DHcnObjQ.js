@@ -1,5 +1,5 @@
 import { l as VITE_CONFIG_FILES } from "./constants-BqJiMVVU.js";
-import { u as withConfigMetadataResolution } from "./define-config-Dz7JLX8k.js";
+import { u as withConfigMetadataResolution } from "./define-config-Bd4jRYpr.js";
 import path from "node:path";
 import fs from "node:fs";
 //#region src/resolve-vite-config.ts

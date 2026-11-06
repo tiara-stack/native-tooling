@@ -2,15 +2,15 @@ import { r as __toESM } from "./rolldown-runtime-CMFfr-1z.js";
 import { t as documentationUrl$1 } from "./documentation-DqcZSthV.js";
 import { a as SETUP_VP_VERSION, c as VITEST_VERSION, d as VITE_PLUS_OVERRIDE_PACKAGES, f as VITE_PLUS_VERSION, l as VITE_CONFIG_FILES, m as isForceOverrideMode, n as BASEURL_TSCONFIG_WARNING, o as TSDOWN_MIGRATION_SKILL_URL, s as VITEST_AGE_GATE_EXEMPT_PACKAGES, u as VITE_PLUS_NAME } from "./constants-BqJiMVVU.js";
 import { i as ensureVitePlusImportRuleDefaults, r as createDefaultVitePlusLintConfig } from "./oxlint-plugin-config-lMMD5fAC.js";
-import { a as writeJsonFile, c as modify, i as readJsonFile, l as parse, n as editJsonFile, o as applyEdits, r as isJsonFile, t as detectFormattingOptions } from "./json-DJ0KlQ20.js";
-import { n as detectPackageMetadata, o as fetchNpmResource, r as getScopeFromPackageName, s as getNpmRegistry } from "./package-BCV9Hn01.js";
+import { a as writeJsonFile, c as modify, i as readJsonFile, l as parse, n as editJsonFile, o as applyEdits, r as isJsonFile, t as detectFormattingOptions } from "./json-DEbQRTSu.js";
+import { n as detectPackageMetadata, o as fetchNpmResource, r as getScopeFromPackageName, s as getNpmRegistry } from "./package-CxcH1qid.js";
 import { n as isAlignableVitestEcosystemPackage } from "./vitest-ecosystem-BU0AqZq-.js";
-import { C as multiselect, S as log, T as select, _ as getSpinner, b as confirm, d as readYamlFile, f as scalarString, g as getSilentSpinner, k as isCancel, t as cancelAndExit, u as editYamlFile, y as PackageManager } from "./prompts-2mo0giRb.js";
-import { n as require_semver, t as require_dist } from "./dist-DK_IMiwa.js";
-import { l as displayRelative, u as rulesDir } from "./agent-CaELp1zW.js";
+import { C as multiselect, S as log, T as select, _ as getSpinner, b as confirm, d as readYamlFile, f as scalarString, g as getSilentSpinner, k as isCancel, t as cancelAndExit, u as editYamlFile, y as PackageManager } from "./prompts-CukK1Ina.js";
+import { n as require_semver, t as require_dist } from "./dist-BY8rUtnB.js";
+import { l as displayRelative, u as rulesDir } from "./agent-D0gTfAYS.js";
 import { n as addMigrationWarning, t as addManualStep } from "./report-NhQk8VHb.js";
-import { n as runCommandSilently, r as require_cross_spawn } from "./command-VbBeIe3y.js";
-import { a as hasBaseUrlInTsconfig, c as hasVitestTypesInTsconfig, l as removeDeprecatedTsconfigFalseOption, n as findTsconfigFiles, s as hasTypesToRewriteInTsconfig, u as rewriteTypesInTsconfig } from "./tsconfig-DVfGWpUa.js";
+import { n as runCommandSilently, r as require_cross_spawn } from "./command-DYpHsDOs.js";
+import { a as hasBaseUrlInTsconfig, c as hasVitestTypesInTsconfig, l as removeDeprecatedTsconfigFalseOption, n as findTsconfigFiles, s as hasTypesToRewriteInTsconfig, u as rewriteTypesInTsconfig } from "./tsconfig-DJTfGBSA.js";
 import { t as extractOverrideTargetName } from "./package-overrides-Dpn4scvN.js";
 import { i as findUnsafeHookInstallPath, t as SUPPORTED_GIT_HOOK_NAMES } from "./hooks-C-4gykWR.js";
 import path, { posix, win32 } from "node:path";
@@ -1791,7 +1791,7 @@ async function initGitRepository(cwd) {
 	return true;
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/balanced-match@4.0.4/node_modules/balanced-match/dist/esm/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/balanced-match@4.0.4/node_modules/balanced-match/dist/esm/index.js
 const balanced = (a, b, str) => {
 	const ma = a instanceof RegExp ? maybeMatch(a, str) : a;
 	const mb = b instanceof RegExp ? maybeMatch(b, str) : b;
@@ -1839,7 +1839,7 @@ const range = (a, b, str) => {
 	return result;
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/brace-expansion@5.0.3/node_modules/brace-expansion/dist/esm/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/brace-expansion@5.0.3/node_modules/brace-expansion/dist/esm/index.js
 const escSlash = "\0SLASH" + Math.random() + "\0";
 const escOpen = "\0OPEN" + Math.random() + "\0";
 const escClose = "\0CLOSE" + Math.random() + "\0";
@@ -1980,14 +1980,14 @@ function expand_(str, max, isTop) {
 	return expansions;
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/assert-valid-pattern.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/assert-valid-pattern.js
 const MAX_PATTERN_LENGTH = 65536;
 const assertValidPattern = (pattern) => {
 	if (typeof pattern !== "string") throw new TypeError("invalid pattern");
 	if (pattern.length > MAX_PATTERN_LENGTH) throw new TypeError("pattern is too long");
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/brace-expressions.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/brace-expressions.js
 const posixClasses = {
 	"[:alnum:]": ["\\p{L}\\p{Nl}\\p{Nd}", true],
 	"[:alpha:]": ["\\p{L}\\p{Nl}", true],
@@ -2111,7 +2111,7 @@ const parseClass = (glob, position) => {
 	];
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/unescape.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/unescape.js
 /**
 * Un-escape a string that has been escaped with {@link escape}.
 *
@@ -2136,7 +2136,7 @@ const unescape = (s, { windowsPathsNoEscape = false, magicalBraces = true } = {}
 	return windowsPathsNoEscape ? s.replace(/\[([^\/\\{}])\]/g, "$1") : s.replace(/((?!\\).|^)\[([^\/\\{}])\]/g, "$1$2").replace(/\\([^\/{}])/g, "$1");
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/ast.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/ast.js
 var _a;
 const types = /* @__PURE__ */ new Set([
 	"!",
@@ -2647,7 +2647,7 @@ var AST = class {
 };
 _a = AST;
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/escape.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/escape.js
 /**
 * Escape all magic characters in a glob pattern.
 *
@@ -2665,7 +2665,7 @@ const escape = (s, { windowsPathsNoEscape = false, magicalBraces = false } = {})
 	return windowsPathsNoEscape ? s.replace(/[?*()[\]]/g, "[$&]") : s.replace(/[?*()[\]\\]/g, "\\$&");
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/index.js
 const minimatch = (p, pattern, options = {}) => {
 	assertValidPattern(pattern);
 	if (!options.nocomment && pattern.charAt(0) === "#") return false;
@@ -3286,7 +3286,7 @@ minimatch.Minimatch = Minimatch;
 minimatch.escape = escape;
 minimatch.unescape = unescape;
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/lru-cache@11.2.7/node_modules/lru-cache/dist/esm/index.min.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lru-cache@11.2.7/node_modules/lru-cache/dist/esm/index.min.js
 var x = typeof performance == "object" && performance && typeof performance.now == "function" ? performance : Date;
 var I = /* @__PURE__ */ new Set();
 var R = typeof process == "object" && process ? process : {};
@@ -3896,7 +3896,7 @@ var L = class c {
 	}
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/minipass@7.1.3/node_modules/minipass/dist/esm/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minipass@7.1.3/node_modules/minipass/dist/esm/index.js
 const proc = typeof process === "object" && process ? process : {
 	stdout: null,
 	stderr: null
@@ -4715,7 +4715,7 @@ while (this[FLUSHCHUNK](this[BUFFERSHIFT]()) && this[BUFFER].length);
 	}
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/path-scurry@2.0.2/node_modules/path-scurry/dist/esm/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/path-scurry@2.0.2/node_modules/path-scurry/dist/esm/index.js
 const realpathSync$2 = realpathSync$1.native;
 const defaultFS = {
 	lstatSync: lstatSync$1,
@@ -6277,7 +6277,7 @@ process.platform;
 */
 const PathScurry = process.platform === "win32" ? PathScurryWin32 : process.platform === "darwin" ? PathScurryDarwin : PathScurryPosix;
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/pattern.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/pattern.js
 const isPatternList = (pl) => pl.length >= 1;
 const isGlobList = (gl) => gl.length >= 1;
 /**
@@ -6439,7 +6439,7 @@ var Pattern = class Pattern {
 	}
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/ignore.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/ignore.js
 const defaultPlatform$1 = typeof process === "object" && process && typeof process.platform === "string" ? process.platform : "linux";
 /**
 * Class used to process ignored patterns
@@ -6512,7 +6512,7 @@ var Ignore = class {
 	}
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/processor.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/processor.js
 /**
 * A cache of which patterns have been processed for a given Path
 */
@@ -6704,7 +6704,7 @@ var Processor = class Processor {
 	}
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/walker.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/walker.js
 /**
 * Single-use utility classes to provide functionality to the {@link Glob}
 * methods.
@@ -6988,7 +6988,7 @@ var GlobStream = class extends GlobUtil {
 	}
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/glob.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/glob.js
 const defaultPlatform = typeof process === "object" && process && typeof process.platform === "string" ? process.platform : "linux";
 /**
 * An object that can perform glob pattern traversals.
@@ -7177,7 +7177,7 @@ var Glob = class {
 	}
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/has-magic.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/has-magic.js
 /**
 * Return true if the patterns provided contain any magic glob characters,
 * given the options provided.
@@ -7195,7 +7195,7 @@ const hasMagic = (pattern, options = {}) => {
 	return false;
 };
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/index.js
 function globStreamSync(pattern, options = {}) {
 	return new Glob(pattern, options).streamSync();
 }

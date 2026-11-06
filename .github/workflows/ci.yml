@@ -105,10 +105,10 @@ jobs:
         run: pnpm native:build
 
       - name: Verify native compiler and diagnostic protocol
-        run: vp run -w native:test:backend
+        run: pnpm exec vp run -w native:test:backend
 
       - name: Verify Effect rules through the native Oxlint CLI
-        run: vp run -w native:test:oxlint
+        run: pnpm exec vp run -w native:test:oxlint
 
       - name: Stage native binaries
         run: pnpm native:stage

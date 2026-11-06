@@ -83,7 +83,7 @@ jobs:
 
       - name: Verify native compiler and diagnostic protocol
         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
-        run: vp run -w native:test:backend
+        run: pnpm exec vp run -w native:test:backend
 
       - name: Stage native binaries
         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
@@ -111,8 +111,8 @@ jobs:
 
       - name: Dry-run staged publish
         if: ${{ github.event_name == 'workflow_dispatch' && inputs['dry-run'] }}
-        run: vp pm stage publish -r --filter "${{ inputs['package-filter'] }}" --access public --provenance --tag "${{ inputs.tag }}" --dry-run -- --no-git-checks
+        run: pnpm exec vp pm stage publish -r --filter "${{ inputs['package-filter'] }}" --access public --provenance --tag "${{ inputs.tag }}" --dry-run -- --no-git-checks
 
       - name: Stage packages for npm trusted publishing
         if: ${{ github.event_name != 'workflow_dispatch' || !inputs['dry-run'] }}
-        run: vp pm stage publish -r --filter "${{ inputs['package-filter'] || './packages/*' }}" --access public --provenance --tag "${{ inputs.tag || 'latest' }}" -- --no-git-checks
+        run: pnpm exec vp pm stage publish -r --filter "${{ inputs['package-filter'] || './packages/*' }}" --access public --provenance --tag "${{ inputs.tag || 'latest' }}" -- --no-git-checks

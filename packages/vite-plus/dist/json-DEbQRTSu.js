@@ -1,5 +1,5 @@
 import fs from "node:fs";
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/detect-indent@7.0.2/node_modules/detect-indent/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/detect-indent@7.0.2/node_modules/detect-indent/index.js
 const INDENT_REGEX = /^(?:( )+|\t+)/;
 const INDENT_TYPE_SPACE = "space";
 const INDENT_TYPE_TAB = "tab";
@@ -97,7 +97,7 @@ function detectIndent(string) {
 	};
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/detect-newline@4.0.1/node_modules/detect-newline/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/detect-newline@4.0.1/node_modules/detect-newline/index.js
 function detectNewline(string) {
 	if (typeof string !== "string") throw new TypeError("Expected a string");
 	const newlines = string.match(/(?:\r?\n)/g) || [];
@@ -106,7 +106,7 @@ function detectNewline(string) {
 	return crlf > newlines.length - crlf ? "\r\n" : "\n";
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/impl/scanner.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/impl/scanner.js
 /**
 * Creates a JSON scanner on the given text.
 * If ignoreTrivia is set, whitespaces or comments are ignored.
@@ -486,7 +486,7 @@ var CharacterCodes;
 	CharacterCodes[CharacterCodes["tab"] = 9] = "tab";
 })(CharacterCodes || (CharacterCodes = {}));
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/impl/string-intern.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/impl/string-intern.js
 const cachedSpaces = new Array(20).fill(0).map((_, index) => {
 	return " ".repeat(index);
 });
@@ -521,7 +521,7 @@ const supportedEols = [
 	"\r\n"
 ];
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/impl/format.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/impl/format.js
 function format(documentText, range, options) {
 	let initialIndentLevel;
 	let formatText;
@@ -690,7 +690,7 @@ function isEOL(text, offset) {
 	return "\r\n".indexOf(text.charAt(offset)) !== -1;
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/impl/parser.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/impl/parser.js
 var ParseOptions;
 (function(ParseOptions) {
 	ParseOptions.DEFAULT = { allowTrailingComma: false };
@@ -1066,7 +1066,7 @@ function getNodeType(value) {
 	}
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/impl/edit.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/impl/edit.js
 function setProperty(text, originalPath, value, options) {
 	const path = originalPath.slice();
 	const root = parseTree$1(text, []);
@@ -1240,7 +1240,7 @@ function applyEdit(text, edit) {
 	return text.substring(0, edit.offset) + edit.content + text.substring(edit.offset + edit.length);
 }
 //#endregion
-//#region ../../../../../../../../../tmp/TIA-314/source-node-modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/main.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/main.js
 var ScanError;
 (function(ScanError) {
 	ScanError[ScanError["None"] = 0] = "None";

@@ -59,8 +59,12 @@ function findSourceRoot(start: string): string | undefined {
   while (true) {
     const manifest = join(directory, 'package.json');
     if (existsSync(manifest)) {
-      const pkg = JSON.parse(readFileSync(manifest, 'utf8'));
-      if (pkg.name === '@tiara-stack/native-tooling-monorepo') return directory;
+      try {
+        const pkg = JSON.parse(readFileSync(manifest, 'utf8'));
+        if (pkg?.name === '@tiara-stack/native-tooling-monorepo') return directory;
+      } catch {
+        // Unrelated malformed or unreadable manifests do not identify a source root.
+      }
     }
     const parent = dirname(directory);
     if (parent === directory) return undefined;

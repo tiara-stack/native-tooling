@@ -35,7 +35,7 @@ Repository: https://github.com/bombshell-dev/clack
 
 > MIT License
 > 
-> Copyright (c) Nate Moore
+> MIT License Copyright (c) 2025-Present [Bombshell contributors](https://bomb.sh/team)
 > 
 > Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 > 
@@ -76,12 +76,13 @@ Repository: https://github.com/nkzw-tech/safe-word-list
 
 ## balanced-match
 License: MIT
-By: Julian Gruber
 Repository: https://github.com/juliangruber/balanced-match
 
 > (MIT)
 > 
-> Copyright (c) 2013 Julian Gruber &lt;julian@juliangruber.com&gt;
+> Original code Copyright Julian Gruber <julian@juliangruber.com>
+> 
+> Port to TypeScript Copyright Isaac Z. Schlueter <i@izs.me>
 > 
 > Permission is hereby granted, free of charge, to any person obtaining a copy of
 > this software and associated documentation files (the "Software"), to deal in
@@ -105,12 +106,13 @@ Repository: https://github.com/juliangruber/balanced-match
 
 ## brace-expansion
 License: MIT
-By: Julian Gruber
 Repository: https://github.com/juliangruber/brace-expansion
 
 > MIT License
 > 
-> Copyright (c) 2013 Julian Gruber <julian@juliangruber.com>
+> Copyright Julian Gruber <julian@juliangruber.com>
+> 
+> TypeScript port Copyright Isaac Z. Schlueter <i@izs.me>
 > 
 > Permission is hereby granted, free of charge, to any person obtaining a copy
 > of this software and associated documentation files (the "Software"), to deal

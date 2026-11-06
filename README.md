@@ -127,6 +127,7 @@ publisher entry:
 - package: `@tiara-stack/oxlint-effect`
 - package: `@tiara-stack/effect-vitest`
 - package: `@tiara-stack/vite-plus`
+- package: `@tiara-stack/vite-plus-core`
 - owner/repository: `tiara-stack/native-tooling`
 - workflow file: `publish.yml`
 - environment: `npm`

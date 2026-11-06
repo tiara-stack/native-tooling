@@ -3,9 +3,9 @@ import { t as renderCliDoc } from "./help-BmKpeOP9.js";
 import { c as warnMsg, i as log, n as errorMsg, o as printHeader, t as accent } from "./terminal-MKGAuy-p.js";
 import { g as resolveBundled, h as resolve$1, i as DEFAULT_ENVS, l as VITE_CONFIG_FILES, n as BASEURL_TSCONFIG_WARNING, r as CONFIG_METADATA_ENV, u as VITE_PLUS_NAME } from "./constants-BqJiMVVU.js";
 import { r as createDefaultVitePlusLintConfig } from "./oxlint-plugin-config-lMMD5fAC.js";
-import { t as resolveTiaraNative } from "./tiara-native-Bcn-YGfc.js";
-import { a as readNearestPackageJson } from "./package-BCV9Hn01.js";
-import { t as cac } from "./dist-Cb-WgN4u.js";
+import { t as resolveTiaraNative } from "./tiara-native-DbeuJGA5.js";
+import { a as readNearestPackageJson } from "./package-CxcH1qid.js";
+import { t as cac } from "./dist-BHNi_1Xm.js";
 import { createRequire } from "node:module";
 import path, { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -1469,7 +1469,7 @@ export default defineConfig({});
 	return viteConfigPath;
 }
 async function vpFmt(cwd, filePath) {
-	const { runCommandSilently } = await import("./command-CrsoSFcP.js");
+	const { runCommandSilently } = await import("./command-CiXubh0B.js");
 	const { binPath, envs } = await fmt();
 	const result = await runCommandSilently({
 		command: binPath,
@@ -1528,7 +1528,7 @@ async function applyToolInitConfigToViteConfig(command, args, projectPath = proc
 	}
 	if (spec.configKey === "lint" && hasTriggerFlag(args, ["--init"])) {
 		const lintInitConfigPath = path.join(projectPath, ".vite-plus-lint-init.oxlintrc.json");
-		const { fixBaseUrlInTsconfig, hasBaseUrlInTsconfig } = await import("./tsconfig-BCEnT8a_.js");
+		const { fixBaseUrlInTsconfig, hasBaseUrlInTsconfig } = await import("./tsconfig-Drny2b5n.js");
 		await fixBaseUrlInTsconfig(projectPath);
 		const hasBaseUrl = hasBaseUrlInTsconfig(projectPath);
 		const initConfig = createDefaultVitePlusLintConfig({ includeTypeAwareDefaults: !hasBaseUrl });
@@ -1828,7 +1828,7 @@ else if (command === "hooks") await import("./hooks/bin.js");
 else if (command === "--version" || command === "-V") await import("./version.js");
 else if (command === "staged") await import("./staged/bin.js");
 else try {
-	const { resolveUniversalViteConfig } = await import("./resolve-vite-config-BX8EcBov.js");
+	const { resolveUniversalViteConfig } = await import("./resolve-vite-config-C1csXN11.js");
 	const initInspection = inspectInitCommand(command, args.slice(1));
 	if (initInspection.handled && initInspection.configKey && initInspection.hasExistingConfigKey && initInspection.existingViteConfigPath) {
 		log(`Skipped initialization: '${accent(initInspection.configKey)}' already exists in '${accent(path.basename(initInspection.existingViteConfigPath))}'.`);

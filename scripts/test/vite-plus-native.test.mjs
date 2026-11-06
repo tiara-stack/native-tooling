@@ -30,6 +30,7 @@ test("lint keeps the Vite config handoff while selecting explicit native overrid
   try {
     const oxlint = process.execPath;
     const tsgolint = join(fixture, "tsgolint");
+    writeFileSync(join(fixture, ".oxlintrc.json"), "{}");
     writeFileSync(tsgolint, "");
     const result = spawnSync(
       process.execPath,
@@ -65,7 +66,7 @@ test("lint keeps the Vite config handoff while selecting explicit native overrid
         "-e",
         "console.log(JSON.stringify({ metadata: process.env.VP_RESOLVING_CONFIG_METADATA, tsgolint: process.env.OXLINT_TSGOLINT_PATH }))",
       ],
-      { encoding: "utf8", env: { ...cleanEnv, ...resolved.envs } },
+      { cwd: fixture, encoding: "utf8", env: { ...cleanEnv, ...resolved.envs } },
     );
     assert.equal(launched.status, 0, launched.stderr);
     assert.deepEqual(JSON.parse(launched.stdout), { metadata: "1", tsgolint });
@@ -128,6 +129,47 @@ test("source tooling selects each native build from the command's checkout", () 
     );
     assert.equal(result.status, 0, result.stderr);
     assert.deepEqual(JSON.parse(result.stdout), expected);
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
+  }
+});
+
+test("source detection skips malformed and unreadable ancestor manifests", () => {
+  const fixture = mkdtempSync(join(tmpdir(), "tiara-source-manifests-"));
+  try {
+    writeFileSync(
+      join(fixture, "package.json"),
+      JSON.stringify({ name: "@tiara-stack/native-tooling-monorepo" }),
+    );
+    const expected = join(
+      fixture,
+      `native/typescript-go/built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`,
+    );
+    mkdirSync(dirname(expected), { recursive: true });
+    writeFileSync(expected, "");
+    for (const { name, manifest } of [
+      { name: "malformed", manifest: "{" },
+      { name: "non-object", manifest: "null" },
+      { name: "unreadable", manifest: undefined },
+    ]) {
+      const ancestor = join(fixture, name);
+      const cwd = join(ancestor, "project");
+      mkdirSync(cwd, { recursive: true });
+      writeFileSync(join(cwd, "package.json"), "{}");
+      if (manifest === undefined) mkdirSync(join(ancestor, "package.json"));
+      else writeFileSync(join(ancestor, "package.json"), manifest);
+      const result = spawnSync(
+        process.execPath,
+        [
+          "--input-type=module",
+          "-e",
+          `import { resolveTiaraNative } from ${JSON.stringify(resolve)}; console.log(resolveTiaraNative("tsgo"));`,
+        ],
+        { cwd, encoding: "utf8", env: cleanEnv },
+      );
+      assert.equal(result.status, 0, `${name}: ${result.stderr}`);
+      assert.equal(result.stdout.trim(), expected);
+    }
   } finally {
     rmSync(fixture, { recursive: true, force: true });
   }
