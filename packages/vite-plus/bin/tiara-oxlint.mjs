@@ -2,7 +2,7 @@
 import { spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { existsSync, unwatchFile, watchFile } from "node:fs";
-import { rename, unlink, writeFile } from "node:fs/promises";
+import { open, rename, unlink } from "node:fs/promises";
 import { constants } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 
@@ -72,6 +72,17 @@ async function prepareViteConfig(path) {
   const prefix = join(dirname(path), `.tiara-oxlint-${randomUUID()}`);
   const rootFile = prefix + "-root.json";
   const materialized = new Set();
+  const stagingFiles = new Set();
+  async function reclaim(file) {
+    try {
+      await unlink(file);
+    } catch (error) {
+      if (error.code !== "ENOENT") return;
+    }
+    materialized.delete(file);
+    stagingFiles.delete(file);
+    temporary.delete(file);
+  }
   async function refresh() {
     const config = await resolveConfig(
       { root: process.cwd(), configFile: path, logLevel: "silent" },
@@ -110,25 +121,38 @@ async function prepareViteConfig(path) {
     // Replace the root only after every child exists, beside the source config.
     const created = [];
     try {
+      for (const file of stagingFiles) await reclaim(file);
       for (const [file, text] of writes) {
         if (closing) return;
         const staging = file + ".writing";
-        temporary.add(file);
+        const handle = await open(staging, "wx");
+        stagingFiles.add(staging);
         temporary.add(staging);
-        await writeFile(staging, text, { flag: "wx" });
+        let failure;
+        try {
+          await handle.writeFile(text);
+        } catch (error) {
+          failure = error;
+        }
+        try {
+          await handle.close();
+        } catch (error) {
+          failure ??= error;
+        }
+        if (failure) throw failure;
         await rename(staging, file);
+        stagingFiles.delete(staging);
+        temporary.delete(staging);
+        temporary.add(file);
         if (file !== rootFile) {
           materialized.add(file);
           created.push(file);
         }
       }
     } catch (error) {
+      for (const file of stagingFiles) await reclaim(file);
       // These files were never published, so no root reader can need them.
-      for (const file of created) {
-        await unlink(file);
-        materialized.delete(file);
-        temporary.delete(file);
-      }
+      for (const file of created) await reclaim(file);
       throw error;
     }
     if (lsp) {

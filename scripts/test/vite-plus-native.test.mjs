@@ -193,7 +193,9 @@ test("an invalid override fails instead of silently selecting another binary", (
   assert.match(result.stderr, /Missing Tiara tsgo build at .*\.tmp\/missing-tsgo/);
 });
 
-const adapter = join(root, "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs");
+const adapter =
+  process.env.TIARA_TEST_ADAPTER ??
+  join(root, "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs");
 function adapterFixture() {
   mkdirSync(join(root, ".tmp"), { recursive: true });
   const directory = mkdtempSync(join(root, ".tmp/native-lint-test-"));
@@ -451,3 +453,175 @@ test("native lint adapter cleans up when the native child cannot start", () => {
     rmSync(fixture.directory, { recursive: true, force: true });
   }
 });
+
+for (const fault of [
+  "missing-child",
+  "unlink-denied",
+  "child-write",
+  "child-rename",
+  "root-rename",
+]) {
+  test(
+    "native lint adapter recovers from " + fault + " during publication",
+    { timeout: 15000 },
+    async () => {
+      const fixture = adapterFixture();
+      let child;
+      let exited;
+      try {
+        const configPath = join(fixture.directory, "vite.config.ts");
+        const armed = join(fixture.directory, "armed");
+        const preloader = join(fixture.directory, "fault.mjs");
+        writeFileSync(
+          preloader,
+          [
+            'import fs from "node:fs/promises";',
+            'import { existsSync } from "node:fs";',
+            'import { syncBuiltinESMExports } from "node:module";',
+            "const armed = " + JSON.stringify(armed) + ";",
+            "const mode = " + JSON.stringify(fault) + ";",
+            "const original = { rename: fs.rename, unlink: fs.unlink, writeFile: fs.writeFile, open: fs.open };",
+            "let failed = false, reclaimed = false;",
+            'const childStage = (path) => String(path).includes(".tiara-oxlint-") && String(path).endsWith(".writing") && !String(path).endsWith("-root.json.writing");',
+            'const fail = (message, code = "EIO") => Object.assign(new Error(message), { code });',
+            "fs.rename = async (from, to) => {",
+            '  if (existsSync(armed) && !failed && ((mode === "child-rename" && childStage(from)) || (mode !== "child-write" && mode !== "child-rename" && String(to).endsWith("-root.json")))) {',
+            '    failed = true; throw fail("publication fault");',
+            "  }",
+            "  return original.rename(from, to);",
+            "};",
+            "fs.unlink = async (path) => {",
+            '  if (failed && !reclaimed && ["missing-child", "unlink-denied"].includes(mode) && String(path).endsWith(".json") && !String(path).endsWith("-root.json")) {',
+            "    reclaimed = true;",
+            '    if (mode === "missing-child") { await original.unlink(path); throw fail("already removed child", "ENOENT"); }',
+            '    throw fail("reclamation fault", "EACCES");',
+            "  }",
+            "  return original.unlink(path);",
+            "};",
+            "fs.writeFile = async (path, ...args) => {",
+            "  const result = await original.writeFile(path, ...args);",
+            '  if (existsSync(armed) && !failed && mode === "child-write" && childStage(path)) { failed = true; throw fail("publication fault"); }',
+            "  return result;",
+            "};",
+            "fs.open = async (path, ...args) => {",
+            "  const handle = await original.open(path, ...args);",
+            "  const write = handle.writeFile.bind(handle);",
+            "  handle.writeFile = async (...args) => {",
+            "    const result = await write(...args);",
+            '    if (existsSync(armed) && !failed && mode === "child-write" && childStage(path)) { failed = true; throw fail("publication fault"); }',
+            "    return result;",
+            "  };",
+            "  return handle;",
+            "};",
+            "syncBuiltinESMExports();",
+          ].join("\n"),
+        );
+        const update = (version, level) =>
+          writeFileSync(
+            configPath,
+            "export default " +
+              JSON.stringify({
+                lint: {
+                  settings: { version },
+                  extends: [
+                    { rules: { "no-console": level }, extends: [{ rules: { "no-alert": level } }] },
+                  ],
+                },
+              }) +
+              ";\n",
+          );
+        update(0, "warn");
+        child = spawn(process.execPath, ["--import", preloader, adapter, "--lsp"], {
+          cwd: fixture.directory,
+          env: fixture.env,
+          stdio: ["ignore", "ignore", "pipe"],
+        });
+        let stderr = "";
+        child.stderr.on("data", (bytes) => {
+          stderr += bytes;
+        });
+        exited = new Promise((done, reject) => {
+          child.once("error", reject);
+          child.once("exit", done);
+        });
+        await waitFor(() => existsSync(fixture.record));
+        const record = JSON.parse(readFileSync(fixture.record, "utf8"));
+        const current = () => JSON.parse(readFileSync(record.configPath, "utf8"));
+        const initial = current();
+        writeFileSync(armed, "");
+        update(1, "off");
+        await waitFor(() => stderr.length > 0);
+        assert.match(stderr, /publication fault/);
+        assert.doesNotMatch(stderr, /already removed child|reclamation fault/);
+        assert.deepEqual(current(), initial);
+        assert.equal(
+          temporaryConfigs(fixture.directory).some((name) => name.endsWith(".writing")),
+          false,
+        );
+        assert.equal(temporaryConfigs(fixture.directory).length, fault === "unlink-denied" ? 4 : 3);
+        update(2, "off");
+        await waitFor(() => current().settings.version === 2);
+        const inherited = JSON.parse(readFileSync(current().extends[0], "utf8"));
+        assert.equal(inherited.rules["no-console"], "off");
+        assert.equal(
+          JSON.parse(readFileSync(inherited.extends[0], "utf8")).rules["no-alert"],
+          "off",
+        );
+        child.kill("SIGTERM");
+        assert.equal(await exited, 0, stderr);
+        assert.deepEqual(temporaryConfigs(fixture.directory), []);
+      } finally {
+        if (child && child.exitCode === null) {
+          child.kill("SIGTERM");
+          await exited;
+        }
+        rmSync(fixture.directory, { recursive: true, force: true });
+      }
+    },
+  );
+}
+
+test(
+  "native lint adapter preserves a staging file it did not create",
+  { timeout: 15000 },
+  async () => {
+    const fixture = adapterFixture();
+    let child;
+    let exited;
+    try {
+      const configPath = join(fixture.directory, "vite.config.ts");
+      writeFileSync(configPath, "export default { lint: { settings: { version: 0 } } };\n");
+      child = spawn(process.execPath, [adapter, "--lsp"], {
+        cwd: fixture.directory,
+        env: fixture.env,
+        stdio: ["ignore", "ignore", "pipe"],
+      });
+      let stderr = "";
+      child.stderr.on("data", (bytes) => {
+        stderr += bytes;
+      });
+      exited = new Promise((done, reject) => {
+        child.once("error", reject);
+        child.once("exit", done);
+      });
+      await waitFor(() => existsSync(fixture.record));
+      const record = JSON.parse(readFileSync(fixture.record, "utf8"));
+      const staging = record.configPath + ".writing";
+      writeFileSync(staging, "pre-existing bytes");
+      writeFileSync(configPath, "export default { lint: { settings: { version: 1 } } };\n");
+      await waitFor(() => stderr.includes("EEXIST"));
+      child.kill("SIGTERM");
+      assert.equal(await exited, 0, stderr);
+      assert.equal(readFileSync(staging, "utf8"), "pre-existing bytes");
+      assert.deepEqual(temporaryConfigs(fixture.directory), [
+        staging.slice(fixture.directory.length + 1),
+      ]);
+    } finally {
+      if (child && child.exitCode === null) {
+        child.kill("SIGTERM");
+        await exited;
+      }
+      rmSync(fixture.directory, { recursive: true, force: true });
+    }
+  },
+);
