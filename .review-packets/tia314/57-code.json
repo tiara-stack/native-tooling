@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "0734b9384875c14beac3f4a70f5f4f5e28169b3b",
+ "source_epoch": "d66300261e57366cbea6a8e8ea0a99ce8632d548",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,21 +13,47 @@
     "after": {
      "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "blob": "5926bec2587273c0ee51af92c229735ae38ac2b0",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "blob": "53e469667a2e236d7d7f77b80f6cd7da61ef3f6a",
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
-    "actual_sha256": "0b0a1ee0e92af3dd3dd29a533c80d7187dae0231f3a0a6bc7c8d388de2079314",
-    "canonical_patch_sha256": "f314abec69c97add39ccd4746973c061a39c3721a18ca96bd189b06325c489dc",
-    "canonical_patch_bytes": 2226017
+    "actual_sha256": "ccbb006bae6981ee633d18490c60116993a927bcce8963906683cd9a93983449",
+    "canonical_patch_sha256": "7c1c1c7ce7030903ade971f5d1116dc6f6a1e062faee49ed4f88611526131887",
+    "canonical_patch_bytes": 2227293
    },
    "fragment": {
     "part": 42,
     "parts": 42,
-    "line_start": 40176,
-    "line_end": 40921,
-    "sha256": "418045ca84856cb93a171d10196a774e26392739df552156cc554b482e3ad6f2"
+    "line_start": 40150,
+    "line_end": 40929,
+    "sha256": "b5d62be1ad94c97817efcffa2b1ebffcb81099dd2920ba122604e786c367fa9f"
    },
    "canonical_patch_lines": [
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus/docs/guide/dev.md\",\n",
+    "+      \"mode\": \"raw diff\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus/docs/guide/docker.md\",\n",
+    "+      \"mode\": \"raw diff\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus/docs/guide/env.md\",\n",
+    "+      \"mode\": \"raw diff\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus/docs/guide/fmt.md\",\n",
+    "+      \"mode\": \"raw diff\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus/docs/guide/github-actions-cache.md\",\n",
+    "+      \"mode\": \"raw diff\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus/docs/guide/global-cli.md\",\n",
+    "+      \"mode\": \"raw diff\"\n",
+    "+    },\n",
+    "+    {\n",
     "+      \"path\": \"packages/vite-plus/docs/guide/ide-integration.md\",\n",
     "+      \"mode\": \"raw diff\"\n",
     "+    },\n",
@@ -194,6 +220,10 @@
     "+      \"mode\": \"raw diff\"\n",
     "+    },\n",
     "+    {\n",
+    "+      \"path\": \"scripts/lib/vite-plus-source-environment.mjs\",\n",
+    "+      \"mode\": \"Tiara custom source/config diff\"\n",
+    "+    },\n",
+    "+    {\n",
     "+      \"path\": \"scripts/prepare-vite-plus.mjs\",\n",
     "+      \"mode\": \"raw diff\"\n",
     "+    },\n",
@@ -216,6 +246,10 @@
     "+    {\n",
     "+      \"path\": \"scripts/test/vite-plus-native.test.mjs\",\n",
     "+      \"mode\": \"raw diff\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"scripts/test/vite-plus-source-environment.test.mjs\",\n",
+    "+      \"mode\": \"Tiara custom source/config diff\"\n",
     "+    },\n",
     "+    {\n",
     "+      \"path\": \".review-packets/tia314/01-code.json\",\n",
@@ -580,7 +614,7 @@
     "+    ],\n",
     "+    \"Markdown_qualification\": \"Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.\",\n",
     "+    \"OCR_carry\": \"Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.\",\n",
-    "+    \"final_main_source_epoch\": \"fd212bfe0543f4b8b30c4886adbde8d9f64233ae\",\n",
+    "+    \"final_main_source_epoch\": \"0734b9384875c14beac3f4a70f5f4f5e28169b3b\",\n",
     "+    \"identical_queue_squash_tree\": \"34d345e35d45df8fc931cfd2aa7312fbe0ae5a99\"\n",
     "+  },\n",
     "+  \"generated_output_review_policy\": {\n",
@@ -680,9 +714,9 @@
     "+    }\n",
     "+  ],\n",
     "+  \"hosted_delivery\": {\n",
-    "+    \"source_epoch\": \"fd212bfe0543f4b8b30c4886adbde8d9f64233ae\",\n",
+    "+    \"source_epoch\": \"0734b9384875c14beac3f4a70f5f4f5e28169b3b\",\n",
     "+    \"base\": \"e088d5c9784d2779684d02524fab62a0fa5e656a\",\n",
-    "+    \"source_adaptations\": 438,\n",
+    "+    \"source_adaptations\": 440,\n",
     "+    \"stock_exclusions\": 6420,\n",
     "+    \"packet_metadata_files\": 82,\n",
     "+    \"packet_paths\": [\n",
@@ -791,7 +825,7 @@
      "path": "package.json",
      "mode": "100644",
      "blob": "236258207e180836ecdac5e9484e4a99ad25ca32",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
     "actual_sha256": "fb453917e9b65d2f4e4c7a91b51e1cf0cd956699808b89652c54a71727d0b282",
     "canonical_patch_sha256": "1a3285dd3a0516f88813836fc3c100551ad885cb6b63e6683695221afd6af2fd",
@@ -855,7 +889,7 @@
      "path": "packages/effect-vitest/vite.config.ts",
      "mode": "100644",
      "blob": "ef9255c15835b6317e12ca7011382d0efbb8aa47",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
     "actual_sha256": "294a7b7290644d43eee9c0debc5b66197cd36d4b791c056d0bc728f11cc6baa4",
     "canonical_patch_sha256": "407ebbcdaa68421272484ec2b2805843d74fa062ccbaee9edeadcabffc13b656",
@@ -911,7 +945,7 @@
      "path": "packages/oxlint-effect/vite.config.ts",
      "mode": "100644",
      "blob": "8b20cb42b74780de187b04c81e35b8a935daef10",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
     "actual_sha256": "25cc82cf16cfd1c6e95ce8268f36a46a14473d1c5d61ae367501a0ccf56f4812",
     "canonical_patch_sha256": "31dfa7162c250ad3c0a378dc5b610f605eb9b366a22fb3af4657d83dc52eb38a",
@@ -967,7 +1001,7 @@
      "path": "packages/tsgo-effect/vite.config.ts",
      "mode": "100644",
      "blob": "8b20cb42b74780de187b04c81e35b8a935daef10",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
     "actual_sha256": "25cc82cf16cfd1c6e95ce8268f36a46a14473d1c5d61ae367501a0ccf56f4812",
     "canonical_patch_sha256": "37c9380aa3d721420417526cf74ff240323644a5eb2d27948d1cbf3420cb8d52",
@@ -1023,7 +1057,7 @@
      "path": "packages/tsgolint-effect/vite.config.ts",
      "mode": "100644",
      "blob": "8b20cb42b74780de187b04c81e35b8a935daef10",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
     "actual_sha256": "25cc82cf16cfd1c6e95ce8268f36a46a14473d1c5d61ae367501a0ccf56f4812",
     "canonical_patch_sha256": "fae54b4cf2e004c738bb53f60ab0268027bdc08c6acd302fa45761f8fb461a59",
@@ -1074,7 +1108,7 @@
      "path": "packages/vite-plus-effect-fork/.gitrepo",
      "mode": "100644",
      "blob": "9356e6a14cc33e234214c27c9d619fae097db8a4",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
     "actual_sha256": "61beb052d23c47ce33fc4dcf01c48c3dce80de85b5753e93bb23660c532873aa",
     "canonical_patch_sha256": "569eb4efcc8c744e890319ac4b0fdad96d8d676bc311eb2166c09936ba6ea2a9",
@@ -1124,7 +1158,7 @@
      "path": "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs",
      "mode": "100755",
      "blob": "0e92172a12c59ad2573dd1845691487e8ff428e2",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
     "actual_sha256": "1ad3b4254141554efd7691b1a062d98dd9b482cbac3f01731769885a5dc2de54",
     "canonical_patch_sha256": "758b57b4ac1e0e3787c00219d0003145e2e8fac5133b77e0951e3ee850c86780",

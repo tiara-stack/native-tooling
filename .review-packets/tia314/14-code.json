@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "0734b9384875c14beac3f4a70f5f4f5e28169b3b",
+ "source_epoch": "d66300261e57366cbea6a8e8ea0a99ce8632d548",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -19,7 +19,7 @@
      "path": ".coderabbit.yaml",
      "mode": "100644",
      "blob": "d1da63034c2388e099a29ea642040356f848ad42",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
     "actual_sha256": "7b43811da58cfbf92cde721bfa8926f52b096efd9767c520178192aeb0f7c417",
     "canonical_patch_sha256": "4edfe41deedee4b04ed535de3cbd3f432faf7252d1ebaf8dadab753f15fde205",
@@ -450,7 +450,7 @@
      "path": ".gitattributes",
      "mode": "100644",
      "blob": "268a8b1636262f1322129e8b8c94693901c41bd7",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
     "actual_sha256": "db946feec18d7b57d2fdd668aa1880347f38ea2564df00505d7e943d26163b29",
     "canonical_patch_sha256": "f2a6594c9f3b5758150d4edf3c608ad8df1bafc4b5e8d3b78de1a243c3bcb355",
@@ -493,7 +493,7 @@
      "path": ".github/workflows/ci.yml",
      "mode": "100644",
      "blob": "9ec11cbb3c90f61b0a937828b1b9b536fa4005b4",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
     "actual_sha256": "166903de58540a566c44bc1dca2b849ed2b61a231e1477a0487591d339703fb6",
     "canonical_patch_sha256": "3ee345380ee0ebf2e7032a5c20bba72df7ed5274bfe2a33363dc4d30c1e8970e",
@@ -601,7 +601,7 @@
      "path": ".github/workflows/publish.yml",
      "mode": "100644",
      "blob": "e32ccc08e611515fbf4d8dc96f4e9bdb12ade628",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
     "actual_sha256": "94775324bdb8838385c9585907ea151a47a250242ba5ae310c3dae18b6186d49",
     "canonical_patch_sha256": "5ab46ba65a361a48c7e3d41a15caccd3d92a317a0487d2d90debfadc1cc6d571",
@@ -720,23 +720,23 @@
     "after": {
      "path": ".github/workflows/vite-plus.yml",
      "mode": "100644",
-     "blob": "5e11d3861e0cfa9d246842d6727092649db33f6a",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "blob": "683b8ec316f5aa639397ea6865036b7b9331832f",
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
-    "actual_sha256": "80dde983ae8e6d331b216f2b6f53eafcbfadde756ec6c95fed4d24a4b7a77241",
-    "canonical_patch_sha256": "d18b924231e36bd7af23e4552ca8069245c3b282566154e566eb13e5fbe3ed89",
-    "canonical_patch_bytes": 2626
+    "actual_sha256": "ebc30cc3a604fc142cc9bad45b4c541f150e6733c669971415763fd6ff19c92a",
+    "canonical_patch_sha256": "710d6682ba43d11d0a134f939106ef648f42d587988b9f97922b1554b909f601",
+    "canonical_patch_bytes": 2735
    },
    "fragment": {
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 75,
-    "sha256": "d18b924231e36bd7af23e4552ca8069245c3b282566154e566eb13e5fbe3ed89"
+    "line_end": 79,
+    "sha256": "710d6682ba43d11d0a134f939106ef648f42d587988b9f97922b1554b909f601"
    },
    "canonical_patch_lines": [
     "diff --git a/.github/workflows/vite-plus.yml b/.github/workflows/vite-plus.yml\n",
-    "index cef1651220..5e11d3861e 100644\n",
+    "index cef1651220..683b8ec316 100644\n",
     "--- a/.github/workflows/vite-plus.yml\n",
     "+++ b/.github/workflows/vite-plus.yml\n",
     "@@ -8,6 +8,14 @@ on:\n",
@@ -769,7 +769,7 @@
     "       - \"packages/tsgo-effect/**\"\n",
     "       - \"scripts/check-vite-plus-package.mjs\"\n",
     "       - \"scripts/sync-vite-plus.mjs\"\n",
-    "@@ -38,24 +54,31 @@ jobs:\n",
+    "@@ -38,24 +54,35 @@ jobs:\n",
     "         with:\n",
     "           node-version: \"22\"\n",
     " \n",
@@ -799,7 +799,11 @@
     "+        run: pnpm check:vite-plus\n",
     "+\n",
     "+      - name: Test native selection and generator lifecycle\n",
-    "+        run: node --test scripts/test/vite-plus-native.test.mjs scripts/test/sync-effect-vitest.test.mjs\n",
+    "+        run: |\n",
+    "+          node --test \\\n",
+    "+            scripts/test/vite-plus-native.test.mjs \\\n",
+    "+            scripts/test/vite-plus-source-environment.test.mjs \\\n",
+    "+            scripts/test/sync-effect-vitest.test.mjs\n",
     " \n",
     "       - name: Verify Vite+ CLI\n",
     "-        run: node packages/vite-plus/bin/vp --version\n",
@@ -827,7 +831,7 @@
      "path": "README.md",
      "mode": "100644",
      "blob": "0f9d3fd5e13a19aaada5e7a13379df4627e82c1e",
-     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+     "ref": "d66300261e57366cbea6a8e8ea0a99ce8632d548"
     },
     "actual_sha256": "43b5605742f4d0d6a4883fb00ad2c4542634752f1bb2eb5bd77c7a28da2f5f3d",
     "canonical_patch_sha256": "3c0e720a453a19fed51ce5f87b35d22e642b61ffe240b18e1e59322c4d80271a",
