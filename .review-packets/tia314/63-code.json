@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
+ "source_epoch": "0734b9384875c14beac3f4a70f5f4f5e28169b3b",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -19,7 +19,7 @@
      "path": "pnpm-workspace.yaml",
      "mode": "100644",
      "blob": "1dd33e791c65776d744fcb84081dd7cdb35a0ac7",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "0d7f1690a7b31dc53ceab2403bd83d1d0a3f3feb6fb69f606fae1757d3c590d9",
     "canonical_patch_sha256": "8c5832510f226a60b772b8fbbfdf1264a2cb192e8591d71c1f527b386ddb2377",
@@ -107,27 +107,27 @@
     "after": {
      "path": "scripts/build-vite-plus.mjs",
      "mode": "100644",
-     "blob": "4d55a4bb51454e7013d1ceef7687e8293de09abf",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "9a5d77e92a2aba3f4dd218b8493630bcdbcef1b5",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "70bf0340cf60ba270fdbc140357665df95d2d803e7315af626aa4e2372e4ca34",
-    "canonical_patch_sha256": "d47ce60c197a1c3c02a6dcc720820aae18d7b55a75f77e7cffcd725d21d8c5c9",
-    "canonical_patch_bytes": 7115
+    "actual_sha256": "d96ae265ff7d2c83290696d8ed3aa725f084e0a9423dabf6e8cfe74981d0ae94",
+    "canonical_patch_sha256": "25074d3e22f0453d706264ba2a710dfaf39b9eb77ae6bd423d9df8bd9b9720d9",
+    "canonical_patch_bytes": 6881
    },
    "fragment": {
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 203,
-    "sha256": "d47ce60c197a1c3c02a6dcc720820aae18d7b55a75f77e7cffcd725d21d8c5c9"
+    "line_end": 196,
+    "sha256": "25074d3e22f0453d706264ba2a710dfaf39b9eb77ae6bd423d9df8bd9b9720d9"
    },
    "canonical_patch_lines": [
     "diff --git a/scripts/build-vite-plus.mjs b/scripts/build-vite-plus.mjs\n",
     "new file mode 100644\n",
-    "index 0000000000..4d55a4bb51\n",
+    "index 0000000000..9a5d77e92a\n",
     "--- /dev/null\n",
     "+++ b/scripts/build-vite-plus.mjs\n",
-    "@@ -0,0 +1,197 @@\n",
+    "@@ -0,0 +1,190 @@\n",
     "+#!/usr/bin/env node\n",
     "+import { existsSync } from \"node:fs\";\n",
     "+import { spawnSync } from \"node:child_process\";\n",
@@ -137,6 +137,7 @@
     "+import { fileURLToPath } from \"node:url\";\n",
     "+import assert from \"node:assert/strict\";\n",
     "+import { rolldownBuildRecord } from \"./lib/vite-plus-build-record.mjs\";\n",
+    "+import { sourceEnvironment } from \"./lib/vite-plus-source-environment.mjs\";\n",
     "+\n",
     "+const root = dirname(fileURLToPath(new URL(\"../package.json\", import.meta.url)));\n",
     "+const source = join(root, \"packages/vite-plus-effect-fork\");\n",
@@ -250,6 +251,7 @@
     "+  \"scripts/build-vite-plus.mjs\",\n",
     "+  \"scripts/prepare-vite-plus.mjs\",\n",
     "+  \"scripts/lib/vite-plus-build-record.mjs\",\n",
+    "+  \"scripts/lib/vite-plus-source-environment.mjs\",\n",
     "+]) {\n",
     "+  rootInputs[relative] = createHash(\"sha256\")\n",
     "+    .update(await readFile(join(root, relative)))\n",
@@ -291,7 +293,7 @@
     "+    {\n",
     "+      cwd,\n",
     "+      stdio: \"inherit\",\n",
-    "+      env: sourceEnvironment(),\n",
+    "+      env: sourceEnvironment(root),\n",
     "+    },\n",
     "+  );\n",
     "+  if (result.error || result.status !== 0)\n",
@@ -307,7 +309,7 @@
     "+    {\n",
     "+      cwd: source,\n",
     "+      encoding: \"utf8\",\n",
-    "+      env: sourceEnvironment(),\n",
+    "+      env: sourceEnvironment(root),\n",
     "+    },\n",
     "+  );\n",
     "+  if (result.error || result.status !== 0)\n",
@@ -315,15 +317,6 @@
     "+      `Reading ${command} build identity failed: ${result.error?.message ?? result.stderr}`,\n",
     "+    );\n",
     "+  return result.stdout.trim();\n",
-    "+}\n",
-    "+\n",
-    "+function sourceEnvironment() {\n",
-    "+  const env = { ...process.env, COREPACK_ENABLE_PROJECT_SPEC: \"1\" };\n",
-    "+  if (env.TIARA_VITE_PLUS_PNPM_STORE_DIR)\n",
-    "+    env.PNPM_CONFIG_STORE_DIR = env.TIARA_VITE_PLUS_PNPM_STORE_DIR;\n",
-    "+  if (env.TIARA_VITE_PLUS_PNPM_VIRTUAL_STORE_DIR)\n",
-    "+    env.PNPM_CONFIG_VIRTUAL_STORE_DIR = env.TIARA_VITE_PLUS_PNPM_VIRTUAL_STORE_DIR;\n",
-    "+  return env;\n",
     "+}\n"
    ]
   },
@@ -342,7 +335,7 @@
      "path": "scripts/check-patches.mjs",
      "mode": "100644",
      "blob": "085b17ef50bcc08491ad949147204339d9959dd7",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "730fe64bd567620f6b0691b6ac4f5644f077724279f48ae6c2283418de0923fc",
     "canonical_patch_sha256": "4e6bd3d8e10ab6401f5bf73d8cfe0737caa88c2e1468e91768a296e67776553a",
@@ -393,7 +386,7 @@
      "path": "scripts/check-vite-plus-package.mjs",
      "mode": "100644",
      "blob": "73840e494f4bac2cb51a7496428ae1c47048030d",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "503b13a87fcc3b2f093de346da2ee57e18be2ce011d667ea186d06a8620f9a60",
     "canonical_patch_sha256": "e7761d12e5102adb8e8108e416ce33120a9a20c6e947e506f65c726f8ad16480",
@@ -650,7 +643,7 @@
      "path": "scripts/lib/declaration-source-maps.d.mts",
      "mode": "100644",
      "blob": "bd53c9545149e0acb0c0891b4b12421ebc162571",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "12d580c0edeafa1c5fce27aa12fd75f5c696871aa8fa40ee223625173f3f5048",
     "canonical_patch_sha256": "3f61bcd3536803c35a339bf48fecafe8c0dc5ba9679237506faaa2061f40a39f",
@@ -683,7 +676,7 @@
      "path": "scripts/lib/declaration-source-maps.mjs",
      "mode": "100644",
      "blob": "727d25e1b9fc8725c552bc457abe30a8eff2d4e6",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "64a8984e949afd9a7fb1d9eae3274663ee1b94ed50ab27c021e6dd9a6d82733f",
     "canonical_patch_sha256": "7bfb75a97b1c90ec10068adcacce2913fc7fb9d1073bbfe09aab85c5584ef85c",
@@ -743,7 +736,7 @@
      "path": "scripts/lib/vite-plus-build-record.mjs",
      "mode": "100644",
      "blob": "9a01272830915105d7690e2363bb9eaec87878bf",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "b74e81e48b9e00b881679c5d6f2bdac652a6a88fa9834d808122ca797d63575b",
     "canonical_patch_sha256": "8aa0692a8d4e43555eda54bd9669dbfff79d969f6e5e87e35f586f2942659cc3",
@@ -813,6 +806,69 @@
   {
    "target": {
     "id": "T0433",
+    "path": "scripts/lib/vite-plus-source-environment.mjs",
+    "view": "parent-relative custom diff",
+    "before": null,
+    "after": {
+     "path": "scripts/lib/vite-plus-source-environment.mjs",
+     "mode": "100644",
+     "blob": "1fb7963f21adbb4c50679addcf934bbaf42e967d",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
+    },
+    "actual_sha256": "5c7a9bc429c92cdf6ec51d5c391bdf4eca214114578df8dcda0824503c5f9336",
+    "canonical_patch_sha256": "1bc1d32b8965201701e8aa291896d7cb5af766dfdbb49f7a046e27ad06f26357",
+    "canonical_patch_bytes": 1479
+   },
+   "fragment": {
+    "part": 1,
+    "parts": 1,
+    "line_start": 1,
+    "line_end": 37,
+    "sha256": "1bc1d32b8965201701e8aa291896d7cb5af766dfdbb49f7a046e27ad06f26357"
+   },
+   "canonical_patch_lines": [
+    "diff --git a/scripts/lib/vite-plus-source-environment.mjs b/scripts/lib/vite-plus-source-environment.mjs\n",
+    "new file mode 100644\n",
+    "index 0000000000..1fb7963f21\n",
+    "--- /dev/null\n",
+    "+++ b/scripts/lib/vite-plus-source-environment.mjs\n",
+    "@@ -0,0 +1,31 @@\n",
+    "+import { spawnSync } from \"node:child_process\";\n",
+    "+import { mkdirSync } from \"node:fs\";\n",
+    "+import { delimiter, join } from \"node:path\";\n",
+    "+\n",
+    "+const prepared = new Set();\n",
+    "+\n",
+    "+export function sourceEnvironment(root) {\n",
+    "+  const env = { ...process.env, COREPACK_ENABLE_PROJECT_SPEC: \"1\" };\n",
+    "+  if (env.TIARA_VITE_PLUS_PNPM_STORE_DIR)\n",
+    "+    env.PNPM_CONFIG_STORE_DIR = env.TIARA_VITE_PLUS_PNPM_STORE_DIR;\n",
+    "+  if (env.TIARA_VITE_PLUS_PNPM_VIRTUAL_STORE_DIR)\n",
+    "+    env.PNPM_CONFIG_VIRTUAL_STORE_DIR = env.TIARA_VITE_PLUS_PNPM_VIRTUAL_STORE_DIR;\n",
+    "+\n",
+    "+  // A root pnpm installation can shadow Corepack in lifecycle scripts even\n",
+    "+  // after Corepack selected the fork's version for the initial command.\n",
+    "+  const bin = join(root, \".tmp\", \"vite-plus-corepack\");\n",
+    "+  if (!prepared.has(bin)) {\n",
+    "+    mkdirSync(bin, { recursive: true });\n",
+    "+    const result = spawnSync(\"corepack\", [\"enable\", \"--install-directory\", bin, \"pnpm\"], {\n",
+    "+      env,\n",
+    "+      encoding: \"utf8\",\n",
+    "+    });\n",
+    "+    if (result.error || result.status !== 0)\n",
+    "+      throw new Error(\n",
+    "+        `Preparing source pnpm shim failed: ${result.error?.message ?? (result.stderr?.trim() || result.status)}`,\n",
+    "+      );\n",
+    "+    prepared.add(bin);\n",
+    "+  }\n",
+    "+  env.PATH = `${bin}${delimiter}${env.PATH ?? \"\"}`;\n",
+    "+  return env;\n",
+    "+}\n"
+   ]
+  },
+  {
+   "target": {
+    "id": "T0434",
     "path": "scripts/prepare-vite-plus.mjs",
     "view": "parent-relative custom diff",
     "before": null,
@@ -820,7 +876,7 @@
      "path": "scripts/prepare-vite-plus.mjs",
      "mode": "100644",
      "blob": "bf61aff7355aa0c9ee84911359aca8cbac8dc451",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "da15296cf3067906babf1fda7c0470b863b800795bed4c54078c28ef18d34ece",
     "canonical_patch_sha256": "cb45548c2519d8bb285fd844cd71b1ee038ec74a6ba1d43f108eb031b03c2d3c",
@@ -901,7 +957,7 @@
   },
   {
    "target": {
-    "id": "T0434",
+    "id": "T0435",
     "path": "scripts/sync-effect-vitest.mjs",
     "view": "parent-relative custom diff",
     "before": {
@@ -914,7 +970,7 @@
      "path": "scripts/sync-effect-vitest.mjs",
      "mode": "100644",
      "blob": "4fc83d0757193ad2daf2d8e44d6dd5c0d8ea635c",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "714e493b731fff2bf81fe33dfb1c8013deb9d4b9a41274d690321202ce955b52",
     "canonical_patch_sha256": "eb4e3912b511d45e772e6f80ff40fafb27955cfe737b4fca37e889d6bee3db4a",

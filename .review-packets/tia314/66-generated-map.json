@@ -1,30 +1,30 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "generated-map",
- "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
+ "source_epoch": "0734b9384875c14beac3f4a70f5f4f5e28169b3b",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
    "target": {
     "id": "T0070",
-    "path": "packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DtiZdigx.mjs",
+    "path": "packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DPBybJV1.mjs",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DtiZdigx.mjs",
+     "path": "packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DPBybJV1.mjs",
      "mode": "100644",
-     "blob": "b07d7f2f11dbb74aca9de5548a492a0cfd8e15bb",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "57897dd9fe50cee3250cc94b9da0bc1a37ae4574",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "da93bb4691d1450bc0698f19c022bb5885ce5a4c7fe7c07283116fa29296a705"
+    "actual_sha256": "3a590ebacefe2a93e209fa1403c6234357b0f1967a9f30c526ab2cf09f6ed73b"
    },
    "input_output_consumer_mapping": {
-    "sha256": "da93bb4691d1450bc0698f19c022bb5885ce5a4c7fe7c07283116fa29296a705",
+    "sha256": "3a590ebacefe2a93e209fa1403c6234357b0f1967a9f30c526ab2cf09f6ed73b",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/bindingify-input-options-DtiZdigx.mjs",
-    "source_sha256": "aade332f12d52008b87dac3de214ac05d13c4e8d05bdc447ca4b286f7bc8586d"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/bindingify-input-options-DPBybJV1.mjs",
+    "source_sha256": "7c7e74e89733be78c23bd2163926e8bab56ecfd77826ef399ce3e586697e7ae5"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -38,7 +38,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/constructors-DuOq7MqW.d.mts",
      "mode": "100644",
      "blob": "52f5fe0c84316955040804c4cd44aa6db6a737a6",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "ba40b180f5497a19433fbf287e1685237797ccd45a7a1b5394b534935da451c0"
    },
@@ -62,7 +62,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/constructors-xEvVj3lN.mjs",
      "mode": "100644",
      "blob": "931cb246e9c2e86eeaa6000783582b4c4716c0f4",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "087234cdd6903f7d5d1fd5e44a4cec61965c8755fa36c8d06f26a1a486d65de3"
    },
@@ -79,24 +79,24 @@
   {
    "target": {
     "id": "T0073",
-    "path": "packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-DE7PdQ66.mjs",
+    "path": "packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-z9tfdr3B.mjs",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-DE7PdQ66.mjs",
+     "path": "packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-z9tfdr3B.mjs",
      "mode": "100644",
-     "blob": "5df8453366b51ca3ebaa6e5ceee8e721e0e2b236",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "bd49e4fa560f94f2673cb6816482bfbbbc093d15",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "bb89392f77adc591d393caee62f89a4174c9723d87840190c7e06852b6b1effb"
+    "actual_sha256": "9506cc4196b89ad2bd584c5734b0ea09b77e3d21671f266f5a0badaf169e1592"
    },
    "input_output_consumer_mapping": {
-    "sha256": "bb89392f77adc591d393caee62f89a4174c9723d87840190c7e06852b6b1effb",
+    "sha256": "9506cc4196b89ad2bd584c5734b0ea09b77e3d21671f266f5a0badaf169e1592",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/create-bundler-option-DE7PdQ66.mjs",
-    "source_sha256": "bb89392f77adc591d393caee62f89a4174c9723d87840190c7e06852b6b1effb"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/create-bundler-option-z9tfdr3B.mjs",
+    "source_sha256": "9506cc4196b89ad2bd584c5734b0ea09b77e3d21671f266f5a0badaf169e1592"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -110,7 +110,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/define-config-C7HCoqY8.d.mts",
      "mode": "100644",
      "blob": "250bf22f6106668dd88942f06b09865580d76061",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "1df52845e65851fefd84183ed1933fa2ef951446d16c678875959eb5f72b812a"
    },
@@ -134,7 +134,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/define-config-Demdg3_4.mjs",
      "mode": "100644",
      "blob": "902af91ef4919c348384c37b3dffb005476fb238",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "e887326cc80caa4248166a9ce863134fc4f7e1314ad9a3d7e380bd1a43f746ab"
    },
@@ -151,24 +151,24 @@
   {
    "target": {
     "id": "T0076",
-    "path": "packages/vite-plus-core/dist/rolldown/shared/dist-Cj6Gizjh.mjs",
+    "path": "packages/vite-plus-core/dist/rolldown/shared/dist-D2P1s4_R.mjs",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/rolldown/shared/dist-Cj6Gizjh.mjs",
+     "path": "packages/vite-plus-core/dist/rolldown/shared/dist-D2P1s4_R.mjs",
      "mode": "100644",
-     "blob": "daf910fb3e4330f525a24ff77131d92eb7bfab4d",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "1ef576400860a1141ab5e65f4ec4e9715a0c3e9e",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "f52012af9c147b61cc42630d36835c362143d73d81ae4a257264f738f59076b4"
+    "actual_sha256": "aab155f1481a79d3c85cbdcb51acaa4befb5062c711a0461ef5c4f48c6403ad3"
    },
    "input_output_consumer_mapping": {
-    "sha256": "f52012af9c147b61cc42630d36835c362143d73d81ae4a257264f738f59076b4",
+    "sha256": "aab155f1481a79d3c85cbdcb51acaa4befb5062c711a0461ef5c4f48c6403ad3",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/dist-Cj6Gizjh.mjs",
-    "source_sha256": "f52012af9c147b61cc42630d36835c362143d73d81ae4a257264f738f59076b4"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/dist-D2P1s4_R.mjs",
+    "source_sha256": "aab155f1481a79d3c85cbdcb51acaa4befb5062c711a0461ef5c4f48c6403ad3"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -182,7 +182,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/error-C7pxws0W.mjs",
      "mode": "100644",
      "blob": "be63af1d8b0d335ca47cb34b1e205d36e5df07d9",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "cc23a45ba8a60c4980f6486590829fe3ad8fef5dfeb31b0fa2686142dbc4b051"
    },
@@ -206,7 +206,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/get-log-filter-AjBknEEO.d.mts",
      "mode": "100644",
      "blob": "c2a26bf32939a5c3e67b492f3b9e26ab7bbdb7f4",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "a57f53caa3e1283f2234c38f3614eb66549f83d0b21bddfcbb2dca1a023c2383"
    },
@@ -223,24 +223,24 @@
   {
    "target": {
     "id": "T0079",
-    "path": "packages/vite-plus-core/dist/rolldown/shared/load-config-DOpJzg5m.mjs",
+    "path": "packages/vite-plus-core/dist/rolldown/shared/load-config-BiiBolfa.mjs",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/rolldown/shared/load-config-DOpJzg5m.mjs",
+     "path": "packages/vite-plus-core/dist/rolldown/shared/load-config-BiiBolfa.mjs",
      "mode": "100644",
-     "blob": "8309ee87a5fab062937593e1130877f7a3249d40",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "13e199205cf1f227c50c984ba51ac30301447492",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "bbaeeae3336fda1422479d883c3d9dbbe20c9194c53c62ca463c5f33e8b286e8"
+    "actual_sha256": "d23dc97908a86810344744d08def272bfdfec6e0867f0f13b63b26c033585404"
    },
    "input_output_consumer_mapping": {
-    "sha256": "bbaeeae3336fda1422479d883c3d9dbbe20c9194c53c62ca463c5f33e8b286e8",
+    "sha256": "d23dc97908a86810344744d08def272bfdfec6e0867f0f13b63b26c033585404",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/load-config-DOpJzg5m.mjs",
-    "source_sha256": "bbaeeae3336fda1422479d883c3d9dbbe20c9194c53c62ca463c5f33e8b286e8"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/load-config-BiiBolfa.mjs",
+    "source_sha256": "d23dc97908a86810344744d08def272bfdfec6e0867f0f13b63b26c033585404"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -254,7 +254,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/logging-xuHO4mAy.d.mts",
      "mode": "100644",
      "blob": "98c6ac5f061d40eb097bab1a0c61cba816728aee",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "fc5ad2ec8b130a59612c5cfcc2cdca9bcdd80851adb8acdb004aaeff00cc978d"
    },
@@ -278,7 +278,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/logs-D6uA606S.mjs",
      "mode": "100644",
      "blob": "2b3affccd57b10adaed6dc39178ce3bf5adf6d91",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "7edfdf44f30af715dbac404c6a6b9909510e82bc9ca6762c127e2ef474dac3da"
    },
@@ -302,7 +302,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/misc-DOSKtd97.mjs",
      "mode": "100644",
      "blob": "de6c73dbc7ac667bd9863535fd3d9a2706e09bd4",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "a6b94bac1329695387fcaf0d0dbd583165e962a2de13c719e819fc68e4bcb04a"
    },
@@ -326,7 +326,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/normalize-string-or-regex-F14uvr6D.mjs",
      "mode": "100644",
      "blob": "3ff320f2b3d84631028b6eba20629c4bc0c35d09",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "e1cff9111ea8819b0890ae35b1cfd2938a53bf755c6c176d79387133ed7e5f1c"
    },
@@ -343,48 +343,48 @@
   {
    "target": {
     "id": "T0084",
-    "path": "packages/vite-plus-core/dist/rolldown/shared/parse-Cx9Y3o34.mjs",
+    "path": "packages/vite-plus-core/dist/rolldown/shared/parse-De9PCajd.mjs",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/rolldown/shared/parse-Cx9Y3o34.mjs",
+     "path": "packages/vite-plus-core/dist/rolldown/shared/parse-De9PCajd.mjs",
      "mode": "100644",
-     "blob": "2a9f4b7834d8f920adb45eea704c504fafb22756",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "837a021ae9dc7c151684a112393ba69312f89145",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "9eafd03b8d7a82095ab1aa80249f4dc528cebc70a8e8f3552fc6f1756bacf604"
+    "actual_sha256": "0a3a206675aa476e9a2b467aa4bdf5ec09f4a0a73c8af82d89d69b46d6d1f797"
    },
    "input_output_consumer_mapping": {
-    "sha256": "9eafd03b8d7a82095ab1aa80249f4dc528cebc70a8e8f3552fc6f1756bacf604",
+    "sha256": "0a3a206675aa476e9a2b467aa4bdf5ec09f4a0a73c8af82d89d69b46d6d1f797",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/parse-Cx9Y3o34.mjs",
-    "source_sha256": "9eafd03b8d7a82095ab1aa80249f4dc528cebc70a8e8f3552fc6f1756bacf604"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/parse-De9PCajd.mjs",
+    "source_sha256": "0a3a206675aa476e9a2b467aa4bdf5ec09f4a0a73c8af82d89d69b46d6d1f797"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
   {
    "target": {
     "id": "T0085",
-    "path": "packages/vite-plus-core/dist/rolldown/shared/prompt-B_HmZT9L.mjs",
+    "path": "packages/vite-plus-core/dist/rolldown/shared/prompt-C6rFTVm4.mjs",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/rolldown/shared/prompt-B_HmZT9L.mjs",
+     "path": "packages/vite-plus-core/dist/rolldown/shared/prompt-C6rFTVm4.mjs",
      "mode": "100644",
-     "blob": "23a06d9a0907178b6dbf76cc9822f211fbc1c6aa",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "3cf9fb55fbf092c568a68b8b711826310aaaf10c",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "74dc40f54f6b8f0ebc0b4aa529e29cfd3b103a97cb557fb6af20db71bb1fa2db"
+    "actual_sha256": "1bba7bcc52c376797eaa7b7f7d73d59396de61e4cbe7361212783e8e24cb144b"
    },
    "input_output_consumer_mapping": {
-    "sha256": "74dc40f54f6b8f0ebc0b4aa529e29cfd3b103a97cb557fb6af20db71bb1fa2db",
+    "sha256": "1bba7bcc52c376797eaa7b7f7d73d59396de61e4cbe7361212783e8e24cb144b",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/prompt-B_HmZT9L.mjs",
-    "source_sha256": "74dc40f54f6b8f0ebc0b4aa529e29cfd3b103a97cb557fb6af20db71bb1fa2db"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/prompt-C6rFTVm4.mjs",
+    "source_sha256": "1bba7bcc52c376797eaa7b7f7d73d59396de61e4cbe7361212783e8e24cb144b"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -398,7 +398,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/resolve-tsconfig-DHwpIs5e.mjs",
      "mode": "100644",
      "blob": "4f9cbef478025e6e4c32dd89f7d3a57bc51ad8c8",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "c02487012bccd197c5ff028924dab92cd727dcf024dd782c561fdaf19a7b1b05"
    },
@@ -415,24 +415,24 @@
   {
    "target": {
     "id": "T0087",
-    "path": "packages/vite-plus-core/dist/rolldown/shared/rolldown-GPZy8usn.mjs",
+    "path": "packages/vite-plus-core/dist/rolldown/shared/rolldown-DeWTZWR_.mjs",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/rolldown/shared/rolldown-GPZy8usn.mjs",
+     "path": "packages/vite-plus-core/dist/rolldown/shared/rolldown-DeWTZWR_.mjs",
      "mode": "100644",
-     "blob": "164ddf724fd2b92df1a4d35a03f2d4fe35050c30",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "20d3db5a64819854589dd7a752e0bb16cd77d0b6",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "2aa42fd3f2ea85d8ee1e47185fd633cf52588c3e6ef874c421ebf7a09b0c66e5"
+    "actual_sha256": "e18537f7db4b3bc2ce25f8ddf152e0cb60343f06af5901794a11ce22f331536f"
    },
    "input_output_consumer_mapping": {
-    "sha256": "2aa42fd3f2ea85d8ee1e47185fd633cf52588c3e6ef874c421ebf7a09b0c66e5",
+    "sha256": "e18537f7db4b3bc2ce25f8ddf152e0cb60343f06af5901794a11ce22f331536f",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/rolldown-GPZy8usn.mjs",
-    "source_sha256": "2aa42fd3f2ea85d8ee1e47185fd633cf52588c3e6ef874c421ebf7a09b0c66e5"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/rolldown-DeWTZWR_.mjs",
+    "source_sha256": "e18537f7db4b3bc2ce25f8ddf152e0cb60343f06af5901794a11ce22f331536f"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -446,7 +446,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/transform-DK_nCt9j.d.mts",
      "mode": "100644",
      "blob": "8f9c271a67e1876f30078348620c4f582d1726d6",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "9a14344b695ee969e1a745a72e9ee8e49449e6a833077226f2773361b9f66853"
    },
@@ -463,24 +463,24 @@
   {
    "target": {
     "id": "T0089",
-    "path": "packages/vite-plus-core/dist/rolldown/shared/watch-D2SEUBpC.mjs",
+    "path": "packages/vite-plus-core/dist/rolldown/shared/watch-BFId5KRN.mjs",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/rolldown/shared/watch-D2SEUBpC.mjs",
+     "path": "packages/vite-plus-core/dist/rolldown/shared/watch-BFId5KRN.mjs",
      "mode": "100644",
-     "blob": "58300bc66b16241cec5786246617dceec8a038e5",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "dcb9472ad9432144781f89179296bfdd35165238",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "51d13095fafaef5204a62d7df56c75d8ef2b0e038e72bf2e89f88aad2bba883b"
+    "actual_sha256": "445995e7625abe6af5c90af58a49067b343c6239e2b54b645746e4fac340a98d"
    },
    "input_output_consumer_mapping": {
-    "sha256": "51d13095fafaef5204a62d7df56c75d8ef2b0e038e72bf2e89f88aad2bba883b",
+    "sha256": "445995e7625abe6af5c90af58a49067b343c6239e2b54b645746e4fac340a98d",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/watch-D2SEUBpC.mjs",
-    "source_sha256": "51d13095fafaef5204a62d7df56c75d8ef2b0e038e72bf2e89f88aad2bba883b"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/shared/watch-BFId5KRN.mjs",
+    "source_sha256": "445995e7625abe6af5c90af58a49067b343c6239e2b54b645746e4fac340a98d"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -493,18 +493,18 @@
     "after": {
      "path": "packages/vite-plus-core/dist/rolldown/utils-index.d.mts",
      "mode": "100644",
-     "blob": "5119fe45535a1beaa661444dc95b4828c5e83b4e",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "ce5631f65e86e948d79cb48319cf8ccc3ce2118b",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "0e35a1614eb729f2f7e2b95037d0d0bf567b05641427a37e6b77583245abc8d3"
+    "actual_sha256": "c9c9cb8a1ef442372dab9c8797b82b595d19658d0db8f38e9be3d5051ddcc883"
    },
    "input_output_consumer_mapping": {
-    "sha256": "0e35a1614eb729f2f7e2b95037d0d0bf567b05641427a37e6b77583245abc8d3",
+    "sha256": "c9c9cb8a1ef442372dab9c8797b82b595d19658d0db8f38e9be3d5051ddcc883",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/utils-index.d.mts",
-    "source_sha256": "0e35a1614eb729f2f7e2b95037d0d0bf567b05641427a37e6b77583245abc8d3"
+    "source_sha256": "c9c9cb8a1ef442372dab9c8797b82b595d19658d0db8f38e9be3d5051ddcc883"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -517,42 +517,42 @@
     "after": {
      "path": "packages/vite-plus-core/dist/rolldown/utils-index.mjs",
      "mode": "100644",
-     "blob": "01ad1bbd0ee76cbd7585e242b211c4e518e6ebec",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "0c5ff5ce460f6f55a182f2b8c38fc83c501c8f01",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "14498dfeef0c0048870ce6d2d5402a32d7f8191c4a0164edead40c6bc98fd038"
+    "actual_sha256": "4b00def9197a360d9a26bf5441c31fc9fdffa6a4ecd4b9ccb887c7c0fdce838e"
    },
    "input_output_consumer_mapping": {
-    "sha256": "14498dfeef0c0048870ce6d2d5402a32d7f8191c4a0164edead40c6bc98fd038",
+    "sha256": "4b00def9197a360d9a26bf5441c31fc9fdffa6a4ecd4b9ccb887c7c0fdce838e",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/rolldown/utils-index.mjs",
-    "source_sha256": "14498dfeef0c0048870ce6d2d5402a32d7f8191c4a0164edead40c6bc98fd038"
+    "source_sha256": "4b00def9197a360d9a26bf5441c31fc9fdffa6a4ecd4b9ccb887c7c0fdce838e"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
   {
    "target": {
     "id": "T0092",
-    "path": "packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-CNEUXy8W.js",
+    "path": "packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-B97bUe6r.js",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-CNEUXy8W.js",
+     "path": "packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-B97bUe6r.js",
      "mode": "100644",
-     "blob": "359ee7521df623bed644d1dc3af60bf236a8cebb",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "6378d1e39b79395fdf339660ef295fb5d4d79004",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "28730ff4d433e537565b30f49724b2da80fbaa1be1010715a1a7bde4938471cd"
+    "actual_sha256": "73433e08e50bdaa5df0e0c24a68a8737ab2e8e88fa558ebf8576663f556fed30"
    },
    "input_output_consumer_mapping": {
-    "sha256": "28730ff4d433e537565b30f49724b2da80fbaa1be1010715a1a7bde4938471cd",
+    "sha256": "73433e08e50bdaa5df0e0c24a68a8737ab2e8e88fa558ebf8576663f556fed30",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/build-JVmLFaZt-CNEUXy8W.js",
-    "source_sha256": "a13438868acf0e5a9c2c47d605086abd3fd9712fab1a2768412c8cfc802d9f1b"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/build-JVmLFaZt-B97bUe6r.js",
+    "source_sha256": "bb4860071e764c8f91dce4b82be560826823e47f4062801d7afc5eeb60eeda9c"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -566,7 +566,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/client.d.ts",
      "mode": "100644",
      "blob": "3367afa200cc5781142d450ac5eed9d3652b2c81",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "2c9f752dc487ec1a6e7a5904304c2c23a633bea1d2baec1ef57c4c436ef20ce4"
    },
@@ -583,72 +583,72 @@
   {
    "target": {
     "id": "T0094",
-    "path": "packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-Dnz9MN5W.js",
+    "path": "packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-Dv0qXBQO.js",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-Dnz9MN5W.js",
+     "path": "packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-Dv0qXBQO.js",
      "mode": "100644",
-     "blob": "602b50a615a1a20129ca72827bb90b5b05594c8c",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "ab5e735f508040bae06da363d727e46eea6af6ea",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "aff7d6ee2ba1e29048d5ac115bc78bf3afff0fe1dfd135f6011e0fef0c2255ca"
+    "actual_sha256": "072f2b6a6b81a2fd1854ecc6a8c349bade4c872dc94c7f08bc319343d56f3eda"
    },
    "input_output_consumer_mapping": {
-    "sha256": "aff7d6ee2ba1e29048d5ac115bc78bf3afff0fe1dfd135f6011e0fef0c2255ca",
+    "sha256": "072f2b6a6b81a2fd1854ecc6a8c349bade4c872dc94c7f08bc319343d56f3eda",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/debug-CpC4hV25-Dnz9MN5W.js",
-    "source_sha256": "aff7d6ee2ba1e29048d5ac115bc78bf3afff0fe1dfd135f6011e0fef0c2255ca"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/debug-CpC4hV25-Dv0qXBQO.js",
+    "source_sha256": "072f2b6a6b81a2fd1854ecc6a8c349bade4c872dc94c7f08bc319343d56f3eda"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
   {
    "target": {
     "id": "T0095",
-    "path": "packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-n78SKrJt.js",
+    "path": "packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-CA0t6ZI1.js",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-n78SKrJt.js",
+     "path": "packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-CA0t6ZI1.js",
      "mode": "100644",
-     "blob": "20b7b086634eb7cffd401e75636b416f5faaab83",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "065d884aeeda0ded5b07a1942c27e6b90371e2a0",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "4f95be0345beeeb96c9c291697c6e569ecd04458c3cbb39b7f5c5f24b092c624"
+    "actual_sha256": "0b8e9bc6d46db4d01407b97113491038eb8d4331c6098270f1553f5a5cc54d15"
    },
    "input_output_consumer_mapping": {
-    "sha256": "4f95be0345beeeb96c9c291697c6e569ecd04458c3cbb39b7f5c5f24b092c624",
+    "sha256": "0b8e9bc6d46db4d01407b97113491038eb8d4331c6098270f1553f5a5cc54d15",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/detect-Bg-d8iUV-n78SKrJt.js",
-    "source_sha256": "4f95be0345beeeb96c9c291697c6e569ecd04458c3cbb39b7f5c5f24b092c624"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/detect-Bg-d8iUV-CA0t6ZI1.js",
+    "source_sha256": "0b8e9bc6d46db4d01407b97113491038eb8d4331c6098270f1553f5a5cc54d15"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
   {
    "target": {
     "id": "T0096",
-    "path": "packages/vite-plus-core/dist/tsdown/dist-BvQ5xRVS.js",
+    "path": "packages/vite-plus-core/dist/tsdown/dist-DmsDu7my.js",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/tsdown/dist-BvQ5xRVS.js",
+     "path": "packages/vite-plus-core/dist/tsdown/dist-DmsDu7my.js",
      "mode": "100644",
-     "blob": "a638b7a56fae84fb1455488e71ad8f9fc1780dc0",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "8633024d916cde6fb7c752bc535899dd38d343f3",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "8a7244b691c80775bf76e9cffd5a631163acbd21c1d68de6789f89213b4ac1b8"
+    "actual_sha256": "0cd462432a0ec78d5fd8e5a01f1de3c417de946044c79ee6a58f289aa3ba4e17"
    },
    "input_output_consumer_mapping": {
-    "sha256": "8a7244b691c80775bf76e9cffd5a631163acbd21c1d68de6789f89213b4ac1b8",
+    "sha256": "0cd462432a0ec78d5fd8e5a01f1de3c417de946044c79ee6a58f289aa3ba4e17",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/dist-BvQ5xRVS.js",
-    "source_sha256": "b723587bbfc7d4163c2b4f2f36c5e8d2248016bba43411b7ae50a4c41f3ceb85"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/dist-DmsDu7my.js",
+    "source_sha256": "a996ce3f930a5248ee14ddc05877049ef1f4b2f3a1f0a8c2ea57d7b08ab051ee"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -661,18 +661,18 @@
     "after": {
      "path": "packages/vite-plus-core/dist/tsdown/index-types.d.ts",
      "mode": "100644",
-     "blob": "8b7f2bbdb1802fcc5bf027a871544785b36b2460",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "9c870f41e6739d12beb26f305ae25d98844052c2",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "33b6ad22ca0edc5f4d63833252435611a4c3d5f19480235804f3ef298ed26c57"
+    "actual_sha256": "a39c4cbf1a4061122b9985f278a98ab730e82edb6b8dee94f412f380f1e5973a"
    },
    "input_output_consumer_mapping": {
-    "sha256": "33b6ad22ca0edc5f4d63833252435611a4c3d5f19480235804f3ef298ed26c57",
+    "sha256": "a39c4cbf1a4061122b9985f278a98ab730e82edb6b8dee94f412f380f1e5973a",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/index-types.d.ts",
-    "source_sha256": "27db6599985205170ce6f2934a012876fee88136ab8d6352ebc6bd3d4c28ec44"
+    "source_sha256": "beaffd69a4e53241d8605e44bea213c0cb9491b6ff65a998897a86a1dee3541c"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -685,42 +685,42 @@
     "after": {
      "path": "packages/vite-plus-core/dist/tsdown/index.js",
      "mode": "100644",
-     "blob": "7fc17634c25acdcf829f8afd2d6489ff43499b04",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "bee9877ac79ded2d228a9d1ce7043f9e52e0a361",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "341282589e0ae95300ca469c913b9beb580a44b7cdb4c0442b72b7861a39071c"
+    "actual_sha256": "e1d0774cf58d64cacc914b670b88222d963bb3db4cb984db5d222395b18dbac9"
    },
    "input_output_consumer_mapping": {
-    "sha256": "341282589e0ae95300ca469c913b9beb580a44b7cdb4c0442b72b7861a39071c",
+    "sha256": "e1d0774cf58d64cacc914b670b88222d963bb3db4cb984db5d222395b18dbac9",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/index.js",
-    "source_sha256": "9b7ad7ce4142dbb569ea6ab8f28d34bb8717c76a9aca386c7d5c69770f957d20"
+    "source_sha256": "c8ee5d3a747217325b592c8a94b3b104c20b1fcd90f89d65a0bbc67e25c570a1"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
   {
    "target": {
     "id": "T0099",
-    "path": "packages/vite-plus-core/dist/tsdown/main-GtGXvAGN.js",
+    "path": "packages/vite-plus-core/dist/tsdown/main-RJSjZfzp.js",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/tsdown/main-GtGXvAGN.js",
+     "path": "packages/vite-plus-core/dist/tsdown/main-RJSjZfzp.js",
      "mode": "100644",
-     "blob": "b43090fb8d994986be3f2dffa92843996de288d2",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "fa9793227bb39bc52108839ebebdf8e33c2ac383",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "41af81be6d4b6c307143e891890e95474041a1bcbaea3f71c2ded5975ea92cd8"
+    "actual_sha256": "8e589080977a539e4e7b49bc30459bde3c6f4e2bc5be1db461b0fca9a879095b"
    },
    "input_output_consumer_mapping": {
-    "sha256": "41af81be6d4b6c307143e891890e95474041a1bcbaea3f71c2ded5975ea92cd8",
+    "sha256": "8e589080977a539e4e7b49bc30459bde3c6f4e2bc5be1db461b0fca9a879095b",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/main-GtGXvAGN.js",
-    "source_sha256": "41af81be6d4b6c307143e891890e95474041a1bcbaea3f71c2ded5975ea92cd8"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/main-RJSjZfzp.js",
+    "source_sha256": "8e589080977a539e4e7b49bc30459bde3c6f4e2bc5be1db461b0fca9a879095b"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -734,7 +734,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/npm_cjs_chunk_rolldown-runtime.cjs",
      "mode": "100644",
      "blob": "18f896e92fa8f698eeae059abc18623f1518cdd9",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "ee3f363a69bd5b30a1d93c271d0ee2dae4f4cf2bbe948a566def608e12319621"
    },
@@ -757,18 +757,18 @@
     "after": {
      "path": "packages/vite-plus-core/dist/tsdown/npm_entry_picomatch.cjs",
      "mode": "100644",
-     "blob": "0c43a9d2448d840227c5a614446d7026e6f3b3ec",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "daeb8eb13e97eaeb587caabb32763a42ba77b4cb",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "aa7ba65442ec2df5f61a4c018fe789a0174be7d953d7f4ba552729a651a31419"
+    "actual_sha256": "2988c186044f12e4be54ee374ed5c2a4579ff943ca619b89aa82fb9c9f469bf6"
    },
    "input_output_consumer_mapping": {
-    "sha256": "aa7ba65442ec2df5f61a4c018fe789a0174be7d953d7f4ba552729a651a31419",
+    "sha256": "2988c186044f12e4be54ee374ed5c2a4579ff943ca619b89aa82fb9c9f469bf6",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/npm_entry_picomatch.cjs",
-    "source_sha256": "aa7ba65442ec2df5f61a4c018fe789a0174be7d953d7f4ba552729a651a31419"
+    "source_sha256": "2988c186044f12e4be54ee374ed5c2a4579ff943ca619b89aa82fb9c9f469bf6"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -781,66 +781,66 @@
     "after": {
      "path": "packages/vite-plus-core/dist/tsdown/npm_entry_tree-kill.cjs",
      "mode": "100644",
-     "blob": "296200d8bd90c1ccc482aff75ad82799a8b1fdee",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "143f396206a64ebbb1883d138f09b06fb98a6472",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "5dc8741c957b8a35ce140ccac24b7e7c595b23a672369f77cc7a601053c43743"
+    "actual_sha256": "09072a77a20ec3169dc9846c47ce2a3f9ad8b6ba881d0a18d4c3ee012675600a"
    },
    "input_output_consumer_mapping": {
-    "sha256": "5dc8741c957b8a35ce140ccac24b7e7c595b23a672369f77cc7a601053c43743",
+    "sha256": "09072a77a20ec3169dc9846c47ce2a3f9ad8b6ba881d0a18d4c3ee012675600a",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/npm_entry_tree-kill.cjs",
-    "source_sha256": "5dc8741c957b8a35ce140ccac24b7e7c595b23a672369f77cc7a601053c43743"
+    "source_sha256": "09072a77a20ec3169dc9846c47ce2a3f9ad8b6ba881d0a18d4c3ee012675600a"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
   {
    "target": {
     "id": "T0103",
-    "path": "packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-CqWtCnhO.js",
+    "path": "packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-C9u53Wjd.js",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-CqWtCnhO.js",
+     "path": "packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-C9u53Wjd.js",
      "mode": "100644",
-     "blob": "4e4991dd77d0b3958c711a4ef2a4119461296ae0",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "331950482fe35cfbb7ee7c4b3f6422ca1baa556d",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "a887a8ef22e189ec6112b73d095334de1041c09cd163122c76aee54d400702d4"
+    "actual_sha256": "6a063e18f45695d3db667ff953ff13d228bcc181420ca18434cff04666aa582d"
    },
    "input_output_consumer_mapping": {
-    "sha256": "a887a8ef22e189ec6112b73d095334de1041c09cd163122c76aee54d400702d4",
+    "sha256": "6a063e18f45695d3db667ff953ff13d228bcc181420ca18434cff04666aa582d",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/require-BbBF8Ii0-CqWtCnhO.js",
-    "source_sha256": "a887a8ef22e189ec6112b73d095334de1041c09cd163122c76aee54d400702d4"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/require-BbBF8Ii0-C9u53Wjd.js",
+    "source_sha256": "6a063e18f45695d3db667ff953ff13d228bcc181420ca18434cff04666aa582d"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
   {
    "target": {
     "id": "T0104",
-    "path": "packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-DkDbuRlS.js",
+    "path": "packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-hk-Nyn9Y.js",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-DkDbuRlS.js",
+     "path": "packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-hk-Nyn9Y.js",
      "mode": "100644",
-     "blob": "8e90d648dc488d12b5961aa322a8c5b88b81c99a",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "f6e65472966ecfda5274c496e34e8aa9093ad2ab",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "589e42b292fd6bfda8a0050353b43531e39fed27a6882ab51226a3b9fdc5f670"
+    "actual_sha256": "69db6158fa2dd1a9fc601f15261bb0b9a8b73d7d4980ad251e1705273a35adb2"
    },
    "input_output_consumer_mapping": {
-    "sha256": "589e42b292fd6bfda8a0050353b43531e39fed27a6882ab51226a3b9fdc5f670",
+    "sha256": "69db6158fa2dd1a9fc601f15261bb0b9a8b73d7d4980ad251e1705273a35adb2",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/resolver-DE0_sy8o-DkDbuRlS.js",
-    "source_sha256": "589e42b292fd6bfda8a0050353b43531e39fed27a6882ab51226a3b9fdc5f670"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/resolver-DE0_sy8o-hk-Nyn9Y.js",
+    "source_sha256": "69db6158fa2dd1a9fc601f15261bb0b9a8b73d7d4980ad251e1705273a35adb2"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -854,7 +854,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/rolldown-runtime-B4iAMlE-.js",
      "mode": "100644",
      "blob": "60b3cbbdd9da91e62fa8ffe20f1c77a1858be6c0",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "aefa2acac0467f8b79c39ad8f80ac480456390bc0a607251f5e9b860675085d9"
    },
@@ -877,42 +877,42 @@
     "after": {
      "path": "packages/vite-plus-core/dist/tsdown/run.js",
      "mode": "100644",
-     "blob": "f251a479e6622188a45c95e7ab23236a3e9d96d0",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "80228b4e45235161041419c228236702afaf3e9c",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "e0931a377b53ca940861fc6c25ccdc8837d8347a56bdc2ae2129bc2bb63cb9d7"
+    "actual_sha256": "797eb6f054d8d06d35418c71094bd61164df38b2fbb755ff55a1d247a72c1838"
    },
    "input_output_consumer_mapping": {
-    "sha256": "e0931a377b53ca940861fc6c25ccdc8837d8347a56bdc2ae2129bc2bb63cb9d7",
+    "sha256": "797eb6f054d8d06d35418c71094bd61164df38b2fbb755ff55a1d247a72c1838",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/run.js",
-    "source_sha256": "85a3f01e46edf29f205580740e2551b9a128994029851a8ae4060a65a4783547"
+    "source_sha256": "14136ef60ac5b4fc970d12420218810e941982a858509d58238966c95a099d72"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
   {
    "target": {
     "id": "T0107",
-    "path": "packages/vite-plus-core/dist/tsdown/src-DCtyfERi.js",
+    "path": "packages/vite-plus-core/dist/tsdown/src-DaTFx-3f.js",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/tsdown/src-DCtyfERi.js",
+     "path": "packages/vite-plus-core/dist/tsdown/src-DaTFx-3f.js",
      "mode": "100644",
-     "blob": "2705b32d9a626ba2d49415713d2b80c0940b3008",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "b6e730c61d92c1c5d7f5905a09bf9c82be6ecda8",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "ff3f10582f25eabf44ecc62ac0313efc3d1446d411f7989f1d9415ca11605f1c"
+    "actual_sha256": "71c7619a272986771222a6d61696cabc102c329b19b6c7d39a3c6f2454c2bf3c"
    },
    "input_output_consumer_mapping": {
-    "sha256": "ff3f10582f25eabf44ecc62ac0313efc3d1446d411f7989f1d9415ca11605f1c",
+    "sha256": "71c7619a272986771222a6d61696cabc102c329b19b6c7d39a3c6f2454c2bf3c",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/src-DCtyfERi.js",
-    "source_sha256": "ff3f10582f25eabf44ecc62ac0313efc3d1446d411f7989f1d9415ca11605f1c"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/src-DaTFx-3f.js",
+    "source_sha256": "71c7619a272986771222a6d61696cabc102c329b19b6c7d39a3c6f2454c2bf3c"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -926,7 +926,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/style-DiMP8pYv-DIC5PXeH.js",
      "mode": "100644",
      "blob": "df1ec33eb861b3149d10abe203b18331576b6f1a",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "ef6d35d819c90d1300c6daed10b61362f2b4bc0a247b5270608f5ddefcd4a33d"
    },
@@ -943,48 +943,48 @@
   {
    "target": {
     "id": "T0109",
-    "path": "packages/vite-plus-core/dist/tsdown/target-DgdLrXba-DkM-5uQn.js",
+    "path": "packages/vite-plus-core/dist/tsdown/target-DgdLrXba-BngL9aSY.js",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/tsdown/target-DgdLrXba-DkM-5uQn.js",
+     "path": "packages/vite-plus-core/dist/tsdown/target-DgdLrXba-BngL9aSY.js",
      "mode": "100644",
-     "blob": "7cdbf3504e46fc7b04fcc425d23c85bd17a65b48",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "57cbf3db3f2cad43c1fad2be01650352c94c89a6",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "cc0a981c8f55e08cc02a2abb7ea4297be94c73ebe6bfd97e3f66cc2eacf9910a"
+    "actual_sha256": "47760a55295635c00c0cdd4cce157e0990e09e32de07df7fba4336a3b6039251"
    },
    "input_output_consumer_mapping": {
-    "sha256": "cc0a981c8f55e08cc02a2abb7ea4297be94c73ebe6bfd97e3f66cc2eacf9910a",
+    "sha256": "47760a55295635c00c0cdd4cce157e0990e09e32de07df7fba4336a3b6039251",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/target-DgdLrXba-DkM-5uQn.js",
-    "source_sha256": "cc0a981c8f55e08cc02a2abb7ea4297be94c73ebe6bfd97e3f66cc2eacf9910a"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/target-DgdLrXba-BngL9aSY.js",
+    "source_sha256": "47760a55295635c00c0cdd4cce157e0990e09e32de07df7fba4336a3b6039251"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
   {
    "target": {
     "id": "T0110",
-    "path": "packages/vite-plus-core/dist/tsdown/tsc-DDiX4JsL.js",
+    "path": "packages/vite-plus-core/dist/tsdown/tsc-CVPiBJQO.js",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/tsdown/tsc-DDiX4JsL.js",
+     "path": "packages/vite-plus-core/dist/tsdown/tsc-CVPiBJQO.js",
      "mode": "100644",
-     "blob": "bf555576548a1061efa915a02b59600e07818c35",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "a34c45df9d38945b9a95f8307218976b47cd4b82",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "ef7770dd0f17264caf7767df9aa05fff0ae67a1c6e2f2f07d1d3ac35f7cf36df"
+    "actual_sha256": "3be6c9cc55c4381633c6e503df13b230c59ffcd95e0ed99d80a4309e4eadfe50"
    },
    "input_output_consumer_mapping": {
-    "sha256": "ef7770dd0f17264caf7767df9aa05fff0ae67a1c6e2f2f07d1d3ac35f7cf36df",
+    "sha256": "3be6c9cc55c4381633c6e503df13b230c59ffcd95e0ed99d80a4309e4eadfe50",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/tsc-DDiX4JsL.js",
-    "source_sha256": "ef7770dd0f17264caf7767df9aa05fff0ae67a1c6e2f2f07d1d3ac35f7cf36df"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/tsc-CVPiBJQO.js",
+    "source_sha256": "3be6c9cc55c4381633c6e503df13b230c59ffcd95e0ed99d80a4309e4eadfe50"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -997,18 +997,18 @@
     "after": {
      "path": "packages/vite-plus-core/dist/tsdown/tsdown-css.js",
      "mode": "100644",
-     "blob": "cab10e23c48ffbe25a6d035a69e7d0828fd5ccf8",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "f6becbe3d70b16da66c428c9c8fa9af5c23af359",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "e5c9d72b43682c1d8039ead4e8b3acca3acbe0bd8f94ec43b57b4439923a3ac9"
+    "actual_sha256": "7d39a898a98fc8b958a3bd29126db1b321663f72250a96170bb0be3465418b96"
    },
    "input_output_consumer_mapping": {
-    "sha256": "e5c9d72b43682c1d8039ead4e8b3acca3acbe0bd8f94ec43b57b4439923a3ac9",
+    "sha256": "7d39a898a98fc8b958a3bd29126db1b321663f72250a96170bb0be3465418b96",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/tsdown-css.js",
-    "source_sha256": "49291db6564c92435ba3ad4a7806c21cbfd8898d2463b5aee659c0b179f4a97d"
+    "source_sha256": "6ba8f595c52c8761045944508b89929b364360c0dcdc4a16676d62d453dbc7a3"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -1021,42 +1021,42 @@
     "after": {
      "path": "packages/vite-plus-core/dist/tsdown/tsdown-exe.js",
      "mode": "100644",
-     "blob": "aee37bf72ac637a414997b791136246feb6aad1a",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "ef7a392cb2d204ccee256182888076222023aeb3",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "4db188b80e9ce33c40d394bba808d114bdf60fa41c45b50dffa8ddfcb3870a5c"
+    "actual_sha256": "3a428cdbf91877224075760521dfca6a7409b185682a5d173aa4bddb868b7291"
    },
    "input_output_consumer_mapping": {
-    "sha256": "4db188b80e9ce33c40d394bba808d114bdf60fa41c45b50dffa8ddfcb3870a5c",
+    "sha256": "3a428cdbf91877224075760521dfca6a7409b185682a5d173aa4bddb868b7291",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/tsdown-exe.js",
-    "source_sha256": "4db188b80e9ce33c40d394bba808d114bdf60fa41c45b50dffa8ddfcb3870a5c"
+    "source_sha256": "3a428cdbf91877224075760521dfca6a7409b185682a5d173aa4bddb868b7291"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
   {
    "target": {
     "id": "T0113",
-    "path": "packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-BXLNg3pw.js",
+    "path": "packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-jJD4zZs9.js",
     "view": "generated transformation output",
     "before": null,
     "after": {
-     "path": "packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-BXLNg3pw.js",
+     "path": "packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-jJD4zZs9.js",
      "mode": "100644",
-     "blob": "640a97d338fa7f89def9ff3655eb3e2e7da68f86",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "b492f6311d778666c60a7b6e32ac9928df9ff914",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "357334ac432bfb43f882d0435c4457fce34e98959a00421f19d71a3e311f1e9b"
+    "actual_sha256": "496ed6af9549ec47143b7001eafb5803e54f3c6eb8b63114ac79e4446c007f83"
    },
    "input_output_consumer_mapping": {
-    "sha256": "357334ac432bfb43f882d0435c4457fce34e98959a00421f19d71a3e311f1e9b",
+    "sha256": "496ed6af9549ec47143b7001eafb5803e54f3c6eb8b63114ac79e4446c007f83",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
-    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/version-CQ98ZBpL-BXLNg3pw.js",
-    "source_sha256": "69655aa11bd3e240f64707fa0e90f4dff85936aa546c75f9fc0b1b4ec81d086e"
+    "source": "packages/vite-plus-effect-fork/packages/core/dist/tsdown/version-CQ98ZBpL-jJD4zZs9.js",
+    "source_sha256": "cb3ac9d0e26675beb923ba494fbb69e54afa47005f24169fca7dc074d0b08a92"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -1070,7 +1070,7 @@
      "path": "packages/vite-plus-core/dist/vite/client.d.ts",
      "mode": "100644",
      "blob": "604286503942f3e69f0c819d01d44450bc0bb837",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "74b98be6ab7723114273526706070ff9885fdf990d5c4e722801addca4d264e1"
    },
@@ -1093,18 +1093,18 @@
     "after": {
      "path": "packages/vite-plus-core/dist/vite/client/bundledDevClient.mjs",
      "mode": "100644",
-     "blob": "b7ecd0b2d71c83d37060050a0c944089a363f4b4",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "6e7788c584979434e81177e9324f19aaae320c60",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "5c0f42362fd1b359858b64a8a69c19366d4de6fcc93b2cea057401e892b062eb"
+    "actual_sha256": "6dbcc77adcf8895b7195958beb08571f5f1c33d6ee5cc3f812fbbcd894ad08e5"
    },
    "input_output_consumer_mapping": {
-    "sha256": "5c0f42362fd1b359858b64a8a69c19366d4de6fcc93b2cea057401e892b062eb",
+    "sha256": "6dbcc77adcf8895b7195958beb08571f5f1c33d6ee5cc3f812fbbcd894ad08e5",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/vite/client/bundledDevClient.mjs",
-    "source_sha256": "5c0f42362fd1b359858b64a8a69c19366d4de6fcc93b2cea057401e892b062eb"
+    "source_sha256": "6dbcc77adcf8895b7195958beb08571f5f1c33d6ee5cc3f812fbbcd894ad08e5"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -1117,18 +1117,18 @@
     "after": {
      "path": "packages/vite-plus-core/dist/vite/client/client.mjs",
      "mode": "100644",
-     "blob": "5bb90064540eda8259576c101e9db201698340d9",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "4e23adb6ab86d55b14308cbcbb589b18b054f2c4",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "5ead305d5ad47b086a86b97537e770ac1dc28ee58a7d5082d3235fb9f1affb09"
+    "actual_sha256": "67063fa3391ee74e8ca488d485f69345e2464ec09462de0435b2da6da4bcb1e8"
    },
    "input_output_consumer_mapping": {
-    "sha256": "5ead305d5ad47b086a86b97537e770ac1dc28ee58a7d5082d3235fb9f1affb09",
+    "sha256": "67063fa3391ee74e8ca488d485f69345e2464ec09462de0435b2da6da4bcb1e8",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/vite/client/client.mjs",
-    "source_sha256": "5ead305d5ad47b086a86b97537e770ac1dc28ee58a7d5082d3235fb9f1affb09"
+    "source_sha256": "67063fa3391ee74e8ca488d485f69345e2464ec09462de0435b2da6da4bcb1e8"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -1142,7 +1142,7 @@
      "path": "packages/vite-plus-core/dist/vite/client/env.mjs",
      "mode": "100644",
      "blob": "46661a84e562b404f2d8429c6a3b7ce15a7c303d",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "7734f62e2275a6178939fc19fe5ae074d83c7e955aeec6ca1739dc5aca67980f"
    },
@@ -1166,7 +1166,7 @@
      "path": "packages/vite-plus-core/dist/vite/misc/false.d.ts",
      "mode": "100644",
      "blob": "b2ba15eb1e7fc337b9bfc3097eab2cd7a2f6e34c",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "d1c8ab076d4dd44d1adf6eeebbad8d95a18146fbb5a400219a4daf6f6121ec8d"
    },
@@ -1190,7 +1190,7 @@
      "path": "packages/vite-plus-core/dist/vite/misc/false.js",
      "mode": "100644",
      "blob": "2693369b44337b7c5d3a96226f7e7eea4715618a",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "3f405f8c82812b5fd5a6ca325a1b9039479bf9de3ee1ef51d76ea80fba7d486c"
    },
@@ -1214,7 +1214,7 @@
      "path": "packages/vite-plus-core/dist/vite/misc/true.d.ts",
      "mode": "100644",
      "blob": "b2ba15eb1e7fc337b9bfc3097eab2cd7a2f6e34c",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "d1c8ab076d4dd44d1adf6eeebbad8d95a18146fbb5a400219a4daf6f6121ec8d"
    },
@@ -1238,7 +1238,7 @@
      "path": "packages/vite-plus-core/dist/vite/misc/true.js",
      "mode": "100644",
      "blob": "186b120756be198f7b34e195640ac267dba19c4e",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "1ca1ff5b531880de960715f4622cb4bfe61620ad0ab56764a00f3afe2bf2981a"
    },
@@ -1261,18 +1261,18 @@
     "after": {
      "path": "packages/vite-plus-core/dist/vite/node/chunks/build.js",
      "mode": "100644",
-     "blob": "be4ca1a366c271d83592a4e00f9d17bf2c94cf9e",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "77a3a474496eabcb53e1dfb52a9b84e20cf7083d",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "8f9dffd96db203868f07abffc5a803a2dc28989b091efdd2d1b9ec96f5944ad3"
+    "actual_sha256": "3202f6463a83cd7df8007e047ebc4ea3e2e15be46592e6cc54a29f410b0f461d"
    },
    "input_output_consumer_mapping": {
-    "sha256": "8f9dffd96db203868f07abffc5a803a2dc28989b091efdd2d1b9ec96f5944ad3",
+    "sha256": "3202f6463a83cd7df8007e047ebc4ea3e2e15be46592e6cc54a29f410b0f461d",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/vite/node/chunks/build.js",
-    "source_sha256": "8f9dffd96db203868f07abffc5a803a2dc28989b091efdd2d1b9ec96f5944ad3"
+    "source_sha256": "3202f6463a83cd7df8007e047ebc4ea3e2e15be46592e6cc54a29f410b0f461d"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -1285,18 +1285,18 @@
     "after": {
      "path": "packages/vite-plus-core/dist/vite/node/chunks/dist.js",
      "mode": "100644",
-     "blob": "1cbf57c5c253a0422b884e7cbd8339be4de7f52f",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "44b2109f2282a780c1f7386a05715b087076b89c",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "50bf7dbff3cb6ea222531ceca2ac85559e43fa90e2b38eab5464551c387d7235"
+    "actual_sha256": "eba3d69a658aa32b01a13969ec5430800afb90b33456174bb013a662fa122fc0"
    },
    "input_output_consumer_mapping": {
-    "sha256": "50bf7dbff3cb6ea222531ceca2ac85559e43fa90e2b38eab5464551c387d7235",
+    "sha256": "eba3d69a658aa32b01a13969ec5430800afb90b33456174bb013a662fa122fc0",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/vite/node/chunks/dist.js",
-    "source_sha256": "50bf7dbff3cb6ea222531ceca2ac85559e43fa90e2b38eab5464551c387d7235"
+    "source_sha256": "eba3d69a658aa32b01a13969ec5430800afb90b33456174bb013a662fa122fc0"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -1309,18 +1309,18 @@
     "after": {
      "path": "packages/vite-plus-core/dist/vite/node/chunks/dist2.js",
      "mode": "100644",
-     "blob": "2f3d623c9622ae15999177b304fd62042428a378",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "011d928d83c8b5018a3641d1ff260cd5ee509818",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "9ceef57cbb4daa452d7042a7b6c8be4649e3897306c0146dede982ad30908ebf"
+    "actual_sha256": "7c007a2651b030cb8b7257596ef20469db806c1a505300678a8b65f65544c91f"
    },
    "input_output_consumer_mapping": {
-    "sha256": "9ceef57cbb4daa452d7042a7b6c8be4649e3897306c0146dede982ad30908ebf",
+    "sha256": "7c007a2651b030cb8b7257596ef20469db806c1a505300678a8b65f65544c91f",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/vite/node/chunks/dist2.js",
-    "source_sha256": "9ceef57cbb4daa452d7042a7b6c8be4649e3897306c0146dede982ad30908ebf"
+    "source_sha256": "7c007a2651b030cb8b7257596ef20469db806c1a505300678a8b65f65544c91f"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -1333,18 +1333,18 @@
     "after": {
      "path": "packages/vite-plus-core/dist/vite/node/chunks/lib.js",
      "mode": "100644",
-     "blob": "c93725ecfd876bd4e6f42062ea0a0ccf5a899404",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "blob": "ee40e0e35a57df08f51636bee7aee718ede8ff95",
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
-    "actual_sha256": "56554c2bb19125938734b418a2ec01bc76f4f29e8c3e040a1e77545a8c3b377d"
+    "actual_sha256": "907d202aa9914fd9cc86849dee3293dac89f5eff7ae19d308d4e9d548694df82"
    },
    "input_output_consumer_mapping": {
-    "sha256": "56554c2bb19125938734b418a2ec01bc76f4f29e8c3e040a1e77545a8c3b377d",
+    "sha256": "907d202aa9914fd9cc86849dee3293dac89f5eff7ae19d308d4e9d548694df82",
     "git_mode": "100644",
     "producer": "scripts/sync-vite-plus.mjs",
     "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
     "source": "packages/vite-plus-effect-fork/packages/core/dist/vite/node/chunks/lib.js",
-    "source_sha256": "56554c2bb19125938734b418a2ec01bc76f4f29e8c3e040a1e77545a8c3b377d"
+    "source_sha256": "907d202aa9914fd9cc86849dee3293dac89f5eff7ae19d308d4e9d548694df82"
    },
    "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
   },
@@ -1358,7 +1358,7 @@
      "path": "packages/vite-plus-core/dist/vite/node/chunks/moduleRunnerTransport.d.ts",
      "mode": "100644",
      "blob": "2cff626a336548e7e26d807b2b63aeae292c7788",
-     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
+     "ref": "0734b9384875c14beac3f4a70f5f4f5e28169b3b"
     },
     "actual_sha256": "c911b3bd083dade8fdb7775261aa25feae695d562a3b11209650b47be90043fc"
    },

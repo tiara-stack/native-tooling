@@ -1,6 +1,6 @@
 {
   "ticket": "TIA-314",
-  "implementation_commit": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
+  "implementation_commit": "0734b9384875c14beac3f4a70f5f4f5e28169b3b",
   "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
   "upstream": {
     "repository": "https://github.com/voidzero-dev/vite-plus",
@@ -9,18 +9,18 @@
   },
   "policy": "Exclude only unchanged pinned upstream source. Keep Tiara overlays, root package/version/lock/config changes, generated artifacts, generation inputs and affected consumers. Pinned upstream metadata remains provenance context. Review mixed source as Tiara overlays against the pin.",
   "counts": {
-    "raw_changed_paths": 6940,
+    "raw_changed_paths": 6942,
     "authorized_import_exclusions": 6420,
-    "review_target_paths": 520,
+    "review_target_paths": 522,
     "mixed_or_custom_source_paths": 13,
     "skipped_reviewable_paths": 0,
     "reviewed_paths": 0,
-    "pending_review_target_paths": 520,
-    "source_adaptation_paths": 438,
+    "pending_review_target_paths": 522,
+    "source_adaptation_paths": 440,
     "hosted_metadata_paths": 82,
     "changed_existing_scope_metadata_paths": 1
   },
-  "review_state": "Root strict installer approval for the locked Parcel watcher is repaired and locally validated against observed CI Node22/pnpm11.9 in clean, warm and empty-store states. Unknown-script enforcement remains. Dependency locks, source/runtime producers and generated bodies are unchanged; affected configuration and delivery review is pending. Historical hosted failures remain failures.",
+  "review_state": "Source build and pack lifecycle commands now prepend a private project-aware Corepack pnpm shim, preserving strict version checks and root pnpm selection. The observed nested pnpm11.9-versus11.24 failure is reproduced. Launcher controls and fresh owned JavaScript generation, package/runtime/native consumers pass. Native compilation is qualified unchanged reuse. Repaired source and delivery review is pending; hosted CI failures remain nonpassing.",
   "custom_overlay_patch_sha256": "8a25940d0c43a0dac647a79f217263bb9a2e52a8181cacbd187aad80624f20f2",
   "authorized_import_exclusions": [
     {
@@ -38830,8 +38830,8 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DtiZdigx.mjs",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DPBybJV1.mjs",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/rolldown/shared/constructors-DuOq7MqW.d.mts",
@@ -38842,8 +38842,8 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-DE7PdQ66.mjs",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-z9tfdr3B.mjs",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/rolldown/shared/define-config-C7HCoqY8.d.mts",
@@ -38854,8 +38854,8 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/dist-Cj6Gizjh.mjs",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/rolldown/shared/dist-D2P1s4_R.mjs",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/rolldown/shared/error-C7pxws0W.mjs",
@@ -38866,8 +38866,8 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/load-config-DOpJzg5m.mjs",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/rolldown/shared/load-config-BiiBolfa.mjs",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/rolldown/shared/logging-xuHO4mAy.d.mts",
@@ -38886,28 +38886,28 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/parse-Cx9Y3o34.mjs",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/rolldown/shared/parse-De9PCajd.mjs",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/prompt-B_HmZT9L.mjs",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/rolldown/shared/prompt-C6rFTVm4.mjs",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/rolldown/shared/resolve-tsconfig-DHwpIs5e.mjs",
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/rolldown-GPZy8usn.mjs",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/rolldown/shared/rolldown-DeWTZWR_.mjs",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/rolldown/shared/transform-DK_nCt9j.d.mts",
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/watch-D2SEUBpC.mjs",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/rolldown/shared/watch-BFId5KRN.mjs",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/rolldown/utils-index.d.mts",
@@ -38918,24 +38918,24 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-CNEUXy8W.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-B97bUe6r.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/tsdown/client.d.ts",
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-Dnz9MN5W.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-Dv0qXBQO.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-n78SKrJt.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-CA0t6ZI1.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/dist-BvQ5xRVS.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/tsdown/dist-DmsDu7my.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/tsdown/index-types.d.ts",
@@ -38946,8 +38946,8 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/main-GtGXvAGN.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/tsdown/main-RJSjZfzp.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/tsdown/npm_cjs_chunk_rolldown-runtime.cjs",
@@ -38962,12 +38962,12 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-CqWtCnhO.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-C9u53Wjd.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-DkDbuRlS.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-hk-Nyn9Y.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/tsdown/rolldown-runtime-B4iAMlE-.js",
@@ -38978,20 +38978,20 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/src-DCtyfERi.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/tsdown/src-DaTFx-3f.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/tsdown/style-DiMP8pYv-DIC5PXeH.js",
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/target-DgdLrXba-DkM-5uQn.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/tsdown/target-DgdLrXba-BngL9aSY.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/tsc-DDiX4JsL.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/tsdown/tsc-CVPiBJQO.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/tsdown/tsdown-css.js",
@@ -39002,8 +39002,8 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-BXLNg3pw.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-jJD4zZs9.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus-core/dist/vite/client.d.ts",
@@ -39289,12 +39289,12 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/agent-D0gTfAYS.js",
-      "mode": "generated transformation mapping; stock algorithms context"
-    },
-    {
       "path": "packages/vite-plus/dist/agent-D7O7mSeO.js",
       "mode": "raw diff"
+    },
+    {
+      "path": "packages/vite-plus/dist/agent-DWTzWYW1.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus/dist/bin.d.ts",
@@ -39329,11 +39329,11 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/command-CiXubh0B.js",
+      "path": "packages/vite-plus/dist/command-CZvBUM6J.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus/dist/command-DYpHsDOs.js",
+      "path": "packages/vite-plus/dist/command-DTsDwt2S.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39361,10 +39361,6 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/define-config-Bd4jRYpr.js",
-      "mode": "generated transformation mapping; stock algorithms context"
-    },
-    {
       "path": "packages/vite-plus/dist/define-config-BuMs_LKa.d.ts",
       "mode": "raw diff"
     },
@@ -39373,12 +39369,16 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/define-config-C_KQOmd-.d.ts",
+      "path": "packages/vite-plus/dist/define-config-CrA3lZhQ.cjs",
+      "mode": "raw diff"
+    },
+    {
+      "path": "packages/vite-plus/dist/define-config-CsJeEKBN.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus/dist/define-config-CrA3lZhQ.cjs",
-      "mode": "raw diff"
+      "path": "packages/vite-plus/dist/define-config-D6odUb-Y.d.ts",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus/dist/define-config-DN3Lf_48.cjs",
@@ -39397,23 +39397,23 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/dist-BHNi_1Xm.js",
-      "mode": "generated transformation mapping; stock algorithms context"
-    },
-    {
-      "path": "packages/vite-plus/dist/dist-BY8rUtnB.js",
-      "mode": "generated transformation mapping; stock algorithms context"
-    },
-    {
       "path": "packages/vite-plus/dist/dist-CKz3vcoG.js",
       "mode": "raw diff"
+    },
+    {
+      "path": "packages/vite-plus/dist/dist-CrT8aBYV.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
       "path": "packages/vite-plus/dist/dist-CtM2JRbM.js",
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/dist-qj-fCx1Z.js",
+      "path": "packages/vite-plus/dist/dist-bEVYPg-3.js",
+      "mode": "generated transformation mapping; stock algorithms context"
+    },
+    {
+      "path": "packages/vite-plus/dist/dist-l10pUlWT.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39425,7 +39425,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/editor-CgYujhxK.js",
+      "path": "packages/vite-plus/dist/editor-DDjNBHmb.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39473,7 +39473,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/json-DEbQRTSu.js",
+      "path": "packages/vite-plus/dist/json-C9TY5YT1.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39577,19 +39577,19 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/package-CU2g7URl.js",
-      "mode": "raw diff"
+      "path": "packages/vite-plus/dist/package-CTMTkwwC.js",
+      "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus/dist/package-CxcH1qid.js",
-      "mode": "generated transformation mapping; stock algorithms context"
+      "path": "packages/vite-plus/dist/package-CU2g7URl.js",
+      "mode": "raw diff"
     },
     {
       "path": "packages/vite-plus/dist/package-overrides-Dpn4scvN.js",
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/prompts-CukK1Ina.js",
+      "path": "packages/vite-plus/dist/prompts-DIFlcnEQ.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39601,11 +39601,11 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/resolve-vite-config-C1csXN11.js",
+      "path": "packages/vite-plus/dist/resolve-vite-config-CBEuFE9y.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus/dist/resolve-vite-config-DHcnObjQ.js",
+      "path": "packages/vite-plus/dist/resolve-vite-config-CWZ-9h7v.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39977,11 +39977,11 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus/dist/tsconfig-DJTfGBSA.js",
+      "path": "packages/vite-plus/dist/tsconfig-BrNZD5aQ.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus/dist/tsconfig-Drny2b5n.js",
+      "path": "packages/vite-plus/dist/tsconfig-CteVwe5T.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -40333,6 +40333,10 @@
       "mode": "raw diff"
     },
     {
+      "path": "scripts/lib/vite-plus-source-environment.mjs",
+      "mode": "Tiara custom source/config diff"
+    },
+    {
       "path": "scripts/prepare-vite-plus.mjs",
       "mode": "raw diff"
     },
@@ -40355,6 +40359,10 @@
     {
       "path": "scripts/test/vite-plus-native.test.mjs",
       "mode": "raw diff"
+    },
+    {
+      "path": "scripts/test/vite-plus-source-environment.test.mjs",
+      "mode": "Tiara custom source/config diff"
     },
     {
       "path": ".review-packets/tia314/01-code.json",
@@ -40719,7 +40727,7 @@
     ],
     "Markdown_qualification": "Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.",
     "OCR_carry": "Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.",
-    "final_main_source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
+    "final_main_source_epoch": "0734b9384875c14beac3f4a70f5f4f5e28169b3b",
     "identical_queue_squash_tree": "34d345e35d45df8fc931cfd2aa7312fbe0ae5a99"
   },
   "generated_output_review_policy": {
@@ -40819,9 +40827,9 @@
     }
   ],
   "hosted_delivery": {
-    "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
+    "source_epoch": "0734b9384875c14beac3f4a70f5f4f5e28169b3b",
     "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
-    "source_adaptations": 438,
+    "source_adaptations": 440,
     "stock_exclusions": 6420,
     "packet_metadata_files": 82,
     "packet_paths": [
