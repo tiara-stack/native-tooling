@@ -2,10 +2,11 @@
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { sourceEnvironment } from "./lib/vite-plus-source-environment.mjs";
 import { replacePackageTrees } from "./lib/replace-package-trees.mjs";
+import { rewriteScopedVitePlus } from "./lib/scoped-vite-plus.mjs";
 
 const root = dirname(fileURLToPath(new URL("../package.json", import.meta.url)));
 const source = join(root, "packages/vite-plus-effect-fork");
@@ -116,7 +117,7 @@ try {
     if (kind === "core")
       await writeFile(join(unpacked, ".gitignore"), "dist/**/*.node\ndist/**/*.wasm\n");
     pkg.files = [...new Set([...pkg.files, "SOURCE.json"])];
-    await rewriteTree(unpacked);
+    await rewriteTree(unpacked, unpacked);
     // Preserve the native binding's file name and upstream platform package
     // names when rewriting runtime specifiers.
     await writeFile(path, `${JSON.stringify(pkg, null, 2)}\n`);
@@ -135,24 +136,15 @@ try {
 }
 console.log(`Generated scoped Vite+ ${cli.version} and its core from the built local fork`);
 
-async function rewriteTree(directory) {
+async function rewriteTree(directory, base) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const path = join(directory, entry.name);
-    if (entry.isDirectory()) await rewriteTree(path);
+    if (entry.isDirectory()) await rewriteTree(path, base);
     else if (/\.(?:[cm]?js|[cm]?ts|json|md)$/.test(entry.name)) {
-      let text = (await readFile(path, "utf8"))
-        .replaceAll("@voidzero-dev/vite-plus-core", "@tiara-stack/vite-plus-core")
-        .replace(/(["'`])vite-plus(?=\/|["'`])/g, "$1@tiara-stack/vite-plus");
-      if (entry.name.endsWith(".md")) {
-        text = text
-          .replace(
-            /(--package(?:=|[ \t]+)["'`]?)vite-plus(?=@|[ \t"'`]|$)/gm,
-            "$1@tiara-stack/vite-plus",
-          )
-          .replace(/^[ \t]*vp install(?:[ \t]+[^\r\n]*)?$/gm, (command) =>
-            command.replace(/([ \t]["'`]?)vite-plus(?=@|[ \t"'`]|$)/g, "$1@tiara-stack/vite-plus"),
-          );
-      }
+      const text = rewriteScopedVitePlus(
+        await readFile(path, "utf8"),
+        relative(base, path).replaceAll("\\", "/"),
+      );
       await writeFile(path, text);
     }
   }

@@ -4,8 +4,8 @@ import { c as warnMsg, i as log, n as errorMsg, o as printHeader, t as accent } 
 import { g as resolveBundled, h as resolve$1, i as DEFAULT_ENVS, l as VITE_CONFIG_FILES, n as BASEURL_TSCONFIG_WARNING, r as CONFIG_METADATA_ENV, u as VITE_PLUS_NAME } from "./constants-BqJiMVVU.js";
 import { r as createDefaultVitePlusLintConfig } from "./oxlint-plugin-config-lMMD5fAC.js";
 import { t as resolveTiaraNative } from "./tiara-native-DbeuJGA5.js";
-import { a as readNearestPackageJson } from "./package-CTMTkwwC.js";
-import { t as cac } from "./dist-l10pUlWT.js";
+import { a as readNearestPackageJson } from "./package-CxcH1qid.js";
+import { t as cac } from "./dist-BHNi_1Xm.js";
 import { createRequire } from "node:module";
 import path, { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -1469,7 +1469,7 @@ export default defineConfig({});
 	return viteConfigPath;
 }
 async function vpFmt(cwd, filePath) {
-	const { runCommandSilently } = await import("./command-DTsDwt2S.js");
+	const { runCommandSilently } = await import("./command-CiXubh0B.js");
 	const { binPath, envs } = await fmt();
 	const result = await runCommandSilently({
 		command: binPath,
@@ -1528,7 +1528,7 @@ async function applyToolInitConfigToViteConfig(command, args, projectPath = proc
 	}
 	if (spec.configKey === "lint" && hasTriggerFlag(args, ["--init"])) {
 		const lintInitConfigPath = path.join(projectPath, ".vite-plus-lint-init.oxlintrc.json");
-		const { fixBaseUrlInTsconfig, hasBaseUrlInTsconfig } = await import("./tsconfig-BrNZD5aQ.js");
+		const { fixBaseUrlInTsconfig, hasBaseUrlInTsconfig } = await import("./tsconfig-Drny2b5n.js");
 		await fixBaseUrlInTsconfig(projectPath);
 		const hasBaseUrl = hasBaseUrlInTsconfig(projectPath);
 		const initConfig = createDefaultVitePlusLintConfig({ includeTypeAwareDefaults: !hasBaseUrl });
@@ -1632,7 +1632,7 @@ async function lint() {
 }
 //#endregion
 //#region src/resolve-core.ts
-const CORE_PACKAGE_NAME = "@tiara-stack/vite-plus-core";
+const CORE_PACKAGE_NAME = "@voidzero-dev/vite-plus-core";
 function checkCoreVersion(packageJsonPath, expectedVersion) {
 	const pkg = JSON.parse(readFileSync(packageJsonPath, "utf8"));
 	if (pkg.name !== CORE_PACKAGE_NAME || pkg.version !== expectedVersion) throw new Error(`Expected ${CORE_PACKAGE_NAME}@${expectedVersion}, but found ${pkg.name}@${pkg.version} at ${packageJsonPath}. Run \`vp migrate\` to align the Vite alias, then run \`vp install\`.`);
@@ -1702,7 +1702,7 @@ async function pack(err, { cwd }) {
 * Vitest is Vite's testing framework that provides a Jest-compatible
 * testing experience with Vite's fast HMR and transformation pipeline.
 * The function resolves the bundled vitest shipped with the CLI first,
-* so the runner matches the Vitest that `@tiara-stack/vite-plus/test*` imports resolve
+* so the runner matches the Vitest that `vite-plus/test*` imports resolve
 * to; it falls back to the project copy only if the bundled one is
 * unreachable. See `resolveBundled` for the rationale (avoiding dual-copy
 * Vitest internal-state / mock-hoisting mismatches).
@@ -1828,7 +1828,7 @@ else if (command === "hooks") await import("./hooks/bin.js");
 else if (command === "--version" || command === "-V") await import("./version.js");
 else if (command === "staged") await import("./staged/bin.js");
 else try {
-	const { resolveUniversalViteConfig } = await import("./resolve-vite-config-CBEuFE9y.js");
+	const { resolveUniversalViteConfig } = await import("./resolve-vite-config-C1csXN11.js");
 	const initInspection = inspectInitCommand(command, args.slice(1));
 	if (initInspection.handled && initInspection.configKey && initInspection.hasExistingConfigKey && initInspection.existingViteConfigPath) {
 		log(`Skipped initialization: '${accent(initInspection.configKey)}' already exists in '${accent(path.basename(initInspection.existingViteConfigPath))}'.`);

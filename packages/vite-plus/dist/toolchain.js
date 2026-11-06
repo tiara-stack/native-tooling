@@ -2,8 +2,8 @@ export const toolchain = {
   "schemaVersion": 1,
   "nodes": [
     {
-      "id": "@tiara-stack/vite-plus",
-      "name": "@tiara-stack/vite-plus",
+      "id": "vite-plus",
+      "name": "vite-plus",
       "version": "1.0.0",
       "kind": "package",
       "delivery": [
@@ -13,7 +13,7 @@ export const toolchain = {
     },
     {
       "id": "vite-plus-core",
-      "name": "@tiara-stack/vite-plus-core",
+      "name": "@voidzero-dev/vite-plus-core",
       "version": "1.0.0",
       "kind": "package",
       "delivery": [
@@ -130,7 +130,7 @@ export const toolchain = {
   ],
   "edges": [
     {
-      "from": "@tiara-stack/vite-plus",
+      "from": "vite-plus",
       "to": "vite-plus-core",
       "relationship": "depends-on"
     },
@@ -165,27 +165,27 @@ export const toolchain = {
       "relationship": "bundles"
     },
     {
-      "from": "@tiara-stack/vite-plus",
+      "from": "vite-plus",
       "to": "vitest",
       "relationship": "depends-on"
     },
     {
-      "from": "@tiara-stack/vite-plus",
+      "from": "vite-plus",
       "to": "oxlint",
       "relationship": "depends-on"
     },
     {
-      "from": "@tiara-stack/vite-plus",
+      "from": "vite-plus",
       "to": "oxlint-tsgolint",
       "relationship": "depends-on"
     },
     {
-      "from": "@tiara-stack/vite-plus",
+      "from": "vite-plus",
       "to": "oxfmt",
       "relationship": "depends-on"
     },
     {
-      "from": "@tiara-stack/vite-plus",
+      "from": "vite-plus",
       "to": "vite-task",
       "relationship": "compiles"
     }

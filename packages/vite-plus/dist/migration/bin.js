@@ -2,16 +2,16 @@ import { r as __toESM } from "../rolldown-runtime-CMFfr-1z.js";
 import { t as documentationUrl$1 } from "../documentation-DqcZSthV.js";
 import { a as muted, c as warnMsg, i as log, o as printHeader, r as formatDuration, t as accent } from "../terminal-MKGAuy-p.js";
 import { _ as engines, a as SETUP_VP_VERSION, d as VITE_PLUS_OVERRIDE_PACKAGES, f as VITE_PLUS_VERSION, m as isForceOverrideMode } from "../constants-BqJiMVVU.js";
-import { a as writeJsonFile, c as modify, i as readJsonFile, l as parse, o as applyEdits, s as findNodeAtLocation, u as parseTree } from "../json-C9TY5YT1.js";
-import { a as readNearestPackageJson, i as hasVitePlusDependency, n as detectPackageMetadata } from "../package-CTMTkwwC.js";
+import { a as writeJsonFile, c as modify, i as readJsonFile, l as parse, o as applyEdits, s as findNodeAtLocation, u as parseTree } from "../json-DEbQRTSu.js";
+import { a as readNearestPackageJson, i as hasVitePlusDependency, n as detectPackageMetadata } from "../package-CxcH1qid.js";
 import { t as vitest_v5_entry_points_default } from "../vitest-v5-entry-points-DthU1e_O.js";
-import { E as spinner, S as log$1, T as select, b as confirm, c as selectPackageManager, i as promptGitHooks, k as isCancel, l as upgradeYarn, n as defaultInteractive, o as runViteFmt, r as downloadPackageManager$1, s as runViteInstall, t as cancelAndExit, w as outro, y as PackageManager } from "../prompts-DIFlcnEQ.js";
-import { n as require_semver, t as require_dist } from "../dist-bEVYPg-3.js";
-import { i as selectAgentTargetPaths, l as displayRelative, n as detectAgentConflicts, r as detectExistingAgentTargetPaths, s as writeAgentInstructions } from "../agent-DWTzWYW1.js";
+import { E as spinner, S as log$1, T as select, b as confirm, c as selectPackageManager, i as promptGitHooks, k as isCancel, l as upgradeYarn, n as defaultInteractive, o as runViteFmt, r as downloadPackageManager$1, s as runViteInstall, t as cancelAndExit, w as outro, y as PackageManager } from "../prompts-CukK1Ina.js";
+import { n as require_semver, t as require_dist } from "../dist-BY8rUtnB.js";
+import { i as selectAgentTargetPaths, l as displayRelative, n as detectAgentConflicts, r as detectExistingAgentTargetPaths, s as writeAgentInstructions } from "../agent-D0gTfAYS.js";
 import { n as addMigrationWarning, r as createMigrationReport } from "../report-NhQk8VHb.js";
-import { $ as confirmEslintMigration, A as createCatalogDependencyResolver, B as addFrameworkShim, C as mergeViteConfigFiles, D as usesWebdriverioProvider, E as ensureVitePlusBootstrap, G as migrateTsupToTsdown, H as hasFrameworkShim, I as minimatch, J as confirmPrettierMigration, L as findGitRoot, M as detectWorkspace$1, O as configureYarnNodeModulesMode, Q as warnPackageLevelPrettier, S as mergeTsdownConfigFile, T as detectVitePlusBootstrapPending, U as confirmTsupMigration, V as detectFramework, W as detectTsupProject, X as migratePrettierToOxfmt, Y as detectPrettierProject, _ as installGitHooks, at as warnLegacyEslintConfig, ct as checkViteVersion, d as finalizeCoreMigrationForExistingVitePlus, et as detectEslintProject, f as detectNodeVersionManagerFile, g as detectLegacyGitHooksMigrationCandidate, i as selectEditor, it as warnIncompatibleEslintIntegration, k as detectYarnPnpMode, l as rewriteStandaloneProject, lt as checkVitestVersion, m as migrateSetupVpVersion, nt as migrateEslintToOxlint, o as writeEditorConfigs, ot as warnPackageLevelEslint, p as migrateNodeVersionManagerFile, q as warnMissingTsupConfig, r as isJsonLikeFile, s as rewriteMonorepo, st as WEBDRIVERIO_PROVIDER, t as detectEditorConflicts, tt as detectIncompatibleEslintIntegration, u as detectPendingCoreMigration, v as preflightGitHooksSetup, w as collectToolchainVersionChanges, x as injectLintTypeCheckDefaults, y as shouldSkipStagedMigrationForHooks, z as extractOverrideParentSegments } from "../editor-DDjNBHmb.js";
-import { n as runCommandSilently } from "../command-CZvBUM6J.js";
-import { a as hasBaseUrlInTsconfig, i as fixBaseUrlInTsconfig, t as confirmBaseUrlFix } from "../tsconfig-CteVwe5T.js";
+import { $ as confirmEslintMigration, A as createCatalogDependencyResolver, B as addFrameworkShim, C as mergeViteConfigFiles, D as usesWebdriverioProvider, E as ensureVitePlusBootstrap, G as migrateTsupToTsdown, H as hasFrameworkShim, I as minimatch, J as confirmPrettierMigration, L as findGitRoot, M as detectWorkspace$1, O as configureYarnNodeModulesMode, Q as warnPackageLevelPrettier, S as mergeTsdownConfigFile, T as detectVitePlusBootstrapPending, U as confirmTsupMigration, V as detectFramework, W as detectTsupProject, X as migratePrettierToOxfmt, Y as detectPrettierProject, _ as installGitHooks, at as warnLegacyEslintConfig, ct as checkViteVersion, d as finalizeCoreMigrationForExistingVitePlus, et as detectEslintProject, f as detectNodeVersionManagerFile, g as detectLegacyGitHooksMigrationCandidate, i as selectEditor, it as warnIncompatibleEslintIntegration, k as detectYarnPnpMode, l as rewriteStandaloneProject, lt as checkVitestVersion, m as migrateSetupVpVersion, nt as migrateEslintToOxlint, o as writeEditorConfigs, ot as warnPackageLevelEslint, p as migrateNodeVersionManagerFile, q as warnMissingTsupConfig, r as isJsonLikeFile, s as rewriteMonorepo, st as WEBDRIVERIO_PROVIDER, t as detectEditorConflicts, tt as detectIncompatibleEslintIntegration, u as detectPendingCoreMigration, v as preflightGitHooksSetup, w as collectToolchainVersionChanges, x as injectLintTypeCheckDefaults, y as shouldSkipStagedMigrationForHooks, z as extractOverrideParentSegments } from "../editor-CgYujhxK.js";
+import { n as runCommandSilently } from "../command-DYpHsDOs.js";
+import { a as hasBaseUrlInTsconfig, i as fixBaseUrlInTsconfig, t as confirmBaseUrlFix } from "../tsconfig-DJTfGBSA.js";
 import { t as extractOverrideTargetName } from "../package-overrides-Dpn4scvN.js";
 import { t as unwrapCliParseOutcome } from "../cli-parse-DHE8NrBU.js";
 import { t as ROLLDOWN_COMPAT_RESULT_PREFIX } from "../protocol-D99W10Qi.js";
@@ -314,16 +314,16 @@ function importedName(editor, node, sources) {
 }
 const ROOT_TEST_SOURCES = /* @__PURE__ */ new Set([
 	"vitest",
-	"@tiara-stack/vite-plus/test",
+	"vite-plus/test",
 	"@vitest/runner"
 ]);
 const CONFIG_SOURCES = /* @__PURE__ */ new Set([
 	"vitest/config",
-	"@tiara-stack/vite-plus",
-	"@tiara-stack/vite-plus/test/config",
+	"vite-plus",
+	"vite-plus/test/config",
 	"vite"
 ]);
-const NODE_SOURCES = /* @__PURE__ */ new Set(["vitest/node", "@tiara-stack/vite-plus/test/node"]);
+const NODE_SOURCES = /* @__PURE__ */ new Set(["vitest/node", "vite-plus/test/node"]);
 function parseSource(file, source) {
 	const { ast, bindings, comments } = JSON.parse(analyzeMigrationSource(file, source));
 	return {
@@ -714,7 +714,7 @@ function hasTestConfigHelper(file, source) {
 	if (!CONFIG_HELPER_IMPORT.test(source)) return false;
 	try {
 		const editor = new SourceEditor(file, source);
-		if (editor.ast.body.some((node) => node.type === "ImportDeclaration" && node.importKind !== "type" && ["vitest/config", "@tiara-stack/vite-plus/test/config"].includes(node.source.value) && node.specifiers.some((specifier) => specifier.type === "ImportNamespaceSpecifier" || specifier.type === "ImportSpecifier" && specifier.importKind !== "type" && [
+		if (editor.ast.body.some((node) => node.type === "ImportDeclaration" && node.importKind !== "type" && ["vitest/config", "vite-plus/test/config"].includes(node.source.value) && node.specifiers.some((specifier) => specifier.type === "ImportNamespaceSpecifier" || specifier.type === "ImportSpecifier" && specifier.importKind !== "type" && [
 			"defineConfig",
 			"defineProject",
 			"mergeConfig"
@@ -1277,8 +1277,8 @@ const DEFAULT_BENCHMARK_INCLUDE = ["**/*.{bench,benchmark}.?(c|m)[jt]s?(x)"];
 const DEFAULT_BENCHMARK_EXCLUDE = ["**/node_modules/**", "**/.git/**"];
 const TEST_CONFIG_SOURCES = /* @__PURE__ */ new Set([
 	"vitest/config",
-	"@tiara-stack/vite-plus/test/config",
-	"@tiara-stack/vite-plus"
+	"vite-plus/test/config",
+	"vite-plus"
 ]);
 const SCOPE_KEYS = [
 	"root",
@@ -1809,7 +1809,7 @@ function migrateBenchmarks(editor, globals = false) {
 			}
 		},
 		ImportDeclaration(node) {
-			if (!["vitest", "@tiara-stack/vite-plus/test"].includes(node.source.value) || node.importKind === "type") return;
+			if (!["vitest", "vite-plus/test"].includes(node.source.value) || node.importKind === "type") return;
 			for (const specifier of node.specifiers) {
 				if (specifier.type !== "ImportSpecifier" || specifier.importKind === "type" || propertyName(specifier.imported) !== "bench") continue;
 				const binding = editor.binding(specifier.local);
@@ -1886,18 +1886,18 @@ const EXPECT_SYMBOLS = /* @__PURE__ */ new Set([
 const RUNNER_SOURCES = /* @__PURE__ */ new Set([
 	"@vitest/runner",
 	"vitest/suite",
-	"@tiara-stack/vite-plus/test/suite",
-	"@tiara-stack/vite-plus/test/plugins/runner"
+	"vite-plus/test/suite",
+	"vite-plus/test/plugins/runner"
 ]);
-const EXPECT_SOURCES = /* @__PURE__ */ new Set(["@vitest/expect", "@tiara-stack/vite-plus/test/plugins/expect"]);
-const RUNNERS_SOURCES = /* @__PURE__ */ new Set(["vitest/runners", "@tiara-stack/vite-plus/test/runners"]);
+const EXPECT_SOURCES = /* @__PURE__ */ new Set(["@vitest/expect", "vite-plus/test/plugins/expect"]);
+const RUNNERS_SOURCES = /* @__PURE__ */ new Set(["vitest/runners", "vite-plus/test/runners"]);
 const REMOVED_SOURCES = /* @__PURE__ */ new Set([
 	"vitest/internal/module-runner",
-	"@tiara-stack/vite-plus/test/internal/module-runner",
+	"vite-plus/test/internal/module-runner",
 	"@vitest/runner/utils",
 	"@vitest/runner/types",
-	"@tiara-stack/vite-plus/test/plugins/runner-utils",
-	"@tiara-stack/vite-plus/test/plugins/runner-types"
+	"vite-plus/test/plugins/runner-utils",
+	"vite-plus/test/plugins/runner-types"
 ]);
 const LEGACY_API_SOURCES = /* @__PURE__ */ new Set([
 	...RUNNER_SOURCES,
@@ -1942,13 +1942,13 @@ const DOM_GLOBALS = /* @__PURE__ */ new Set([
 const CHILD_PROCESS_SOURCES = /* @__PURE__ */ new Set(["node:child_process", "child_process"]);
 const ENVIRONMENT_SOURCES = /* @__PURE__ */ new Set([
 	"vitest/environments",
-	"@tiara-stack/vite-plus/test/environments",
+	"vite-plus/test/environments",
 	"vitest/runtime",
-	"@tiara-stack/vite-plus/test/runtime"
+	"vite-plus/test/runtime"
 ]);
 const ASSERTION_SOURCES = /* @__PURE__ */ new Set([
 	"vitest",
-	"@tiara-stack/vite-plus/test",
+	"vite-plus/test",
 	...EXPECT_SOURCES
 ]);
 /** Follow immutable bindings, including Map iteration variables, back to
@@ -2180,7 +2180,7 @@ function rewriteSource(file, source, options) {
 			if (imports.length) {
 				if (node.specifiers.some((specifier) => specifier.type !== "ImportSpecifier")) return;
 				const kept = remaining.length ? `import ${node.importKind === "type" ? "type " : ""}{ ${remaining.join(", ")} } from ${JSON.stringify(source)};\n` : "";
-				editor.replace(node, `${kept}import { ${imports.join(", ")} } from '@tiara-stack/vite-plus/test';`);
+				editor.replace(node, `${kept}import { ${imports.join(", ")} } from 'vite-plus/test';`);
 				runnerAliases.push(...constants);
 			}
 		},
@@ -2676,7 +2676,7 @@ function lockedSourceVersion(directory, root, pkg, manager, expectedRunnerPackag
 		const lock = record(document.toJS());
 		const importer = record(record(lock?.importers)?.[path.relative(root, directory).replaceAll("\\", "/") || "."]);
 		if (!importer) return;
-		const name = dependency(pkg, "vitest") ? "vitest" : "@tiara-stack/vite-plus";
+		const name = dependency(pkg, "vitest") ? "vitest" : "vite-plus";
 		const spec = dependency(pkg, name);
 		if (!spec) return;
 		const entry = [
@@ -2720,7 +2720,7 @@ function installedSourceVersion(directory, name, expectedPackage, expectedRange)
 		const version = record(pkg.peerDependencies)?.["@vitest/ui"];
 		return typeof version === "string" ? import_semver.default.valid(version) ?? void 0 : void 0;
 	}
-	if (installed.name !== "@tiara-stack/vite-plus") return;
+	if (installed.name !== "vite-plus") return;
 	const bundled = dependency(pkg, "vitest");
 	if (bundled?.startsWith("catalog:")) return installedSourceVersion(installed.path, "vitest");
 	if (bundled && import_semver.default.validRange(bundled)) {
@@ -2731,8 +2731,8 @@ function installedSourceVersion(directory, name, expectedPackage, expectedRange)
 }
 function sourceVersion(directory, root, pkg, manager) {
 	const catalog = createCatalogDependencyResolver(root, manager ?? PackageManager.pnpm);
-	const vitePlus = dependency(pkg, "@tiara-stack/vite-plus");
-	const vitePlusRange = vitePlus?.startsWith("catalog:") ? catalog?.(vitePlus, "@tiara-stack/vite-plus") : vitePlus;
+	const vitePlus = dependency(pkg, "vite-plus");
+	const vitePlusRange = vitePlus?.startsWith("catalog:") ? catalog?.(vitePlus, "vite-plus") : vitePlus;
 	let spec = dependency(pkg, "vitest");
 	if (spec?.startsWith("catalog:")) spec = catalog?.(spec, "vitest");
 	const legacyAlias = spec?.startsWith(`npm:${LEGACY_RUNNER}@`);
@@ -2742,7 +2742,7 @@ function sourceVersion(directory, root, pkg, manager) {
 		"devDependencies",
 		"optionalDependencies"
 	].some((field) => typeof record(pkg[field])?.vitest === "string") && vitePlus) {
-		const bundled = installedSourceVersion(directory, "@tiara-stack/vite-plus", "@tiara-stack/vite-plus", vitePlusRange);
+		const bundled = installedSourceVersion(directory, "vite-plus", "vite-plus", vitePlusRange);
 		if (bundled) return bundled;
 	}
 	const expectedRunnerPackage = legacyAlias ? LEGACY_RUNNER : void 0;
@@ -2753,7 +2753,7 @@ function sourceVersion(directory, root, pkg, manager) {
 	if (legacyAlias) return "4.0.0";
 	if (spec && import_semver.default.validRange(spec)) return unambiguousRunnerVersion(spec);
 	if (vitePlus) {
-		const bundled = installedSourceVersion(directory, "@tiara-stack/vite-plus", "@tiara-stack/vite-plus", vitePlusRange);
+		const bundled = installedSourceVersion(directory, "vite-plus", "vite-plus", vitePlusRange);
 		if (bundled) return bundled;
 	}
 	if (directory !== root) return sourceVersion(root, root, readJson(path.join(root, "package.json")), manager);
@@ -3266,12 +3266,12 @@ async function formatMigratedProject(projectRoot, interactive, report, options =
 }
 //#endregion
 //#region src/migration/npm-reinstall.ts
-const VITE_PLUS_CORE_PACKAGE = "@tiara-stack/vite-plus-core";
+const VITE_PLUS_CORE_PACKAGE = "@voidzero-dev/vite-plus-core";
 function isViteInstallPath(packagePath) {
 	return packagePath === "node_modules/vite" || packagePath.endsWith("/node_modules/vite");
 }
 function isVitePlusCorePackage(pkg) {
-	return pkg?.name === VITE_PLUS_CORE_PACKAGE || pkg?.resolved?.includes("/@tiara-stack/vite-plus-core/") === true;
+	return pkg?.name === VITE_PLUS_CORE_PACKAGE || pkg?.resolved?.includes("/@voidzero-dev/vite-plus-core/") === true;
 }
 const STALE_VITE_BACKUP_NAME = ".vite-plus-migrate-stale-vite";
 function removeStaleInstalledVite(packagePath, moved) {
@@ -3301,7 +3301,7 @@ function removeStaleInstalledVite(packagePath, moved) {
 }
 /**
 * npm does not replace an already-installed package when its dependency changes
-* from `vite` to the `@tiara-stack/vite-plus-core` npm alias. Even `npm
+* from `vite` to the `@voidzero-dev/vite-plus-core` npm alias. Even `npm
 * install --force` can exit successfully while retaining the real Vite package
 * and its stale package-lock entry. Move those stale Vite installs aside (and
 * drop their lock entries) before the migration's final install so npm resolves

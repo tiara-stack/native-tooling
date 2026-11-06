@@ -1,9 +1,9 @@
 import { r as __toESM, t as __commonJSMin } from "./rolldown-runtime-CMFfr-1z.js";
 import { t as accent } from "./terminal-MKGAuy-p.js";
 import { f as VITE_PLUS_VERSION } from "./constants-BqJiMVVU.js";
-import { a as writeJsonFile, i as readJsonFile } from "./json-C9TY5YT1.js";
-import { n as require_semver, t as require_dist } from "./dist-bEVYPg-3.js";
-import { n as runCommandSilently } from "./command-CZvBUM6J.js";
+import { a as writeJsonFile, i as readJsonFile } from "./json-DEbQRTSu.js";
+import { n as require_semver, t as require_dist } from "./dist-BY8rUtnB.js";
+import { n as runCommandSilently } from "./command-DYpHsDOs.js";
 import path from "node:path";
 import { downloadPackageManager } from "../binding/index.js";
 import { stripVTControlCharacters, styleText } from "node:util";
@@ -13,7 +13,7 @@ import * as l from "node:readline";
 import l__default from "node:readline";
 import { ReadStream } from "node:tty";
 import { randomBytes } from "node:crypto";
-//#region ../../../../../build-virtual-store/fast-string-truncated-width@3.0.3/node_modules/fast-string-truncated-width/dist/utils.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/fast-string-truncated-width@3.0.3/node_modules/fast-string-truncated-width/dist/utils.js
 const getCodePointsLength$1 = (() => {
 	const SURROGATE_PAIR_RE = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
 	return (input) => {
@@ -30,7 +30,7 @@ const isWideNotCJKTNotEmoji$1 = (x) => {
 	return x === 8987 || x === 9001 || x >= 12272 && x <= 12287 || x >= 12289 && x <= 12350 || x >= 12441 && x <= 12543 || x >= 12549 && x <= 12591 || x >= 12593 && x <= 12686 || x >= 12688 && x <= 12771 || x >= 12783 && x <= 12830 || x >= 12832 && x <= 12871 || x >= 12880 && x <= 19903 || x >= 65040 && x <= 65049 || x >= 65072 && x <= 65106 || x >= 65108 && x <= 65126 || x >= 65128 && x <= 65131 || x >= 127488 && x <= 127490 || x >= 127504 && x <= 127547 || x >= 127552 && x <= 127560 || x >= 131072 && x <= 196605 || x >= 196608 && x <= 262141;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/fast-string-truncated-width@3.0.3/node_modules/fast-string-truncated-width/dist/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/fast-string-truncated-width@3.0.3/node_modules/fast-string-truncated-width/dist/index.js
 const ANSI_RE = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]|\u001b\]8;[^;]*;.*?(?:\u0007|\u001b\u005c)/y;
 const CONTROL_RE = /[\x00-\x08\x0A-\x1F\x7F-\x9F]{1,1000}/y;
 const CJKT_WIDE_RE$1 = /(?:(?![\uFF61-\uFF9F\uFF00-\uFFEF])[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Tangut}]){1,1000}/uy;
@@ -120,7 +120,7 @@ const getStringTruncatedWidth = (input, truncationOptions = {}, widthOptions = {
 	};
 };
 //#endregion
-//#region ../../../../../build-virtual-store/fast-string-width@3.0.2/node_modules/fast-string-width/dist/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/fast-string-width@3.0.2/node_modules/fast-string-width/dist/index.js
 const NO_TRUNCATION = {
 	limit: Infinity,
 	ellipsis: "",
@@ -130,7 +130,7 @@ const fastStringWidth = (input, options = {}) => {
 	return getStringTruncatedWidth(input, NO_TRUNCATION, options).width;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/fast-wrap-ansi@0.2.0/node_modules/fast-wrap-ansi/lib/main.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/fast-wrap-ansi@0.2.0/node_modules/fast-wrap-ansi/lib/main.js
 const ESC$1 = "\x1B";
 const CSI$1 = "";
 const END_CODE$1 = 39;
@@ -295,7 +295,7 @@ function wrapAnsi$1(string, columns, options) {
 	return String(string).normalize().split(CRLF_OR_LF$1).map((line) => exec$1(line, columns, options)).join("\n");
 }
 //#endregion
-//#region ../../../../../build-virtual-store/@clack+core@1.4.3/node_modules/@clack/core/dist/index.mjs
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/@clack+core@1.4.3/node_modules/@clack/core/dist/index.mjs
 var import_src = (/* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const ESC = "\x1B";
 	const CSI = `${ESC}[`;
@@ -759,7 +759,7 @@ var n = class extends V {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/picocolors@1.1.1/node_modules/picocolors/picocolors.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/picocolors@1.1.1/node_modules/picocolors/picocolors.js
 var require_picocolors = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	let p = process || {};
 	let argv = p.argv || [];

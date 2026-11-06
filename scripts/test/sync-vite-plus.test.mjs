@@ -12,6 +12,7 @@ import {
   readdirSync,
   rmSync,
   statSync,
+  symlinkSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
@@ -53,12 +54,18 @@ function fixture(fault) {
     "scripts/sync-vite-plus.mjs",
     "scripts/lib/vite-plus-source-environment.mjs",
     "scripts/lib/replace-package-trees.mjs",
+    "scripts/lib/scoped-vite-plus.mjs",
   ]) {
     if (existsSync(join(repository, path))) {
       mkdirSync(dirname(join(root, path)), { recursive: true });
       cpSync(join(repository, path), join(root, path));
     }
   }
+  mkdirSync(join(root, "node_modules"));
+  symlinkSync(
+    dirname(createRequire(import.meta.url).resolve("typescript/package.json")),
+    join(root, "node_modules/typescript"),
+  );
   const source = join(root, "packages/vite-plus-effect-fork");
   const archives = {};
   const outputs = {};

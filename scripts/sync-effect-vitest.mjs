@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { replacePackageTrees } from "./lib/replace-package-trees.mjs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -132,14 +133,23 @@ const formattedReadme = await formatOutput(
     ),
 );
 
-await rm(join(target, "src"), { force: true, recursive: true });
-for (const [relative, source] of sources) {
-  await mkdir(dirname(join(target, "src", relative)), { recursive: true });
-  await writeFile(join(target, "src", relative), source);
+await mkdir(join(root, ".tmp"), { recursive: true });
+const staging = await mkdtemp(join(root, ".tmp/effect-vitest-sync-"));
+try {
+  for (const [relative, source] of sources) {
+    await mkdir(dirname(join(staging, "src", relative)), { recursive: true });
+    await writeFile(join(staging, "src", relative), source);
+  }
+  await writeFile(join(staging, "LICENSE"), license);
+  await writeFile(join(staging, "package.json"), `${JSON.stringify(pkg, null, 2)}\n`);
+  await writeFile(join(staging, "README.md"), formattedReadme);
+  await replacePackageTrees(
+    [{ source: staging, target, preserveOtherEntries: true }],
+    join(root, ".tmp"),
+  );
+} finally {
+  await rm(staging, { recursive: true, force: true });
 }
-await writeFile(join(target, "LICENSE"), license);
-await writeFile(join(target, "package.json"), `${JSON.stringify(pkg, null, 2)}\n`);
-await writeFile(join(target, "README.md"), formattedReadme);
 
 console.log(
   `Synced Effect ${upstreamPackage.version} helper for Vite+ ${vitePackage.version} / Vitest ${runnerVersion}`,

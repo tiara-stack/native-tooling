@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { t as resolveTiaraNative } from "./tiara-native-DbeuJGA5.js";
-import { t as cac } from "./dist-l10pUlWT.js";
-import { o as resolveViteConfig } from "./resolve-vite-config-CWZ-9h7v.js";
+import { t as cac } from "./dist-BHNi_1Xm.js";
+import { o as resolveViteConfig } from "./resolve-vite-config-DHcnObjQ.js";
 import module from "node:module";
 import { buildWithConfigs, enableDebug, globalLogger, resolveUserConfig } from "vite/pack";
 //#region src/pack-bin.ts
@@ -9,7 +9,7 @@ const RE_DTS = /\.d\.[cm]?ts$/;
 const EXTERNAL_DTS_PKG_RE = /^(?:postcss|lightningcss|vitest|@vitest\/[^/]+|(?:@tiara-stack\/)?vite-plus)(?:\/|$)/;
 /**
 * Rolldown plugin that keeps `postcss` / `lightningcss` / `vitest` / `@vitest/*`
-* / `@tiara-stack/vite-plus` external to the DTS bundle.
+* / `vite-plus` external to the DTS bundle.
 *
 * The DTS bundler resolves these packages and tries to inline their `.d.ts`
 * files. postcss ships its public types as a CJS `export = postcss` over a
@@ -27,15 +27,15 @@ const EXTERNAL_DTS_PKG_RE = /^(?:postcss|lightningcss|vitest|@vitest\/[^/]+|(?:@
 * eagerly resolves every re-export while inlining and so hits the missing
 * export. `@vitest/browser/matchers.d.ts` then re-imports the same name from
 * `vitest`, propagating the failure. Established vite-plus projects reach
-* these files through the `@tiara-stack/vite-plus/test*` shims, which re-export `vitest` /
+* these files through the `vite-plus/test*` shims, which re-export `vitest` /
 * `@vitest/*` from declaration files.
 *
-* `@tiara-stack/vite-plus` itself (root and `@tiara-stack/vite-plus/test*` shims) is kept external so the
+* `vite-plus` itself (root and `vite-plus/test*` shims) is kept external so the
 * PUBLIC specifier survives in the emitted declarations. If the shim were
 * inlined instead, its private `vitest` / `@vitest/*` re-exports would be the
 * ones externalized above and the published `.d.ts` would carry bare `vitest`
 * specifiers — unresolvable for consumers under strict pnpm / Yarn PnP layouts,
-* where `vitest` is a dependency of `@tiara-stack/vite-plus` and not of the packed package.
+* where `vitest` is a dependency of `vite-plus` and not of the packed package.
 *
 * Marking these packages external for `.d.ts` importers leaves the import
 * untouched in the emitted declarations (`import type { AtRule } from 'postcss'`),
@@ -78,8 +78,8 @@ cli.command("[...files]", "Bundle files", {
 				...packConfig,
 				...flags
 			};
-			if (merged.dts && typeof merged.dts === "object" && (merged.dts.generator === "tsgo" || merged.dts.tsgo === true)) {
-				const tsgo = typeof merged.dts.tsgo === "object" ? merged.dts.tsgo : {};
+			if (merged.dts && typeof merged.dts === "object" && (merged.dts.generator === "tsgo" || !merged.dts.generator && merged.dts.tsgo === true)) {
+				const tsgo = merged.dts.tsgo && typeof merged.dts.tsgo === "object" ? merged.dts.tsgo : {};
 				merged.dts = {
 					...merged.dts,
 					generator: "tsgo",

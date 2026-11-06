@@ -1,7 +1,7 @@
 import { r as __toESM } from "../rolldown-runtime-CMFfr-1z.js";
-import { c as modify, l as parse, o as applyEdits, t as detectFormattingOptions } from "../json-C9TY5YT1.js";
+import { c as modify, l as parse, o as applyEdits, t as detectFormattingOptions } from "../json-DEbQRTSu.js";
 import { n as isAlignableVitestEcosystemPackage } from "../vitest-ecosystem-BU0AqZq-.js";
-import { n as require_semver, t as require_dist } from "../dist-bEVYPg-3.js";
+import { n as require_semver, t as require_dist } from "../dist-BY8rUtnB.js";
 import { t as extractOverrideTargetName } from "../package-overrides-Dpn4scvN.js";
 import path from "node:path";
 import fsPromises from "node:fs/promises";
@@ -21,7 +21,7 @@ async function readBoundedUtf8(input, maxBytes = MAX_SYNC_VERSIONS_REQUEST_BYTES
 	return Buffer.concat(chunks, totalBytes).toString("utf8");
 }
 //#endregion
-//#region ../../../../../build-virtual-store/zod@3.25.76/node_modules/zod/v3/helpers/util.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/util.js
 var util;
 (function(util) {
 	util.assertEqual = (_) => {};
@@ -117,7 +117,7 @@ const getParsedType = (data) => {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/zod@3.25.76/node_modules/zod/v3/ZodError.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/zod@3.25.76/node_modules/zod/v3/ZodError.js
 const ZodIssueCode = util.arrayToEnum([
 	"invalid_type",
 	"invalid_literal",
@@ -216,7 +216,7 @@ ZodError.create = (issues) => {
 	return new ZodError(issues);
 };
 //#endregion
-//#region ../../../../../build-virtual-store/zod@3.25.76/node_modules/zod/v3/locales/en.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/zod@3.25.76/node_modules/zod/v3/locales/en.js
 const errorMap = (issue, _ctx) => {
 	let message;
 	switch (issue.code) {
@@ -294,13 +294,13 @@ const errorMap = (issue, _ctx) => {
 	return { message };
 };
 //#endregion
-//#region ../../../../../build-virtual-store/zod@3.25.76/node_modules/zod/v3/errors.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/zod@3.25.76/node_modules/zod/v3/errors.js
 let overrideErrorMap = errorMap;
 function getErrorMap() {
 	return overrideErrorMap;
 }
 //#endregion
-//#region ../../../../../build-virtual-store/zod@3.25.76/node_modules/zod/v3/helpers/parseUtil.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/parseUtil.js
 const makeIssue = (params) => {
 	const { data, path, errorMaps, issueData } = params;
 	const fullPath = [...path, ...issueData.path || []];
@@ -404,14 +404,14 @@ const isDirty = (x) => x.status === "dirty";
 const isValid = (x) => x.status === "valid";
 const isAsync = (x) => typeof Promise !== "undefined" && x instanceof Promise;
 //#endregion
-//#region ../../../../../build-virtual-store/zod@3.25.76/node_modules/zod/v3/helpers/errorUtil.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/errorUtil.js
 var errorUtil;
 (function(errorUtil) {
 	errorUtil.errToObj = (message) => typeof message === "string" ? { message } : message || {};
 	errorUtil.toString = (message) => typeof message === "string" ? message : message?.message;
 })(errorUtil || (errorUtil = {}));
 //#endregion
-//#region ../../../../../build-virtual-store/zod@3.25.76/node_modules/zod/v3/types.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js
 var ParseInputLazyPath = class {
 	constructor(parent, value, path, key) {
 		this._cachedPath = [];
@@ -3652,7 +3652,7 @@ function parsePackageJson(contents) {
 	return parsed;
 }
 function targetVersion(name, toolchain) {
-	if (name === "@tiara-stack/vite-plus" || name === "@tiara-stack/vite-plus-core") return toolchain.vitePlus;
+	if (name === "vite-plus" || name === "@voidzero-dev/vite-plus-core") return toolchain.vitePlus;
 	if (name === "vitest" || isAlignableVitestEcosystemPackage(name)) return toolchain.vitest;
 }
 function alignedNpmAlias(current, toolchain) {
@@ -3813,7 +3813,7 @@ function planSyncVersions(request, toolchain) {
 	return {
 		schemaVersion: 1,
 		tool: {
-			name: "@tiara-stack/vite-plus",
+			name: "vite-plus",
 			version: toolchain.vitePlus
 		},
 		workspace: ".",
@@ -3838,7 +3838,7 @@ function requiredToolVersion(nodes, id) {
 function toolchainFromManifest(input) {
 	const manifest = toolchainManifestSchema.parse(input);
 	return {
-		vitePlus: requiredToolVersion(manifest.nodes, "@tiara-stack/vite-plus"),
+		vitePlus: requiredToolVersion(manifest.nodes, "vite-plus"),
 		vitest: requiredToolVersion(manifest.nodes, "vitest")
 	};
 }

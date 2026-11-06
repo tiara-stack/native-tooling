@@ -83,6 +83,7 @@ async function hashTree(directory, hashes) {
 for (const directory of [
   "packages/cli/src",
   "packages/cli/bin",
+  "packages/cli/templates",
   "packages/core",
   "packages/prompts",
   "packages/tools/src",

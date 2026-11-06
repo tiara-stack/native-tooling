@@ -2,15 +2,15 @@ import { r as __toESM } from "./rolldown-runtime-CMFfr-1z.js";
 import { t as documentationUrl$1 } from "./documentation-DqcZSthV.js";
 import { a as SETUP_VP_VERSION, c as VITEST_VERSION, d as VITE_PLUS_OVERRIDE_PACKAGES, f as VITE_PLUS_VERSION, l as VITE_CONFIG_FILES, m as isForceOverrideMode, n as BASEURL_TSCONFIG_WARNING, o as TSDOWN_MIGRATION_SKILL_URL, s as VITEST_AGE_GATE_EXEMPT_PACKAGES, u as VITE_PLUS_NAME } from "./constants-BqJiMVVU.js";
 import { i as ensureVitePlusImportRuleDefaults, r as createDefaultVitePlusLintConfig } from "./oxlint-plugin-config-lMMD5fAC.js";
-import { a as writeJsonFile, c as modify, i as readJsonFile, l as parse, n as editJsonFile, o as applyEdits, r as isJsonFile, t as detectFormattingOptions } from "./json-C9TY5YT1.js";
-import { n as detectPackageMetadata, o as fetchNpmResource, r as getScopeFromPackageName, s as getNpmRegistry } from "./package-CTMTkwwC.js";
+import { a as writeJsonFile, c as modify, i as readJsonFile, l as parse, n as editJsonFile, o as applyEdits, r as isJsonFile, t as detectFormattingOptions } from "./json-DEbQRTSu.js";
+import { n as detectPackageMetadata, o as fetchNpmResource, r as getScopeFromPackageName, s as getNpmRegistry } from "./package-CxcH1qid.js";
 import { n as isAlignableVitestEcosystemPackage } from "./vitest-ecosystem-BU0AqZq-.js";
-import { C as multiselect, S as log, T as select, _ as getSpinner, b as confirm, d as readYamlFile, f as scalarString, g as getSilentSpinner, k as isCancel, t as cancelAndExit, u as editYamlFile, y as PackageManager } from "./prompts-DIFlcnEQ.js";
-import { n as require_semver, t as require_dist } from "./dist-bEVYPg-3.js";
-import { l as displayRelative, u as rulesDir } from "./agent-DWTzWYW1.js";
+import { C as multiselect, S as log, T as select, _ as getSpinner, b as confirm, d as readYamlFile, f as scalarString, g as getSilentSpinner, k as isCancel, t as cancelAndExit, u as editYamlFile, y as PackageManager } from "./prompts-CukK1Ina.js";
+import { n as require_semver, t as require_dist } from "./dist-BY8rUtnB.js";
+import { l as displayRelative, u as rulesDir } from "./agent-D0gTfAYS.js";
 import { n as addMigrationWarning, t as addManualStep } from "./report-NhQk8VHb.js";
-import { n as runCommandSilently, r as require_cross_spawn } from "./command-CZvBUM6J.js";
-import { a as hasBaseUrlInTsconfig, c as hasVitestTypesInTsconfig, l as removeDeprecatedTsconfigFalseOption, n as findTsconfigFiles, s as hasTypesToRewriteInTsconfig, u as rewriteTypesInTsconfig } from "./tsconfig-CteVwe5T.js";
+import { n as runCommandSilently, r as require_cross_spawn } from "./command-DYpHsDOs.js";
+import { a as hasBaseUrlInTsconfig, c as hasVitestTypesInTsconfig, l as removeDeprecatedTsconfigFalseOption, n as findTsconfigFiles, s as hasTypesToRewriteInTsconfig, u as rewriteTypesInTsconfig } from "./tsconfig-DJTfGBSA.js";
 import { t as extractOverrideTargetName } from "./package-overrides-Dpn4scvN.js";
 import { i as findUnsafeHookInstallPath, t as SUPPORTED_GIT_HOOK_NAMES } from "./hooks-C-4gykWR.js";
 import path, { posix, win32 } from "node:path";
@@ -1510,7 +1510,7 @@ const OWNED_PROVIDER_ANCESTOR_NAMES = REMOVE_PACKAGES.filter((name) => name.star
 function parentChainReachesVitePlus(segments) {
 	const concrete = segments.filter((segment) => segment !== "**");
 	let index = 0;
-	if (concrete.length > 0 && ancestorSegmentMatches(concrete[0], "@tiara-stack/vite-plus")) index = 1;
+	if (concrete.length > 0 && ancestorSegmentMatches(concrete[0], "vite-plus")) index = 1;
 	for (; index < concrete.length; index += 1) {
 		const segment = concrete[index];
 		if (!OWNED_PROVIDER_ANCESTOR_NAMES.some((name) => ancestorSegmentMatches(segment, name))) return false;
@@ -1551,7 +1551,7 @@ function shouldDropProviderOverrideKey(key) {
 function childChainContribution(key) {
 	return [...extractOverrideParentSegments(key) ?? [], extractOverrideTargetName(key)];
 }
-// @vitest/provider`. Covers bare, versioned, global-glob and `@tiara-stack/vite-plus`-parent
+// @vitest/provider`. Covers bare, versioned, global-glob and `vite-plus`-parent
 function dropRemovePackageOverrideKeys(overrides, ancestorChain = []) {
 	if (!overrides) return false;
 	let removed = false;
@@ -1791,7 +1791,7 @@ async function initGitRepository(cwd) {
 	return true;
 }
 //#endregion
-//#region ../../../../../build-virtual-store/balanced-match@4.0.4/node_modules/balanced-match/dist/esm/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/balanced-match@4.0.4/node_modules/balanced-match/dist/esm/index.js
 const balanced = (a, b, str) => {
 	const ma = a instanceof RegExp ? maybeMatch(a, str) : a;
 	const mb = b instanceof RegExp ? maybeMatch(b, str) : b;
@@ -1839,7 +1839,7 @@ const range = (a, b, str) => {
 	return result;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/brace-expansion@5.0.3/node_modules/brace-expansion/dist/esm/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/brace-expansion@5.0.3/node_modules/brace-expansion/dist/esm/index.js
 const escSlash = "\0SLASH" + Math.random() + "\0";
 const escOpen = "\0OPEN" + Math.random() + "\0";
 const escClose = "\0CLOSE" + Math.random() + "\0";
@@ -1980,14 +1980,14 @@ function expand_(str, max, isTop) {
 	return expansions;
 }
 //#endregion
-//#region ../../../../../build-virtual-store/minimatch@10.2.4/node_modules/minimatch/dist/esm/assert-valid-pattern.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/assert-valid-pattern.js
 const MAX_PATTERN_LENGTH = 65536;
 const assertValidPattern = (pattern) => {
 	if (typeof pattern !== "string") throw new TypeError("invalid pattern");
 	if (pattern.length > MAX_PATTERN_LENGTH) throw new TypeError("pattern is too long");
 };
 //#endregion
-//#region ../../../../../build-virtual-store/minimatch@10.2.4/node_modules/minimatch/dist/esm/brace-expressions.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/brace-expressions.js
 const posixClasses = {
 	"[:alnum:]": ["\\p{L}\\p{Nl}\\p{Nd}", true],
 	"[:alpha:]": ["\\p{L}\\p{Nl}", true],
@@ -2111,7 +2111,7 @@ const parseClass = (glob, position) => {
 	];
 };
 //#endregion
-//#region ../../../../../build-virtual-store/minimatch@10.2.4/node_modules/minimatch/dist/esm/unescape.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/unescape.js
 /**
 * Un-escape a string that has been escaped with {@link escape}.
 *
@@ -2136,7 +2136,7 @@ const unescape = (s, { windowsPathsNoEscape = false, magicalBraces = true } = {}
 	return windowsPathsNoEscape ? s.replace(/\[([^\/\\{}])\]/g, "$1") : s.replace(/((?!\\).|^)\[([^\/\\{}])\]/g, "$1$2").replace(/\\([^\/{}])/g, "$1");
 };
 //#endregion
-//#region ../../../../../build-virtual-store/minimatch@10.2.4/node_modules/minimatch/dist/esm/ast.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/ast.js
 var _a;
 const types = /* @__PURE__ */ new Set([
 	"!",
@@ -2647,7 +2647,7 @@ var AST = class {
 };
 _a = AST;
 //#endregion
-//#region ../../../../../build-virtual-store/minimatch@10.2.4/node_modules/minimatch/dist/esm/escape.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/escape.js
 /**
 * Escape all magic characters in a glob pattern.
 *
@@ -2665,7 +2665,7 @@ const escape = (s, { windowsPathsNoEscape = false, magicalBraces = false } = {})
 	return windowsPathsNoEscape ? s.replace(/[?*()[\]]/g, "[$&]") : s.replace(/[?*()[\]\\]/g, "\\$&");
 };
 //#endregion
-//#region ../../../../../build-virtual-store/minimatch@10.2.4/node_modules/minimatch/dist/esm/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minimatch@10.2.4/node_modules/minimatch/dist/esm/index.js
 const minimatch = (p, pattern, options = {}) => {
 	assertValidPattern(pattern);
 	if (!options.nocomment && pattern.charAt(0) === "#") return false;
@@ -3286,7 +3286,7 @@ minimatch.Minimatch = Minimatch;
 minimatch.escape = escape;
 minimatch.unescape = unescape;
 //#endregion
-//#region ../../../../../build-virtual-store/lru-cache@11.2.7/node_modules/lru-cache/dist/esm/index.min.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lru-cache@11.2.7/node_modules/lru-cache/dist/esm/index.min.js
 var x = typeof performance == "object" && performance && typeof performance.now == "function" ? performance : Date;
 var I = /* @__PURE__ */ new Set();
 var R = typeof process == "object" && process ? process : {};
@@ -3896,7 +3896,7 @@ var L = class c {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/minipass@7.1.3/node_modules/minipass/dist/esm/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/minipass@7.1.3/node_modules/minipass/dist/esm/index.js
 const proc = typeof process === "object" && process ? process : {
 	stdout: null,
 	stderr: null
@@ -4715,7 +4715,7 @@ while (this[FLUSHCHUNK](this[BUFFERSHIFT]()) && this[BUFFER].length);
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/path-scurry@2.0.2/node_modules/path-scurry/dist/esm/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/path-scurry@2.0.2/node_modules/path-scurry/dist/esm/index.js
 const realpathSync$2 = realpathSync$1.native;
 const defaultFS = {
 	lstatSync: lstatSync$1,
@@ -6277,7 +6277,7 @@ process.platform;
 */
 const PathScurry = process.platform === "win32" ? PathScurryWin32 : process.platform === "darwin" ? PathScurryDarwin : PathScurryPosix;
 //#endregion
-//#region ../../../../../build-virtual-store/glob@13.0.0/node_modules/glob/dist/esm/pattern.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/pattern.js
 const isPatternList = (pl) => pl.length >= 1;
 const isGlobList = (gl) => gl.length >= 1;
 /**
@@ -6439,7 +6439,7 @@ var Pattern = class Pattern {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/glob@13.0.0/node_modules/glob/dist/esm/ignore.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/ignore.js
 const defaultPlatform$1 = typeof process === "object" && process && typeof process.platform === "string" ? process.platform : "linux";
 /**
 * Class used to process ignored patterns
@@ -6512,7 +6512,7 @@ var Ignore = class {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/glob@13.0.0/node_modules/glob/dist/esm/processor.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/processor.js
 /**
 * A cache of which patterns have been processed for a given Path
 */
@@ -6704,7 +6704,7 @@ var Processor = class Processor {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/glob@13.0.0/node_modules/glob/dist/esm/walker.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/walker.js
 /**
 * Single-use utility classes to provide functionality to the {@link Glob}
 * methods.
@@ -6988,7 +6988,7 @@ var GlobStream = class extends GlobUtil {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/glob@13.0.0/node_modules/glob/dist/esm/glob.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/glob.js
 const defaultPlatform = typeof process === "object" && process && typeof process.platform === "string" ? process.platform : "linux";
 /**
 * An object that can perform glob pattern traversals.
@@ -7177,7 +7177,7 @@ var Glob = class {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/glob@13.0.0/node_modules/glob/dist/esm/has-magic.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/has-magic.js
 /**
 * Return true if the patterns provided contain any magic glob characters,
 * given the options provided.
@@ -7195,7 +7195,7 @@ const hasMagic = (pattern, options = {}) => {
 	return false;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/glob@13.0.0/node_modules/glob/dist/esm/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/glob@13.0.0/node_modules/glob/dist/esm/index.js
 function globStreamSync(pattern, options = {}) {
 	return new Glob(pattern, options).streamSync();
 }
@@ -7338,7 +7338,7 @@ const PUBLIC_PEER_DEPENDENCY_FALLBACKS = {
 	vitest: "*"
 };
 const PNPM_MINIMUM_RELEASE_AGE_EXCLUDES = [
-	"@tiara-stack/vite-plus",
+	"vite-plus",
 	"@voidzero-dev/*",
 	"oxlint",
 	"@oxlint/*",
@@ -7583,13 +7583,13 @@ function getCatalogDependencySpec(currentValue, version, supportCatalog, options
 *
 * - The spec is computed once from the `vite` override: under a catalog
 *   (`supportCatalog`) it resolves to the preferred `catalog:` reference,
-*   otherwise the concrete `npm:@tiara-stack/vite-plus-core@<v>` alias (or the
+*   otherwise the concrete `npm:@voidzero-dev/vite-plus-core@<v>` alias (or the
 *   `file:` tgz under force-override). A `catalog:` reference satisfies bun's
 *   #8406 peer pre-resolution just as well as a concrete alias because catalog
 *   refs resolve during the dependency-graph build (unlike overrides).
 * - `vite` is inserted in SORTED position rather than appended: oxfmt sorts
 *   package.json dependencies and `vp migrate` has no later format pass, so an
-*   out-of-order key (e.g. `vite` after `@tiara-stack/vite-plus`) would fail a follow-up
+*   out-of-order key (e.g. `vite` after `vite-plus`) would fail a follow-up
 *   `vp check`.
 */
 function setDirectViteEdge(pkg, supportCatalog, catalogDependencyResolver) {
@@ -7686,7 +7686,7 @@ function getYamlMapScalarStringValue(map, key) {
 * pnpm-workspace.yaml sink. A `file:` managed spec (force-override mode) always
 * wins, because there is no catalog to resolve against in that mode.
 *
-* Force-override mode also appends the `@tiara-stack/vite-plus` pin, under a BARE key. The
+* Force-override mode also appends the `vite-plus` pin, under a BARE key. The
 * pin only exists in `file:` tgz mode, where migration writes the tgz spec
 * straight into every manifest instead of a `catalog:` reference. In that mode
 * there is no catalog provenance for a bare key to strip. This matches the
@@ -7745,7 +7745,7 @@ function rewriteYamlCatalogAtPath(doc, catalogPath, addMissing, usesVitest, vite
 		if (value.startsWith("file:") || !addMissing && !catalog.has(key)) continue;
 		catalog.set(scalarString(key), scalarString(value));
 	}
-	if (!VITE_PLUS_VERSION.startsWith("file:") && (addMissing || catalog.has("@tiara-stack/vite-plus"))) catalog.set(scalarString(VITE_PLUS_NAME), scalarString(VITE_PLUS_VERSION));
+	if (!VITE_PLUS_VERSION.startsWith("file:") && (addMissing || catalog.has("vite-plus"))) catalog.set(scalarString(VITE_PLUS_NAME), scalarString(VITE_PLUS_VERSION));
 	if (addMissing && VITEST_IS_MANAGED_OVERRIDE) {
 		const additions = catalog.has("vitest") ? /* @__PURE__ */ new Set([...catalogAdditions, ...vitestEcosystemPackages]) : catalogAdditions;
 		for (const name of additions) if (isAlignableVitestEcosystemPackage(name)) catalog.set(scalarString(name), scalarString(VITEST_VERSION));
@@ -7768,7 +7768,7 @@ function rewriteCatalogObject(catalog, addMissing, usesVitest, vitestEcosystemPa
 		if (value.startsWith("file:") || !addMissing && !(key in catalog)) continue;
 		catalog[key] = value;
 	}
-	if (!VITE_PLUS_VERSION.startsWith("file:") && (addMissing || "@tiara-stack/vite-plus" in catalog)) catalog[VITE_PLUS_NAME] = VITE_PLUS_VERSION;
+	if (!VITE_PLUS_VERSION.startsWith("file:") && (addMissing || "vite-plus" in catalog)) catalog[VITE_PLUS_NAME] = VITE_PLUS_VERSION;
 	for (const name of REMOVE_PACKAGES) delete catalog[name];
 	if (VITEST_IS_MANAGED_OVERRIDE) {
 		for (const name of Object.keys(catalog)) if (vitestEcosystemPackages.has(name) && isAlignableVitestEcosystemPackage(name)) catalog[name] = VITEST_VERSION;
@@ -8079,7 +8079,7 @@ function yarnrcSatisfiesVitePlus(projectPath, usesVitest, supportCatalog) {
 	const resolver = createCatalogDependencyResolverFromCatalogs(doc?.catalog, doc?.catalogs);
 	const catalogName = resolver.preferredCatalogSpec.slice(8);
 	const managedCatalog = catalogName && catalogName !== "default" ? doc?.catalogs?.[catalogName] : doc?.catalog ?? doc?.catalogs?.default;
-	return Object.hasOwn(doc, "nodeLinker") && npmPreapprovedSatisfied && overridesSatisfyVitePlus(managedCatalog, usesVitest) && (VITE_PLUS_VERSION.startsWith("file:") || resolver(resolver.preferredCatalogSpec, "@tiara-stack/vite-plus") === VITE_PLUS_VERSION);
+	return Object.hasOwn(doc, "nodeLinker") && npmPreapprovedSatisfied && overridesSatisfyVitePlus(managedCatalog, usesVitest) && (VITE_PLUS_VERSION.startsWith("file:") || resolver(resolver.preferredCatalogSpec, "vite-plus") === VITE_PLUS_VERSION);
 }
 //#endregion
 //#region src/migration/migrator/source-scan.ts
@@ -8096,32 +8096,32 @@ const VITEST_BROWSER_SPECIFIER_HINTS = [
 	"vitest/browser",
 	"vitest/plugins/browser",
 	"@vitest/browser",
-	"@tiara-stack/vite-plus/test/browser",
-	"@tiara-stack/vite-plus/test/plugins/browser",
-	"@tiara-stack/vite-plus/test/internal/browser",
-	"@tiara-stack/vite-plus/test/client",
-	"@tiara-stack/vite-plus/test/context",
-	"@tiara-stack/vite-plus/test/locators",
-	"@tiara-stack/vite-plus/test/matchers",
-	"@tiara-stack/vite-plus/test/utils"
+	"vite-plus/test/browser",
+	"vite-plus/test/plugins/browser",
+	"vite-plus/test/internal/browser",
+	"vite-plus/test/client",
+	"vite-plus/test/context",
+	"vite-plus/test/locators",
+	"vite-plus/test/matchers",
+	"vite-plus/test/utils"
 ];
 const WEBDRIVERIO_PROVIDER_SPECIFIER_HINTS = [
 	"vitest/browser-webdriverio",
 	"vitest/browser/providers/webdriverio",
 	"vitest/plugins/browser-webdriverio",
 	"@vitest/browser-webdriverio",
-	"@tiara-stack/vite-plus/test/browser-webdriverio",
-	"@tiara-stack/vite-plus/test/browser/providers/webdriverio",
-	"@tiara-stack/vite-plus/test/plugins/browser-webdriverio"
+	"vite-plus/test/browser-webdriverio",
+	"vite-plus/test/browser/providers/webdriverio",
+	"vite-plus/test/plugins/browser-webdriverio"
 ];
 const PLAYWRIGHT_PROVIDER_SPECIFIER_HINTS = [
 	"vitest/browser-playwright",
 	"vitest/browser/providers/playwright",
 	"vitest/plugins/browser-playwright",
 	"@vitest/browser-playwright",
-	"@tiara-stack/vite-plus/test/browser-playwright",
-	"@tiara-stack/vite-plus/test/browser/providers/playwright",
-	"@tiara-stack/vite-plus/test/plugins/browser-playwright"
+	"vite-plus/test/browser-playwright",
+	"vite-plus/test/browser/providers/playwright",
+	"vite-plus/test/plugins/browser-playwright"
 ];
 const BROWSER_PROVIDER_SPECIFIER_HINTS = { [PLAYWRIGHT_PROVIDER]: PLAYWRIGHT_PROVIDER_SPECIFIER_HINTS };
 const VITEST_SCAN_EXTENSIONS = /* @__PURE__ */ new Set([
@@ -8162,7 +8162,7 @@ const OXLINT_RETENTION_SKIP_DIRS = /* @__PURE__ */ new Set([
 * `vitest > @vitest/expect > chai`). Vite resolves the leading `vitest` segment
 * from the Vite config root, so `vitest` MUST be resolvable as a package from
 * the consuming package's directory. In a pnpm strict (non-hoisted) layout,
-* `vitest` pulled in only transitively via `@tiara-stack/vite-plus` is NOT reachable from the
+* `vitest` pulled in only transitively via `vite-plus` is NOT reachable from the
 * package root — the optimizer then fails with `Failed to resolve dependency`
 * and the browser test page hangs forever.
 *
@@ -8170,7 +8170,7 @@ const OXLINT_RETENTION_SKIP_DIRS = /* @__PURE__ */ new Set([
 * devDependency so it is hoisted next to the package and the optimizer chain
 * resolves. The signal is any of the package's TS/JS files (config, workspace
 * config under any name, or test file) referencing `@vitest/browser*` or
-* `@tiara-stack/vite-plus/test/browser*`. The scan recurses through the package directory
+* `vite-plus/test/browser*`. The scan recurses through the package directory
 * (skipping `node_modules`, build output, VCS metadata) so browser config in a
 * non-standard filename or browser imports in test files are all caught.
 *
@@ -8375,7 +8375,7 @@ function vitePlusDependencyNeedsConcreteVersion(pkg) {
 		pkg.devDependencies,
 		pkg.dependencies,
 		pkg.optionalDependencies
-	].some((dependencies) => dependencies?.["@tiara-stack/vite-plus"]?.startsWith("catalog:") ?? false);
+	].some((dependencies) => dependencies?.["vite-plus"]?.startsWith("catalog:") ?? false);
 }
 function catalogVitePlusDependencyPending(pkg, catalogDependencyResolver) {
 	return [
@@ -8586,7 +8586,7 @@ function detectVitePlusBootstrapPending(projectPath, packageManager, packages, p
 	return false;
 }
 function hasDirectVitePlusInstallEntry(pkg) {
-	return pkg.dependencies?.["@tiara-stack/vite-plus"] !== void 0 || pkg.devDependencies?.["@tiara-stack/vite-plus"] !== void 0;
+	return pkg.dependencies?.["vite-plus"] !== void 0 || pkg.devDependencies?.["vite-plus"] !== void 0;
 }
 function ensureVitePlusDependencySpecs(pkg, version, ensurePresent = true) {
 	let changed = false;
@@ -8814,7 +8814,7 @@ function resolveDisplayFromSpec(spec, dependencyName, catalogDependencyResolver)
 * Read the RAW upstream Vite version installed under the project's own
 * `node_modules/vite`, best-effort. This is a deliberate project-local read (not
 * an ancestor-walking resolve) so a parent directory's vite cannot leak in as
-* the project's "from". When that copy is the `@tiara-stack/vite-plus-core`
+* the project's "from". When that copy is the `@voidzero-dev/vite-plus-core`
 * alias (the Vite+ bundle), the raw Vite version lives in its
 * `bundledVersions.vite`; otherwise it is a real upstream vite and `version` is
 * the raw value. Returns undefined when the file is missing (e.g. a cleared
@@ -8829,7 +8829,7 @@ function readInstalledRawViteVersion(projectPath) {
 	} catch {
 		return;
 	}
-	if (pkgJson.name === "@tiara-stack/vite-plus-core") return pkgJson.bundledVersions?.vite;
+	if (pkgJson.name === "@voidzero-dev/vite-plus-core") return pkgJson.bundledVersions?.vite;
 	return pkgJson.version;
 }
 /**
@@ -8838,9 +8838,9 @@ function readInstalledRawViteVersion(projectPath) {
 * reconcile mutates the manifest so the `from` values still reflect the
 * pre-migration root package.json.
 *
-* `to` targets: `@tiara-stack/vite-plus` -> VITE_PLUS_VERSION, `vitest` and every declared
+* `to` targets: `vite-plus` -> VITE_PLUS_VERSION, `vitest` and every declared
 * `@vitest/*` -> VITEST_VERSION, `vite` -> the RAW bundled upstream Vite version
-* (NOT the `@tiara-stack/vite-plus-core` alias). An entry is included only when
+* (NOT the `@voidzero-dev/vite-plus-core` alias). An entry is included only when
 * `to` is defined and the version actually changes (or the package is freshly
 * added, i.e. `from` is undefined).
 */
@@ -8929,8 +8929,8 @@ function rewritePackageJson(pkg, packageManager, isMonorepo, skipStagedMigration
 	if (normalizeVitestPeerCatalogSpec(pkg.peerDependencies, catalogDependencyResolver)) needVitePlus = true;
 	alignVitestEcosystemPackages(pkg, packageManager, supportCatalog, catalogDependencyResolver);
 	if (isForceOverrideMode()) {
-		for (const { dependencies } of dependencyGroups) if (dependencies?.["@tiara-stack/vite-plus"]) {
-			if (!supportCatalog || VITE_PLUS_VERSION.startsWith("file:") || !dependencies["@tiara-stack/vite-plus"].startsWith("catalog:")) dependencies[VITE_PLUS_NAME] = VITE_PLUS_VERSION;
+		for (const { dependencies } of dependencyGroups) if (dependencies?.["vite-plus"]) {
+			if (!supportCatalog || VITE_PLUS_VERSION.startsWith("file:") || !dependencies["vite-plus"].startsWith("catalog:")) dependencies[VITE_PLUS_NAME] = VITE_PLUS_VERSION;
 			needVitePlus = true;
 		}
 	}
@@ -8990,7 +8990,7 @@ function rewritePackageJson(pkg, packageManager, isMonorepo, skipStagedMigration
 	const isVitestAdjacent = !installableNames.includes("vitest") && installableNames.some((name) => name !== "vitest" && name.includes("vitest") && !VITEST_DIRECT_USAGE_EXCLUDED.has(name));
 	const hasNuxtTestUtils = hasNuxtTestUtilsDependency(pkg);
 	const canonicalVitePlusSpec = supportCatalog && !VITE_PLUS_VERSION.startsWith("file:") ? catalogDependencyResolver?.preferredCatalogSpec ?? "catalog:" : VITE_PLUS_VERSION;
-	const existingVitePlusGroup = pkg.devDependencies?.["@tiara-stack/vite-plus"] !== void 0 ? pkg.devDependencies : pkg.dependencies?.["@tiara-stack/vite-plus"] !== void 0 ? pkg.dependencies : void 0;
+	const existingVitePlusGroup = pkg.devDependencies?.["vite-plus"] !== void 0 ? pkg.devDependencies : pkg.dependencies?.["vite-plus"] !== void 0 ? pkg.dependencies : void 0;
 	const existingVitePlus = existingVitePlusGroup?.[VITE_PLUS_NAME];
 	const shouldNormalizeExistingVitePlus = !!existingVitePlus && supportCatalog && existingVitePlus !== canonicalVitePlusSpec && !isProtocolPinnedSpec(existingVitePlus);
 	if (!existingVitePlus && (isVitestAdjacent || effectiveBrowserMode)) needVitePlus = true;
@@ -9853,7 +9853,7 @@ function rewriteStandaloneProject(projectPath, workspaceInfo, skipStagedMigratio
 			if (!usePnpmWorkspaceYaml && pnpmMajorVersion !== void 0 && pkg.pnpm) applyBuildAllowanceToPackageJsonPnpm(pkg.pnpm, pnpmMajorVersion, shouldAllowBrowserProviderBuilds);
 		}
 		extractedStagedConfig = rewritePackageJson(pkg, packageManager, supportCatalog, skipStagedMigration, catalogDependencyResolver, browserMode, providerSourceModes, usesVitest, retainedVitestModule, requiredVitestPeer, providerCatalogAdditions);
-		const forceRepinExistingDevEntry = isForceOverrideMode() && pkg.devDependencies?.["@tiara-stack/vite-plus"] !== void 0;
+		const forceRepinExistingDevEntry = isForceOverrideMode() && pkg.devDependencies?.["vite-plus"] !== void 0;
 		if (!hasDirectVitePlusInstallEntry(pkg) || forceRepinExistingDevEntry) {
 			const existingVitePlusSpec = pkg.devDependencies?.[VITE_PLUS_NAME];
 			const version = supportCatalog && !VITE_PLUS_VERSION.startsWith("file:") ? existingVitePlusSpec?.startsWith("catalog:") ? existingVitePlusSpec : catalogDependencyResolver?.preferredCatalogSpec ?? "catalog:" : VITE_PLUS_VERSION;

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdir, mkdtemp, readFile, realpath, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -188,6 +188,7 @@ run(process.execPath, [vp, "test", "--run", "--maxWorkers=2"], fixture);
 console.log(
   `Packed Effect helper passed with one Vitest 5 runtime and TypeScript 5.9.3 at ${fixture}`,
 );
+await rm(fixture, { recursive: true, force: true });
 
 function run(command, args, cwd) {
   const env = { ...process.env, NODE_PATH: "" };

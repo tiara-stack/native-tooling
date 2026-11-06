@@ -4084,6 +4084,6 @@ export interface VpDirsJs {
 /**
  * Wrap safe inline `plugins: [...]` arrays in recognized Vite config objects
  * with `lazyPlugins(() => [...])` and add a `lazyPlugins` import from
- * `@tiara-stack/vite-plus` when needed.
+ * `vite-plus` when needed.
  */
 export declare function wrapLazyPlugins(viteConfigPath: string): MergeJsonConfigResult;

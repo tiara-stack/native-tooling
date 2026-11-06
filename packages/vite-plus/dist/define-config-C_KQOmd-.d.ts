@@ -157,7 +157,7 @@ type RunConfig = {
   enablePrePostScripts?: boolean;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/config.d.ts
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/config.d.ts
 /**
  * A single task that will be spawned
  *

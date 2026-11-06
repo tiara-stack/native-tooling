@@ -169,9 +169,10 @@ cli
         if (
           merged.dts &&
           typeof merged.dts === 'object' &&
-          (merged.dts.generator === 'tsgo' || merged.dts.tsgo === true)
+          (merged.dts.generator === 'tsgo' || (!merged.dts.generator && merged.dts.tsgo === true))
         ) {
-          const tsgo = typeof merged.dts.tsgo === 'object' ? merged.dts.tsgo : {};
+          const tsgo =
+            merged.dts.tsgo && typeof merged.dts.tsgo === 'object' ? merged.dts.tsgo : {};
           merged.dts = {
             ...merged.dts,
             generator: 'tsgo',

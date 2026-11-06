@@ -5,6 +5,7 @@ import { existsSync, unwatchFile, watchFile } from "node:fs";
 import { open, rename, unlink } from "node:fs/promises";
 import { constants } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
+import { bridgeLsp, lspOptions } from "./tiara-oxlint-lsp.mjs";
 
 const args = process.argv.slice(2);
 process.env.VP_RESOLVING_CONFIG_METADATA = "1";
@@ -66,6 +67,29 @@ let closing = false;
 let updates = Promise.resolve();
 let preparedArgs = args;
 const lsp = args.includes("--lsp");
+let bridge;
+let effectiveLspOptions = { defaults: {}, overrides: {} };
+const explicitLsp = {};
+for (let index = 0; index < args.length && args[index] !== "--"; index++) {
+  const [flag, inline] = args[index].split(/=(.*)/s);
+  const key = {
+    "--type-aware": "typeAware",
+    "--disable-nested-config": "disableNestedConfig",
+    "--tsconfig": "tsconfig",
+    "--report-unused-disable-directives": "reportUnusedDisableDirectives",
+    "--report-unused-disable-directives-severity": "reportUnusedDisableDirectivesSeverity",
+    "--fix": "fix",
+    "--fix-suggestions": "fixSuggestions",
+    "--fix-dangerously": "fixDangerously",
+  }[flag];
+  if (key)
+    explicitLsp[key] = ["tsconfig", "reportUnusedDisableDirectivesSeverity"].includes(key)
+      ? (inline ?? args[++index])
+      : true;
+}
+if (explicitLsp.tsconfig) explicitLsp.tsconfig = resolve(explicitLsp.tsconfig);
+effectiveLspOptions.overrides = lsp ? lspOptions(explicitLsp) : {};
+if (configPath) effectiveLspOptions.overrides.configPath = resolve(configPath);
 
 async function prepareViteConfig(path) {
   const { resolveConfig } = await import("../dist/index.js");
@@ -96,7 +120,9 @@ async function prepareViteConfig(path) {
         throw new Error("The Vite lint configuration must be an object.");
       if (visiting.has(value)) throw new Error("Circular Vite lint configuration extends.");
       visiting.add(value);
-      const { options: _options, ...json } = value;
+      // These are native root-config options too. Keep settings such as
+      // respectEslintDisableDirectives that have no equivalent CLI flag.
+      const json = { ...value };
       if (json.extends && !Array.isArray(json.extends))
         throw new Error("Vite lint extends must be an array.");
       if (json.extends)
@@ -155,6 +181,11 @@ async function prepareViteConfig(path) {
       for (const file of created) await reclaim(file);
       throw error;
     }
+    effectiveLspOptions = {
+      defaults: lsp ? lspOptions(config.lint?.options ?? {}) : {},
+      overrides: { ...(lsp ? lspOptions(explicitLsp) : {}), configPath: rootFile },
+    };
+    bridge?.refresh();
     if (lsp) {
       for (const dependency of [path, ...(config.configFileDependencies ?? [])]) {
         if (watched.has(dependency)) continue;
@@ -168,23 +199,11 @@ async function prepareViteConfig(path) {
     }
     return config;
   }
-  const config = await refresh();
+  await refresh();
   if (closing) return;
-  const options = [];
-  for (const [key, value] of Object.entries(config.lint?.options ?? {})) {
-    const flag = "--" + key.replace(/[A-Z]/g, (letter) => "-" + letter.toLowerCase());
-    if (
-      value == null ||
-      value === false ||
-      args.some((arg) => arg === flag || arg.startsWith(flag + "="))
-    )
-      continue;
-    for (const item of Array.isArray(value) ? value : [value])
-      options.push(flag, ...(item === true ? [] : [String(item)]));
-  }
   const remaining = [...args];
   if (configIndex >= 0) remaining.splice(configIndex, configCount);
-  preparedArgs = [...options, "--config", rootFile, ...remaining];
+  preparedArgs = ["--config", rootFile, ...remaining];
 }
 
 let child;
@@ -204,11 +223,25 @@ try {
   if (configPath && viteNames.includes(basename(configPath)))
     await prepareViteConfig(resolve(configPath));
   if (!closing) {
-    child = spawn(native, preparedArgs, { stdio: "inherit", env: process.env });
-    const result = await new Promise((done, reject) => {
+    child = spawn(native, preparedArgs, {
+      stdio: lsp ? ["pipe", "pipe", "inherit"] : "inherit",
+      env: process.env,
+    });
+    const exited = new Promise((done, reject) => {
       child.once("error", reject);
       child.once("exit", (code, signal) => done({ code, signal }));
     });
+    if (lsp) bridge = bridgeLsp(child, () => effectiveLspOptions);
+    let result;
+    try {
+      result = await (bridge ? Promise.race([exited, bridge.failed]) : exited);
+    } catch (error) {
+      child.kill("SIGTERM");
+      await exited.catch(() => {});
+      throw error;
+    } finally {
+      bridge?.close();
+    }
     process.exitCode = result.code ?? 128 + (constants.signals[result.signal] ?? 1);
   }
 } finally {
@@ -216,13 +249,18 @@ try {
   for (const path of watched) unwatchFile(path);
   try {
     await updates;
-    await Promise.all(
+    const cleanup = await Promise.allSettled(
       [...temporary].map((file) =>
         unlink(file).catch((error) => {
           if (error.code !== "ENOENT") throw error;
         }),
       ),
     );
+    const failures = cleanup
+      .filter((result) => result.status === "rejected")
+      .map((result) => result.reason);
+    if (failures.length)
+      throw new AggregateError(failures, "Could not remove native lint snapshots");
   } finally {
     for (const [signal, handler] of handlers) process.off(signal, handler);
   }

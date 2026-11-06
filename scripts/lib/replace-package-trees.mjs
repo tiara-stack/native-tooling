@@ -32,7 +32,11 @@ export async function replacePackageTrees(pairs, backupParent) {
       const directory = join(backup, String(index));
       await mkdir(directory);
       for (const entry of await readdir(pair.target)) {
-        if (entry === "node_modules") continue;
+        if (
+          entry === "node_modules" ||
+          (pair.preserveOtherEntries && !pair.entries.includes(entry))
+        )
+          continue;
         const move = { from: join(pair.target, entry), to: join(directory, entry) };
         await rename(move.from, move.to);
         retained.push(move);

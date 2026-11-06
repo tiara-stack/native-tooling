@@ -5,7 +5,7 @@ import path, { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readFileSync } from "node:fs";
 import { defineConfig, defineProject } from "vitest/config";
-//#region ../../../../../build-virtual-store/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_540e13d22e6879071cae9cd3610e4dea/node_modules/tsdown/esm-shims.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/tsdown@0.23.0_@arethetypeswrong+core@0.18.2_@tsdown+css@0.23.0_@tsdown+exe@0.23.0_@type_540e13d22e6879071cae9cd3610e4dea/node_modules/tsdown/esm-shims.js
 const getFilename = () => fileURLToPath(import.meta.url);
 const getDirname = () => path.dirname(getFilename());
 const __dirname = /* @__PURE__ */ getDirname();
@@ -13,7 +13,7 @@ const __dirname = /* @__PURE__ */ getDirname();
 //#region src/define-config.ts
 /**
 * `require` anchored at THIS module's location so `require.resolve` reaches
-* the `vitest` / `@vitest/*` family that the `@tiara-stack/vite-plus` package directly
+* the `vitest` / `@vitest/*` family that the `vite-plus` package directly
 * depends on — even from a consumer project where they are only transitive.
 * Used to locate the bundled `vitest` package (its `package.json`), NOT to
 * resolve module ENTRIES: `require.resolve` applies the `require` export
@@ -33,7 +33,7 @@ const __dirname = /* @__PURE__ */ getDirname();
 const vitePlusRequire = createRequire(typeof __dirname !== "undefined" ? __dirname : import.meta.url);
 /**
 * Absolute path to THIS module, used as a `this.resolve` importer so Vite's
-* resolver roots the `vitest` / `@vitest/*` family at `@tiara-stack/vite-plus`'s own
+* resolver roots the `vitest` / `@vitest/*` family at `vite-plus`'s own
 * location — reaching its direct deps (`vitest`, `vitest/*`, `@vitest/browser*`)
 * even from a consumer project where they are only transitive.
 *
@@ -90,7 +90,7 @@ function isVitestFamilySpecifier(id) {
 /**
 * Rescue `vitest` / `@vitest/*` resolution for browser-mode tests.
 *
-* In an established project that depends only on `@tiara-stack/vite-plus`, both `vitest`
+* In an established project that depends only on `vite-plus`, both `vitest`
 * and `@vitest/browser` are transitive deps. pnpm's isolated layout only
 * exposes a package's *direct* deps, so the browser-mode Vite dev server
 * (rooted at the consumer project) cannot resolve `vitest/internal/browser`,
@@ -98,16 +98,16 @@ function isVitestFamilySpecifier(id) {
 * module runner handles resolution there.
 *
 * This plugin re-resolves the explicit Vitest runtime allowlist through Vite's OWN
-* resolver, but ROOTED at `@tiara-stack/vite-plus`'s location ([[vitePlusModuleFile]]) and
+* resolver, but ROOTED at `vite-plus`'s location ([[vitePlusModuleFile]]) and
 * then the bundled `vitest`'s location ([[getVitestAnchor]]) BEFORE the
 * project. So every such import binds to the same physical (pinned) Vitest that
 * `vp test` spawns as the runner (see `resolveBundled` in `resolve-test.ts`)
-* and that the `@tiara-stack/vite-plus/test*` shims re-export. Were a project-local Vitest
+* and that the `vite-plus/test*` shims re-export. Were a project-local Vitest
 * preferred instead, a project that keeps its own `vitest` dependency would
 * split the run across two physical Vitest module instances — the runner
 * (bundled) vs. the test files' `vi`/`expect`/runner internals (project) — a
 * classic source of internal-state and mock-hoisting mismatches. For the common
-* migrated layout (a project depending only on `@tiara-stack/vite-plus`) nothing in this
+* migrated layout (a project depending only on `vite-plus`) nothing in this
 * family is resolvable from the project root under pnpm's isolated layout
 * anyway, so default resolution would return `null` there regardless;
 * bundle-first only changes the project-keeps-its-own-`vitest` case, which is
@@ -118,7 +118,7 @@ function isVitestFamilySpecifier(id) {
 * Vitest's CJS `require`-condition entry — a throw-stub for the bare `vitest`
 * root (`index.cjs`), and the CJS build for subpaths (e.g. `vitest/config` →
 * `config.cjs`) instead of the ESM entry. Two bundled anchors are tried because `@vitest/browser*` are
-* direct deps of `@tiara-stack/vite-plus` (reachable from [[vitePlusModuleFile]]) while the
+* direct deps of `vite-plus` (reachable from [[vitePlusModuleFile]]) while the
 * nested `@vitest/*` family are deps of `vitest` (reachable only from the
 * `vitest` anchor). The project root remains the last resort for any family id
 * the bundled tree cannot resolve, so this is never worse than deferring first.
@@ -130,7 +130,7 @@ function isVitestFamilySpecifier(id) {
 *     projects that deliberately re-point the family — treated as an opt-out of
 *     pinning, not defeated silently.
 *   - Coverage providers (`@vitest/coverage-v8` / `-istanbul`) are NOT shipped
-*     with `@tiara-stack/vite-plus`, so they hit the project fallback below. Under
+*     with `vite-plus`, so they hit the project fallback below. Under
 *     `--coverage`, a project-installed provider of a different version pairs
 *     with the bundled runner; Vitest only WARNS on the version skew and then
 *     runs mixed versions (its provider `_initialize` logs and continues, it

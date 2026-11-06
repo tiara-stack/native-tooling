@@ -293,7 +293,7 @@ const VITEST_VERSION = "5.0.1";
 const SETUP_VP_VERSION = "v1.21.1";
 const TSDOWN_MIGRATION_SKILL_URL = "https://github.com/rolldown/tsdown/blob/main/skills/tsdown-migrate/SKILL.md";
 const VITE_PLUS_OVERRIDE_PACKAGES = process.env.VP_OVERRIDE_PACKAGES ? JSON.parse(process.env.VP_OVERRIDE_PACKAGES) : {
-	vite: `npm:@tiara-stack/vite-plus-core@${VITE_PLUS_VERSION}`,
+	vite: `npm:@voidzero-dev/vite-plus-core@${VITE_PLUS_VERSION}`,
 	vitest: VITEST_VERSION
 };
 /**
@@ -327,8 +327,8 @@ function resolve(path) {
 * Like {@link resolve}, but prefers the copy shipped with the CLI
 * (`import.meta.dirname`) over the project's (`process.cwd()`).
 *
-* Use this for runtime modules that MUST match what `@tiara-stack/vite-plus/test*`
-* imports resolve to — chiefly the Vitest runner binary. The `@tiara-stack/vite-plus/test`
+* Use this for runtime modules that MUST match what `vite-plus/test*`
+* imports resolve to — chiefly the Vitest runner binary. The `vite-plus/test`
 * shims `export * from 'vitest'`, which Node resolves to vite-plus's own
 * bundled (pinned) Vitest. If `vp test` instead spawned a project-local
 * Vitest (a different physical copy/version), the runner and the imported
@@ -349,7 +349,7 @@ function createBaseUrlTsconfigFixArgs(target = ".") {
 const DEFAULT_ENVS = {
 	JS_RUNTIME_VERSION: process.versions.node,
 	JS_RUNTIME_NAME: process.release.name,
-	NODE_PACKAGE_MANAGER: "@tiara-stack/vite-plus"
+	NODE_PACKAGE_MANAGER: "vite-plus"
 };
 const CONFIG_METADATA_ENV = "VP_RESOLVING_CONFIG_METADATA";
 //#endregion

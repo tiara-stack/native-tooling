@@ -256,7 +256,7 @@ test("native lint adapter preserves configuration origins and cleans up a failed
     assert.deepEqual(record.config.ignorePatterns, ["ignored/**"]);
     assert.equal(record.config.rules["no-debugger"], "error");
     assert.equal(record.inherited[0].rules["no-debugger"], "off");
-    assert.ok(record.args.includes("--type-aware"));
+    assert.equal(record.config.options.typeAware, true);
     assert.equal(record.metadata, "1");
     assert.equal(record.backend, process.execPath);
     assert.deepEqual(temporaryConfigs(fixture.directory), []);
@@ -744,6 +744,46 @@ test("native lint adapter forwards SIGINT to an active native reader before clea
       child.kill("SIGTERM");
       await exited;
     }
+    rmSync(fixture.directory, { recursive: true, force: true });
+  }
+});
+
+test("native lint adapter holds signal ownership until every cleanup attempt settles", () => {
+  const fixture = adapterFixture();
+  try {
+    writeFileSync(
+      join(fixture.directory, "vite.config.ts"),
+      'export default {lint:{extends:[{rules:{"no-debugger":"off"}}]}};\n',
+    );
+    const observed = join(fixture.directory, "cleanup.json"),
+      preload = join(fixture.directory, "cleanup.mjs");
+    writeFileSync(
+      preload,
+      `
+import fs from 'node:fs/promises';import{syncBuiltinESMExports}from'node:module';
+const unlink=fs.unlink;
+fs.unlink=async(path)=>{
+ if(String(path).endsWith('-root.json'))throw new Error('retained unlink denial');
+ if(String(path).includes('.tiara-oxlint-')&&String(path).endsWith('.json')){
+   await new Promise(done=>setTimeout(done,80));
+   await fs.writeFile(${JSON.stringify(observed)},JSON.stringify({signalOwned:process.listenerCount('SIGTERM')>0}));
+ }
+ return unlink(path);
+};syncBuiltinESMExports();\n`,
+    );
+    const result = spawnSync(process.execPath, ["--import", preload, adapter], {
+      cwd: fixture.directory,
+      encoding: "utf8",
+      env: fixture.env,
+    });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /retained unlink denial/);
+    assert.equal(JSON.parse(readFileSync(observed, "utf8")).signalOwned, true);
+    assert.deepEqual(
+      temporaryConfigs(fixture.directory).filter((name) => !name.endsWith("-root.json")),
+      [],
+    );
+  } finally {
     rmSync(fixture.directory, { recursive: true, force: true });
   }
 });

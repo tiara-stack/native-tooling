@@ -1,7 +1,7 @@
 import { i as log, n as errorMsg } from "../terminal-MKGAuy-p.js";
-import { i as promptGitHooks, n as defaultInteractive } from "../prompts-DIFlcnEQ.js";
-import { t as require_dist } from "../dist-bEVYPg-3.js";
-import { o as updateExistingAgentInstructions } from "../agent-DWTzWYW1.js";
+import { i as promptGitHooks, n as defaultInteractive } from "../prompts-CukK1Ina.js";
+import { t as require_dist } from "../dist-BY8rUtnB.js";
+import { o as updateExistingAgentInstructions } from "../agent-D0gTfAYS.js";
 import { a as install, c as resolveHooksLocation, o as isGitHooksEnvDisabled, s as isHooksUserDisabled } from "../hooks-C-4gykWR.js";
 import { t as unwrapCliParseOutcome } from "../cli-parse-DHE8NrBU.js";
 import path, { join, relative } from "node:path";

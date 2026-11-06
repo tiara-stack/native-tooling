@@ -1,5 +1,5 @@
 import "./constants-BqJiMVVU.js";
-import { i as readJsonFile } from "./json-C9TY5YT1.js";
+import { i as readJsonFile } from "./json-DEbQRTSu.js";
 import { createRequire } from "node:module";
 import path from "node:path";
 import fs from "node:fs";
@@ -218,7 +218,7 @@ function readNearestPackageJson(currentDir) {
 	return null;
 }
 function hasVitePlusDependency(pkg) {
-	return Boolean(pkg?.dependencies?.["@tiara-stack/vite-plus"] || pkg?.devDependencies?.["@tiara-stack/vite-plus"]);
+	return Boolean(pkg?.dependencies?.["vite-plus"] || pkg?.devDependencies?.["vite-plus"]);
 }
 /**
 * Check if an npm package exists on its resolved registry.

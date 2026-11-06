@@ -1,6 +1,6 @@
 import { n as rewriteDocumentationLinks } from "./documentation-DqcZSthV.js";
 import { a as SETUP_VP_VERSION } from "./constants-BqJiMVVU.js";
-import { C as multiselect, S as log, T as select, k as isCancel } from "./prompts-DIFlcnEQ.js";
+import { C as multiselect, S as log, T as select, k as isCancel } from "./prompts-CukK1Ina.js";
 import path from "node:path";
 import { styleText } from "node:util";
 import fs from "node:fs";

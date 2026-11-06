@@ -61,7 +61,7 @@ function rewriteVitePlusImportSpecifier(specifier) {
 	if (specifier in vitest_v5_entry_points_default) return vitest_v5_entry_points_default[specifier];
 	if (specifier.startsWith("vitest/")) {
 		const subpath = `./test/${specifier.slice(7)}`;
-		return subpath in exports ? `vite-plus${subpath.slice(1)}` : null;
+		return subpath in exports ? `@tiara-stack/vite-plus${subpath.slice(1)}` : null;
 	}
 	if (specifier === "@vitest/browser") return "@tiara-stack/vite-plus/test/browser";
 	const browserSubpathRewrites = {

@@ -1,6 +1,15 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -89,7 +98,93 @@ function fixture(runner) {
   write("packages/effect-vitest/README.md", "existing readme\n");
   mkdirSync(join(root, "scripts"));
   copyFileSync(generator, join(root, "scripts/sync-effect-vitest.mjs"));
+  mkdirSync(join(root, "scripts/lib"));
+  copyFileSync(
+    new URL("../lib/replace-package-trees.mjs", import.meta.url),
+    join(root, "scripts/lib/replace-package-trees.mjs"),
+  );
   return root;
+}
+
+function snapshot(directory) {
+  return Object.fromEntries(
+    readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+      const path = join(directory, entry.name);
+      return entry.isDirectory()
+        ? Object.entries(snapshot(path)).map(([key, value]) => [entry.name + "/" + key, value])
+        : [[entry.name, readFileSync(path, "utf8")]];
+    }),
+  );
+}
+
+for (const fault of ["stage", "backup", "install", "rollback", "none"]) {
+  test(`helper replacement ${fault} preserves retained entries and runtime`, () => {
+    const root = fixture("5.0.1"),
+      target = join(root, "packages/effect-vitest");
+    try {
+      for (const path of ["node_modules", "dist"]) {
+        mkdirSync(join(target, path));
+        writeFileSync(join(target, path, "sentinel"), "retained " + path);
+      }
+      const before = snapshot(target),
+        inode = statSync(join(target, "node_modules")).ino;
+      const preload = join(root, "fault.mjs");
+      writeFileSync(
+        preload,
+        `
+import fs from "node:fs/promises";
+import { syncBuiltinESMExports } from "node:module";
+const target = ${JSON.stringify(target)}, mode = ${JSON.stringify(fault)};
+const write = fs.writeFile, rename = fs.rename;
+let failed = false;
+fs.writeFile = async (path, ...rest) => {
+  if (!failed && mode === "stage" && String(path).endsWith("/internal/internal.ts")) {
+    failed = true; throw new Error("staging fault");
+  }
+  return write(path, ...rest);
+};
+fs.rename = async (from, to) => {
+  if (!failed && ((mode === "backup" && from === target + "/README.md") ||
+      (["install", "rollback"].includes(mode) && to === target + "/README.md"))) {
+    failed = true; throw new Error("replacement fault");
+  }
+  if (mode === "rollback" && failed && String(from).includes("/vite-plus-backup-") && to === target + "/LICENSE")
+    throw new Error("rollback fault");
+  return rename(from, to);
+};
+syncBuiltinESMExports();
+`,
+      );
+      const result = spawnSync(
+        process.execPath,
+        ["--import", preload, "scripts/sync-effect-vitest.mjs"],
+        { cwd: root, encoding: "utf8" },
+      );
+      assert.equal(statSync(join(target, "node_modules")).ino, inode);
+      assert.equal(readFileSync(join(target, "dist/sentinel"), "utf8"), "retained dist");
+      if (fault === "none") {
+        assert.equal(result.status, 0, result.stderr);
+        assert.match(
+          readFileSync(join(target, "src/index.ts"), "utf8"),
+          /@tiara-stack\/vite-plus\/test/,
+        );
+      } else {
+        assert.notEqual(result.status, 0, "fault must reach the actual publication path");
+        if (fault === "rollback") {
+          assert.match(result.stderr, /rollback is incomplete; retained backup/);
+          const backup = readdirSync(join(root, ".tmp")).find((name) =>
+            name.startsWith("vite-plus-backup-"),
+          );
+          assert.equal(
+            readFileSync(join(root, ".tmp", backup, "0/LICENSE"), "utf8"),
+            before.LICENSE,
+          );
+        } else assert.deepEqual(snapshot(target), before);
+      }
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
 }
 
 test("sync rejects an incompatible runner before replacing the existing helper", () => {

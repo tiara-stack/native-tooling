@@ -1,8 +1,8 @@
 import { p as createBaseUrlTsconfigFixArgs, t as BASEURL_TSCONFIG_FIX_PACKAGE } from "./constants-BqJiMVVU.js";
-import { c as modify, l as parse, o as applyEdits } from "./json-C9TY5YT1.js";
+import { c as modify, l as parse, o as applyEdits } from "./json-DEbQRTSu.js";
 import { t as vitest_v5_entry_points_default } from "./vitest-v5-entry-points-DthU1e_O.js";
-import { S as log, b as confirm, k as isCancel, t as cancelAndExit } from "./prompts-DIFlcnEQ.js";
-import { n as runCommandSilently } from "./command-CZvBUM6J.js";
+import { S as log, b as confirm, k as isCancel, t as cancelAndExit } from "./prompts-CukK1Ina.js";
+import { n as runCommandSilently } from "./command-DYpHsDOs.js";
 import path from "node:path";
 import { styleText } from "node:util";
 import fs from "node:fs";
@@ -103,7 +103,7 @@ function removeDeprecatedTsconfigFalseOption(filePath, optionName) {
 }
 const TSCONFIG_TYPE_REPLACEMENTS = {
 	"tsdown/client": "@tiara-stack/vite-plus/pack/client",
-	...Object.fromEntries(Object.entries(vitest_v5_entry_points_default).filter(([source]) => source.startsWith("@tiara-stack/vite-plus/")))
+	...Object.fromEntries(Object.entries(vitest_v5_entry_points_default).filter(([source]) => (source.startsWith("vite-plus/") || source.startsWith("@tiara-stack/vite-plus/"))))
 };
 function hasTypesToRewriteInTsconfig(filePath) {
 	let text;

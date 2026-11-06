@@ -10947,8 +10947,8 @@
     }
   },
   "buildOptions": {
-    "cliReleaseLto": "false",
-    "cliReleaseCodegenUnits": "16"
+    "cliReleaseLto": "source default",
+    "cliReleaseCodegenUnits": "source default"
   },
   "vitest": "5.0.1",
   "upstream": {
@@ -10964,8 +10964,8 @@
     }
   },
   "rootInputs": {
-    "scripts/build-vite-plus.mjs": "d96ae265ff7d2c83290696d8ed3aa725f084e0a9423dabf6e8cfe74981d0ae94",
-    "scripts/prepare-vite-plus.mjs": "da15296cf3067906babf1fda7c0470b863b800795bed4c54078c28ef18d34ece",
+    "scripts/build-vite-plus.mjs": "af4846f325e1f1265984378f0d6ce2bf7fc6d247bb941926495de80b61aa3e43",
+    "scripts/prepare-vite-plus.mjs": "14f1ffd7e116b45b31fbf4af5f1103a43fb194410c737b43cffbd95f88c0fc02",
     "scripts/lib/vite-plus-build-record.mjs": "b74e81e48b9e00b881679c5d6f2bdac652a6a88fa9834d808122ca797d63575b",
     "scripts/lib/vite-plus-source-environment.mjs": "5c7a9bc429c92cdf6ec51d5c391bdf4eca214114578df8dcda0824503c5f9336"
   },
@@ -14605,7 +14605,8 @@
     "crates/vp_trampoline/src/cmdline.rs": "d836be8b88ff26e2bb6fd1e96d64e9e8cc319dad031bc9116d238ea9897026f8",
     "crates/vp_trampoline/src/main.rs": "c28b77426b62090a3f889592fa4f009ff1d3e6b5afb0dfb6414a4a49854a3979",
     "crates/vp_trampoline/src/win.rs": "495959eb5e2dc003effc991eb21e0e2213f11d47311faa4d8e685ebfdf0b1f33",
-    "packages/cli/bin/tiara-oxlint.mjs": "12ec88e88dfe902551ef816381a34a18084345644f35455f8c09ac7fa2cb252a",
+    "packages/cli/bin/tiara-oxlint-lsp.mjs": "b68badafaf91fbfa7fd203e689f52fd2e6df2cbec09544adc5104219413006b2",
+    "packages/cli/bin/tiara-oxlint.mjs": "f89ba58d1e1693032cee92559bf75551a61e047b17ae6b632a69bde01ad84201",
     "packages/cli/bin/vp": "a44bf8b7327c9e98e6efe20d246dad893ef5565d69d10ff202d5c75ba76d14b3",
     "packages/cli/bin/vpr": "1ee0e64efcfb4faed356f511a899ca0cfdae1c11c1509c5f927ee926e9040150",
     "packages/cli/binding/Cargo.toml": "dc05475b357b8b9e66456da3f44bdf058aba75cc3ea6b158f5d6fe38705fc188",
@@ -14754,7 +14755,7 @@
     "packages/cli/src/migration/vitest-v5/webdriverio.ts": "794e9b2305d75a751bb55a368bf4be615a598b4aeab5e378b7c84da5f23aabc9",
     "packages/cli/src/oxlint-plugin-config.ts": "09601142fbeb466bf138279f66bdcad4fc7e4b005b59ebaad69829a89014ca8f",
     "packages/cli/src/oxlint-plugin.ts": "367b8a90fb498cdad6bb37008034fde2fdc38eb7afc4153b84e899f1ec20a137",
-    "packages/cli/src/pack-bin.ts": "7b62de433b64a391dfc1caae1f2dfdc66ec10d4309b6ad490a2efd73975ab764",
+    "packages/cli/src/pack-bin.ts": "085672962a237ac23e6894845c1192f1bd2e643c9f7822f13ae7786185b7583f",
     "packages/cli/src/pack.ts": "6609a24d680532f1443f6701f62be4f72de35171823ffa044b2934f711ebbe40",
     "packages/cli/src/resolve-core.ts": "7506abb58b05efa1fb467c80a75c231a69b28c3dd3fa37e699e98dc669f0350c",
     "packages/cli/src/resolve-doc.ts": "5b8ae4add73eac5712ddd75cff74cc983c0af3e32fd81061f89b7d483ff11f40",
@@ -14823,6 +14824,18 @@
     "packages/cli/src/version.ts": "ac22576d3be950de727576ec50f7a8d6aab59685a8d6a9705b849c0e5e9100e8",
     "packages/cli/src/vite-config-entry-basenames.json": "ecce308688dcb96303cfec8a64fe2f87c2c36dd115b89bdf5feff3b39974fb73",
     "packages/cli/src/vitest-v5-entry-points.json": "8f2a49ffd13acf0f777291cce5702b9cff7c8f8efc0f2082b0e01e9a95af7370",
+    "packages/cli/templates/generator/README.md": "051c8c20ad481e53f2f8f6a5476c5049974b4ab7ef30d5f63892a0918d48b092",
+    "packages/cli/templates/generator/bin/index.ts": "06e6c9455270f4adcfadc3a69bac96904a973b4b4f8e98dbf27a135bb4ccd360",
+    "packages/cli/templates/generator/package.json": "d446a000295c18a1a14eb471411c9be10e7dadcc421aa7e71d2c0cea7cc7b778",
+    "packages/cli/templates/generator/src/template.ts": "ae3a8f7d920105175f0c95378a160aae42502d57ab53766eb2a77897b05096f4",
+    "packages/cli/templates/generator/tsconfig.json": "25114f8eafa9db4911dec07a681189d6dc3114151c1c62fcb11030f041a9bd28",
+    "packages/cli/templates/monorepo/README.md": "535bc811313579b95c80f977f838c4eb3573a61173037a00bb0189124038c795",
+    "packages/cli/templates/monorepo/_gitignore": "12225a35463f529fec2f755a7b4ef0e1c8c441e45fe6d5de89d41468c7dd68da",
+    "packages/cli/templates/monorepo/_yarnrc.yml": "48fe82374a7750c12faf51fee342d7b5fd69b418bbae1d432a1f35dd33852f7b",
+    "packages/cli/templates/monorepo/package.json": "6e2a2fce1711daa31c0768f5be67cdc39dfba77f34d665cb786432441ad1e51c",
+    "packages/cli/templates/monorepo/pnpm-workspace.yaml": "a4b525e135e1b9cf3089402e16cd445e2f044e4bd224b1ccc8294a251e6f52f9",
+    "packages/cli/templates/monorepo/tsconfig.json": "e83ad93940e4b8402236d9dd194d0180173d503801ad899c506e41f0de154f89",
+    "packages/cli/templates/monorepo/vite.config.ts": "97fa6ff26ba8e8b275400936c99759c3062f6140255d4b6f71ae07db87e8c543",
     "packages/cli/tsdown.config.ts": "7727babe67b7ff93dc65e69a68ea8170481ed917d7aa40d98a817ff948272c9c",
     "packages/core/.gitignore": "3868a7253ecbe952fa7776848c9594fd95391a44e5f9b415d20244d0dfa76347",
     "packages/core/BUNDLING.md": "0d6d5c98aaea3eb136d9b79a82ade65e67ff828ed866d786c31880cd4517839d",
@@ -15641,32 +15654,32 @@
     "packages/cli/binding/src/utils.rs": "d3fc165ae3954c74f5cc439aa1ce3a21068fde295097f6c6b51b6ff4864df353",
     "packages/cli/binding/vite-plus.build-time": "bff431bbfe792ab724d4b364e1e0489b328ae85818dd1e4741bca01152fee3c5",
     "packages/cli/binding/vite-plus.linux-x64-gnu.node": "9f67b16913b44831b24f46605f20cafed74df653ac59b075c9bf2d61ff4225e0",
-    "packages/cli/dist/agent-DWTzWYW1.js": "e82c5f273de63f510a69a6bae4a328de012ce0acbd1c0323342f8db34c96e7ae",
+    "packages/cli/dist/agent-D0gTfAYS.js": "0757ce03c994b1901ae817e8c91f1acb8407a4f1188ca6bf49185bae80ad3ebc",
     "packages/cli/dist/bin.d.ts": "f4c5cf9bb78e85f15dc27180260637cf24b2a24bc39e0788783a3accc4dde614",
-    "packages/cli/dist/bin.js": "6251ff1a70428abd5f8492ffd1946b0ede01fdce05a92d712f83cb3fc0a1b6df",
+    "packages/cli/dist/bin.js": "43e8cffde0967eeef526247b265ef666ecbdd495fc6024fa9efd9d027716602a",
     "packages/cli/dist/cli-parse-DHE8NrBU.js": "1cef77f2f3ea98fbc5c82546b628cbe17e7c4c2b945ad6ac6c03fdf4610e27f8",
     "packages/cli/dist/client.d.ts": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
     "packages/cli/dist/client/bundledDevClient.mjs": "f2555a399b0bfcd40cc7f12b99949a2cf756046ecff19966a9c3f04066796fe8",
     "packages/cli/dist/client/client.mjs": "538c4b0e6581143507f41cda572862fad9d8b750598ddb04dcab8aee54e7970c",
     "packages/cli/dist/client/env.mjs": "7072183f80b5b0ae2fa6b042dccb09de82d558a2338c37e99b0c157874115b79",
-    "packages/cli/dist/command-CZvBUM6J.js": "fb74cee38066cffb80078fbb612fcea174990350eb5cc9e93dd81200c41f05d0",
-    "packages/cli/dist/command-DTsDwt2S.js": "f49b25c5c67bfdea25284188c4c39dd9ba697a5bd88f4092dd5469b9ca01e91a",
+    "packages/cli/dist/command-CiXubh0B.js": "6461d5eb7c4fcb1baf691bfa4c05a85a15edbcd3746896d226beb7c71556be9c",
+    "packages/cli/dist/command-DYpHsDOs.js": "10c1d5bd6b377d28bd238965bff459cebfc7003603d2a1e8f580836f32712a9f",
     "packages/cli/dist/config/bin.d.ts": "f4c5cf9bb78e85f15dc27180260637cf24b2a24bc39e0788783a3accc4dde614",
-    "packages/cli/dist/config/bin.js": "9f77fb3826fbcf722485400b7b294167cd267d840aa8f38f7de0a8c557ed1e20",
+    "packages/cli/dist/config/bin.js": "bebefe233cf7394fcee4f9d11d2a14f0a16567d47eb740d42e2b344a2b907df9",
     "packages/cli/dist/constants-BqJiMVVU.js": "3f13330cd7dc37426d71cfedd1c47b6f4a23f9ca82ea7764bb61c089b39498ca",
     "packages/cli/dist/create/bin.d.ts": "3eb3f59a608f55762079e6bf7bbd7b510731e629e827cbd0f7d5fd0404e96d91",
-    "packages/cli/dist/create/bin.js": "35ba99376650162c7d38c0152a2f1c3f69fe03ff1bb8450cb69ee910d5c931b2",
-    "packages/cli/dist/define-config-CsJeEKBN.js": "042afb05032e4c0d37326835841465477e3f98657af7d2a1552f5e77e2d02f95",
-    "packages/cli/dist/define-config-D6odUb-Y.d.ts": "084134dfb6f84f354e95eb8e49958d03af5fd8247a19c62c00552987dfa351e1",
+    "packages/cli/dist/create/bin.js": "5a9dfad5d01db67839859a153d6b1631a511ced5c1d703a051ee7bea8e9c520d",
+    "packages/cli/dist/define-config-Bd4jRYpr.js": "8acf7eb90a196a20b78352051603ac5972921db915fa73448d2da573cf0c9bb2",
+    "packages/cli/dist/define-config-C_KQOmd-.d.ts": "40d33b33b00757d8ee54769c0416054e8d52c835b8be350aeb1e706a9aa0b6c5",
     "packages/cli/dist/define-config-DN3Lf_48.cjs": "77383e3eb53452f81d1142aef82145c0147fe407cbaec58e6609e8c8c5205170",
     "packages/cli/dist/define-config.cjs": "bc70240feb00a3b2f693e821dd461e387c66306be1b0bd1b67006c6bdc4d7efc",
-    "packages/cli/dist/define-config.d.ts": "d3083659f23e918d64a7cff1b82c4e1a2185df01fe18f6ffe716e75b72607006",
-    "packages/cli/dist/define-config.js": "5163ca32f47efd0e67b237ddf085d24914d7130d9d1dda6cbf9417dbf7460483",
-    "packages/cli/dist/dist-CrT8aBYV.js": "efcf31b05e0a66448b237b63b3c0d6c011db5d8fecf222ff8f6c64f15abf0220",
-    "packages/cli/dist/dist-bEVYPg-3.js": "27c9e827f5385f52b7cd4278c534cb9b49cf321d82e1c871b99f9ba76e221331",
-    "packages/cli/dist/dist-l10pUlWT.js": "f66cc6bd43682a857fa39d9c350c7b21d0764038251f9f35b60e29456dd96202",
+    "packages/cli/dist/define-config.d.ts": "fc7bd3b1b4fede97bfa3d79f11659cb322176b69f28e9d877f02a13f64ca0a2b",
+    "packages/cli/dist/define-config.js": "7b4a31425996e34c5b1cf8a86c7911df5e5d54b3fafc3923849ca2e3d673b857",
+    "packages/cli/dist/dist-BHNi_1Xm.js": "e0293234ea7d13e71ac4f3f95dc0c3155ae36d899a6b998b4d4fdede0ff9fb47",
+    "packages/cli/dist/dist-BY8rUtnB.js": "d898a74295c72f6504a49968dbb2d42f6d4c57da23c561fead4036baf8b2ac96",
+    "packages/cli/dist/dist-qj-fCx1Z.js": "4e5ca7346c52a254a801f3c457e47ee80240f466b7b9e3a4dc6bf07849ce8697",
     "packages/cli/dist/documentation-DqcZSthV.js": "7621c7a2f31a28d7f42a507303b3fbc1f94df58657cc7735aee9af002da43ce8",
-    "packages/cli/dist/editor-DDjNBHmb.js": "00203ac50dd883104832efd8ac310a8b1d78a7357e074c2d1a9166792ff7f175",
+    "packages/cli/dist/editor-CgYujhxK.js": "deddcf471ee37f550f9284e909b7fdb147f16e9ead479ed1c42a4957ec7b51c3",
     "packages/cli/dist/fmt.d.ts": "48b1276fd7e6675d033da675c9023e600537792b50e82f9f221dbd0f7b984303",
     "packages/cli/dist/fmt.js": "494eccb7cc40cc6ec1dd2b3cb3d6cdd1daa9210811fa8c7a7f73641a5d9f91a9",
     "packages/cli/dist/help-BmKpeOP9.js": "f772a0294b446384a6d31657ad34aa5042a9e9fc36b890a5b7d0ae714155f1b1",
@@ -15674,11 +15687,11 @@
     "packages/cli/dist/hooks/bin.d.ts": "f4c5cf9bb78e85f15dc27180260637cf24b2a24bc39e0788783a3accc4dde614",
     "packages/cli/dist/hooks/bin.js": "b25786e5a02d553e25e30f6886b8cef8987dbd153cdbb6094315b1335b111bf2",
     "packages/cli/dist/index.cjs": "b5902e7fe7b8f3825471c9f41b23576519a2e4ddd5d3f8a0b632689dab89fd77",
-    "packages/cli/dist/index.d.ts": "06cceb6c1777560de2c6eaa00b99bfb1130e4749c614e00ab83786b8370c19c5",
-    "packages/cli/dist/index.js": "5826284f2063da18a18a214a2cd4c429c3fd1b2b3f31ec4a6223d75f9271a2ea",
+    "packages/cli/dist/index.d.ts": "56d4ad81147bb9983d20fc233c7dad63cbdfaaffa4c8ac0c8eb5e9cdc9d92ce3",
+    "packages/cli/dist/index.js": "5bb538f97354ee00a186e1962f79416265c089fb78c035229d5613f5b123d44e",
     "packages/cli/dist/internal.d.ts": "e35dcc3690830276eb576950b3613ebab0e55dbe2d0f6d96dd3a8355b2af800e",
     "packages/cli/dist/internal.js": "e35dcc3690830276eb576950b3613ebab0e55dbe2d0f6d96dd3a8355b2af800e",
-    "packages/cli/dist/json-C9TY5YT1.js": "8cdf9c4fc84fa46bf842d9348f07de6d99d5a87fb22843cf93bc74ad1d61f8b6",
+    "packages/cli/dist/json-DEbQRTSu.js": "8d75940ce5376848d48f9c5bb43a45e06260ee2e2f359d6af8abca72dbdb0521",
     "packages/cli/dist/lint-plugins-dev.d.ts": "3f8445081265f2fefa6ca0b2c63216efd2fa8596306c0011793cf5c60b1f6e16",
     "packages/cli/dist/lint-plugins-dev.js": "b88cd2ca6d1b133b47d7f7ee1945ec607f1fa2c4b42881920b45883066ce2042",
     "packages/cli/dist/lint-plugins.cjs": "025177128f44aa5eef2d9d9b19007f10ed0d06cb1dd60417a5098d164807fdfd",
@@ -15687,7 +15700,7 @@
     "packages/cli/dist/lint.d.ts": "316212fc7ac464425d994eabe43c55d4fcb0e90e71efde4ff3cf1e8dae698737",
     "packages/cli/dist/lint.js": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
     "packages/cli/dist/migration/bin.d.ts": "f4c5cf9bb78e85f15dc27180260637cf24b2a24bc39e0788783a3accc4dde614",
-    "packages/cli/dist/migration/bin.js": "8eff84f0249006c070f738394cfedb5409e9801dd482d02413daff831bd44c24",
+    "packages/cli/dist/migration/bin.js": "d703800c90ec9a333974333f056421b774c6573c39fcad940adde97432437504",
     "packages/cli/dist/migration/compat/worker.d.ts": "f4c5cf9bb78e85f15dc27180260637cf24b2a24bc39e0788783a3accc4dde614",
     "packages/cli/dist/migration/compat/worker.js": "3fa985bd3287b361d90ea3678297c6c22112053b796f548e1805077566913854",
     "packages/cli/dist/module-runner.d.ts": "5e6a0ffc0826b5db2fa2a265ca6cf5a89846245da39bf93896a81b294f19de3e",
@@ -15697,23 +15710,23 @@
     "packages/cli/dist/oxlint-plugin.js": "568584c3745522d43d8c3d67aa6ce9bf76bf66934f284fa6ccef460039d1008e",
     "packages/cli/dist/pack-BK38MLVZ.d.ts": "845841780c3cc0c9b1760fe0ec4a4dbed8744b1137fcd00b94b47b46f12e8e7b",
     "packages/cli/dist/pack-bin.d.ts": "bacb466a84d516e7abe637673ae836b65de41ecdc542a1cd96c7469b6f8df3bb",
-    "packages/cli/dist/pack-bin.js": "6945cb35925b2c0e69ae399230ef1d0c6b3741d78bb34839fa5d33007217bb6d",
+    "packages/cli/dist/pack-bin.js": "94f9958e35bf61e4f7b9ef31888efc0b6792f2686063942d72573f3c9262ef94",
     "packages/cli/dist/pack-client.d.ts": "c3064ed5b18bb770b50b1cb3c520d77f7ba935b5783c5fcb2eff04127df85f7c",
     "packages/cli/dist/pack.d.ts": "4e8df56bda195c2b3a9e3cbd11c0476bb04ac28ac3d9731854285606addf0859",
     "packages/cli/dist/pack.js": "d18555cfacba22b4779f411cfd0e24e37659522a94df6ba07fbdd6166937f1c8",
-    "packages/cli/dist/package-CTMTkwwC.js": "c22f354097a6787295521d28888596c3bd81404eab475a07555b4e9da43d9a5b",
+    "packages/cli/dist/package-CxcH1qid.js": "f5dcf9514af0e6f498aad3683757eed39c542319fcd7361a461112fa2e4d5937",
     "packages/cli/dist/package-overrides-Dpn4scvN.js": "a29317bec22dac11f38939696e9da3044a1a59613903ce45821093e5b8e5bc2c",
-    "packages/cli/dist/prompts-DIFlcnEQ.js": "37e26961c8919ff7ecdb18e2ab2534dde2b57980ecf4743069bf38a814a840fc",
+    "packages/cli/dist/prompts-CukK1Ina.js": "6791ddf71de1995a2c6399934a0e418380c7ae890aa8dd3a4fa2cfc7351fe37a",
     "packages/cli/dist/protocol-D99W10Qi.js": "17bff92e49c81d6d1141adfe5a44230e015b9319d07310e0b25475f013d6d723",
     "packages/cli/dist/report-NhQk8VHb.js": "42fa40f1e06fe879ac855761e4614b934994a576b8c3b402d80071c71dc020c7",
-    "packages/cli/dist/resolve-vite-config-CBEuFE9y.js": "b9f64c6675591b8a35d3d6ae761cf783ce83afa99fb55e2d9d9c28338948359a",
-    "packages/cli/dist/resolve-vite-config-CWZ-9h7v.js": "d6d38e2b2ae56afb5ea5058a913d910a43ac243a23083cef49c1f3aec45b0e51",
+    "packages/cli/dist/resolve-vite-config-C1csXN11.js": "2fb6dd484901e871984b0a222852bf0090e1e9c77cdb5c3ba088d806eb08b980",
+    "packages/cli/dist/resolve-vite-config-DHcnObjQ.js": "e0411a58bf412b4796252427d1349335bea823eb6665ba949efb082c37de97a8",
     "packages/cli/dist/rolldown-runtime-CMFfr-1z.js": "9006d98183af8d9771f87731bd97f6d539781460df9ec5be28eeaac9dbcc5af4",
     "packages/cli/dist/staged/bin.d.ts": "f4c5cf9bb78e85f15dc27180260637cf24b2a24bc39e0788783a3accc4dde614",
-    "packages/cli/dist/staged/bin.js": "ec10c0349d626f1d2a0188e56a546d96975831f258241c877c485ff7751e6f29",
+    "packages/cli/dist/staged/bin.js": "e540ccada4ad7986fb64fbb7c121071e0d530f94b92cc940a44bc4c87fb6e2ee",
     "packages/cli/dist/sync-versions/bin.d.ts": "f4c5cf9bb78e85f15dc27180260637cf24b2a24bc39e0788783a3accc4dde614",
-    "packages/cli/dist/sync-versions/bin.js": "fb002e52557eac982b40be47de3453302b3a974527694e87d0c21a6b5334d0ae",
-    "packages/cli/dist/sync-versions/bin.mjs": "f04771f34dafbe53e51ca20ade54d7111c5bb18ffb3049eedb7f115c8ba7b9c2",
+    "packages/cli/dist/sync-versions/bin.js": "4c384debf47a3795e2ec6fab9a78089162b692a1b0a6aa5cb0b3ed423ff22a38",
+    "packages/cli/dist/sync-versions/bin.mjs": "1be446c544d47bf0a7c436365b1526c4666dd5f7f6fb2eedd921d48ae27d5da8",
     "packages/cli/dist/terminal-MKGAuy-p.js": "fa415490deaf4be816374108141a388838b13dbcf04f999af7cb94a06c924b2a",
     "packages/cli/dist/test/_at-vitest-browser.d.ts": "185aaa94efa6f79d6dbb21be092efbd76862ce38e276f12ea5ba16609ef20b3b",
     "packages/cli/dist/test/_at-vitest-browser/context.d.ts": "a8418c7ce83af644a13b392f46496cc49ba0aceb68c9f4596e76aef5a521ae05",
@@ -15836,8 +15849,8 @@
     "packages/cli/dist/toolchain.d.ts": "3c8ca636c249df125e4ec91c8317eeba72ff46cc1c346d7d1b33104dce07c037",
     "packages/cli/dist/toolchain.js": "10c44f816685f6921393c6f660719f626d6b886da125f54e50b551efc2852467",
     "packages/cli/dist/toolchain.json": "744bbf4a386d45dcedf038e6b34749867466d2ecfab2ddb818bc5fc996760a8b",
-    "packages/cli/dist/tsconfig-BrNZD5aQ.js": "c3ca9a096f68ae9311b66fe79079de24f34cc37679415b44915fa6ca638b5112",
-    "packages/cli/dist/tsconfig-CteVwe5T.js": "49d0bdb50f75f6d66747d5e9ff8cf7e414d2aded3682a88bdbab9228d8ffa252",
+    "packages/cli/dist/tsconfig-DJTfGBSA.js": "15cd4edff7d3dda5f31a3bf8a15b8720f2ffa195e88cae1ae7db104f3d9b3da1",
+    "packages/cli/dist/tsconfig-Drny2b5n.js": "61cbe06f7a83d822dcc415494324589218667fa1a3f968f174b9c1079fd34bc3",
     "packages/cli/dist/types/customEvent.d.ts": "62c8f6354794b6081401e19ff0579d9ecb46ad63ee76eeaadad73f795435713a",
     "packages/cli/dist/types/hmrPayload.d.ts": "fe24a1ac82b4cdf2fa6591fd196f97a872f4b85eda90c1774246bc0f6f87f355",
     "packages/cli/dist/types/hot.d.ts": "8499d2e86e0b442746853087da96e2e8679ab1a3b2f33acbe1a338b2d7a74e79",
@@ -15846,7 +15859,7 @@
     "packages/cli/dist/types/importMeta.d.ts": "9e34f450cf0605a4ed0a6a4aae6af9fb610107390ef33cfe133c2e268a48af4d",
     "packages/cli/dist/types/metadata.d.ts": "d13d9234c88d9f0acf6bd39a48b242fd6ac6d199ac4b5033ec79be80b162db62",
     "packages/cli/dist/version.d.ts": "939ce056d16632b8e503f92844f0d65a9b9e6e14b6ea265c7a0868342509d8f2",
-    "packages/cli/dist/version.js": "1e0ac6b9831ef4731ba58f5d932e164229557625a39497c6fd6bb831978ad1d4",
+    "packages/cli/dist/version.js": "640379b59f60545c6acc1db5f26a2cfc439e795667a7602e0762659f3879bfda",
     "packages/cli/dist/versions.d.ts": "c2927902706cc71cbfbe1c877442c9d7f662e70fe7d26671d052c0af81bb7f02",
     "packages/cli/dist/versions.js": "6a3eee6a0c1107f10a841e349becc48b44fbe7eb8d35695c48c58c2b647f3345",
     "packages/cli/dist/vitest-ecosystem-BU0AqZq-.js": "5c73780e110ae0ef2518e3887bfc6178b6b729f401d957fee675c12b24615461",
@@ -15966,52 +15979,50 @@
     "packages/core/dist/vite/types/metadata.d.ts": "6c509fc7a52594dab06c0bae27b4d9d9f5c9409c8f187b46c32f6656a5df721a"
   },
   "revalidation": {
-    "kind": "source launcher repair and fresh JavaScript generation",
-    "priorNativeProducerManifestSha256": "db21f08262f2d6fe41632723ae11e1af82cdc1984cf7ebecfc1b7e6da8ce4048",
-    "nativeCompilation": "unchanged native inputs/artifacts verified and reused; not rerun",
+    "nativeToolchainIdentity": "Carried unchanged native producer identities, not newly executed cargo/rustc.",
+    "kind": "TIA-314 hosted R2 affected CLI JavaScript/declaration build and source preparation repair",
+    "baselineManifestSha256": "58fbd1d8a910bdde3076f1d8197c18621427d4a3b3f36bc96f5fe5c14449c275",
     "freshCommands": [
-      {
-        "pkg": "rolldown",
-        "script": "build-node"
-      },
-      {
-        "pkg": "vite",
-        "script": "build-types-roll"
-      },
-      {
-        "pkg": "vite",
-        "script": "build-types-check"
-      },
-      {
-        "pkg": "@voidzero-dev/vite-plus-core",
-        "script": "build"
-      },
-      {
-        "pkg": "@voidzero-dev/vite-plus-prompts",
-        "script": "build"
-      },
-      {
-        "pkg": "vite-plus",
-        "script": "build-ts"
-      }
+      [
+        "/opt/data/worktrees/tia314-62588537-rebase-r4-scratch/ci-install-repair-r1/toolchain/bin/node",
+        "/opt/data/worktrees/native-tooling/t3-62588537/scripts/prepare-vite-plus.mjs"
+      ],
+      [
+        "corepack",
+        "pnpm",
+        "--filter",
+        "vite-plus",
+        "run",
+        "build-ts"
+      ]
     ],
-    "packageManagerLaunch": "project-scoped private Corepack shims",
+    "changedExistingInputs": {
+      "packages/cli/src/utils/tsconfig.ts": {
+        "before": "86d8cdb106396d870a9f230156d62363c4a264c3e54aa0933184a952c3151e89",
+        "after": "012dbc75ab27ad7abd2c4c20d922db3e02ee8a1c3bdb59b33c66fae9c83eadde"
+      }
+    },
+    "nativeCompilation": "REUSED_EXACT_NATIVE_INPUTS_AND_OUTPUTS_NOT_RERUN",
+    "coreJavaScript": "REUSED_EXACT_CORE_INPUTS_AND_OUTPUTS_NOT_RERUN",
+    "rolldown": "REUSED_ALL_10865_INPUTS_AND_55_OUTPUTS",
+    "directPackedTemplates": "Included in the canonical source-build collector; staged publication and rollback separately exercised.",
     "directPackInput": {
-      "baseline_ref": "98f7bd9cacc913b54d6b81b19f5798cde2b5c8b3",
-      "baseline_path": "packages/vite-plus/SOURCE.json",
-      "baseline_manifest_sha256": "ee3198d4abaa368926b9122638a39d80dea5755a19d332e3aa89e628b489557f",
       "changed_inputs": {
+        "packages/cli/bin/tiara-oxlint-lsp.mjs": {
+          "before": "8702491d40172caa76b0253d03bf07751edea1198c54cdb041ba10b61f36319f",
+          "after": "b68badafaf91fbfa7fd203e689f52fd2e6df2cbec09544adc5104219413006b2"
+        },
         "packages/cli/bin/tiara-oxlint.mjs": {
-          "before": "0dda0364e9cf28c14712d18134792a4c47ac92eaf26fcbb72457c893a507edf0",
-          "after": "12ec88e88dfe902551ef816381a34a18084345644f35455f8c09ac7fa2cb252a"
+          "before": "ff32d8e54ab6808c7bbd804c3ca8f8089ee2034e8ddd0b8c238f11861d0e1f17",
+          "after": "f89ba58d1e1693032cee92559bf75551a61e047b17ae6b632a69bde01ad84201"
         }
       },
-      "compiled_outputs": "All359exact; direct executable input is not compiled into them.",
+      "compiled_outputs": "All359 exact after the final affected CLI JavaScript/declaration build",
       "evidence": {
-        "path": "/opt/data/worktrees/native-tooling/t3-62588537/.tmp/TIA-314/ocr-signal-repair-r13/producer-impact.json",
-        "sha256": "a299ed05159d51d47501a3db457e4e8a0ac617b45960779b54a65bf97bea39d6"
+        "path": "/opt/data/worktrees/native-tooling/t3-62588537/.tmp/TIA-314/hosted-assess-repair-r2/direct-pack-final-refresh.json",
+        "sha256": "f1f44f17f724e3d1e385fea8e1bc95432b6592b5b1662bebc34737a80292834d"
       },
-      "qualification": "Only the direct-packed executable changes. Its bin path, resolve-lint interface, compilation entrypoints, nested lock and dependencies remain exact. New startup/exit regression code is not a compilation input. Actual scoped sync/pack and lifecycle consumers are required; this is producer reuse, not a clean CI build."
+      "qualification": "Bin modules are copied directly by pack; their parser/transport/lifecycle consumers and actual scoped sync are revalidated. This is not another native/compiler build."
     }
   }
 }

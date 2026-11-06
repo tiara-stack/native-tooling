@@ -1,6 +1,6 @@
 import { r as __toESM, t as __commonJSMin } from "../rolldown-runtime-CMFfr-1z.js";
 import { i as log, n as errorMsg, o as printHeader } from "../terminal-MKGAuy-p.js";
-import { o as resolveViteConfig } from "../resolve-vite-config-CWZ-9h7v.js";
+import { o as resolveViteConfig } from "../resolve-vite-config-DHcnObjQ.js";
 import { t as unwrapCliParseOutcome } from "../cli-parse-DHE8NrBU.js";
 import { createRequire } from "node:module";
 import path, { basename, delimiter, dirname, normalize, resolve } from "node:path";
@@ -15,7 +15,7 @@ import crypto from "node:crypto";
 import fsPromises, { constants as constants$1 } from "node:fs/promises";
 import { PassThrough } from "node:stream";
 import { pipeline } from "node:stream/promises";
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/assertGitVersion.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/assertGitVersion.js
 /** @see {@link https://github.com/git/git/blob/master/Documentation/RelNotes/2.32.0.adoc} */
 const MIN_GIT_VERSION = "2.32.0";
 const GIT_VERSION_REGEXP = /git version\s+(\d+\.\d+\.\d+)/i;
@@ -61,7 +61,7 @@ const assertGitVersion = (gitVersionOutput) => {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/colors.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/colors.js
 let COLORS_ENABLED = false;
 /** Node.js util checks for FORCE_COLOR/NO_COLOR and whether TTY supports ANSI colors */
 const supportsColors = (stream = process.stdout) => util.styleText("red", "test", { stream }) !== "test";
@@ -81,7 +81,7 @@ const blue = styleText$1("blue");
 const dim = styleText$1("dim");
 const bold = styleText$1("bold");
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/debug.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/debug.js
 const format = (...args) => formatWithOptions({ colors: COLORS_ENABLED }, ...args);
 let activeLogger;
 const enableDebug = (logger = console) => {
@@ -99,7 +99,7 @@ const createDebug = (name) => {
 	};
 };
 //#endregion
-//#region ../../../../../build-virtual-store/tinyexec@1.3.1/node_modules/tinyexec/dist/main.mjs
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/tinyexec@1.3.1/node_modules/tinyexec/dist/main.mjs
 const isPathLikePattern = /^path$/i;
 const defaultEnvPathInfo = {
 	key: "PATH",
@@ -440,7 +440,7 @@ const x = (command, args, userOptions) => {
 };
 const exec$1 = x;
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/execGit.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/execGit.js
 const debugLog$17 = createDebug("lint-staged:execGit");
 /**
 * Explicitly never recurse commands into submodules, overriding local/global configuration.
@@ -459,7 +459,7 @@ const execGit = async (cmd, options) => {
 	return result.stdout.trimEnd();
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/figures.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/figures.js
 const wip = () => blue("⋯");
 const done = () => green("✔");
 const info = () => blue("→");
@@ -470,7 +470,7 @@ const parallelGroupStart = () => dim("┌");
 const parallelGroupMiddle = () => dim("│");
 const parallelGroupStop = () => dim("└");
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/messages.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/messages.js
 const configurationError = (opt, helpMsg, value) => `${red(`${error()} Validation Error:`)}
 
   Invalid value for '${bold(opt)}': ${bold(inspect(value))}
@@ -525,7 +525,7 @@ const minGitVersionRequired = (expected) => red(`${error()} lint-staged requires
 
 Please update Git: https://git-scm.com/downloads`);
 //#endregion
-//#region ../../../../../build-virtual-store/string-argv@0.3.2/node_modules/string-argv/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/string-argv@0.3.2/node_modules/string-argv/index.js
 function parseArgsStringToArgv(value, env, file) {
 	var myRegexp = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi;
 	var myString = value;
@@ -548,7 +548,7 @@ function firstString() {
 	}
 }
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/getAbortController.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getAbortController.js
 const Signal = {
 	SIGINT: "SIGINT",
 	SIGKILL: "SIGKILL"
@@ -565,7 +565,7 @@ const getAbortController = (nodeProcess = process) => {
 	return abortController;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/killSubprocesses.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/killSubprocesses.js
 const execAsync = promisify(exec);
 /**
 * End process by pid, forcefully, including child processes
@@ -598,7 +598,7 @@ const killSubProcesses = async (pid, isWin32 = process.platform === "win32") => 
 	} catch {}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/symbols.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/symbols.js
 const ApplyEmptyCommitError = Symbol("ApplyEmptyCommitError");
 const ConfigNotFoundError = /* @__PURE__ */ new Error("Configuration could not be found");
 const ConfigFormatError = /* @__PURE__ */ new Error("Configuration should be an object or a function");
@@ -615,7 +615,7 @@ const RestoreUnstagedChangesError = Symbol("RestoreUnstagedChangesError");
 const TaskError = Symbol("TaskError");
 const FailOnChangesError = Symbol("FailOnChangesError");
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/state.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/state.js
 const getInitialState = ({ failOnChanges = false, hideAll = false, hideUnstaged = false, hidePartiallyStaged = !(hideAll || hideUnstaged), quiet = false, revert = true } = {}) => {
 	const initialState = {
 		backupHash: void 0,
@@ -665,7 +665,7 @@ const cleanupSkipped = (ctx) => {
 	if (ctx.errors.has(RestoreOriginalStateError)) return gitError();
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/getSpawnedTask.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getSpawnedTask.js
 const debugLog$16 = createDebug("lint-staged:getSpawnedTask");
 /**
 * Handle task console output.
@@ -763,7 +763,7 @@ const getSpawnedTask = ({ abortController, command, continueOnError = false, cwd
 	};
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/getSpawnedTasks.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getSpawnedTasks.js
 const debugLog$15 = createDebug("lint-staged:getSpawnedTasks");
 /**
 * Get the maximum length of a command-line argument string based on current platform
@@ -861,7 +861,7 @@ const getSpawnedTasks = async ({ abortController, commands, continueOnError, cwd
 	}))).flat();
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/parseOptions.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/parseOptions.js
 const debugLog$14 = createDebug("lint-staged:parseOptions");
 /** @param {import('./index').Options} [options] */
 const parseOptions = ({ all, allowEmpty, color, concurrent, config: configObject, configPath, continueOnError, cwd, debug, diff, diffFilter, failOnChanges, hideAll, hidePartiallyStaged, hideUnstaged, maxArgLength, quiet, relative, revert, stash, verbose } = {}) => {
@@ -916,7 +916,7 @@ const parseOptions = ({ all, allowEmpty, color, concurrent, config: configObject
 	return options;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/printTaskOutput.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/printTaskOutput.js
 /**
 * Handle logging of task `ctx.output` to the specified `logger`
 * @param {Object} ctx - The context
@@ -928,7 +928,7 @@ const printTaskOutput = (ctx = {}, logger) => {
 	for (const line of ctx.output) log(line);
 };
 //#endregion
-//#region ../../../../../build-virtual-store/picomatch@4.0.7/node_modules/picomatch/lib/constants.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/picomatch@4.0.7/node_modules/picomatch/lib/constants.js
 var require_constants = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const WIN_SLASH = "\\\\/";
 	const WIN_NO_SLASH = `[^${WIN_SLASH}]`;
@@ -1097,7 +1097,7 @@ var require_constants = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	};
 }));
 //#endregion
-//#region ../../../../../build-virtual-store/picomatch@4.0.7/node_modules/picomatch/lib/utils.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/picomatch@4.0.7/node_modules/picomatch/lib/utils.js
 var require_utils = /* @__PURE__ */ __commonJSMin(((exports) => {
 	const { REGEX_BACKSLASH, REGEX_REMOVE_BACKSLASH, REGEX_SPECIAL_CHARS, REGEX_SPECIAL_CHARS_GLOBAL } = require_constants();
 	exports.isObject = (val) => val !== null && typeof val === "object" && !Array.isArray(val);
@@ -1145,7 +1145,7 @@ var require_utils = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 }));
 //#endregion
-//#region ../../../../../build-virtual-store/picomatch@4.0.7/node_modules/picomatch/lib/scan.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/picomatch@4.0.7/node_modules/picomatch/lib/scan.js
 var require_scan = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const utils = require_utils();
 	const { CHAR_ASTERISK, CHAR_AT, CHAR_BACKWARD_SLASH, CHAR_COMMA, CHAR_DOT, CHAR_EXCLAMATION_MARK, CHAR_FORWARD_SLASH, CHAR_LEFT_CURLY_BRACE, CHAR_LEFT_PARENTHESES, CHAR_LEFT_SQUARE_BRACKET, CHAR_PLUS, CHAR_QUESTION_MARK, CHAR_RIGHT_CURLY_BRACE, CHAR_RIGHT_PARENTHESES, CHAR_RIGHT_SQUARE_BRACKET } = require_constants();
@@ -1442,7 +1442,7 @@ var require_scan = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = scan;
 }));
 //#endregion
-//#region ../../../../../build-virtual-store/picomatch@4.0.7/node_modules/picomatch/lib/parse.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/picomatch@4.0.7/node_modules/picomatch/lib/parse.js
 var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const constants = require_constants();
 	const utils = require_utils();
@@ -2519,7 +2519,7 @@ var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = parse;
 }));
 //#endregion
-//#region ../../../../../build-virtual-store/picomatch@4.0.7/node_modules/picomatch/lib/picomatch.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/picomatch@4.0.7/node_modules/picomatch/lib/picomatch.js
 var require_picomatch$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const scan = require_scan();
 	const parse = require_parse();
@@ -2833,7 +2833,7 @@ var require_picomatch$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = picomatch;
 }));
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/matchFiles.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/matchFiles.js
 var import_picomatch = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const pico = require_picomatch$1();
 	const utils = require_utils();
@@ -2864,7 +2864,7 @@ const matchFiles = (files, pattern, cwd = process.cwd()) => {
 	return files.filter((file) => isMatch(file.filepath));
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/normalizePath.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/normalizePath.js
 /**
 * Reimplementation of "normalize-path"
 * @see https://github.com/jonschlinkert/normalize-path/blob/52c3a95ebebc2d98c1ad7606cbafa7e658656899/index.js
@@ -2902,7 +2902,7 @@ const normalizePath = (input) => {
 	return normalized;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/generateTasks.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/generateTasks.js
 const debugLog$13 = createDebug("lint-staged:generateTasks");
 /**
 * Generates all task commands, and filelist
@@ -2939,7 +2939,7 @@ const generateTasks = ({ config, cwd = process.cwd(), files, relative = false })
 	});
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/getFunctionTask.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getFunctionTask.js
 const debugLog$12 = createDebug("lint-staged:getFunctionTasks");
 /**
 * @typedef {{ title: string; task: Function }} FunctionTask
@@ -2975,7 +2975,7 @@ const getFunctionTask = async ({ abortController, command, continueOnError, file
 	}];
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/parseGitZOutput.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/parseGitZOutput.js
 const GIT_Z_REGEXP = /\u0000$/;
 /**
 * Return array of strings split from the output of `git <something> -z`.
@@ -2987,7 +2987,7 @@ const GIT_Z_REGEXP = /\u0000$/;
 */
 const parseGitZOutput = (input) => input ? input.replace(GIT_Z_REGEXP, "").split("\0") : [];
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/getIntentToAddFiles.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getIntentToAddFiles.js
 const debugLog$11 = createDebug("lint-staged:getIntentToAddFiles");
 const getIntentToAddFiles = async ({ cwd }) => {
 	const [stagedWithIta, stagedWithoutIta] = await Promise.all([execGit([
@@ -3009,7 +3009,7 @@ const getIntentToAddFiles = async ({ cwd }) => {
 	return intentToAdd;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/file.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/file.js
 const debugLog$10 = createDebug("lint-staged:file");
 /**
 * Read contents of a file to buffer
@@ -3052,7 +3052,7 @@ const writeFile = async (filename, buffer) => {
 	await fsPromises.writeFile(filename, buffer);
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/getDiffCommand.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getDiffCommand.js
 /** @type {(diff?: string, diffFilter?: string) => string[]} */
 const getDiffCommand = (diff, diffFilter) => {
 	/**
@@ -3069,7 +3069,7 @@ const getDiffCommand = (diff, diffFilter) => {
 	];
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/getStagedFiles.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/getStagedFiles.js
 /**
 * @typedef {'A'|'C'|'D'|'M'|'R'|'T'|'U'|'X'} FileSatus
 * @typedef { { filepath: string; status: FileSatus }} StagedFile
@@ -3176,7 +3176,7 @@ const getStagedFiles = async ({ all, cwd, gitConfigDir, diff, diffFilter }) => {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/runParallelTasks.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/runParallelTasks.js
 const debugLog$9 = createDebug("lint-staged:runParallelTasks");
 /** @param {Number | boolean} options.concurrent Boolean value for whether to run concurrently */
 const parseConcurrency = (concurrent) => {
@@ -3262,7 +3262,7 @@ const runParallelTasks = async (ctx, tasks, { abortController, concurrent = true
 	logger?.log("");
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/gitWorkflow.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/gitWorkflow.js
 const debugLog$8 = createDebug("lint-staged:GitWorkflow");
 const MERGE_HEAD = "MERGE_HEAD";
 const MERGE_MODE = "MERGE_MODE";
@@ -3717,7 +3717,7 @@ var GitWorkflow = class {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/groupFilesByConfig.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/groupFilesByConfig.js
 const debugLog$7 = createDebug("lint-staged:groupFilesByConfig");
 /**
 * @typedef {import('./getStagedFiles.js').StagedFile} StagedFile
@@ -3767,7 +3767,7 @@ const groupFilesByConfig = async ({ configs, files, singleConfigMode }) => {
 	return filesByConfig;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/resolveGitRepo.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/resolveGitRepo.js
 const debugLog$6 = createDebug("lint-staged:resolveGitRepo");
 /**
 * Relative path up to the repo top-level directory
@@ -3826,7 +3826,7 @@ const resolveGitRepo = async (cwd = process.cwd()) => {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/configFiles.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/configFiles.js
 const CONFIG_NAME = "lint-staged";
 const PACKAGE_JSON_FILE = "package.json";
 const PACKAGE_YAML_FILES = ["package.yaml", "package.yml"];
@@ -3855,7 +3855,7 @@ const CONFIG_FILE_NAMES = [
 	"lint-staged.config.cts"
 ];
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/resolveConfig.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/resolveConfig.js
 /**
 * require() does not exist for ESM, so we must create it to use require.resolve().
 * @see https://nodejs.org/api/module.html#modulecreaterequirefilename
@@ -3869,7 +3869,7 @@ function resolveConfig(configPath) {
 	}
 }
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/loadConfig.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/loadConfig.js
 /** @typedef {import('./index').Logger} Logger */
 const debugLog$5 = createDebug("lint-staged:loadConfig");
 const readFile = async (filename) => fsPromises.readFile(path.resolve(filename), "utf-8");
@@ -3890,7 +3890,7 @@ const jsonParse = async (filename) => {
 const yamlParse = async (filename) => {
 	const isPackageFile = PACKAGE_YAML_FILES.includes(path.basename(filename));
 	try {
-		const [YAML, content] = await Promise.all([import("../dist-CrT8aBYV.js").then((m) => /* @__PURE__ */ __toESM(m.default, 1)), readFile(filename)]);
+		const [YAML, content] = await Promise.all([import("../dist-qj-fCx1Z.js").then((m) => /* @__PURE__ */ __toESM(m.default, 1)), readFile(filename)]);
 		const yaml = YAML.parse(content);
 		return isPackageFile ? yaml[CONFIG_NAME] : yaml;
 	} catch (error) {
@@ -3950,7 +3950,7 @@ const loadConfig = async (configPath, logger) => {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/validateBraces.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/validateBraces.js
 /**
 * A correctly-formed brace expansion must contain unquoted opening and closing braces,
 * and at least one unquoted comma or a valid sequence expression.
@@ -4034,7 +4034,7 @@ const validateBraces = (pattern, logger) => {
 	return fixedPattern;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/validateConfig.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/validateConfig.js
 /** @typedef {import('./index').Logger} Logger */
 const debugLog$4 = createDebug("lint-staged:validateConfig");
 const isTask = (task) => typeof task === "string" || typeof task === "function";
@@ -4101,7 +4101,7 @@ const validateConfig = (config, configPath, logger) => {
 	}
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/searchConfigs.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/searchConfigs.js
 const debugLog$3 = createDebug("lint-staged:searchConfigs");
 const CONFIG_PATHSPEC = CONFIG_FILE_NAMES.map((f) => `:(glob)**/${f}`);
 const numberOfLevels = (file) => file.split("/").length;
@@ -4215,7 +4215,7 @@ const searchConfigs = async ({ configObject, configPath, cwd = process.cwd(), to
 	return foundConfigs;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/runAll.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/runAll.js
 /** @typedef {import('./index').Logger} Logger */
 const debugLog$2 = createDebug("lint-staged:runAll");
 /**
@@ -4430,7 +4430,7 @@ const runAll = async ({ all, allowEmpty, concurrent, configObject, configPath, c
 	return ctx;
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/validateOptions.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/validateOptions.js
 const debugLog$1 = createDebug("lint-staged:validateOptions");
 /** @type {(value: number) => boolean} */
 const isValidIntegerValue = (value) => Number.isInteger(value) || value === Infinity;
@@ -4463,10 +4463,10 @@ const validateOptions = async (options = {}, logger) => {
 	debugLog$1("Validated options: %o", options);
 };
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/version.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/version.js
 const getVersion = async () => "17.5.1";
 //#endregion
-//#region ../../../../../build-virtual-store/lint-staged@17.5.1/node_modules/lint-staged/lib/index.js
+//#region ../../../../.tmp/TIA-314/rebase-r1/runtime/source-node-modules/.pnpm/lint-staged@17.5.1/node_modules/lint-staged/lib/index.js
 const debugLog = createDebug("lint-staged");
 /**
 * @typedef {(...any) => void} LogFunction
