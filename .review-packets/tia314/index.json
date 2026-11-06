@@ -1,8 +1,8 @@
 {
  "format": "tia314-review-index-v1",
- "source_epoch": "5236fab536dd15c3f0abf67d299b3ceae6b1e0c5",
+ "source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
- "source_tree": "6b8397fed235dff0a7e42aa1ccf4889a80b5d1e2",
+ "source_tree": "60f352d26f4a7fedd4ff6b863d7a54d74fc51a8d",
  "source_targets": 438,
  "source_classes": {
   "mixed": 13,
@@ -15,463 +15,463 @@
   {
    "path": ".review-packets/tia314/01-code.json",
    "bytes": 65412,
-   "sha256": "66de8031739ad0b356a5ec38a9629864b520d736c2df1bcdfbd16d39190c3011",
+   "sha256": "9bdab8821f1f0d28de92c6c89d72f3850cc28f72f27ac53eeb61d53d2061f5bb",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/02-code.json",
    "bytes": 65438,
-   "sha256": "5baeae356e0318f92db37df00b1e5dfb8e13410795f1727d24018ebb47b08a97",
+   "sha256": "3e7d608ed8078c723fe5215c796ffb5ba22128bddde412c5baf50bff7ecfdfc1",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/03-code.json",
    "bytes": 65519,
-   "sha256": "b3d8fc2afd6d9d8c9a3cd2132cd30f6c10c2e1fd6251f7ce7bd0c25d7fb138d5",
+   "sha256": "4a4c262139e6dca82061affbcaefe547fd68667a38a62fa50f14d6ce301324d2",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/04-code.json",
    "bytes": 65531,
-   "sha256": "9b5aed1ba9f1313ca7bd3fe223eef8a4dfed1319fd3a2fd7db82c14bf3742e79",
+   "sha256": "e1a8e431e1ab71a462248cb6ca98c4922fba015b136f31f58709e745ef4d8ab6",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/05-code.json",
    "bytes": 65381,
-   "sha256": "a3aea45d6bd535ee2229dc566ea6b8d8a729aaca64723f302597eda57e735508",
+   "sha256": "f720f45fbe3ec22b07d16597df0488eb0a631e838a518ad73eb1d6ed410ab2e4",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/06-code.json",
    "bytes": 65479,
-   "sha256": "590cbdcf3f70f13aeefb005118811ab8211f163e0ac113f905266490109c9e81",
+   "sha256": "b50b54d0828dec6e8371afdcd57d3e63ffb86a91bbffea4097f91c7f03dc6adc",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/07-code.json",
    "bytes": 65388,
-   "sha256": "6aa57689ed967150c886b71041b44b37e082012f39ea82c4da1f3555b01b3571",
+   "sha256": "43472f1633fc95665c8219bf766fbc60432a6fb37185d83fb898d4d152cbfc31",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/08-code.json",
    "bytes": 65436,
-   "sha256": "e24a2d51216a1e22644cd25466c2d096b2a66aaae2f91778b1af54cba3313baf",
+   "sha256": "04f83ea3fabb24d9c9bc7bc9dd7b0d44982ca239998494590a706997a225a3da",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/09-code.json",
    "bytes": 65529,
-   "sha256": "c39019858d40177db91f7376881d6ae0186e57d2ae46b02520e7fb723808b2d8",
+   "sha256": "124a4a8e5368863f45964314c94c4cf52f69a26e032a24f9bfe805c3bb0146c7",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/10-code.json",
    "bytes": 65435,
-   "sha256": "6bcfe9b0bf0f1bec7c789ccea172b201187614fc858da01d67ee06f4b1344fc9",
+   "sha256": "14d18d6616d3989967dfa0f41e98657103e151b774f91fbdb70119c5a8bee3c2",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/11-code.json",
    "bytes": 65482,
-   "sha256": "d0f6e4cd9255da2d4e0c93eb81c3c305c6b5e3eb9092fe202b16e5250ef1751e",
+   "sha256": "9c3180271795a8dbf5554442a19496115760b5f9c2e9cc40d2b28639845b3cc8",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/12-code.json",
    "bytes": 65456,
-   "sha256": "84b6e85775fc25acdf865ea243820ca065c34e313c8ecc8be3fe88eea058d54a",
+   "sha256": "9a6881f55199d092ec15e5bdb1dd0486fdb55390ab744191b899dfe949be9708",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/13-code.json",
    "bytes": 65512,
-   "sha256": "993102dcaac5d6940f5361e60f093c10f245b7056c4623eb1a716bf27ef4de35",
+   "sha256": "5528c0dc40db53bcb03e0aa8cfdd764a581ffb72fffa0efd05d01e1b964c80d4",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/14-code.json",
-   "bytes": 64158,
-   "sha256": "f5a93177986207eee8758c045cbde17b03efe66543813205ef962bc50c03ae95",
+   "bytes": 64143,
+   "sha256": "5cb283ef48da7feb96f5b9b0e323a80a564bef9c9ac4d088547231d1e5f814b2",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/15-code.json",
    "bytes": 59946,
-   "sha256": "a9f24c6c0ac4479bc3372d75ebd25fed7d559a6a05283e457203547773cafadf",
+   "sha256": "3bf12b7a6c0ec03a9971695dceadb12a718b320801d99c278be7f471638a695a",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/16-code.json",
-   "bytes": 65458,
-   "sha256": "83e84c9c6af8a0180a1e92e6683ac22b09d1c09563699b7ea42846d132643802",
+   "bytes": 65524,
+   "sha256": "4b39ac7de515775fd15c4db4feb0aab234f136fd8a83082950261ea9a0bc7c30",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/17-code.json",
    "bytes": 65511,
-   "sha256": "9d97a359ddd54251bd1b30537114fbd1c2dad2cc186ec4f8518ab6c0f8fcdc9d",
+   "sha256": "fcc2cd24913baa93783240218e62cfa5c0f726e94e4b559400430c9226478867",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/18-code.json",
    "bytes": 65526,
-   "sha256": "09c56a8322be195c26d995ede171868a3b03a58e9c3ab706912604fa658a9234",
+   "sha256": "ecf22e1484e6d99ebb01977a1e1f048bd89e7066a5d346c9abca469ca612dadd",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/19-code.json",
    "bytes": 65436,
-   "sha256": "e71d254838a9ad3b8ac7945a22e80e52f70b1258fb422cccdaf2f9c0b7123241",
+   "sha256": "40a9c50d0b4a2922803b1258dd1d997224ab35e23cd53795a1c2acbb3a3d99b3",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/20-code.json",
    "bytes": 65529,
-   "sha256": "c68c3735f1dd6527db53c2464643df34dbafbd6a20702e90633a6854035abc20",
+   "sha256": "2281192107a31b3af4642f3aaff14f0292b256f1707e03c28db10a1830b0643f",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/21-code.json",
    "bytes": 65525,
-   "sha256": "c73b8a45e827c8120a6562c2f3029e7c9e0254b2d6fe789b68accad138958a52",
+   "sha256": "8aad05542a32eaa4ae498dd71d8c9abca7f0dd0154632acc61307900cbab93c8",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/22-code.json",
    "bytes": 65508,
-   "sha256": "8f0bb88ee8f681bea020cd375b82e435fb3fa69caa70910557e84c1450e6bc5b",
+   "sha256": "046d1f6bbfdfbe9170da59521d009cd25fbb1ea0e3dfd6cc12b4ea2977440295",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/23-code.json",
    "bytes": 65516,
-   "sha256": "0f72bd5f81cafda9ac40f812c8269118ee28908d094b9c52545a588cc383788e",
+   "sha256": "4f55b68ead1b783c30cbfeb16474063149f24f17f10bb9a2e979b5fa8664543e",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/24-code.json",
    "bytes": 65510,
-   "sha256": "053b18e5b65a9641e647ba4210fe64c911508301f7f6a8583ce78dd4cfbcb2df",
+   "sha256": "61a7eb075e7054d70d6b10c22830f129d351ecb9a19c97625ef6cbe08edf803c",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/25-code.json",
    "bytes": 65529,
-   "sha256": "dfdedee16d2976e91991e74b9eae3ebdf68f12c025d5a6db06e42dd22422e7ad",
+   "sha256": "86b0b0fd214f6d85c045209be4bfae4d161823035fae61bbcc02ee50856e2176",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/26-code.json",
    "bytes": 65532,
-   "sha256": "8b76af293727e66a74a9386ad818505910ba40353b8d5833b33bd4f626bbdf10",
+   "sha256": "79f2aa63a474467e5d22d80d61d6f1f40c7f9024407d640aa2ebd1cddad2ee9e",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/27-code.json",
    "bytes": 65475,
-   "sha256": "c4ad446c9d93c1b9fcf0142a140373a61a9b625e1f4d6ab41031b16961239268",
+   "sha256": "ebb42f86805f2c385dc297f8e1426ecaba40bbf63b59785f43095d645d8c8e0a",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/28-code.json",
    "bytes": 65503,
-   "sha256": "ff679a1e8067e33d815390a20768072b17c3beba4ba006a71add1eeabc442cd3",
+   "sha256": "1295d2db036a8f5fd5f6f14422a28264f216f540fd1833eede7d7ee0d4c46e89",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/29-code.json",
    "bytes": 65471,
-   "sha256": "bfb9d9971e56f91246017567c0e66cd7c1cb42d720f4400b95a5efde75f84591",
+   "sha256": "84f6f1818fc4152a8f15c3516104468f1ce62f39a1ceb69665cb23ed3c5caadb",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/30-code.json",
    "bytes": 65505,
-   "sha256": "05345991ea150aee9d108fa6ea9286961f1f36850edb5af49b1b89eb7952b76a",
+   "sha256": "6a5b284338bafc211d3af274458302cd85da66c07ebe2e05d37dfdcb9359e2ed",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/31-code.json",
    "bytes": 65501,
-   "sha256": "3a731a030f2e34a403d2d5b6bb4e0f3882a2b60cc9282a878ed452bee643dfb8",
+   "sha256": "32db55b69d583b40ee96fc0c28fb0786fe71da63273a2dd4ccf569b1c2bf6f8f",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/32-code.json",
    "bytes": 65446,
-   "sha256": "9905430cd7d68e98b133ba9325ada57ca707794d0a6102899ede3576958b1a9d",
+   "sha256": "3d8c1f45055fbed0d1e50b83fbe1d0a4eacbc7694857d099fefd52878ce33c73",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/33-code.json",
    "bytes": 65449,
-   "sha256": "46d1fd84a49f30a2fcac92443d3f7a5481e8d8678a7f2e58a51603746569486c",
+   "sha256": "5545fab769447ff96331bcc146b296e5f6480d43a0b3ede871bb69af4df11d7f",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/34-code.json",
    "bytes": 65515,
-   "sha256": "4725903300da438f08cc6941af35ea9570ac7771c18db110871be10b01fdc6e2",
+   "sha256": "068933048ede7a390e846b0faa13caff2e7aa59cbfef633586ac04236547c78b",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/35-code.json",
    "bytes": 65449,
-   "sha256": "92e87925c801fcc327b9d4c58f63f147c6593d439d2c903efd987267a6ca7cdb",
+   "sha256": "62626bb5671dac159663a94492be0b6436d5952f4f7ea58224009edae426eb33",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/36-code.json",
    "bytes": 65465,
-   "sha256": "3a9da31e79874ebc944c369f51430ac9f2be7f5081357fb9b0e82f42de3a787d",
+   "sha256": "aaeff2bfe7f394c0e1e199ac90041df2fdfb8b6a627787d1efaf0e6fc4749c6d",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/37-code.json",
    "bytes": 65387,
-   "sha256": "c9a723e63540f3b1a2c21bf89afbf7b4eccc92d7b3ffc431698d35996bad1725",
+   "sha256": "f6179597d7c296df9d967e5c7dae9dea83ca9e7ad72353a637aa78779995595e",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/38-code.json",
    "bytes": 65483,
-   "sha256": "78b1b4d0aeeac88c207305629e1ac2a2a5da077b927170b0c0b6d7283ae123e5",
+   "sha256": "95f0be3f9248d53a2b86f512c34220296b77dbd78420f51a52c51f228fa237d8",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/39-code.json",
    "bytes": 65400,
-   "sha256": "e669aefdb446f73cc8fb63b4eba6a3fdd7128106494fd9a5ce7e6ac8d1cc6163",
+   "sha256": "150accde86dc1ed10aa1258133e596f8241f4b5d163ff11d96e036e8eca6624d",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/40-code.json",
    "bytes": 65474,
-   "sha256": "912d64c8533c7e4a01d0584f1fa3ee4b4190ac0f6356ef0681867bfba6d09698",
+   "sha256": "97f850e6e64c519ac675bf73eb20f073769312cc5a585d82a85d317deae8a773",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/41-code.json",
    "bytes": 65526,
-   "sha256": "30634fd5ac8ddcc76b1ad7e2dbfeb71f8cbb1b9dd22d963422c6010ec7eb0a18",
+   "sha256": "5382a97ab002d1f1a9dd1365518033d93b2c047be6c1ad2051a4694fed2f7cb4",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/42-code.json",
    "bytes": 65495,
-   "sha256": "9cb12134d51617d2c58bd1b620e8120a52c2d033feee355ccf16982167478fe2",
+   "sha256": "f2aa3e2511146ee720fc02f81b653d3d730d6e3245ad9f414c50f05543bd4642",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/43-code.json",
    "bytes": 65529,
-   "sha256": "b8e0f8262867728f694b5c4519b8087717e1efa953633a9c700bad68f6c7a75f",
+   "sha256": "26796ebd23a885c9cc6c4ae0c24e83b95f2b8e0d456c7f007e96a782214211b2",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/44-code.json",
    "bytes": 65520,
-   "sha256": "1461768642ed9e7fa8576836a2c34ed66949992dde9ae5b6d42ddad9662a1bf2",
+   "sha256": "26538c15b3542c076e0b241a937ad34538528b5636f76b0efc59de15f0f83fe9",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/45-code.json",
    "bytes": 65524,
-   "sha256": "843b7a8db20da910bfe82b531ca7f1813da0cc0f4afe9f2da9a9770f9856a959",
+   "sha256": "ed3099501e4d4f42c566d0f12e193d3fe3a1c0bebc3f82e82a868e2053fa6ea4",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/46-code.json",
    "bytes": 65512,
-   "sha256": "811081286d89bb6b79fad9dcf0e158bf9199a171ca56e6bc96cfe19aaba6681c",
+   "sha256": "7711a50bbe2516a90a5a355cc8d607ca1cf3706e63c3ed994a2aecf4669a9c89",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/47-code.json",
    "bytes": 65512,
-   "sha256": "6b9d11942b95d8e8f4c574afb428c1ff8e556c93ba04540afe0a1cf4a63443fd",
+   "sha256": "c805c7e3538a3f064894c918b40426e6990d3e70fe183e9ada57200529f63053",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/48-code.json",
    "bytes": 65463,
-   "sha256": "0a32ee8077266e3e49ac93d81ade88b8c0edcaac9602fa6b9920b6335084ff33",
+   "sha256": "7f4ba9557accbae7a1b36dbbc82e1f08a317d043d0f63fdff3001f2fd947df56",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/49-code.json",
    "bytes": 65403,
-   "sha256": "a3303036b276446b22ab1449bba5d0b27cee6621093b360a223aab36fa47d2e3",
+   "sha256": "8208d7e207053ebb9c9351af2605302dbe0f31d0221267e89167a26ceac4c0c0",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/50-code.json",
    "bytes": 65507,
-   "sha256": "6ca4648dc11a036d62dc7f162c374b58f49b0a166028272a51c127c3612ca604",
+   "sha256": "2e42586c8a2666fdc7f712d82123f96da1e1f512dc303a812ee32260cb00adee",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/51-code.json",
    "bytes": 65510,
-   "sha256": "a5bec2dc4bb17776db676a830477826e0c4b563221e8432ff3fe69401bff9158",
+   "sha256": "50bbfcc80e88e9517a06ebf5bbe528aa3755f349aa7e64195fb04fc26d3bc945",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/52-code.json",
    "bytes": 65532,
-   "sha256": "cb9e811a1ec639c1acd23bfe510f1f6d655f0de5bd56fc4d989abf0324833627",
+   "sha256": "86c68ee9e71ff3eb507577160f16b74de7478bc7387320569722b21b5c6f4dab",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/53-code.json",
    "bytes": 65424,
-   "sha256": "8475c07ed348a4abf0472c46fc43d2bd451294fdaf39f25719f05c6c08f5835d",
+   "sha256": "2ab1a84224bec4f73aeecce77eb2a9162705b0e550005675cc19e969b5ec5aea",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/54-code.json",
    "bytes": 65529,
-   "sha256": "e4db4521ee12c93f6eae6047b240a8228e3a96db225a7ef05e6eba46ffec2daa",
+   "sha256": "fdc351033ec2de97373d0c68559c1b5b6e5912b6d54631cd67bb429ba533c579",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/55-code.json",
    "bytes": 65518,
-   "sha256": "464630c533d0d5ed3c2dafe9e54491f3fab63e084acd199f0d52dc0c9b04e30c",
+   "sha256": "df2628082572fe29c8367bd8d6fb356194f03e55c23160a9245abf2c3e273619",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/56-code.json",
    "bytes": 65481,
-   "sha256": "816da90f34a86b3651c1fabd5f9f8c3570123a5dd9b5b6dc27b7a16d4926b0bf",
+   "sha256": "60cf1a11a2e63431184c3b5e59adecffcf7b19b96fa15f5b23237f98b8adc48d",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/57-code.json",
    "bytes": 63811,
-   "sha256": "7f465c5314733f9fa3ffe468112c61523f0c8dad2293d8fd424428e88250ae28",
+   "sha256": "1188a84af34e87d12a88e788fec355c9eac129464dce64aa968f744e064c7ec2",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/58-code.json",
    "bytes": 63603,
-   "sha256": "17366eab36bd9bfe168431552d67be2d0965df1acb5f4645b6d3f27687d8a023",
+   "sha256": "5114ddb41b84ce89be58f3f9c1326ce25eb1ca6c5eaf65d97cfe8ae399707057",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/59-code.json",
    "bytes": 65507,
-   "sha256": "3a5e424f79b106f676eba316a25649e1688dee3b23e6d2da2cbe655f18e521f9",
+   "sha256": "b22f2428317280203c31afb539e961a131f7bff0e48f6807c830e929095daec0",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/60-code.json",
    "bytes": 65493,
-   "sha256": "39c64b52d7c25609041d93e8c83644b84bb789191e579981f228778194db7a13",
+   "sha256": "2f8eeebff17961818f5aa17087b15cb69e34df1b9c2f2a87baa39ed8a90c6ef0",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/61-code.json",
    "bytes": 65530,
-   "sha256": "fbe2f363ef03a98c7a2d55aae84be65887830b9f73135bf238d62e34c17a9c33",
+   "sha256": "309760200e6a6a58c9e2160efebb669978793a30e8c42d6178e9691dcd2544f0",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/62-code.json",
    "bytes": 65137,
-   "sha256": "6d406e056c22c537e080158440be77e7eaf359524c8dcc34c95d468761549e2b",
+   "sha256": "5f220bdf1d99f17eb5fd2413afe7b9322adec91436ece237e14ebb6057544f65",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/63-code.json",
    "bytes": 52199,
-   "sha256": "73ef68e9683bf2ac635fea39aa9ce8ba0466919dbe2a6d9328c82057a941578c",
+   "sha256": "7561f926f59bcce4e75d72fb7961cee3e5857ec522ae5d41287f41fa96b08ad7",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/64-code.json",
    "bytes": 58759,
-   "sha256": "7bd65ac8eade9f83d53d096ffcae2a9f18be8e6a8059b4945d832ea6d12d6444",
+   "sha256": "037a1873a44924a924e8066450bbae691a04c08c251f6f95febb4f3a6372ca5d",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/65-generated-map.json",
    "bytes": 65044,
-   "sha256": "e1bc97918bc956299213882f2091c0d7eb70f51bfa42b736b6f21faca3c5fc88",
+   "sha256": "e7dc3e45b526c797c62e354fafb491220850a4acaf6fd490890c5a0924aa6d39",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/66-generated-map.json",
    "bytes": 64443,
-   "sha256": "682965c9625af23b624a0218a0d177f4ae06d8378fc5917ecf1c29a49bf4f03f",
+   "sha256": "1bd6bb052af621f835aebf9a44c3ea3dc89b1e6be5c87c6739a1ebdcd16d3bbc",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/67-generated-map.json",
    "bytes": 65351,
-   "sha256": "d147d80739d048a121d9354fd4915d491510c7d5a6a21a58484665d1023ca549",
+   "sha256": "521b5e149b4a668a61295d06dac21e1938a8306b27738a4a8dcf2f073b7fc3dc",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/68-generated-map.json",
    "bytes": 64513,
-   "sha256": "18dac376f3f397bea95e6bc5feb918c6afd1ffd0b815f9b8247d7d9744d087aa",
+   "sha256": "1c62099b99ca2dfe58e82565709fd20be83703affb225970627175393f2c1563",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/69-generated-map.json",
    "bytes": 65234,
-   "sha256": "72cac83e402caf8ee121798bce62931467c3093bca27c058e0dfdb021937a400",
+   "sha256": "4d5faf3c8c199cd4806fbf8b2e7f694db774237c0e8bbc3bb1493293e57a7f18",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/70-generated-map.json",
    "bytes": 65086,
-   "sha256": "b84f0f64b57e408bef2e4638fa41542a12f3844a272395ff1526fa91216375b4",
+   "sha256": "04c679b7ebb6c266ce8b3acd58ccdd8f607fcebcf283cc879a42694cba10fefa",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/77-generated-map.json",
    "bytes": 1512,
-   "sha256": "61c407cfa3c98c98195677f27b2445b6590aee755c29ae84baccb5d06e63a635",
+   "sha256": "cfe4d2ad5c1509d51cb3bcea69c1f286e2f79516ad43c6aae9ebe5dea407bec2",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/71-legacy-contract.json",
    "bytes": 64568,
-   "sha256": "573f8f5552e4f583c5c49b86fe78c20935eb85238c3d4a7e54bc794189dbb88f",
+   "sha256": "f0aaadd4f8dc78beb5b6b60eb87ebfa80509577542b7aa4ac7c6d45b408e59cc",
    "kind": "legacy-contract"
   },
   {
    "path": ".review-packets/tia314/72-legacy-contract.json",
    "bytes": 25214,
-   "sha256": "92ba371937feaf596591656423dc9e3ab5d51e194e556326e63fd816d33fecd6",
+   "sha256": "56abd8349f916d41136cfc7f8e75f5ef8158088942f5d0e0777ede1cd895b02d",
    "kind": "legacy-contract"
   },
   {
    "path": ".review-packets/tia314/73-context.json",
    "bytes": 60826,
-   "sha256": "cc3649189ddcfdbfb369321f916c8c4009f9bcd46db6ac13afb71dc7b9f8d0a9",
+   "sha256": "82484bb007ea82a27466dcad04ecd2dd10b12881676b3d74a8f7f1f4556107c4",
    "kind": "context"
   },
   {
    "path": ".review-packets/tia314/74-context.json",
    "bytes": 43925,
-   "sha256": "d115aae3e5f167135f25c1c2098fbea4d03f3f78905f1ef27292486276a924b5",
+   "sha256": "d169a4d3e803a7f593135a8d2f7fe0b98ee5aaea0410b821645f9df9f853643b",
    "kind": "context"
   },
   {
    "path": ".review-packets/tia314/75-context.json",
    "bytes": 54011,
-   "sha256": "70502d3a6dedc64564e7409adb8a939bc3e4d84430a9a6f37aff818964ea7296",
+   "sha256": "fad5a689bbcda232d271d53a04b53d9f7e62273ad40d2dcf730ed88831dba920",
    "kind": "context"
   },
   {
    "path": ".review-packets/tia314/76-context.json",
    "bytes": 38718,
-   "sha256": "af16b61436b1d7a274acfbb9358475e082bd2b8f69886e06900a4611b4ba54fb",
+   "sha256": "9055a2f1eca5893773d500795e6678194deeb4a3853bacdaf58526b4a2e2519b",
    "kind": "context"
   }
  ],
@@ -482,24 +482,24 @@
   "hosted-request.md",
   "initial-description.md"
  ],
- "canonical_code_corpus_sha256": "d1580c1c89a357e20956a7de44becc8feb3f039039a54944c23d36e66e615801",
+ "canonical_code_corpus_sha256": "8a3c5d173cf5ed0eac48c4a33f8097684012a83b02374978a6c931c28e5cc476",
  "canonical_code_target_count": 40,
- "canonical_code_bytes": 3439022,
+ "canonical_code_bytes": 3439073,
  "generated_and_legacy_contracts": "Each of the other398source targets has one exact identity/mapping or removed-contract record. Shared transformation code is included among the40code targets. Stock algorithm bodies remain context. No private build/projection/evidence file is needed to read a custom code delta.",
  "delivery_scope": {
   "path": "docs/review/TIA-314/scope.json",
-  "before_blob": "82447ac969ae76491891ef3107ce0d98792e4df9",
-  "after_blob": "0ebc55503e3be2d818232f232665f3db3fa2b4b0",
-  "after_sha256": "20b8acdee6d15a696ebe32eeca8b4d20f3972d0da53870cbaff9defd07933b07",
-  "metadata_patch_sha256": "d7361c0b16e95e4028e6315f09ac61f0ff549107f48c7245be6dc74ae671b775",
+  "before_blob": "0ebc55503e3be2d818232f232665f3db3fa2b4b0",
+  "after_blob": "dce3066bf96598c09119e917409875fe512e91e7",
+  "after_sha256": "d8cb5087832ae7865b86b3cb757ddb18f54e329b675b9c37e7ceaecc19cba145",
+  "metadata_patch_sha256": "4c26d55a16a935198c6095ccb430e71abe588964dc08cbe4e36f866b6851573c",
   "metadata_patch_lines": [
    "--- a/docs/review/TIA-314/scope.json\n",
    "+++ b/docs/review/TIA-314/scope.json\n",
    "@@ -1,6 +1,6 @@\n",
    " {\n",
    "   \"ticket\": \"TIA-314\",\n",
-   "-  \"implementation_commit\": \"67d0071a9d0f22791793fe56ab7f714432e5db49\",\n",
-   "+  \"implementation_commit\": \"5236fab536dd15c3f0abf67d299b3ceae6b1e0c5\",\n",
+   "-  \"implementation_commit\": \"5236fab536dd15c3f0abf67d299b3ceae6b1e0c5\",\n",
+   "+  \"implementation_commit\": \"206414e9d27709fd7ccaee809bb515c636dc4c2b\",\n",
    "   \"base\": \"e088d5c9784d2779684d02524fab62a0fa5e656a\",\n",
    "   \"upstream\": {\n",
    "     \"repository\": \"https://github.com/voidzero-dev/vite-plus\",\n",
@@ -507,8 +507,8 @@
    "     \"hosted_metadata_paths\": 82,\n",
    "     \"changed_existing_scope_metadata_paths\": 1\n",
    "   },\n",
-   "-  \"review_state\": \"Native discovery/workflow repair checks pass at9952. Current438source adaptations and delivery metadata require qualified carry and assigned re-entry. CLI4 remains non-pass with one unnamed unreviewed file; no current semantic review certificate.\",\n",
-   "+  \"review_state\": \"Workflow native-lint guard and quoted-input repairs pass focused controls. Prior exact source/runtime checks carry; current workflow and affected delivery fields require assigned re-entry. Two included-only CLI calls at23ade had complete coverage and2valid workflow findings; no current clean review certificate.\",\n",
+   "-  \"review_state\": \"Workflow native-lint guard and quoted-input repairs pass focused controls. Prior exact source/runtime checks carry; current workflow and affected delivery fields require assigned re-entry. Two included-only CLI calls at23ade had complete coverage and2valid workflow findings; no current clean review certificate.\",\n",
+   "+  \"review_state\": \"Native backend verification now dispatches directly before the local Vite source build. Finite startup-state, launcher/dispatch, existing argument/guard and formatting controls pass. Exact runtime producer bodies carry; changed workflow and delivery metadata require ordered affected review re-entry. No current-head review pass is asserted.\",\n",
    "   \"custom_overlay_patch_sha256\": \"8a25940d0c43a0dac647a79f217263bb9a2e52a8181cacbd187aad80624f20f2\",\n",
    "   \"authorized_import_exclusions\": [\n",
    "     {\n",
@@ -516,8 +516,8 @@
    "     ],\n",
    "     \"Markdown_qualification\": \"Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.\",\n",
    "     \"OCR_carry\": \"Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.\",\n",
-   "-    \"final_main_source_epoch\": \"67d0071a9d0f22791793fe56ab7f714432e5db49\",\n",
-   "+    \"final_main_source_epoch\": \"5236fab536dd15c3f0abf67d299b3ceae6b1e0c5\",\n",
+   "-    \"final_main_source_epoch\": \"5236fab536dd15c3f0abf67d299b3ceae6b1e0c5\",\n",
+   "+    \"final_main_source_epoch\": \"206414e9d27709fd7ccaee809bb515c636dc4c2b\",\n",
    "     \"identical_queue_squash_tree\": \"34d345e35d45df8fc931cfd2aa7312fbe0ae5a99\"\n",
    "   },\n",
    "   \"generated_output_review_policy\": {\n",
@@ -525,8 +525,8 @@
    "     }\n",
    "   ],\n",
    "   \"hosted_delivery\": {\n",
-   "-    \"source_epoch\": \"67d0071a9d0f22791793fe56ab7f714432e5db49\",\n",
-   "+    \"source_epoch\": \"5236fab536dd15c3f0abf67d299b3ceae6b1e0c5\",\n",
+   "-    \"source_epoch\": \"5236fab536dd15c3f0abf67d299b3ceae6b1e0c5\",\n",
+   "+    \"source_epoch\": \"206414e9d27709fd7ccaee809bb515c636dc4c2b\",\n",
    "     \"base\": \"e088d5c9784d2779684d02524fab62a0fa5e656a\",\n",
    "     \"source_adaptations\": 438,\n",
    "     \"stock_exclusions\": 6420,\n"
@@ -585,5 +585,13 @@
   ],
   "owner_status": "Native-disabled lint guard and quoted environment handoff implemented;10focused controls and source formatter pass; affected independent re-entry pending.",
   "producer_impact": "Workflow-only change; native/Vite/helper/package producer inputs and outputs exact, no rebuild."
+ },
+ "workflow_startup_repair": {
+  "source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+  "prior_review_head": "68b6219ec0c33b550f25415fa1c0e5baaa0038bd",
+  "source_policy": "Before the source CLI exists, dispatch the native backend Node test directly. Later source CLI calls follow the completed local core-before-CLI producer.",
+  "focused_validation": "Actual old pnpm dispatch reproduces missing dist/bin.js; direct dispatch passes with no source dist. Four launcher import states,36workflow startup rows,10guard/literal-input controls and source formatting pass. Native protocol and full runtime validation retain exact accepted9952evidence.",
+  "producer_impact": "Workflow-only change; all3root/4633fork producer inputs and359outputs unchanged. No native/Vite/helper rebuild.",
+  "status": "Affected independent review re-entry pending; this is source-epoch metadata, not a current gate certificate."
  }
 }
