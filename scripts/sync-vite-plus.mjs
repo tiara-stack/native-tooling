@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { sourceEnvironment } from "./lib/vite-plus-source-environment.mjs";
+import { replacePackageTrees } from "./lib/replace-package-trees.mjs";
 
 const root = dirname(fileURLToPath(new URL("../package.json", import.meta.url)));
 const source = join(root, "packages/vite-plus-effect-fork");
@@ -122,17 +123,13 @@ try {
     await writeFile(join(unpacked, "SOURCE.json"), `${JSON.stringify(build, null, 2)}\n`);
   }
   // Both packages are staged and validated before replacing either retained tree.
-  for (const [kind, name] of [
-    ["core", "vite-plus-core"],
-    ["cli", "vite-plus"],
-  ]) {
-    const target = join(root, "packages", name);
-    await mkdir(target, { recursive: true });
-    for (const entry of await readdir(target)) {
-      if (entry !== "node_modules") await rm(join(target, entry), { recursive: true, force: true });
-    }
-    await cp(join(staging, kind), target, { recursive: true });
-  }
+  await replacePackageTrees(
+    [
+      { source: join(staging, "core"), target: join(root, "packages/vite-plus-core") },
+      { source: join(staging, "cli"), target: join(root, "packages/vite-plus") },
+    ],
+    join(root, ".tmp"),
+  );
 } finally {
   await rm(staging, { recursive: true, force: true });
 }

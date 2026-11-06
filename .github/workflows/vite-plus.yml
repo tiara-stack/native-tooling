@@ -76,6 +76,7 @@ jobs:
           node --test \
             scripts/test/vite-plus-native.test.mjs \
             scripts/test/vite-plus-source-environment.test.mjs \
+            scripts/test/sync-vite-plus.test.mjs \
             scripts/test/sync-effect-vitest.test.mjs
 
       - name: Verify Vite+ CLI
