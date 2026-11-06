@@ -4,12 +4,10 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 
 const root = process.cwd();
+// Vite+ customizations now live in the selected source fork and deterministic
+// scoped artifacts. The obsolete 0.1.15 consumer patch is no longer a gate.
+run(process.execPath, [join(root, "scripts/check-vite-plus-package.mjs")], root);
 const cases = [
-  {
-    packageName: "vite-plus",
-    version: "0.1.15",
-    patch: join(root, "patches", "vite-plus@0.1.15-native-tsgolint.patch"),
-  },
   {
     packageName: "oxlint",
     version: "1.87.0",

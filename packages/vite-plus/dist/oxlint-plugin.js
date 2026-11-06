@@ -1,4 +1,6 @@
-import { n as VITE_PLUS_OXLINT_PLUGIN_NAME, t as PREFER_VITE_PLUS_IMPORTS_RULE_NAME } from "./oxlint-plugin-config-C2Rqc_WQ.js";
+import { v as exports } from "./constants-BqJiMVVU.js";
+import { n as VITE_PLUS_OXLINT_PLUGIN_NAME, t as PREFER_VITE_PLUS_IMPORTS_RULE_NAME } from "./oxlint-plugin-config-lMMD5fAC.js";
+import { t as vitest_v5_entry_points_default } from "./vitest-v5-entry-points-DthU1e_O.js";
 import path from "node:path";
 import fs from "node:fs";
 import { definePlugin, defineRule } from "@oxlint/plugins";
@@ -23,48 +25,78 @@ function isVitestFamilyDeclareModuleSpecifier(specifier) {
 	return specifier === "vitest" || specifier.startsWith("vitest/") || specifier === "@vitest/browser" || specifier.startsWith("@vitest/browser/") || specifier.startsWith("@vitest/browser-");
 }
 const VITE_CONFIG_FILE_BASENAMES = new Set(vite_config_entry_basenames_default);
+function isOxlintFamilyDeclareModuleSpecifier(specifier) {
+	return specifier === OXLINT_PACKAGE || specifier.startsWith(`${OXLINT_PACKAGE}/`) || specifier === OXLINT_PLUGINS_PACKAGE;
+}
 function isViteSpecifier(specifier) {
 	return specifier === "vite" || specifier.startsWith("vite/");
 }
 function isViteConfigFile(filename) {
 	return VITE_CONFIG_FILE_BASENAMES.has(path.basename(filename));
 }
+const OXLINT_PACKAGE = "oxlint";
+const OXLINT_PLUGINS_PACKAGE = "@oxlint/plugins";
+const OXLINT_PLUGINS_DEV_SUBPATH = "oxlint/plugins-dev";
+const VITE_PLUS_LINT_PLUGINS = "@tiara-stack/vite-plus/lint/plugins";
+const VITE_PLUS_LINT_PLUGINS_DEV = "@tiara-stack/vite-plus/lint/plugins-dev";
+const OXLINT_CONFIG_SURFACE_EXPORTS = /* @__PURE__ */ new Set([
+	"defineConfig",
+	"AllowWarnDeny",
+	"DummyRule",
+	"DummyRuleMap",
+	"ExternalPluginEntry",
+	"ExternalPluginsConfig",
+	"OxlintConfig",
+	"OxlintEnv",
+	"OxlintGlobals",
+	"OxlintOverride",
+	"RuleCategories"
+]);
 function rewriteVitePlusImportSpecifier(specifier) {
-	if (specifier === "vite") return "vite-plus";
-	if (specifier.startsWith("vite/")) return `vite-plus/${specifier.slice(5)}`;
-	if (specifier === "vitest/config") return "vite-plus";
-	if (specifier === "vitest") return "vite-plus/test";
+	if (specifier === "vite") return "@tiara-stack/vite-plus";
+	if (specifier.startsWith("vite/")) return `@tiara-stack/vite-plus/${specifier.slice(5)}`;
+	if (specifier === "vitest/config") return "@tiara-stack/vite-plus";
+	if (specifier === "vitest") return "@tiara-stack/vite-plus/test";
 	if (specifier === "vitest/package.json") return null;
-	if (specifier.startsWith("vitest/")) return `vite-plus/test/${specifier.slice(7)}`;
-	if (specifier === "@vitest/browser") return "vite-plus/test/browser";
+	if (specifier in vitest_v5_entry_points_default) return vitest_v5_entry_points_default[specifier];
+	if (specifier.startsWith("vitest/")) {
+		const subpath = `./test/${specifier.slice(7)}`;
+		return subpath in exports ? `vite-plus${subpath.slice(1)}` : null;
+	}
+	if (specifier === "@vitest/browser") return "@tiara-stack/vite-plus/test/browser";
 	const browserSubpathRewrites = {
-		"@vitest/browser/context": "vite-plus/test/browser/context",
-		"@vitest/browser/client": "vite-plus/test/client",
-		"@vitest/browser/locators": "vite-plus/test/locators",
-		"@vitest/browser/matchers": "vite-plus/test/matchers",
-		"@vitest/browser/utils": "vite-plus/test/utils"
+		"@vitest/browser/context": "@tiara-stack/vite-plus/test/browser/context",
+		"@vitest/browser/client": "@tiara-stack/vite-plus/test/client",
+		"@vitest/browser/locators": "@tiara-stack/vite-plus/test/locators",
+		"@vitest/browser/matchers": "@tiara-stack/vite-plus/test/matchers",
+		"@vitest/browser/utils": "@tiara-stack/vite-plus/test/utils"
 	};
 	if (specifier in browserSubpathRewrites) return browserSubpathRewrites[specifier];
-	for (const [prefix, provider] of [
-		["@vitest/browser-playwright", "playwright"],
-		["@vitest/browser-preview", "preview"],
-		["@vitest/browser-webdriverio", "webdriverio"]
-	]) {
-		if (specifier === prefix) return `vite-plus/test/${prefix.slice(8)}`;
-		if (specifier === `${prefix}/context`) return "vite-plus/test/browser/context";
-		if (specifier === `${prefix}/provider`) return `vite-plus/test/browser/providers/${provider}`;
+	for (const [prefix, provider] of [["@vitest/browser-playwright", "playwright"], ["@vitest/browser-preview", "preview"]]) {
+		if (specifier === prefix) return `@tiara-stack/vite-plus/test/${prefix.slice(8)}`;
+		if (specifier === `${prefix}/context`) return "@tiara-stack/vite-plus/test/browser/context";
+		if (specifier === `${prefix}/provider`) return `@tiara-stack/vite-plus/test/browser/providers/${provider}`;
 	}
+	if (specifier === OXLINT_PLUGINS_PACKAGE) return VITE_PLUS_LINT_PLUGINS;
+	if (specifier === OXLINT_PLUGINS_DEV_SUBPATH) return VITE_PLUS_LINT_PLUGINS_DEV;
 	return null;
+}
+function moduleBindingName(node) {
+	return node.type === "Identifier" ? node.name : node.value;
+}
+function importsOxlintPluginApi(node) {
+	return node.specifiers.length > 0 && node.specifiers.every((specifier) => specifier.type === "ImportSpecifier" && !OXLINT_CONFIG_SURFACE_EXPORTS.has(moduleBindingName(specifier.imported)));
 }
 function quoteSpecifier(literal, replacement) {
 	const quote = literal.raw?.startsWith("'") ? "'" : "\"";
 	return `${quote}${replacement}${quote}`;
 }
 const nuxtTestUtilsPackageCache = /* @__PURE__ */ new Map();
+const oxlintOwnerPackageCache = /* @__PURE__ */ new Map();
 function isUpstreamVitestSpecifier(specifier) {
 	return specifier === "vitest" || specifier.startsWith("vitest/");
 }
-function nearestPackageUsesNuxtTestUtils(filename) {
+function nearestPackageMatches(filename, cache, matchesPackage) {
 	if (!path.isAbsolute(filename)) return false;
 	let directory = path.dirname(filename);
 	while (true) {
@@ -74,34 +106,34 @@ function nearestPackageUsesNuxtTestUtils(filename) {
 			try {
 				mtimeMs = fs.statSync(packageJsonPath).mtimeMs;
 			} catch {}
-			const cached = mtimeMs === void 0 ? void 0 : nuxtTestUtilsPackageCache.get(packageJsonPath);
-			if (cached !== void 0 && cached.mtimeMs === mtimeMs) return cached.usesNuxtTestUtils;
-			let usesNuxtTestUtils = false;
+			const cached = mtimeMs === void 0 ? void 0 : cache.get(packageJsonPath);
+			if (cached !== void 0 && cached.mtimeMs === mtimeMs) return cached.matches;
+			let matches = false;
 			try {
-				const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-				usesNuxtTestUtils = [
-					pkg.dependencies,
-					pkg.devDependencies,
-					pkg.optionalDependencies
-				].some((dependencies) => dependencies?.["@nuxt/test-utils"] !== void 0);
+				matches = matchesPackage(JSON.parse(fs.readFileSync(packageJsonPath, "utf8")));
 			} catch {}
-			if (mtimeMs !== void 0) nuxtTestUtilsPackageCache.set(packageJsonPath, {
+			if (mtimeMs !== void 0) cache.set(packageJsonPath, {
 				mtimeMs,
-				usesNuxtTestUtils
+				matches
 			});
-			return usesNuxtTestUtils;
+			return matches;
 		}
 		const parent = path.dirname(directory);
 		if (parent === directory) return false;
 		directory = parent;
 	}
 }
-function maybeReportLiteral(context, literal, preserveUpstreamVitest = false, fileIsViteConfig = false) {
-	if (!literal || literal.type !== "Literal" || typeof literal.value !== "string") return;
-	if (preserveUpstreamVitest && isUpstreamVitestSpecifier(literal.value)) return;
-	if (!fileIsViteConfig && isViteSpecifier(literal.value)) return;
-	const replacement = rewriteVitePlusImportSpecifier(literal.value);
-	if (!replacement) return;
+function nearestPackageUsesNuxtTestUtils(filename) {
+	return nearestPackageMatches(filename, nuxtTestUtilsPackageCache, (pkg) => [
+		pkg.dependencies,
+		pkg.devDependencies,
+		pkg.optionalDependencies
+	].some((dependencies) => dependencies?.["@nuxt/test-utils"] !== void 0));
+}
+function nearestPackageOwnsOxlintApi(filename) {
+	return nearestPackageMatches(filename, oxlintOwnerPackageCache, (pkg) => pkg.optionalDependencies?.[OXLINT_PLUGINS_PACKAGE] !== void 0 || [pkg.dependencies, pkg.peerDependencies].some((dependencies) => dependencies?.[OXLINT_PACKAGE] !== void 0 || dependencies?.[OXLINT_PLUGINS_PACKAGE] !== void 0));
+}
+function reportSpecifier(context, literal, replacement) {
 	context.report({
 		node: literal,
 		messageId: "preferVitePlusImports",
@@ -113,6 +145,30 @@ function maybeReportLiteral(context, literal, preserveUpstreamVitest = false, fi
 			return fixer.replaceText(literal, quoteSpecifier(literal, replacement));
 		}
 	});
+}
+function isOxlintApiSpecifier(specifier) {
+	return specifier === OXLINT_PLUGINS_PACKAGE || specifier === OXLINT_PLUGINS_DEV_SUBPATH;
+}
+function maybeReportLiteral(context, literal, { preserveUpstreamVitest, fileIsViteConfig, ownsOxlintApi }) {
+	if (!literal || literal.type !== "Literal" || typeof literal.value !== "string") return;
+	if (preserveUpstreamVitest && isUpstreamVitestSpecifier(literal.value)) return;
+	if (!fileIsViteConfig && isViteSpecifier(literal.value)) return;
+	const replacement = rewriteVitePlusImportSpecifier(literal.value);
+	if (!replacement) return;
+	if (ownsOxlintApi && isOxlintApiSpecifier(literal.value)) return;
+	reportSpecifier(context, literal, replacement);
+}
+function reportLegacyOxlintPluginApiExport(context, node, ownsOxlintApi) {
+	const literal = node.source;
+	if (!literal || literal.value !== OXLINT_PACKAGE || ownsOxlintApi) return;
+	if (node.specifiers.length === 0) return;
+	if (!node.specifiers.every((specifier) => !OXLINT_CONFIG_SURFACE_EXPORTS.has(moduleBindingName(specifier.local)))) return;
+	reportSpecifier(context, literal, VITE_PLUS_LINT_PLUGINS);
+}
+function reportLegacyOxlintPluginApiImport(context, node, ownsOxlintApi) {
+	const literal = node.source;
+	if (literal.value !== OXLINT_PACKAGE || ownsOxlintApi || !importsOxlintPluginApi(node)) return;
+	reportSpecifier(context, literal, VITE_PLUS_LINT_PLUGINS);
 }
 const preferVitePlusImportsRule = defineRule({
 	meta: {
@@ -126,36 +182,43 @@ const preferVitePlusImportsRule = defineRule({
 		messages: { preferVitePlusImports: "Use '{{to}}' instead of '{{from}}' in Vite+ projects." }
 	},
 	createOnce(context) {
-		let preserveUpstreamVitest = false;
-		let fileIsViteConfig = false;
+		const options = {
+			preserveUpstreamVitest: false,
+			fileIsViteConfig: false,
+			ownsOxlintApi: false
+		};
 		return {
 			Program() {
-				preserveUpstreamVitest = nearestPackageUsesNuxtTestUtils(context.filename);
-				fileIsViteConfig = isViteConfigFile(context.filename);
+				options.preserveUpstreamVitest = nearestPackageUsesNuxtTestUtils(context.filename);
+				options.fileIsViteConfig = isViteConfigFile(context.filename);
+				options.ownsOxlintApi = nearestPackageOwnsOxlintApi(context.filename);
 			},
 			ImportDeclaration(node) {
-				maybeReportLiteral(context, node.source, preserveUpstreamVitest, fileIsViteConfig);
+				maybeReportLiteral(context, node.source, options);
+				reportLegacyOxlintPluginApiImport(context, node, options.ownsOxlintApi);
 			},
 			ExportAllDeclaration(node) {
-				maybeReportLiteral(context, node.source, preserveUpstreamVitest, fileIsViteConfig);
+				maybeReportLiteral(context, node.source, options);
 			},
 			ExportNamedDeclaration(node) {
-				maybeReportLiteral(context, node.source, preserveUpstreamVitest, fileIsViteConfig);
+				maybeReportLiteral(context, node.source, options);
+				reportLegacyOxlintPluginApiExport(context, node, options.ownsOxlintApi);
 			},
 			ImportExpression(node) {
-				maybeReportLiteral(context, node.source, preserveUpstreamVitest, fileIsViteConfig);
+				maybeReportLiteral(context, node.source, options);
 			},
 			TSImportType(node) {
-				maybeReportLiteral(context, node.source, preserveUpstreamVitest, fileIsViteConfig);
+				maybeReportLiteral(context, node.source, options);
 			},
 			TSExternalModuleReference(node) {
-				maybeReportLiteral(context, node.expression, preserveUpstreamVitest, fileIsViteConfig);
+				if (node.expression.type === "Literal" && typeof node.expression.value === "string" && isOxlintApiSpecifier(node.expression.value)) return;
+				maybeReportLiteral(context, node.expression, options);
 			},
 			TSModuleDeclaration(node) {
 				if (node.global) return;
 				const id = node.id;
-				if (id?.type === "Literal" && typeof id.value === "string" && isVitestFamilyDeclareModuleSpecifier(id.value)) return;
-				maybeReportLiteral(context, id, preserveUpstreamVitest, fileIsViteConfig);
+				if (id?.type === "Literal" && typeof id.value === "string" && (isVitestFamilyDeclareModuleSpecifier(id.value) || isOxlintFamilyDeclareModuleSpecifier(id.value))) return;
+				maybeReportLiteral(context, id, options);
 			}
 		};
 	}

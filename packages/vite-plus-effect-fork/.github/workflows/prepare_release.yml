@@ -22,7 +22,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -33,7 +33,7 @@ jobs:
           save-cache: false
           cache-key: lint
 
-      - uses: oxc-project/setup-node@4c588e9266bd930b6ddc34307df0659ed511d187 # v1.3.1
+      - uses: oxc-project/setup-node@1f1a5b4450c8905bd1830c3a908d22b960c4559a # main (Node before pnpm; unreleased)
 
       - name: Bump versions
         env:
@@ -54,8 +54,9 @@ jobs:
           }
           update_json packages/cli/package.json
           update_json packages/core/package.json
+          update_json packages/prompts/package.json
           update_toml packages/cli/binding/Cargo.toml
-          update_toml crates/vite_global_cli/Cargo.toml
+          update_toml crates/vp_global_cli/Cargo.toml
 
       - name: Refresh Cargo.lock
         run: cargo check
@@ -78,4 +79,4 @@ jobs:
             Release vite-plus v${{ inputs.version }}.
 
             Merging this PR will trigger the release workflow.
-          assignees: fengmk2
+          assignees: ${{ github.actor }}

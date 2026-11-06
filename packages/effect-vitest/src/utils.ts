@@ -39,7 +39,11 @@ export function fail(message: string) {
  * @since 4.0.0
  */
 export function deepStrictEqual<A>(actual: A, expected: A, message?: string, ..._: Array<never>) {
-  assert.deepStrictEqual(actual, expected, message);
+  if (message !== undefined) {
+    assert.deepStrictEqual(actual, expected, message);
+  } else {
+    assert.deepStrictEqual(actual, expected);
+  }
 }
 
 /**
@@ -54,7 +58,11 @@ export function notDeepStrictEqual<A>(
   message?: string,
   ..._: Array<never>
 ) {
-  assert.notDeepStrictEqual(actual, expected, message);
+  if (message !== undefined) {
+    assert.notDeepStrictEqual(actual, expected, message);
+  } else {
+    assert.notDeepStrictEqual(actual, expected);
+  }
 }
 
 /**
@@ -64,7 +72,11 @@ export function notDeepStrictEqual<A>(
  * @since 4.0.0
  */
 export function strictEqual<A>(actual: A, expected: A, message?: string, ..._: Array<never>) {
-  assert.strictEqual(actual, expected, message);
+  if (message !== undefined) {
+    assert.strictEqual(actual, expected, message);
+  } else {
+    assert.strictEqual(actual, expected);
+  }
 }
 
 /**
@@ -168,7 +180,6 @@ export function throws(
 ) {
   try {
     thunk();
-    fail("Expected to throw an error");
   } catch (e) {
     if (error !== undefined) {
       if (Predicate.isFunction(error)) {
@@ -179,7 +190,9 @@ export function throws(
         throw e;
       }
     }
+    return;
   }
+  fail("Expected to throw an error");
 }
 
 /**
@@ -195,7 +208,6 @@ export async function throwsAsync(
 ) {
   try {
     await thunk();
-    fail("Expected to throw an error");
   } catch (e) {
     if (error !== undefined) {
       if (Predicate.isFunction(error)) {
@@ -204,7 +216,9 @@ export async function throwsAsync(
         deepStrictEqual(e, error);
       }
     }
+    return;
   }
+  fail("Expected to throw an error");
 }
 
 // ----------------------------

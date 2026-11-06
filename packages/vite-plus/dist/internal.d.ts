@@ -1,1 +1,1 @@
-export * from '@voidzero-dev/vite-plus-core/internal';
+export * from 'vite/internal';

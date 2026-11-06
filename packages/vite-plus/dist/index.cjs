@@ -1,6 +1,6 @@
-const require_define_config = require("./define-config-CrA3lZhQ.cjs");
+const require_define_config = require("./define-config-DN3Lf_48.cjs");
 //#region src/index.cts
-const vite = require("@voidzero-dev/vite-plus-core");
+const vite = require("vite");
 const { configDefaults, coverageConfigDefaults, defaultBrowserPort, defaultExclude, defaultInclude } = require("vitest/config");
 const { defineConfig, defineProject, lazyPlugins } = (require_define_config.init_define_config(), require_define_config.__toCommonJS(require_define_config.define_config_exports));
 module.exports = {

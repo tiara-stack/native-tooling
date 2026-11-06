@@ -1,189 +1,118 @@
-import { f as promptGitHooks, u as defaultInteractive } from "../tsconfig-fvpxgUq2.js";
-import { a as printHeader, r as log } from "../terminal-uTv0ZaMr.js";
-import { t as lib_default } from "../lib-L3DWSRQp.js";
-import { o as updateExistingAgentInstructions, v as ensurePreCommitHook, x as hasStagedConfigInViteConfig } from "../agent-D7O7mSeO.js";
-import { t as renderCliDoc } from "../help-YP84FSEz.js";
-import { join } from "node:path";
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
-import { spawnSync } from "node:child_process";
-//#region src/config/hooks.ts
-const HOOKS = [
-	"pre-commit",
-	"pre-merge-commit",
-	"prepare-commit-msg",
-	"commit-msg",
-	"post-commit",
-	"applypatch-msg",
-	"pre-applypatch",
-	"post-applypatch",
-	"pre-rebase",
-	"post-rewrite",
-	"post-checkout",
-	"post-merge",
-	"pre-push",
-	"pre-auto-gc"
-];
-function nestedDirname(depth) {
-	let expr = "\"$0\"";
-	for (let i = 0; i < depth; i++) expr = `"$(dirname ${expr})"`;
-	return expr;
+import { i as log, n as errorMsg } from "../terminal-MKGAuy-p.js";
+import { i as promptGitHooks, n as defaultInteractive } from "../prompts-DIFlcnEQ.js";
+import { t as require_dist } from "../dist-bEVYPg-3.js";
+import { o as updateExistingAgentInstructions } from "../agent-DWTzWYW1.js";
+import { a as install, c as resolveHooksLocation, o as isGitHooksEnvDisabled, s as isHooksUserDisabled } from "../hooks-C-4gykWR.js";
+import { t as unwrapCliParseOutcome } from "../cli-parse-DHE8NrBU.js";
+import path, { join, relative } from "node:path";
+import { parseConfigArgs } from "../../binding/index.js";
+import fs, { existsSync } from "node:fs";
+//#region src/utils/legacy-vitest-alias.ts
+var import_dist = require_dist();
+const LEGACY_VITEST_ALIAS = "npm:@voidzero-dev/vite-plus-test";
+function containsLegacyVitestAlias(value, visited = /* @__PURE__ */ new Set()) {
+	if (typeof value === "string") return value === LEGACY_VITEST_ALIAS || value.startsWith(`${LEGACY_VITEST_ALIAS}@`);
+	if (value === null || typeof value !== "object" || visited.has(value)) return false;
+	visited.add(value);
+	return Object.values(value).some((entry) => containsLegacyVitestAlias(entry, visited));
 }
-function hookScript(dir) {
-	return `#!/usr/bin/env sh
-{ [ "$HUSKY" = "2" ] || [ "$VITE_GIT_HOOKS" = "2" ]; } && set -x
-n=$(basename "$0")
-s=$(dirname "$(dirname "$0")")/$n
-
-[ ! -f "$s" ] && exit 0
-
-i="\${XDG_CONFIG_HOME:-$HOME/.config}/vite-plus/hooks-init.sh"
-[ ! -f "$i" ] && i="\${XDG_CONFIG_HOME:-$HOME/.config}/husky/init.sh"
-[ -f "$i" ] && . "$i"
-
-{ [ "\${HUSKY-}" = "0" ] || [ "\${VITE_GIT_HOOKS-}" = "0" ]; } && exit 0
-
-d=${nestedDirname(dir.split("/").filter((s) => s !== "" && s !== ".").length + 2)}
-__vp_shell=/bin/sh
-[ -x "$__vp_shell" ] || __vp_shell=$(command -v sh)
-
-if [ -n "\${VP_HOME-}" ]; then
-  __vp_bin="$VP_HOME/bin"
-elif [ -n "\${HOME-}" ]; then
-  __vp_bin="$HOME/.vite-plus/bin"
-else
-  __vp_bin=""
-fi
-[ -n "$__vp_bin" ] && [ -d "$__vp_bin" ] && export PATH="$PATH:$__vp_bin"
-
-export PATH="$d/node_modules/.bin:$PATH"
-"$__vp_shell" -e "$s" "$@"
-c=$?
-
-[ $c != 0 ] && echo "VITE+ - $n script failed (code $c)"
-[ $c = 127 ] && echo "VITE+ - command not found in PATH=$PATH"
-exit $c`;
+function asRecord(value) {
+	return value !== null && typeof value === "object" && !Array.isArray(value) ? value : void 0;
 }
-function install(dir = ".vite-hooks") {
-	if (process.env.HUSKY === "0" || process.env.VITE_GIT_HOOKS === "0") return {
-		message: "skip install (git hooks disabled)",
-		isError: false
-	};
-	if (dir.includes("..")) return {
-		message: ".. not allowed",
-		isError: false
-	};
-	const prefixResult = spawnSync("git", ["rev-parse", "--show-prefix"]);
-	if (prefixResult.status == null) return {
-		message: "git command not found",
-		isError: true
-	};
-	if (prefixResult.status !== 0) return {
-		message: ".git can't be found",
-		isError: false
-	};
-	const internal = (x = "") => join(dir, "_", x);
-	const rel = prefixResult.stdout.toString().trim().replace(/\/$/, "");
-	const target = rel ? `${rel}/${dir}/_` : `${dir}/_`;
-	const checkResult = spawnSync("git", [
-		"config",
-		"--local",
-		"core.hooksPath"
-	]);
-	const existingHooksPath = checkResult.status === 0 ? checkResult.stdout?.toString().trim() : "";
-	if (existingHooksPath && existingHooksPath !== target && existingHooksPath !== ".husky" && !existingHooksPath.startsWith(".husky/")) return {
-		message: `core.hooksPath is already set to "${existingHooksPath}", skipping`,
-		isError: false
-	};
-	const { status, stderr } = spawnSync("git", [
-		"config",
-		"core.hooksPath",
-		target
-	]);
-	if (status == null) return {
-		message: "git command not found",
-		isError: true
-	};
-	if (status) return {
-		message: "" + stderr,
-		isError: true
-	};
-	rmSync(internal("husky.sh"), { force: true });
-	mkdirSync(internal(), { recursive: true });
-	writeFileSync(internal(".gitignore"), "*");
-	writeFileSync(internal("h"), hookScript(dir), { mode: 493 });
-	for (const hook of HOOKS) writeFileSync(internal(hook), `#!/usr/bin/env sh\n. "$(dirname "$0")/h"`, { mode: 493 });
-	return {
-		message: "",
-		isError: false
-	};
+function containsAliasInFields(config, fields) {
+	const record = asRecord(config);
+	return fields.some((field) => containsLegacyVitestAlias(record?.[field]));
+}
+function containsPackageAlias(config) {
+	return containsAliasInFields(config, [
+		"dependencies",
+		"devDependencies",
+		"optionalDependencies",
+		"peerDependencies",
+		"overrides",
+		"resolutions",
+		"catalog",
+		"catalogs"
+	]) || containsAliasInFields(config?.pnpm, ["overrides"]) || containsAliasInFields(config?.workspaces, ["catalog", "catalogs"]);
+}
+function readConfigFile(filePath) {
+	try {
+		const source = fs.readFileSync(filePath, "utf8");
+		return asRecord(path.basename(filePath) === "package.json" ? JSON.parse(source) : (0, import_dist.parse)(source));
+	} catch {
+		return;
+	}
+}
+/**
+* Find a package-manager setting that still aliases Vitest to the deleted
+* `@voidzero-dev/vite-plus-test` wrapper. Check the nearest package and its
+* workspace root, without inspecting unrelated ancestor package settings.
+*/
+function findLegacyVitestAliasConfig(startDir) {
+	let currentDir = path.resolve(startDir);
+	let foundPackage = false;
+	while (true) {
+		const packagePath = path.join(currentDir, "package.json");
+		const pkg = readConfigFile(packagePath);
+		const isNearestPackage = !foundPackage && fs.existsSync(packagePath);
+		if (isNearestPackage) foundPackage = true;
+		const workspacePath = path.join(currentDir, "pnpm-workspace.yaml");
+		const isWorkspaceRoot = fs.existsSync(workspacePath) || pkg !== void 0 && Object.hasOwn(pkg, "workspaces");
+		if ((isNearestPackage || isWorkspaceRoot) && containsPackageAlias(pkg)) return packagePath;
+		if (isWorkspaceRoot) {
+			if (containsAliasInFields(readConfigFile(workspacePath), [
+				"catalog",
+				"catalogs",
+				"overrides"
+			])) return workspacePath;
+			return;
+		}
+		const parentDir = path.dirname(currentDir);
+		if (parentDir === currentDir) return;
+		currentDir = parentDir;
+	}
 }
 //#endregion
 //#region src/config/bin.ts
 async function main() {
-	const args = lib_default(process.argv.slice(3), {
-		boolean: [
-			"help",
-			"hooks",
-			"agent"
-		],
-		string: ["hooks-dir"],
-		alias: { h: "help" }
-	});
-	if (args.help) {
-		const helpMessage = renderCliDoc({
-			usage: "vp config [OPTIONS]",
-			summary: "Configure Vite+ for the current project (hooks + agent integration).",
-			documentationUrl: "https://viteplus.dev/guide/commit-hooks",
-			sections: [{
-				title: "Options",
-				rows: [
-					{
-						label: "--hooks-dir <path>",
-						description: "Custom hooks directory (default: .vite-hooks)"
-					},
-					{
-						label: "--no-hooks",
-						description: "Skip hook installation"
-					},
-					{
-						label: "--no-agent",
-						description: "Skip updating coding agent instructions"
-					},
-					{
-						label: "-h, --help",
-						description: "Show this help message"
-					}
-				]
-			}, {
-				title: "Environment",
-				rows: [{
-					label: "VITE_GIT_HOOKS=0",
-					description: "Skip hook installation"
-				}]
-			}]
-		});
-		printHeader();
-		log(helpMessage);
-		return;
-	}
-	const dir = args["hooks-dir"];
+	const args = unwrapCliParseOutcome(parseConfigArgs(process.argv.slice(3)));
+	const dir = args.hooksDir;
 	const skipHooks = args.hooks === false;
 	const skipAgent = args.agent === false;
 	const interactive = defaultInteractive();
 	const lifecycleEvent = process.env.npm_lifecycle_event;
 	const isLifecycleScript = lifecycleEvent === "prepare" || lifecycleEvent === "postinstall";
 	const root = process.cwd();
-	const hooksDir = dir ?? ".vite-hooks";
-	const isFirstHooksRun = !existsSync(join(root, hooksDir, "_", "pre-commit"));
-	let shouldSetupHooks = !skipHooks;
-	if (shouldSetupHooks && interactive && isFirstHooksRun && !dir && !isLifecycleScript && !hasStagedConfigInViteConfig(root)) shouldSetupHooks = await promptGitHooks({ interactive });
-	if (shouldSetupHooks) {
-		const { message, isError } = install(dir);
-		if (message) {
-			log(message);
-			if (isError) process.exit(1);
+	const staleVitestAliasConfig = findLegacyVitestAliasConfig(root);
+	if (staleVitestAliasConfig) {
+		const relativeConfigPath = relative(root, staleVitestAliasConfig);
+		errorMsg(`Found a stale Vitest alias in ${relativeConfigPath} that points to the removed \`@voidzero-dev/vite-plus-test\` package. Run \`vp migrate\` to update the project before installing dependencies.`);
+		process.exit(1);
+	}
+	if (!skipHooks && isGitHooksEnvDisabled()) log("skip install (git hooks disabled)");
+	else if (!skipHooks) {
+		const location = resolveHooksLocation(dir);
+		if ("isError" in location) {
+			if (location.message) log(location.message);
+			if (location.isError) process.exit(1);
+		} else {
+			const isFirstHooksRun = !existsSync(join(location.baseDir, location.dir, "_", "pre-commit"));
+			let shouldSetupHooks = true;
+			if (isHooksUserDisabled()) {
+				log("skip install (hooks disabled; run `vp hooks enable` to re-enable)");
+				shouldSetupHooks = false;
+			} else if (interactive && isFirstHooksRun && !dir && !isLifecycleScript) shouldSetupHooks = await promptGitHooks({
+				interactive,
+				message: "Install the Git hook dispatcher for this project?"
+			});
+			if (shouldSetupHooks) {
+				const { message, isError } = install(dir);
+				if (message) {
+					log(message);
+					if (isError) process.exit(1);
+				}
+			}
 		}
-		if (!message) ensurePreCommitHook(root, hooksDir);
 	}
 	if (!skipAgent) updateExistingAgentInstructions(root);
 }

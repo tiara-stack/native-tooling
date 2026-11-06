@@ -1,1 +1,1 @@
-export type * from '@voidzero-dev/vite-plus-core/types/metadata.d.ts';
+export type * from 'vite/types/metadata.d.ts';

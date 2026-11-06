@@ -1,6 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { findLatestStableVersionForMajor } from './upgrade-deps-utils.ts';
+
 const ROOT = process.cwd();
 const META_DIR = process.env.UPGRADE_DEPS_META_DIR;
 
@@ -31,6 +33,10 @@ type NpmLatestResponse = {
   dependencies?: Record<string, string>;
 };
 
+type NpmPackumentResponse = {
+  versions?: Record<string, unknown>;
+};
+
 type UpstreamVersions = {
   rolldown: {
     hash: string;
@@ -44,6 +50,7 @@ type PnpmWorkspaceVersions = {
   vitest: string;
   tsdown: string;
   lightningcss: string;
+  lintStaged: string;
   oxcNodeCli: string;
   oxcNodeCore: string;
   oxfmt: string;
@@ -63,12 +70,10 @@ type PnpmWorkspaceEntry = {
   newVersion: string;
 };
 
-type PackageJson = {
-  devDependencies?: Record<string, string>;
-  peerDependencies?: Record<string, string>;
-};
-
 const STABLE_SEMVER_TAG_RE = /^v?\d+\.\d+\.\d+$/;
+// Vitest major upgrades can change the bundled API, export shims, and CLI
+// behavior. Advance this only after Vite+ has adapted to the new major.
+const SUPPORTED_VITEST_MAJOR = 5;
 
 const isFullSha = (s: string): boolean => /^[0-9a-f]{40}$/.test(s);
 
@@ -151,6 +156,23 @@ async function getLatestNpmVersion(packageName: string): Promise<string> {
   return data.version;
 }
 
+async function getLatestNpmVersionForMajor(packageName: string, major: number): Promise<string> {
+  const res = await fetch(`https://registry.npmjs.org/${packageName}`, {
+    headers: { accept: 'application/vnd.npm.install-v1+json' },
+  });
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch npm metadata for ${packageName}: ${res.status} ${res.statusText}`,
+    );
+  }
+  const data = (await res.json()) as NpmPackumentResponse;
+  const version = findLatestStableVersionForMajor(Object.keys(data.versions ?? {}), major);
+  if (!version) {
+    throw new Error(`No stable ${major}.x version found for ${packageName}`);
+  }
+  return version;
+}
+
 // Read a dependency range from the latest published version of `packageName`,
 // e.g. the `lightningcss` range that the bundled `@tsdown/css` depends on.
 async function getNpmDependencyRange(packageName: string, dependencyName: string): Promise<string> {
@@ -190,18 +212,15 @@ async function updatePnpmWorkspace(versions: PnpmWorkspaceVersions): Promise<voi
   let content = fs.readFileSync(filePath, 'utf8');
 
   // oxlint's trailing \n in the pattern disambiguates from oxlint-tsgolint.
-  // All @vitest/* catalog entries (browser + core direct deps) must stay pinned
+  // Official @vitest/* catalog entries (browser + core direct deps) stay pinned
   // to the same exact version as `vitest` itself, otherwise the catalog drifts
   // from VITEST_VERSION.
   const vitestExactVersionPackages = [
     '@vitest/browser',
     '@vitest/browser-playwright',
     '@vitest/browser-preview',
-    '@vitest/browser-webdriverio',
-    '@vitest/expect',
     '@vitest/mocker',
     '@vitest/pretty-format',
-    '@vitest/runner',
     '@vitest/snapshot',
     '@vitest/spy',
     '@vitest/utils',
@@ -256,6 +275,12 @@ async function updatePnpmWorkspace(versions: PnpmWorkspaceVersions): Promise<voi
       pattern: /\n {2}lightningcss: ([^\n]+)\n/,
       replacement: `\n  lightningcss: ${versions.lightningcss}\n`,
       newVersion: versions.lightningcss,
+    },
+    {
+      name: 'lint-staged',
+      pattern: /\n {2}lint-staged: \^([\d.]+(?:-[\w.]+)?)\n/,
+      replacement: `\n  lint-staged: ^${versions.lintStaged}\n`,
+      newVersion: versions.lintStaged,
     },
     {
       name: '@oxc-node/cli',
@@ -363,48 +388,6 @@ async function updateVitestVersionConstant(vitestVersion: string): Promise<void>
   console.log('Updated packages/cli/src/utils/constants.ts');
 }
 
-// ============ Update .github/workflows/test-vp-create.yml ============
-// The `vp create` smoke-test workflow pins every vitest-family package via the
-// `VP_OVERRIDE_PACKAGES` env var so that template installs use the bundled
-// version. Daily upstream bumps must rewrite those pins so the workflow does
-// not drift behind the rest of the repo.
-async function updateTestVpCreateWorkflow(vitestVersion: string): Promise<void> {
-  const filePath = path.join(ROOT, '.github/workflows/test-vp-create.yml');
-  const content = fs.readFileSync(filePath, 'utf8');
-  const vitestKeys = [
-    'vitest',
-    '@vitest/expect',
-    '@vitest/runner',
-    '@vitest/snapshot',
-    '@vitest/spy',
-    '@vitest/utils',
-    '@vitest/mocker',
-    '@vitest/pretty-format',
-    '@vitest/coverage-v8',
-    '@vitest/coverage-istanbul',
-  ];
-  let updated = content;
-  let oldVersion: string | undefined;
-  for (const key of vitestKeys) {
-    const pattern = new RegExp(`"${key.replaceAll('/', '\\/')}":"([\\d.]+(?:-[\\w.]+)?)"`);
-    let matched = false;
-    updated = updated.replace(pattern, (_match: string, captured: string) => {
-      matched = true;
-      oldVersion ??= captured;
-      return `"${key}":"${vitestVersion}"`;
-    });
-    if (!matched) {
-      throw new Error(
-        `Failed to match "${key}" in ${filePath} — the pattern ${pattern} is stale, ` +
-          `please update it in .github/scripts/upgrade-deps.ts`,
-      );
-    }
-  }
-  fs.writeFileSync(filePath, updated);
-  recordChange('test-vp-create workflow', oldVersion ?? null, vitestVersion);
-  console.log('Updated .github/workflows/test-vp-create.yml');
-}
-
 // ============ Update README.md manual-migration vitest pins ============
 // The manual-migration guide pins `vitest` to an exact version in three places —
 // the npm/Bun `overrides` block, the pnpm-workspace `overrides` block, and the
@@ -463,24 +446,26 @@ async function updateReadmeVitestPins(vitestVersion: string): Promise<void> {
   recordChange('README vitest pins', oldVersion ?? null, vitestVersion);
 }
 
-// ============ Update packages/core/package.json ============
-async function updateCorePackage(devtoolsVersion: string): Promise<void> {
-  const filePath = path.join(ROOT, 'packages/core/package.json');
-  const pkg: PackageJson = readJsonFile(filePath);
-
-  const devDependencies = pkg.devDependencies;
-  const currentDevtools = devDependencies?.['@vitejs/devtools'];
-  if (!currentDevtools) {
-    return;
-  }
-  devDependencies['@vitejs/devtools'] = `^${devtoolsVersion}`;
-  recordChange('@vitejs/devtools', currentDevtools.replace(/^[\^~]/, ''), devtoolsVersion);
-
-  fs.writeFileSync(filePath, JSON.stringify(pkg, null, 2) + '\n');
-  console.log('Updated packages/core/package.json');
-}
-
 // ============ Write metadata files for PR description ============
+const formatVersion = (v: Change): string => {
+  if (v.tag) {
+    return `${v.tag} (${v.new.slice(0, 7)})`;
+  }
+  if (isFullSha(v.new)) {
+    return v.new.slice(0, 7);
+  }
+  return v.new;
+};
+const formatOld = (v: Change): string => {
+  if (!v.old) {
+    return '(unset)';
+  }
+  if (isFullSha(v.old)) {
+    return v.old.slice(0, 7);
+  }
+  return v.old;
+};
+
 function writeMetaFiles(): void {
   if (!META_DIR) {
     return;
@@ -496,25 +481,6 @@ function writeMetaFiles(): void {
 
   const changed = [...changes.entries()].filter(([, v]) => v.old !== v.new);
   const unchanged = [...changes.entries()].filter(([, v]) => v.old === v.new);
-
-  const formatVersion = (v: Change): string => {
-    if (v.tag) {
-      return `${v.tag} (${v.new.slice(0, 7)})`;
-    }
-    if (isFullSha(v.new)) {
-      return v.new.slice(0, 7);
-    }
-    return v.new;
-  };
-  const formatOld = (v: Change): string => {
-    if (!v.old) {
-      return '(unset)';
-    }
-    if (isFullSha(v.old)) {
-      return v.old.slice(0, 7);
-    }
-    return v.old;
-  };
 
   const commitLines = ['feat(deps): upgrade upstream dependencies', ''];
   if (changed.length) {
@@ -562,7 +528,7 @@ const [
   vitestVersion,
   tsdownVersion,
   lightningcssVersion,
-  devtoolsVersion,
+  lintStagedVersion,
   oxcNodeCliVersion,
   oxcNodeCoreVersion,
   oxfmtVersion,
@@ -574,11 +540,11 @@ const [
   oxcParserVersion,
   oxcTransformVersion,
 ] = await Promise.all([
-  getLatestNpmVersion('vitest'),
+  getLatestNpmVersionForMajor('vitest', SUPPORTED_VITEST_MAJOR),
   getLatestNpmVersion('tsdown'),
   // Mirror exactly what the bundled @tsdown/css depends on.
   getNpmDependencyRange('@tsdown/css', 'lightningcss'),
-  getLatestNpmVersion('@vitejs/devtools'),
+  getLatestNpmVersion('lint-staged'),
   getLatestNpmVersion('@oxc-node/cli'),
   getLatestNpmVersion('@oxc-node/core'),
   getLatestNpmVersion('oxfmt'),
@@ -594,7 +560,7 @@ const [
 console.log(`vitest: ${vitestVersion}`);
 console.log(`tsdown: ${tsdownVersion}`);
 console.log(`lightningcss (from @tsdown/css): ${lightningcssVersion}`);
-console.log(`@vitejs/devtools: ${devtoolsVersion}`);
+console.log(`lint-staged: ${lintStagedVersion}`);
 console.log(`@oxc-node/cli: ${oxcNodeCliVersion}`);
 console.log(`@oxc-node/core: ${oxcNodeCoreVersion}`);
 console.log(`oxfmt: ${oxfmtVersion}`);
@@ -611,6 +577,7 @@ await updatePnpmWorkspace({
   vitest: vitestVersion,
   tsdown: tsdownVersion,
   lightningcss: lightningcssVersion,
+  lintStaged: lintStagedVersion,
   oxcNodeCli: oxcNodeCliVersion,
   oxcNodeCore: oxcNodeCoreVersion,
   oxfmt: oxfmtVersion,
@@ -623,10 +590,7 @@ await updatePnpmWorkspace({
   oxcTransform: oxcTransformVersion,
 });
 await updateVitestVersionConstant(vitestVersion);
-await updateTestVpCreateWorkflow(vitestVersion);
 await updateReadmeVitestPins(vitestVersion);
-await updateCorePackage(devtoolsVersion);
-
 writeMetaFiles();
 
 console.log('Done!');

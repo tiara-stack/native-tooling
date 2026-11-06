@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 import module from 'node:module';
-import { spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
 
+import { cac } from 'cac';
 import {
   buildWithConfigs,
   resolveUserConfig,
@@ -11,16 +9,18 @@ import {
   enableDebug,
   type InlineConfig,
   type ResolvedConfig,
-} from '@voidzero-dev/vite-plus-core/pack';
-import { cac } from 'cac';
+  type TsdownHandle,
+} from 'vite/pack';
 
 import { resolveViteConfig } from './resolve-vite-config.ts';
+import { resolveTiaraNative } from './utils/tiara-native.ts';
 
 // Matches a `.d.ts` / `.d.mts` / `.d.cts` importer.
 const RE_DTS = /\.d\.[cm]?ts$/;
 // Bare specifier for postcss / lightningcss / vitest / `@vitest/*` /
 // vite-plus (root or any subpath).
-const EXTERNAL_DTS_PKG_RE = /^(?:postcss|lightningcss|vitest|@vitest\/[^/]+|vite-plus)(?:\/|$)/;
+const EXTERNAL_DTS_PKG_RE =
+  /^(?:postcss|lightningcss|vitest|@vitest\/[^/]+|(?:@tiara-stack\/)?vite-plus)(?:\/|$)/;
 
 /**
  * Rolldown plugin that keeps `postcss` / `lightningcss` / `vitest` / `@vitest/*`
@@ -80,72 +80,6 @@ cli.help();
 
 // support `TSDOWN_` for migration compatibility
 const DEFAULT_ENV_PREFIXES = ['VITE_PACK_', 'TSDOWN_'];
-const require = module.createRequire(import.meta.url);
-
-function resolveTiaraTsgoPath(): string {
-  const executableName = process.platform === 'win32' ? 'tsgo.exe' : 'tsgo';
-  const candidates = [
-    process.env.TIARA_TSGO_EFFECT_PATH,
-    process.env.TIARA_TSGO_PATH,
-    resolvePackagedTsgoPath(executableName),
-    findUp(process.cwd(), join('native', 'typescript-go', 'built', 'local', executableName)),
-  ].filter((path): path is string => Boolean(path));
-
-  const binaryPath = candidates.find((path) => existsSync(path));
-  if (!binaryPath) {
-    throw new Error(
-      [
-        'Unable to locate tsgo-effect for dts generation.',
-        'Install @tiara-stack/tsgo-effect with a platform binary or build native/typescript-go/built/local/tsgo.',
-        'Set TIARA_TSGO_EFFECT_PATH to override the binary path.',
-      ].join(' '),
-    );
-  }
-
-  return binaryPath;
-}
-
-function resolvePackagedTsgoPath(_executableName: string): string | undefined {
-  try {
-    const binPath = require.resolve('@tiara-stack/tsgo-effect/bin/tsgo-effect');
-    const result = spawnSync(process.execPath, [binPath, '--print-path'], {
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    });
-    const binaryPath = result.status === 0 ? result.stdout.trim() : undefined;
-    return binaryPath && existsSync(binaryPath) ? binaryPath : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-function withTiaraTsgoDtsConfig(dts: InlineConfig['dts']): InlineConfig['dts'] {
-  if (!dts || typeof dts !== 'object' || dts.tsgo !== true) {
-    return dts;
-  }
-
-  return {
-    ...dts,
-    tsgo: {
-      path: resolveTiaraTsgoPath(),
-    },
-  };
-}
-
-function findUp(start: string, relativePath: string): string | undefined {
-  let directory = resolve(start);
-  while (true) {
-    const candidate = join(directory, relativePath);
-    if (existsSync(candidate)) {
-      return candidate;
-    }
-    const parent = dirname(directory);
-    if (parent === directory) {
-      return undefined;
-    }
-    directory = parent;
-  }
-}
 
 cli
   .command('[...files]', 'Bundle files', {
@@ -197,12 +131,14 @@ cli
   })
   .option('--on-success <command>', 'Command to run on success')
   .option('--copy <dir>', 'Copy files to output dir')
-  .option('--public-dir <dir>', 'Alias for --copy, deprecated')
+  // NOTE: `--public-dir` (deprecated alias for `--copy`) was removed from the
+  // tsdown CLI in v0.23.0, so it is no longer forwarded.
   .option('--tsconfig <tsconfig>', 'Set tsconfig path')
   .option('--unbundle', 'Unbundle mode')
   .option('--root <dir>', 'Root directory of input files')
   .option('--exe', 'Bundle as executable')
   .option('-W, --workspace [dir]', 'Enable workspace mode')
+  .option('--concurrency <count>', 'Maximum number of Rolldown builds to run in parallel')
   .option('-F, --filter <pattern>', 'Filter configs (cwd or name), e.g. /pkg-name$/ or pkg-name')
   .option('--exports', 'Generate export-related metadata for package.json (experimental)')
   .action(async (input: string[], flags: InlineConfig) => {
@@ -213,33 +149,46 @@ cli
       flags.envPrefix = DEFAULT_ENV_PREFIXES;
     }
 
-    async function runBuild() {
-      const viteConfig = await resolveViteConfig(process.cwd(), {
-        traverseUp: flags.config !== false,
-      });
+    async function runBuild(): Promise<TsdownHandle> {
+      const viteConfig =
+        flags.config === false
+          ? undefined
+          : await resolveViteConfig(process.cwd(), { traverseUp: true });
 
       const configDeps = new Set<string>();
-      if (viteConfig.configFile) {
+      if (viteConfig?.configFile) {
         configDeps.add(viteConfig.configFile);
       }
 
       const configs: ResolvedConfig[] = [];
-      const packConfigs = Array.isArray(viteConfig.pack)
+      const packConfigs = Array.isArray(viteConfig?.pack)
         ? viteConfig.pack
-        : [viteConfig.pack ?? {}];
+        : [viteConfig?.pack ?? {}];
       for (const packConfig of packConfigs) {
         const merged = { ...packConfig, ...flags };
-        merged.dts = withTiaraTsgoDtsConfig(merged.dts);
+        if (
+          merged.dts &&
+          typeof merged.dts === 'object' &&
+          (merged.dts.generator === 'tsgo' || merged.dts.tsgo === true)
+        ) {
+          const tsgo = typeof merged.dts.tsgo === 'object' ? merged.dts.tsgo : {};
+          merged.dts = {
+            ...merged.dts,
+            generator: 'tsgo',
+            tsgo: { ...tsgo, path: tsgo.path ?? resolveTiaraNative('tsgo') },
+          };
+        }
         // Keep postcss/lightningcss external to the dts bundle (see plugin doc)
         if (merged.dts) {
           const existingPlugins = Array.isArray(merged.plugins) ? merged.plugins : [];
           merged.plugins = [...existingPlugins, externalDtsTypeOnlyPlugin()];
         }
         const resolvedConfig = await resolveUserConfig(merged, flags, configDeps);
+        resolvedConfig.forEach((config) => config.configDeps.forEach((dep) => configDeps.add(dep)));
         configs.push(...resolvedConfig);
       }
 
-      await buildWithConfigs(configs, configDeps, runBuild);
+      return buildWithConfigs(configs, configDeps, runBuild);
     }
 
     await runBuild();

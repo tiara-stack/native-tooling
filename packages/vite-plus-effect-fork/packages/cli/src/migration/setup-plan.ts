@@ -8,15 +8,23 @@ import {
   detectExistingAgentTargetPaths,
   selectAgentTargetPaths,
 } from '../utils/agent.ts';
-import { detectEditorConflicts, type EditorId, selectEditor } from '../utils/editor.ts';
+import {
+  detectEditorConflicts,
+  type EditorId,
+  isJsonLikeFile,
+  selectEditor,
+} from '../utils/editor.ts';
 import { cancelAndExit, promptGitHooks } from '../utils/prompts.ts';
 import {
   confirmEslintMigration,
+  confirmTsupMigration,
   detectEslintProject,
   detectIncompatibleEslintIntegration,
+  detectTsupProject,
   preflightGitHooksSetup,
   warnIncompatibleEslintIntegration,
   warnLegacyEslintConfig,
+  warnMissingTsupConfig,
   warnPackageLevelEslint,
 } from './migrator.ts';
 import type { MigrationOptions } from './options.ts';
@@ -35,10 +43,11 @@ async function collectGitHooksDecision(
   rootDir: string,
   packageManager: PackageManager | undefined,
   options: MigrationOptions,
+  packages: readonly WorkspacePackage[] = [],
 ): Promise<boolean> {
   let shouldSetupHooks = await promptGitHooks(options);
   if (shouldSetupHooks) {
-    const reason = preflightGitHooksSetup(rootDir, packageManager);
+    const reason = preflightGitHooksSetup(rootDir, packageManager, packages);
     if (reason) {
       prompts.log.warn(`⚠ ${reason}`);
       shouldSetupHooks = false;
@@ -141,7 +150,11 @@ async function collectEditorConfigPlan(
       }
       editorConflictDecisions.set(conflict.fileName, action);
     } else {
-      editorConflictDecisions.set(conflict.fileName, 'merge');
+      // Non-JSON files (e.g. JetBrains XML) can't be merged, so only skip them here.
+      editorConflictDecisions.set(
+        conflict.fileName,
+        isJsonLikeFile(conflict.fileName) ? 'merge' : 'skip',
+      );
     }
   }
 
@@ -175,6 +188,25 @@ async function collectEslintMigrationDecision(
   return { migrateEslint, eslintConfigFile: eslintProject.configFile };
 }
 
+// Collected separately from collectMigrationSetupPlan so callers can prompt
+// for it after the Prettier -> Oxfmt decision (tsup/tsdown is checked last
+// among the tool migrations).
+export async function collectTsupMigrationDecision(
+  rootDir: string,
+  options: MigrationOptions,
+  packages?: WorkspacePackage[],
+): Promise<{ migrateTsup: boolean; tsupConfigFile?: string }> {
+  const tsupProject = detectTsupProject(rootDir, packages);
+  let migrateTsup = false;
+  if (tsupProject.hasDependency && tsupProject.hasConfig) {
+    migrateTsup = await confirmTsupMigration(options.interactive);
+  } else if (tsupProject.hasDependency) {
+    warnMissingTsupConfig();
+  }
+
+  return { migrateTsup, tsupConfigFile: tsupProject.configFile };
+}
+
 export async function collectMigrationSetupPlan(
   rootDir: string,
   packageManager: PackageManager | undefined,
@@ -182,7 +214,12 @@ export async function collectMigrationSetupPlan(
   packages?: WorkspacePackage[],
   includeEslint = true,
 ): Promise<MigrationSetupPlan> {
-  const shouldSetupHooks = await collectGitHooksDecision(rootDir, packageManager, options);
+  const shouldSetupHooks = await collectGitHooksDecision(
+    rootDir,
+    packageManager,
+    options,
+    packages,
+  );
   const agentPlan = await collectAgentInstructionPlan(rootDir, options);
   const editorPlan = await collectEditorConfigPlan(rootDir, options);
   const eslintPlan = includeEslint

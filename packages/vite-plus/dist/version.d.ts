@@ -2,6 +2,5 @@
 /**
  * Print version information
  */
-declare function printVersion(cwd: string): Promise<void>;
+export declare function printVersion(cwd: string): Promise<void>;
 //#endregion
-export { printVersion };

@@ -1,1 +1,1 @@
-export * from '@voidzero-dev/vite-plus-core/dist/client/client.mjs';
+export * from 'vite/dist/client/client.mjs';

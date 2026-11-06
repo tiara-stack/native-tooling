@@ -1,33 +1,25 @@
-import { r as __toESM, t as __commonJSMin } from "../rolldown-runtime-C7HZzL1F.js";
-import { s as VITE_PLUS_NAME } from "../constants-NeTOxrzV.js";
-import { A as intro, B as runCommandSilently, C as resolveApproveBuildTargets, E as PackageManager, F as spinner, I as text, L as require_picocolors, M as multiselect, O as cancel, P as select, R as isCancel, S as detectGatedBuilds, T as DependencyType, V as require_cross_spawn, d as downloadPackageManager$1, f as promptGitHooks, g as selectPackageManager, h as runViteInstall, j as log, k as confirm, m as runViteFmt, p as resolveGitInit, u as defaultInteractive, x as approveBuilds, z as runCommand$1 } from "../tsconfig-fvpxgUq2.js";
-import { a as printHeader, i as muted, o as success, r as log$1, t as accent } from "../terminal-uTv0ZaMr.js";
-import { i as readJsonFile, n as editJsonFile } from "../json-DiRs8ceZ.js";
-import { a as resolveViteConfig, n as findWorkspaceRoot, r as hasViteConfig, t as findViteConfig } from "../resolve-vite-config-r91rIaPs.js";
-import { t as lib_default } from "../lib-L3DWSRQp.js";
-import { o as fetchNpmResource, s as getNpmRegistry, t as checkNpmPackageExists } from "../package-CU2g7URl.js";
-import { A as detectWorkspace$1, F as detectEslintProject, M as updatePackageJsonWithDeps, N as updateWorkspaceConfig, R as promptEslintMigration, S as injectCreateDefaultTemplate, X as templatesDir, Y as displayRelative, a as selectAgentTargets, c as writeCopilotSetupWorkflow, d as rewriteStandaloneProject, g as setPackageManager, j as isBingoTemplate, l as rewriteMonorepo, r as detectExistingAgentTargetPaths, s as writeAgentInstructions, t as COPILOT_AGENT_ID, u as rewriteMonorepoProject, y as installGitHooks } from "../agent-D7O7mSeO.js";
-import { a as writeEditorConfigs, c as hasFrameworkShim, f as promptPrettierMigration, i as selectEditors, n as detectExistingEditors, o as addFrameworkShim, s as detectFramework, u as detectPrettierProject } from "../editor-CPzssglc.js";
-import { t as renderCliDoc } from "../help-YP84FSEz.js";
+import { r as __toESM, t as __commonJSMin } from "../rolldown-runtime-CMFfr-1z.js";
+import { t as documentationUrl$1 } from "../documentation-DqcZSthV.js";
+import { t as renderCliDoc } from "../help-BmKpeOP9.js";
+import { a as muted, i as log, o as printHeader, r as formatDuration, s as success, t as accent } from "../terminal-MKGAuy-p.js";
+import { u as VITE_PLUS_NAME } from "../constants-BqJiMVVU.js";
+import { i as readJsonFile, n as editJsonFile } from "../json-C9TY5YT1.js";
+import { o as fetchNpmResource, r as getScopeFromPackageName, s as getNpmRegistry, t as checkNpmPackageExists } from "../package-CTMTkwwC.js";
+import { i as hasViteConfig, o as resolveViteConfig, r as findWorkspaceRoot, t as findViteConfig } from "../resolve-vite-config-CWZ-9h7v.js";
+import { C as multiselect, D as text, E as spinner, O as require_picocolors, S as log$1, T as select, a as resolveGitInit, c as selectPackageManager, d as readYamlFile, h as resolveApproveBuildTargets, i as promptGitHooks, k as isCancel, m as detectGatedBuilds, n as defaultInteractive, o as runViteFmt, p as approveBuilds, r as downloadPackageManager$1, s as runViteInstall, t as cancelAndExit, u as editYamlFile, v as DependencyType, x as intro, y as PackageManager } from "../prompts-DIFlcnEQ.js";
+import { n as require_semver } from "../dist-bEVYPg-3.js";
+import { a as selectAgentTargets, c as writeCopilotSetupWorkflow, d as templatesDir, l as displayRelative, r as detectExistingAgentTargetPaths, s as writeAgentInstructions, t as COPILOT_AGENT_ID } from "../agent-DWTzWYW1.js";
+import { B as addFrameworkShim, F as updateWorkspaceConfig, H as hasFrameworkShim, K as promptTsupMigration, L as findGitRoot, M as detectWorkspace$1, N as isBingoTemplate, P as updatePackageJsonWithDeps, R as initGitRepository, V as detectFramework, W as detectTsupProject, Y as detectPrettierProject, Z as promptPrettierMigration, _ as installGitHooks, a as selectEditors, b as injectCreateDefaultTemplate, c as rewriteMonorepoProject, et as detectEslintProject, h as setPackageManager, j as supportsCatalog, l as rewriteStandaloneProject, n as detectExistingEditors, o as writeEditorConfigs, rt as promptEslintMigration, s as rewriteMonorepo, y as shouldSkipStagedMigrationForHooks } from "../editor-DDjNBHmb.js";
+import { n as runCommandSilently, t as runCommand$1 } from "../command-CZvBUM6J.js";
+import { t as unwrapCliParseOutcome } from "../cli-parse-DHE8NrBU.js";
 import path from "node:path";
-import { runCommand, upsertJsonConfig, vitePlusHeader } from "../../binding/index.js";
-import fs from "node:fs";
+import { getVpDirs, parseCreateArgs, removeConfigKey, runCommand, upsertJsonConfig, vitePlusHeader } from "../../binding/index.js";
 import { styleText } from "node:util";
+import fs from "node:fs";
 import os from "node:os";
-import fsPromises from "node:fs/promises";
 import { createHash, randomUUID } from "node:crypto";
+import fsPromises from "node:fs/promises";
 import assert from "node:assert";
-//#region src/utils/git.ts
-var import_cross_spawn = /* @__PURE__ */ __toESM(require_cross_spawn(), 1);
-async function initGitRepository(cwd) {
-	return (await runCommandSilently({
-		command: "git",
-		args: ["init"],
-		cwd,
-		envs: process.env
-	})).exitCode === 0;
-}
-//#endregion
 //#region src/create/command.ts
 async function runCommandAndDetectProjectDir(options, parentDir) {
 	const cwd = parentDir ? path.join(options.cwd, parentDir) : options.cwd;
@@ -103,6 +95,390 @@ function prependToPathToEnvs(extraPath, envs) {
 	const current = envs[pathKey] ?? "";
 	if (!current.split(delimiter).filter(Boolean).includes(extraPath)) envs[pathKey] = extraPath + (current ? delimiter + current : "");
 	return envs;
+}
+//#endregion
+//#region ../../../../../build-virtual-store/nanotar@0.3.0/node_modules/nanotar/dist/index.mjs
+var import_semver = /* @__PURE__ */ __toESM(require_semver(), 1);
+const tarItemTypeMap = {
+	"0": "file",
+	"1": "hardLink",
+	"2": "symbolicLink",
+	"3": "characterDevice",
+	"4": "blockDevice",
+	"5": "directory",
+	"6": "fifo",
+	"7": "contiguousFile",
+	"g": "globalExtendedHeader",
+	"x": "extendedHeader",
+	"D": "gnuDirectory",
+	"I": "gnuInodeMetadata",
+	"K": "gnuLongLinkName",
+	"L": "gnuLongFileName",
+	"N": "gnuOldLongFileName",
+	"M": "gnuMultiVolume",
+	"S": "gnuSparseFile",
+	"E": "gnuExtendedSparse",
+	"A": "solarisAcl",
+	"V": "solarisVolumeLabel",
+	"X": "solarisOldExtendedHeader"
+};
+function parseTar(data, opts) {
+	const buffer = data.buffer || data;
+	const files = [];
+	let offset = 0;
+	let nextExtendedHeader;
+	let globalExtendedHeader;
+	while (offset < buffer.byteLength - 512) {
+		let name = _readString(buffer, offset, 100);
+		if (name.length === 0) break;
+		if (nextExtendedHeader) {
+			const longName = nextExtendedHeader.path || nextExtendedHeader.linkpath;
+			if (longName) name = longName;
+		}
+		const mode = _readString(buffer, offset + 100, 8).trim();
+		const uid = Number.parseInt(_readString(buffer, offset + 108, 8));
+		const gid = Number.parseInt(_readString(buffer, offset + 116, 8));
+		const size = _readNumber(buffer, offset + 124, 12);
+		const seek = 512 + 512 * Math.trunc(size / 512) + (size % 512 ? 512 : 0);
+		const mtime = _readNumber(buffer, offset + 136, 12);
+		const _type = _readString(buffer, offset + 156, 1) || "0";
+		const type = tarItemTypeMap[_type] || _type;
+		switch (type) {
+			case "extendedHeader":
+			case "globalExtendedHeader": {
+				const headers = _parseExtendedHeaders(new Uint8Array(buffer, offset + 512, size));
+				if (type === "extendedHeader") nextExtendedHeader = headers;
+				else {
+					nextExtendedHeader = void 0;
+					globalExtendedHeader = {
+						...globalExtendedHeader,
+						...headers
+					};
+				}
+				offset += seek;
+				continue;
+			}
+			case "gnuLongFileName":
+			case "gnuOldLongFileName":
+			case "gnuLongLinkName":
+				nextExtendedHeader = { path: _readString(buffer, offset + 512, size) };
+				offset += seek;
+				continue;
+		}
+		const user = _readString(buffer, offset + 265, 32);
+		const group = _readString(buffer, offset + 297, 32);
+		name = _sanitizePath(name);
+		const meta = {
+			name,
+			type,
+			size,
+			attrs: {
+				...globalExtendedHeader,
+				...nextExtendedHeader,
+				mode,
+				uid,
+				gid,
+				mtime,
+				user,
+				group
+			}
+		};
+		nextExtendedHeader = void 0;
+		if (opts?.filter && !opts.filter(meta)) {
+			offset += seek;
+			continue;
+		}
+		if (opts?.metaOnly) {
+			files.push(meta);
+			offset += seek;
+			continue;
+		}
+		const data2 = size === 0 ? void 0 : new Uint8Array(buffer, offset + 512, size);
+		files.push({
+			...meta,
+			data: data2,
+			get text() {
+				return new TextDecoder().decode(this.data);
+			}
+		});
+		offset += seek;
+	}
+	return files;
+}
+async function parseTarGzip(data, opts = {}) {
+	const stream = new ReadableStream({ start(controller) {
+		controller.enqueue(new Uint8Array(data));
+		controller.close();
+	} }).pipeThrough(new DecompressionStream(opts.compression ?? "gzip"));
+	return parseTar(await new Response(stream).arrayBuffer(), opts);
+}
+function _sanitizePath(path) {
+	let normalized = path.replace(/\\/g, "/");
+	normalized = normalized.replace(/^[a-zA-Z]:\//, "");
+	normalized = normalized.replace(/^\/+/, "");
+	const hasLeadingDotSlash = normalized.startsWith("./");
+	const parts = normalized.split("/");
+	const resolved = [];
+	for (const part of parts) if (part === "..") resolved.pop();
+	else if (part !== "." && part !== "") resolved.push(part);
+	let result = resolved.join("/");
+	if (hasLeadingDotSlash && !result.startsWith("./")) result = "./" + result;
+	if (path.endsWith("/") && !result.endsWith("/")) result += "/";
+	return result;
+}
+function _readString(buffer, offset, size) {
+	const view = new Uint8Array(buffer, offset, size);
+	const i = view.indexOf(0);
+	return new TextDecoder().decode(i === -1 ? view : view.slice(0, i));
+}
+function _readNumber(buffer, offset, size) {
+	const view = new Uint8Array(buffer, offset, size);
+	let str = "";
+	for (let i = 0; i < size; i++) str += String.fromCodePoint(view[i]);
+	return Number.parseInt(str, 8);
+}
+function _parseExtendedHeaders(data) {
+	const dataStr = new TextDecoder().decode(data);
+	const headers = {};
+	for (const line of dataStr.split("\n")) {
+		const s = line.split(" ")[1]?.split("=");
+		if (s) headers[s[0]] = s[1];
+	}
+	return headers;
+}
+//#endregion
+//#region src/create/org-tarball.ts
+function getCacheRoot() {
+	return path.join(getVpDirs().cache, "create-org");
+}
+/**
+* Replace characters that are illegal in Windows path segments
+* (`\ / : * ? " < > |` plus the IPv6 bracket pair `[ ]`). The host
+* comes from `new URL(...).host` which can carry a port (`:4873`) or
+* IPv6 literal (`[::1]`); both end up in the cache path otherwise.
+*/
+function sanitizeHostForPath(host) {
+	return host.replaceAll(/[\\/:*?"<>|[\]]/g, "_");
+}
+/**
+* Cache extracted tarballs under `<host>/<scope>/create/<version>` so two
+* repos resolving the same `<scope>@<version>` through different registries
+* (via `.npmrc` scope mappings) don't share a cache slot. The registry
+* guarantees `manifest.tarballUrl` is a valid URL, so any parse failure
+* here is a real bug worth surfacing.
+*
+* Require a strict descendant of `cacheRoot` so sibling staging directories
+* stay inside the cache, even if a caller skips `readOrgManifest` validation.
+*/
+function resolveExtractionDir(cacheRoot, manifest) {
+	const { host } = new URL(manifest.tarballUrl);
+	const resolvedRoot = path.resolve(cacheRoot);
+	const resolvedDir = path.resolve(resolvedRoot, sanitizeHostForPath(host), manifest.scope, "create", manifest.version);
+	if (!resolvedDir.startsWith(`${resolvedRoot}${path.sep}`)) throw new Error(`org template extraction path escapes the cache root: ${manifest.version}`);
+	return resolvedDir;
+}
+function parseIntegrity(integrity) {
+	const match = integrity.split(/\s+/)[0].match(/^(sha\d+)-(.+)$/);
+	if (!match) return null;
+	return {
+		algorithm: match[1],
+		expected: match[2]
+	};
+}
+function verifyIntegrity(bytes, integrity) {
+	if (!integrity) return;
+	const parsed = parseIntegrity(integrity);
+	if (!parsed) return;
+	const hash = createHash(parsed.algorithm);
+	hash.update(bytes);
+	const actual = hash.digest("base64");
+	if (actual !== parsed.expected) throw new Error(`integrity check failed: expected ${integrity}, got ${parsed.algorithm}-${actual}`);
+}
+const MAX_TARBALL_BYTES = 52428800;
+async function downloadTarball(url) {
+	const response = await fetchNpmResource(url, { timeoutMs: 3e4 });
+	if (!response.ok) throw new Error(`failed to download tarball (${response.status}): ${url}`);
+	const contentLength = Number(response.headers.get("content-length"));
+	if (Number.isFinite(contentLength) && contentLength > MAX_TARBALL_BYTES) throw new Error(`tarball exceeds ${MAX_TARBALL_BYTES} byte size limit: ${url}`);
+	const reader = response.body?.getReader();
+	if (!reader) throw new Error(`tarball response has no body: ${url}`);
+	const chunks = [];
+	let total = 0;
+	while (true) {
+		const { done, value } = await reader.read();
+		if (done) break;
+		total += value.byteLength;
+		if (total > MAX_TARBALL_BYTES) {
+			await reader.cancel();
+			throw new Error(`tarball exceeds ${MAX_TARBALL_BYTES} byte size limit: ${url}`);
+		}
+		chunks.push(value);
+	}
+	const bytes = new Uint8Array(total);
+	let offset = 0;
+	for (const chunk of chunks) {
+		bytes.set(chunk, offset);
+		offset += chunk.byteLength;
+	}
+	return bytes;
+}
+/**
+* Download a package tarball and parse its `package/package.json`.
+*
+* Some registries (GitHub Packages among them) strip fields they don't
+* recognize — including `createConfig` — from packument *version metadata*
+* while preserving the published tarball byte-for-byte. This gives
+* `readOrgManifest` a fallback source of truth for those registries.
+*
+* Returns `null` when the archive contains no `package/package.json`.
+* Throws on download/integrity failures or unparsable JSON.
+*/
+async function readPackageJsonFromTarball(tarballUrl, integrity) {
+	const bytes = await downloadTarball(tarballUrl);
+	verifyIntegrity(bytes, integrity);
+	const entries = await parseTarGzip(bytes);
+	for (const entry of entries) {
+		if (normalizeEntryName(entry.name) !== "package.json" || !entry.data) continue;
+		const text = new TextDecoder().decode(entry.data);
+		try {
+			return JSON.parse(text);
+		} catch {
+			throw new Error(`invalid package.json in tarball: ${tarballUrl}`);
+		}
+	}
+	return null;
+}
+const STAGING_SUFFIX_PREFIX = ".tmp-";
+/**
+* Parse a tar entry's stored mode (always octal) into the numeric
+* permission bits (low 9 bits — `rwxrwxrwx`). Returns `undefined` when
+* the mode is missing or unparsable so the caller leaves the file with
+* its default (umask-derived) permissions instead of downgrading.
+*/
+function parseEntryMode(raw) {
+	if (!raw) return;
+	const parsed = Number.parseInt(raw, 8);
+	if (!Number.isFinite(parsed)) return;
+	return parsed & 511;
+}
+/**
+* Strip the `package/` prefix from an `npm pack` tarball entry. Returns
+* `null` for entries to skip (root dir, PaxHeader, anything outside
+* `package/`).
+*/
+function normalizeEntryName(rawName) {
+	const name = rawName.replace(/^\.\//, "").replace(/\\/g, "/");
+	if (!name || name === "package" || name === "package/") return null;
+	if (name.startsWith("PaxHeader/") || name.includes("/PaxHeader/")) return null;
+	if (!name.startsWith("package/")) return null;
+	return name.slice(8);
+}
+async function extractTarballTo(bytes, destDir) {
+	const entries = await parseTarGzip(bytes);
+	const stagingDir = `${destDir}${STAGING_SUFFIX_PREFIX}${process.pid}-${Date.now()}`;
+	await fs.promises.mkdir(stagingDir, { recursive: true });
+	const resolvedStaging = path.resolve(stagingDir);
+	try {
+		for (const entry of entries) {
+			const relativeName = normalizeEntryName(entry.name);
+			if (relativeName === null) continue;
+			const targetPath = path.join(stagingDir, relativeName);
+			const resolvedTarget = path.resolve(targetPath);
+			if (resolvedTarget !== resolvedStaging && !resolvedTarget.startsWith(`${resolvedStaging}${path.sep}`)) throw new Error(`tarball entry escapes extraction root: ${entry.name}`);
+			if (entry.type === "directory" || relativeName.endsWith("/")) {
+				await fs.promises.mkdir(targetPath, { recursive: true });
+				continue;
+			}
+			await fs.promises.mkdir(path.dirname(targetPath), { recursive: true });
+			const data = entry.data ?? /* @__PURE__ */ new Uint8Array(0);
+			await fs.promises.writeFile(targetPath, data);
+			const mode = parseEntryMode(entry.attrs?.mode);
+			if (mode !== void 0) await fs.promises.chmod(targetPath, mode);
+		}
+		try {
+			await fs.promises.rename(stagingDir, destDir);
+		} catch (error) {
+			const code = error.code;
+			if ((code === "ENOTEMPTY" || code === "EEXIST") && fs.existsSync(path.join(destDir, "package.json"))) {
+				await fs.promises.rm(stagingDir, {
+					recursive: true,
+					force: true
+				}).catch(() => {});
+				return;
+			}
+			throw error;
+		}
+	} catch (error) {
+		await fs.promises.rm(stagingDir, {
+			recursive: true,
+			force: true
+		}).catch(() => {});
+		throw error;
+	}
+}
+const STAGING_STALE_MS = 864e5;
+/**
+* Remove `<destDir>.tmp-*` siblings left behind by a previous crash so
+* repeated aborts don't accumulate orphaned staging trees. Only deletes
+* entries whose mtime is older than 24 hours — a concurrent `vp create`
+* that's still actively extracting will always be younger than that, so
+* the age gate keeps this safe to run at the top of every extract.
+*/
+async function cleanupStaleStagingDirs(destDir) {
+	const parent = path.dirname(destDir);
+	const prefix = `${path.basename(destDir)}${STAGING_SUFFIX_PREFIX}`;
+	let entries;
+	try {
+		entries = await fs.promises.readdir(parent);
+	} catch {
+		return;
+	}
+	const cutoff = Date.now() - STAGING_STALE_MS;
+	await Promise.all(entries.filter((name) => name.startsWith(prefix)).map(async (name) => {
+		const fullPath = path.join(parent, name);
+		try {
+			if ((await fs.promises.stat(fullPath)).mtimeMs < cutoff) await fs.promises.rm(fullPath, {
+				recursive: true,
+				force: true
+			});
+		} catch {}
+	}));
+}
+/**
+* Ensure the `@org/create` package tarball for the given manifest has been
+* downloaded and extracted locally. Returns the absolute path to the
+* extracted package root (i.e. the directory that contains
+* `package.json`).
+*
+* Idempotent: subsequent calls for the same `<scope, version>` reuse the
+* cached extraction. Concurrent calls race on the final rename; the loser
+* cleans up and returns the existing directory.
+*/
+async function ensureOrgPackageExtracted(manifest) {
+	const extractedRoot = resolveExtractionDir(getCacheRoot(), manifest);
+	if (fs.existsSync(path.join(extractedRoot, "package.json"))) return extractedRoot;
+	const parent = path.dirname(extractedRoot);
+	await fs.promises.mkdir(parent, { recursive: true });
+	await cleanupStaleStagingDirs(extractedRoot);
+	const bytes = await downloadTarball(manifest.tarballUrl);
+	verifyIntegrity(bytes, manifest.integrity);
+	await extractTarballTo(bytes, extractedRoot);
+	return extractedRoot;
+}
+/**
+* Resolve a manifest entry's relative `./...` path against an already-
+* extracted package root, rejecting any path that escapes the root (via
+* `..` walks or an absolute specifier).
+*
+* Existence is NOT checked here — the subsequent `copyDir` surfaces any
+* missing-directory error with a clearer errno.
+*/
+function resolveBundledPath(extractedRoot, relativePath) {
+	if (path.isAbsolute(relativePath)) throw new Error(`bundled template path must be relative, got ${relativePath}`);
+	const resolvedRoot = path.resolve(extractedRoot);
+	const resolvedTarget = path.resolve(extractedRoot, relativePath);
+	if (resolvedTarget !== resolvedRoot && !resolvedTarget.startsWith(`${resolvedRoot}${path.sep}`)) throw new Error(`bundled template path escapes the package root: ${relativePath}`);
+	return resolvedTarget;
 }
 //#endregion
 //#region src/create/org-manifest.ts
@@ -243,6 +619,7 @@ var CreateConfigSchemaError = class extends Error {
 		this.name = "CreateConfigSchemaError";
 	}
 };
+const makeCreateConfigError = (message) => new CreateConfigSchemaError(message);
 /**
 * Validate `create.templates` from `vite.config.ts`. Returns `[]` when the field
 * is absent or an empty array; throws {@link CreateConfigSchemaError} when present
@@ -251,15 +628,15 @@ var CreateConfigSchemaError = class extends Error {
 function validateCreateTemplates(templates) {
 	if (templates === void 0) return [];
 	if (!Array.isArray(templates)) throw new CreateConfigSchemaError("create.templates must be an array");
-	const makeError = (message) => new CreateConfigSchemaError(message);
-	return validateTemplateEntries(templates, "create.templates", makeError, (entry, index) => {
-		const validated = validateTemplateEntry(entry, index, "create.templates", makeError);
-		if (validated.name.startsWith("vite:")) throw makeError(`create.templates[${index}].name uses the reserved \`vite:\` prefix`);
+	return validateTemplateEntries(templates, "create.templates", makeCreateConfigError, (entry, index) => {
+		const validated = validateTemplateEntry(entry, index, "create.templates", makeCreateConfigError);
+		if (validated.name.startsWith("vite:")) throw makeCreateConfigError(`create.templates[${index}].name uses the reserved \`vite:\` prefix`);
 		return validated;
 	});
 }
 async function fetchPackument(scope, packageName) {
-	const response = await fetchNpmResource(`${getNpmRegistry(scope)}/${packageName}`, {
+	const url = `${getNpmRegistry(scope)}/${packageName}`;
+	const response = await fetchNpmResource(url, {
 		headers: { accept: "application/json" },
 		timeoutMs: 5e3
 	});
@@ -274,6 +651,11 @@ async function fetchPackument(scope, packageName) {
 * Returns `null` when:
 * - the package does not exist on the registry (404), or
 * - the package exists but has no `createConfig.templates` field
+*
+* When the packument version metadata lacks `createConfig` entirely, the
+* published tarball's package.json is consulted before giving up — some
+* registries (GitHub Packages among them) strip custom fields from version
+* metadata while preserving the tarball byte-for-byte.
 *
 * Throws when:
 * - the `createConfig.templates` field is present but malformed (`OrgManifestSchemaError`), or
@@ -295,9 +677,11 @@ async function readOrgManifest(scope, requestedVersion) {
 		resolvedVersion = packument["dist-tags"]?.latest;
 		if (!resolvedVersion) return null;
 	}
+	if (import_semver.default.valid(resolvedVersion) === null) throw new OrgManifestSchemaError(`invalid version "${resolvedVersion}" (expected a semantic version)`, packageName);
 	const meta = packument.versions?.[resolvedVersion];
 	if (!meta) return null;
-	const templates = validateManifest(meta, packageName);
+	let templates = validateManifest(meta, packageName);
+	if (!templates && meta.createConfig === void 0 && meta.dist?.tarball) templates = validateManifest(await readPackageJsonFromTarball(meta.dist.tarball, meta.dist.integrity).catch(() => null), packageName);
 	if (!templates) return null;
 	if (!meta.dist?.tarball) throw new OrgManifestSchemaError(`missing dist.tarball for ${resolvedVersion}`, packageName);
 	return {
@@ -409,6 +793,7 @@ function discoverTemplate(templateName, templateArgs, workspaceInfo, interactive
 		if (isBingoTemplate(pkg)) {
 			type = TemplateType.bingo;
 			args.push("--skip-requests");
+			envs.VP_CREATE_INTERACTIVE = interactive === false ? "0" : "1";
 		}
 		return {
 			command: "node",
@@ -578,359 +963,141 @@ function formatManifestTable(manifest, isMonorepo) {
 	};
 }
 //#endregion
-//#region ../../node_modules/.pnpm/nanotar@0.3.0/node_modules/nanotar/dist/index.mjs
-const tarItemTypeMap = {
-	"0": "file",
-	"1": "hardLink",
-	"2": "symbolicLink",
-	"3": "characterDevice",
-	"4": "blockDevice",
-	"5": "directory",
-	"6": "fifo",
-	"7": "contiguousFile",
-	"g": "globalExtendedHeader",
-	"x": "extendedHeader",
-	"D": "gnuDirectory",
-	"I": "gnuInodeMetadata",
-	"K": "gnuLongLinkName",
-	"L": "gnuLongFileName",
-	"N": "gnuOldLongFileName",
-	"M": "gnuMultiVolume",
-	"S": "gnuSparseFile",
-	"E": "gnuExtendedSparse",
-	"A": "solarisAcl",
-	"V": "solarisVolumeLabel",
-	"X": "solarisOldExtendedHeader"
-};
-function parseTar(data, opts) {
-	const buffer = data.buffer || data;
-	const files = [];
-	let offset = 0;
-	let nextExtendedHeader;
-	let globalExtendedHeader;
-	while (offset < buffer.byteLength - 512) {
-		let name = _readString(buffer, offset, 100);
-		if (name.length === 0) break;
-		if (nextExtendedHeader) {
-			const longName = nextExtendedHeader.path || nextExtendedHeader.linkpath;
-			if (longName) name = longName;
-		}
-		const mode = _readString(buffer, offset + 100, 8).trim();
-		const uid = Number.parseInt(_readString(buffer, offset + 108, 8));
-		const gid = Number.parseInt(_readString(buffer, offset + 116, 8));
-		const size = _readNumber(buffer, offset + 124, 12);
-		const seek = 512 + 512 * Math.trunc(size / 512) + (size % 512 ? 512 : 0);
-		const mtime = _readNumber(buffer, offset + 136, 12);
-		const _type = _readString(buffer, offset + 156, 1) || "0";
-		const type = tarItemTypeMap[_type] || _type;
-		switch (type) {
-			case "extendedHeader":
-			case "globalExtendedHeader": {
-				const headers = _parseExtendedHeaders(new Uint8Array(buffer, offset + 512, size));
-				if (type === "extendedHeader") nextExtendedHeader = headers;
-				else {
-					nextExtendedHeader = void 0;
-					globalExtendedHeader = {
-						...globalExtendedHeader,
-						...headers
-					};
-				}
-				offset += seek;
-				continue;
-			}
-			case "gnuLongFileName":
-			case "gnuOldLongFileName":
-			case "gnuLongLinkName":
-				nextExtendedHeader = { path: _readString(buffer, offset + 512, size) };
-				offset += seek;
-				continue;
-		}
-		const user = _readString(buffer, offset + 265, 32);
-		const group = _readString(buffer, offset + 297, 32);
-		name = _sanitizePath(name);
-		const meta = {
-			name,
-			type,
-			size,
-			attrs: {
-				...globalExtendedHeader,
-				...nextExtendedHeader,
-				mode,
-				uid,
-				gid,
-				mtime,
-				user,
-				group
-			}
-		};
-		nextExtendedHeader = void 0;
-		if (opts?.filter && !opts.filter(meta)) {
-			offset += seek;
-			continue;
-		}
-		if (opts?.metaOnly) {
-			files.push(meta);
-			offset += seek;
-			continue;
-		}
-		const data2 = size === 0 ? void 0 : new Uint8Array(buffer, offset + 512, size);
-		files.push({
-			...meta,
-			data: data2,
-			get text() {
-				return new TextDecoder().decode(this.data);
-			}
-		});
-		offset += seek;
+//#region src/create/org-resolve.ts
+function printNonInteractiveTable(manifest, orgSpec, isMonorepo) {
+	const { lines, filteredCount } = formatManifestTable(manifest, isMonorepo);
+	const [firstVisible] = filterManifestForContext(manifest.templates, isMonorepo);
+	const body = [
+		"",
+		`A template name is required when running \`vp create ${orgSpec.scope}\` in non-interactive mode.`,
+		"",
+		`Available templates in ${manifest.packageName}:`,
+		"",
+		...lines
+	];
+	if (filteredCount > 0) body.push("", `(omitted ${filteredCount} monorepo-only ${filteredCount === 1 ? "entry" : "entries"} because this workspace is already a monorepo)`);
+	body.push("", "Examples:");
+	if (firstVisible) body.push("  # Scaffold a specific template from the org", `  vp create ${orgSpec.scope}:${firstVisible.name} --no-interactive`, "");
+	body.push("  # Or use a Vite+ built-in template", "  vp create vite:application --no-interactive", "");
+	process.stderr.write(body.join("\n"));
+}
+function rejectMonorepoEntryInsideMonorepo(entry, isMonorepo) {
+	if (entry.monorepo && isMonorepo) {
+		log$1.info("You are already in a monorepo workspace.\nUse a different template or run this command outside the monorepo");
+		cancelAndExit("Cannot create a monorepo inside an existing monorepo", 1);
 	}
-	return files;
 }
-async function parseTarGzip(data, opts = {}) {
-	const stream = new ReadableStream({ start(controller) {
-		controller.enqueue(new Uint8Array(data));
-		controller.close();
-	} }).pipeThrough(new DecompressionStream(opts.compression ?? "gzip"));
-	return parseTar(await new Response(stream).arrayBuffer(), opts);
-}
-function _sanitizePath(path) {
-	let normalized = path.replace(/\\/g, "/");
-	normalized = normalized.replace(/^[a-zA-Z]:\//, "");
-	normalized = normalized.replace(/^\/+/, "");
-	const hasLeadingDotSlash = normalized.startsWith("./");
-	const parts = normalized.split("/");
-	const resolved = [];
-	for (const part of parts) if (part === "..") resolved.pop();
-	else if (part !== "." && part !== "") resolved.push(part);
-	let result = resolved.join("/");
-	if (hasLeadingDotSlash && !result.startsWith("./")) result = "./" + result;
-	if (path.endsWith("/") && !result.endsWith("/")) result += "/";
-	return result;
-}
-function _readString(buffer, offset, size) {
-	const view = new Uint8Array(buffer, offset, size);
-	const i = view.indexOf(0);
-	return new TextDecoder().decode(i === -1 ? view : view.slice(0, i));
-}
-function _readNumber(buffer, offset, size) {
-	const view = new Uint8Array(buffer, offset, size);
-	let str = "";
-	for (let i = 0; i < size; i++) str += String.fromCodePoint(view[i]);
-	return Number.parseInt(str, 8);
-}
-function _parseExtendedHeaders(data) {
-	const dataStr = new TextDecoder().decode(data);
-	const headers = {};
-	for (const line of dataStr.split("\n")) {
-		const s = line.split(" ")[1]?.split("=");
-		if (s) headers[s[0]] = s[1];
-	}
-	return headers;
-}
-//#endregion
-//#region src/create/org-tarball.ts
-function getCacheRoot() {
-	const home = process.env.VP_HOME || path.join(os.homedir(), ".vite-plus");
-	return path.join(home, "tmp", "create-org");
-}
-/**
-* Replace characters that are illegal in Windows path segments
-* (`\ / : * ? " < > |` plus the IPv6 bracket pair `[ ]`). The host
-* comes from `new URL(...).host` which can carry a port (`:4873`) or
-* IPv6 literal (`[::1]`); both end up in the cache path otherwise.
-*/
-function sanitizeHostForPath(host) {
-	return host.replaceAll(/[\\/:*?"<>|[\]]/g, "_");
-}
-/**
-* Cache extracted tarballs under `<host>/<scope>/create/<version>` so two
-* repos resolving the same `<scope>@<version>` through different registries
-* (via `.npmrc` scope mappings) don't share a cache slot. The registry
-* guarantees `manifest.tarballUrl` is a valid URL, so any parse failure
-* here is a real bug worth surfacing.
-*/
-function getExtractionDir(manifest) {
-	const { host } = new URL(manifest.tarballUrl);
-	return path.join(getCacheRoot(), sanitizeHostForPath(host), manifest.scope, "create", manifest.version);
-}
-function parseIntegrity(integrity) {
-	const match = integrity.split(/\s+/)[0].match(/^(sha\d+)-(.+)$/);
-	if (!match) return null;
+async function resolveEntry(manifest, entry) {
+	if (isRelativePath(entry.template)) return {
+		kind: "bundled",
+		bundledLocalPath: resolveBundledPath(await ensureOrgPackageExtracted(manifest), entry.template),
+		entryName: entry.name,
+		scope: manifest.scope,
+		...entry.monorepo === true ? { monorepo: true } : {}
+	};
 	return {
-		algorithm: match[1],
-		expected: match[2]
+		kind: "replaced",
+		templateName: entry.template
 	};
 }
-function verifyIntegrity(bytes, integrity) {
-	if (!integrity) return;
-	const parsed = parseIntegrity(integrity);
-	if (!parsed) return;
-	const hash = createHash(parsed.algorithm);
-	hash.update(bytes);
-	const actual = hash.digest("base64");
-	if (actual !== parsed.expected) throw new Error(`integrity check failed: expected ${integrity}, got ${parsed.algorithm}-${actual}`);
-}
-const MAX_TARBALL_BYTES = 50 * 1024 * 1024;
-async function downloadTarball(url) {
-	const response = await fetchNpmResource(url, { timeoutMs: 3e4 });
-	if (!response.ok) throw new Error(`failed to download tarball (${response.status}): ${url}`);
-	const contentLength = Number(response.headers.get("content-length"));
-	if (Number.isFinite(contentLength) && contentLength > MAX_TARBALL_BYTES) throw new Error(`tarball exceeds ${MAX_TARBALL_BYTES} byte size limit: ${url}`);
-	const reader = response.body?.getReader();
-	if (!reader) throw new Error(`tarball response has no body: ${url}`);
-	const chunks = [];
-	let total = 0;
-	while (true) {
-		const { done, value } = await reader.read();
-		if (done) break;
-		total += value.byteLength;
-		if (total > MAX_TARBALL_BYTES) {
-			await reader.cancel();
-			throw new Error(`tarball exceeds ${MAX_TARBALL_BYTES} byte size limit: ${url}`);
-		}
-		chunks.push(value);
-	}
-	const bytes = new Uint8Array(total);
-	let offset = 0;
-	for (const chunk of chunks) {
-		bytes.set(chunk, offset);
-		offset += chunk.byteLength;
-	}
-	return bytes;
-}
-const STAGING_SUFFIX_PREFIX = ".tmp-";
 /**
-* Parse a tar entry's stored mode (always octal) into the numeric
-* permission bits (low 9 bits — `rwxrwxrwx`). Returns `undefined` when
-* the mode is missing or unparsable so the caller leaves the file with
-* its default (umask-derived) permissions instead of downgrading.
+* If `selectedTemplateName` points at an `@scope[/name]` org whose
+* `@scope/create` package publishes a `createConfig.templates` manifest, apply the
+* manifest rules (picker / direct lookup / escape hatch / bundled
+* extraction) and report the outcome.
+*
+* The caller — `packages/cli/src/create/bin.ts` — decides what to do next
+* based on the returned variant.
 */
-function parseEntryMode(raw) {
-	if (!raw) return;
-	const parsed = Number.parseInt(raw, 8);
-	if (!Number.isFinite(parsed)) return;
-	return parsed & 511;
-}
-/**
-* Strip the `package/` prefix from an `npm pack` tarball entry. Returns
-* `null` for entries to skip (root dir, PaxHeader, anything outside
-* `package/`).
-*/
-function normalizeEntryName(rawName) {
-	const name = rawName.replace(/^\.\//, "").replace(/\\/g, "/");
-	if (!name || name === "package" || name === "package/") return null;
-	if (name.startsWith("PaxHeader/") || name.includes("/PaxHeader/")) return null;
-	if (!name.startsWith("package/")) return null;
-	return name.slice(8);
-}
-async function extractTarballTo(bytes, destDir) {
-	const entries = await parseTarGzip(bytes);
-	const stagingDir = `${destDir}${STAGING_SUFFIX_PREFIX}${process.pid}-${Date.now()}`;
-	await fs.promises.mkdir(stagingDir, { recursive: true });
-	const resolvedStaging = path.resolve(stagingDir);
+async function resolveOrgManifestForCreate(args) {
+	const orgSpec = parseOrgScopedSpec(args.templateName);
+	if (!orgSpec) return { kind: "passthrough" };
+	let manifest;
 	try {
-		for (const entry of entries) {
-			const relativeName = normalizeEntryName(entry.name);
-			if (relativeName === null) continue;
-			const targetPath = path.join(stagingDir, relativeName);
-			const resolvedTarget = path.resolve(targetPath);
-			if (resolvedTarget !== resolvedStaging && !resolvedTarget.startsWith(`${resolvedStaging}${path.sep}`)) throw new Error(`tarball entry escapes extraction root: ${entry.name}`);
-			if (entry.type === "directory" || relativeName.endsWith("/")) {
-				await fs.promises.mkdir(targetPath, { recursive: true });
-				continue;
-			}
-			await fs.promises.mkdir(path.dirname(targetPath), { recursive: true });
-			const data = entry.data ?? /* @__PURE__ */ new Uint8Array(0);
-			await fs.promises.writeFile(targetPath, data);
-			const mode = parseEntryMode(entry.attrs?.mode);
-			if (mode !== void 0) await fs.promises.chmod(targetPath, mode);
-		}
-		try {
-			await fs.promises.rename(stagingDir, destDir);
-		} catch (error) {
-			const code = error.code;
-			if ((code === "ENOTEMPTY" || code === "EEXIST") && fs.existsSync(path.join(destDir, "package.json"))) {
-				await fs.promises.rm(stagingDir, {
-					recursive: true,
-					force: true
-				}).catch(() => {});
-				return;
-			}
-			throw error;
-		}
+		manifest = await readOrgManifest(orgSpec.scope, orgSpec.version);
 	} catch (error) {
-		await fs.promises.rm(stagingDir, {
-			recursive: true,
-			force: true
-		}).catch(() => {});
-		throw error;
+		const message = error instanceof OrgManifestSchemaError ? error.message : `Failed to read ${orgSpec.scope}/create manifest: ${error.message}`;
+		cancelAndExit(message, 1);
 	}
+	if (!manifest) {
+		if (orgSpec.name !== void 0) cancelAndExit(`No \`createConfig.templates\` manifest in ${orgSpec.scope}/create — \`@org:name\` requires one.`, 1);
+		log$1.info(`No \`createConfig.templates\` manifest in ${orgSpec.scope}/create — running it as a normal package.`);
+		return { kind: "passthrough" };
+	}
+	if (orgSpec.name === void 0) {
+		if (!args.interactive) {
+			printNonInteractiveTable(manifest, orgSpec, args.isMonorepo);
+			process.exit(1);
+		}
+		const picked = await pickOrgTemplate(manifest, { isMonorepo: args.isMonorepo });
+		if (picked === ORG_PICKER_CANCEL) cancelAndExit();
+		if (picked === ORG_PICKER_BUILTIN_ESCAPE) {
+			if (args.isMonorepo && manifest.templates.every((t) => t.monorepo)) log$1.info(`No templates from ${manifest.packageName} are applicable inside a monorepo — showing Vite+ built-in templates instead.`);
+			return { kind: "escape-hatch" };
+		}
+		rejectMonorepoEntryInsideMonorepo(picked.entry, args.isMonorepo);
+		return resolveEntry(manifest, picked.entry);
+	}
+	const entry = manifest.templates.find((candidate) => candidate.name === orgSpec.name);
+	if (!entry) {
+		const available = filterManifestForContext(manifest.templates, args.isMonorepo).map((t) => t.name).join(", ");
+		cancelAndExit(`No template named "${orgSpec.name}" in ${manifest.packageName}. Available: ${available || "(none applicable in this context)"}.`, 1);
+	}
+	rejectMonorepoEntryInsideMonorepo(entry, args.isMonorepo);
+	return resolveEntry(manifest, entry);
 }
-const STAGING_STALE_MS = 1440 * 60 * 1e3;
 /**
-* Remove `<destDir>.tmp-*` siblings left behind by a previous crash so
-* repeated aborts don't accumulate orphaned staging trees. Only deletes
-* entries whose mtime is older than 24 hours — a concurrent `vp create`
-* that's still actively extracting will always be younger than that, so
-* the age gate keeps this safe to run at the top of every extract.
+* Read the `create` config (`defaultTemplate` + validated `templates`) from
+* a workspace's `vite.config.ts` in a single config evaluation.
+*
+* By default, walks up from `startDir` via `findWorkspaceRoot` (monorepo
+* markers only — `pnpm-workspace.yaml`, `workspaces` in `package.json`,
+* `lerna.json`) so monorepo invocations from any subdirectory still pick up
+* the root config. Pass `walkUp: false` to read `startDir` directly when the
+* caller already holds the exact workspace root.
+*
+* Best-effort for resolution: a missing or unresolvable config reads as
+* empty. A present-but-malformed `create.templates` still throws a
+* {@link CreateConfigSchemaError} so the misconfiguration surfaces.
+*
+* Pass `throwOnReadError: true` for read-modify-write callers (registration):
+* if a config file exists but cannot be evaluated, an empty read would let a
+* later write clobber the real `create` block, so the eval error is rethrown
+* instead of swallowed.
 */
-async function cleanupStaleStagingDirs(destDir) {
-	const parent = path.dirname(destDir);
-	const prefix = `${path.basename(destDir)}${STAGING_SUFFIX_PREFIX}`;
-	let entries;
+async function getConfiguredCreate(startDir, options) {
+	const projectRoot = options?.walkUp === false ? startDir : findWorkspaceRoot(startDir) ?? startDir;
+	if (!hasViteConfig(projectRoot)) return { templates: [] };
+	let create;
 	try {
-		entries = await fs.promises.readdir(parent);
-	} catch {
+		create = (await resolveViteConfig(projectRoot)).create;
+	} catch (error) {
+		if (options?.throwOnReadError) throw error;
+		return { templates: [] };
+	}
+	const defaultTemplate = typeof create?.defaultTemplate === "string" && create.defaultTemplate.length > 0 ? create.defaultTemplate : void 0;
+	const templates = validateCreateTemplates(create?.templates);
+	return {
+		...defaultTemplate !== void 0 ? { defaultTemplate } : {},
+		templates
+	};
+}
+/**
+* Read `create.defaultTemplate` only. Best-effort for missing or unresolvable
+* configs (returns `undefined`), but a malformed `create.templates` still
+* rethrows its {@link CreateConfigSchemaError}: swallowing it here would
+* silently drop a valid `defaultTemplate` along with the diagnostic.
+*/
+async function getConfiguredDefaultTemplate(startDir) {
+	try {
+		return (await getConfiguredCreate(startDir)).defaultTemplate;
+	} catch (error) {
+		if (error instanceof CreateConfigSchemaError) throw error;
 		return;
 	}
-	const cutoff = Date.now() - STAGING_STALE_MS;
-	await Promise.all(entries.filter((name) => name.startsWith(prefix)).map(async (name) => {
-		const fullPath = path.join(parent, name);
-		try {
-			if ((await fs.promises.stat(fullPath)).mtimeMs < cutoff) await fs.promises.rm(fullPath, {
-				recursive: true,
-				force: true
-			});
-		} catch {}
-	}));
-}
-/**
-* Ensure the `@org/create` package tarball for the given manifest has been
-* downloaded and extracted locally. Returns the absolute path to the
-* extracted package root (i.e. the directory that contains
-* `package.json`).
-*
-* Idempotent: subsequent calls for the same `<scope, version>` reuse the
-* cached extraction. Concurrent calls race on the final rename; the loser
-* cleans up and returns the existing directory.
-*/
-async function ensureOrgPackageExtracted(manifest) {
-	const extractedRoot = getExtractionDir(manifest);
-	if (fs.existsSync(path.join(extractedRoot, "package.json"))) return extractedRoot;
-	const parent = path.dirname(extractedRoot);
-	await fs.promises.mkdir(parent, { recursive: true });
-	await cleanupStaleStagingDirs(extractedRoot);
-	const bytes = await downloadTarball(manifest.tarballUrl);
-	verifyIntegrity(bytes, manifest.integrity);
-	await extractTarballTo(bytes, extractedRoot);
-	return extractedRoot;
-}
-/**
-* Resolve a manifest entry's relative `./...` path against an already-
-* extracted package root, rejecting any path that escapes the root (via
-* `..` walks or an absolute specifier).
-*
-* Existence is NOT checked here — the subsequent `copyDir` surfaces any
-* missing-directory error with a clearer errno.
-*/
-function resolveBundledPath(extractedRoot, relativePath) {
-	if (path.isAbsolute(relativePath)) throw new Error(`bundled template path must be relative, got ${relativePath}`);
-	const resolvedRoot = path.resolve(extractedRoot);
-	const resolvedTarget = path.resolve(extractedRoot, relativePath);
-	if (resolvedTarget !== resolvedRoot && !resolvedTarget.startsWith(`${resolvedRoot}${path.sep}`)) throw new Error(`bundled template path escapes the package root: ${relativePath}`);
-	return resolvedTarget;
 }
 //#endregion
-//#region ../../node_modules/.pnpm/validate-npm-package-name@7.0.2/node_modules/validate-npm-package-name/lib/builtin-modules.json
+//#region ../../../../../build-virtual-store/validate-npm-package-name@7.0.2/node_modules/validate-npm-package-name/lib/builtin-modules.json
 var require_builtin_modules = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = [
 		"_http_agent",
@@ -1008,7 +1175,7 @@ var require_builtin_modules = /* @__PURE__ */ __commonJSMin(((exports, module) =
 	];
 }));
 //#endregion
-//#region ../../node_modules/.pnpm/@nkzw+safe-word-list@3.1.0/node_modules/@nkzw/safe-word-list/index.js
+//#region ../../../../../build-virtual-store/@nkzw+safe-word-list@3.1.0/node_modules/@nkzw/safe-word-list/index.js
 var import_lib = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const builtins = require_builtin_modules();
 	var scopedPackagePattern = /* @__PURE__ */ new RegExp("^(?:@([^/]+?)[/])?([^/]+?)$");
@@ -3820,11 +3987,6 @@ function getRandomProjectName(options = {}) {
 function hasExplicitEditorOptIn(editor) {
 	return typeof editor === "string" && editor.trim() !== "";
 }
-function normalizeEditorOption(editor) {
-	if (!Array.isArray(editor)) return editor;
-	if (editor.includes(false)) return false;
-	return editor.findLast((value) => typeof value === "string");
-}
 function shouldConfigureEditorsForCreate({ editor, isMonorepo }) {
 	if (editor === false) return false;
 	if (!isMonorepo) return true;
@@ -3919,23 +4081,46 @@ function renameFiles(projectDir) {
 		if (fs.existsSync(fromPath)) fs.renameSync(fromPath, path.join(projectDir, to));
 	}
 }
+const DOTENV_GITIGNORE_LINES = [
+	"# dotenv environment variable files",
+	".env",
+	".env.*",
+	"!.env.example"
+];
 /**
-* Make sure the scaffolded project's `.gitignore` excludes `node_modules`.
+* Make sure the scaffolded project's `.gitignore` excludes default generated
+* project artifacts.
 *
 * Called right after `git init` so even bundled `@org` templates (which
-* may ship without a `.gitignore`) don't end up tracking installed
-* dependencies on the user's first commit. No-op when an existing
-* `.gitignore` already lists `node_modules`.
+* may ship without a `.gitignore`) don't end up tracking dependencies or
+* local environment files on the user's first commit.
 */
-function ensureGitignoreNodeModules(projectDir) {
+function ensureDefaultGitignoreEntries(projectDir) {
 	const gitignorePath = path.join(projectDir, ".gitignore");
 	let content = "";
 	try {
 		content = fs.readFileSync(gitignorePath, "utf-8");
 	} catch {}
-	if (/^\s*node_modules\/?\s*$/m.test(content)) return;
+	const lines = [];
+	if (!hasNodeModulesGitignoreLine(content)) lines.push("node_modules");
+	const missingDotenvLines = DOTENV_GITIGNORE_LINES.filter((line) => !hasGitignoreLine(content, line));
+	if (missingDotenvLines.length > 0) {
+		const startsDotenvSection = missingDotenvLines[0] === DOTENV_GITIGNORE_LINES[0];
+		if (lines.length > 0 || startsDotenvSection && content.trim() !== "") lines.push("");
+		lines.push(...missingDotenvLines);
+	}
+	appendGitignoreLines(gitignorePath, content, lines);
+}
+function hasNodeModulesGitignoreLine(content) {
+	return /^\s*node_modules\/?\s*$/m.test(content);
+}
+function hasGitignoreLine(content, line) {
+	return content.split(/\r?\n/).some((entry) => entry.trim() === line);
+}
+function appendGitignoreLines(gitignorePath, content, lines) {
+	if (lines.length === 0) return;
 	const prefix = content === "" || content.endsWith("\n") ? "" : "\n";
-	fs.appendFileSync(gitignorePath, `${prefix}node_modules\n`);
+	fs.appendFileSync(gitignorePath, `${prefix}${lines.join("\n")}\n`);
 }
 const VSCODE_SETTINGS_PATH = ".vscode/settings.json";
 const VSCODE_CONFIG_UNIGNORE_BLOCK = [
@@ -3960,11 +4145,6 @@ function ensureGitignoreVsCodeEditorConfigs(projectDir) {
 function appendGitignoreVsCodeEditorConfigsBlock(gitignorePath, content) {
 	if (content.trimEnd().endsWith(VSCODE_CONFIG_UNIGNORE_BLOCK.join("\n"))) return;
 	appendGitignoreLines(gitignorePath, content, VSCODE_CONFIG_UNIGNORE_BLOCK);
-}
-function appendGitignoreLines(gitignorePath, content, lines) {
-	if (lines.length === 0) return;
-	const prefix = content === "" || content.endsWith("\n") ? "" : "\n";
-	fs.appendFileSync(gitignorePath, `${prefix}${lines.join("\n")}\n`);
 }
 function formatDisplayTargetDir(targetDir) {
 	const normalized = targetDir.split(path.sep).join("/");
@@ -4003,7 +4183,7 @@ async function promptPackageNameAndTargetDir(defaultPackageName, interactive) {
 	} else {
 		packageName = defaultPackageName;
 		targetDir = getProjectDirFromPackageName(packageName);
-		log.info(`Using default package name: ${accent(packageName)}`);
+		log$1.info(`Using default package name: ${accent(packageName)}`);
 	}
 	return {
 		packageName,
@@ -4023,7 +4203,7 @@ async function promptTargetDir(defaultTargetDir, interactive, options) {
 		targetDir = validateTargetDir(selected ?? defaultTargetDir, options?.cwd).directory;
 	} else {
 		targetDir = validateTargetDir(defaultTargetDir, options?.cwd).directory;
-		log.info(`Using default target directory: ${accent(targetDir)}`);
+		log$1.info(`Using default target directory: ${accent(targetDir)}`);
 	}
 	return targetDir;
 }
@@ -4039,7 +4219,7 @@ function suggestAvailableTargetDir(defaultTargetDir, cwd) {
 async function checkProjectDirExists(projectDirFullPath, interactive) {
 	if (isTargetDirAvailable(projectDirFullPath)) return;
 	if (!interactive) {
-		log.info("Use --directory to specify a different location or remove the directory first");
+		log$1.info("Use --directory to specify a different location or remove the directory first");
 		cancelAndExit(`Target directory "${projectDirFullPath}" is not empty`, 1);
 	}
 	const overwrite = await select({
@@ -4059,10 +4239,6 @@ async function checkProjectDirExists(projectDirFullPath, interactive) {
 			break;
 		case "no": cancelAndExit();
 	}
-}
-function cancelAndExit(message = "Operation cancelled", exitCode = 0) {
-	cancel(message);
-	process.exit(exitCode);
 }
 function isEmpty(path) {
 	const files = fs.readdirSync(path);
@@ -4107,139 +4283,6 @@ function validateTargetDir(input, cwd) {
 	return { directory: targetDir };
 }
 //#endregion
-//#region src/create/org-resolve.ts
-function printNonInteractiveTable(manifest, orgSpec, isMonorepo) {
-	const { lines, filteredCount } = formatManifestTable(manifest, isMonorepo);
-	const [firstVisible] = filterManifestForContext(manifest.templates, isMonorepo);
-	const body = [
-		"",
-		`A template name is required when running \`vp create ${orgSpec.scope}\` in non-interactive mode.`,
-		"",
-		`Available templates in ${manifest.packageName}:`,
-		"",
-		...lines
-	];
-	if (filteredCount > 0) body.push("", `(omitted ${filteredCount} monorepo-only ${filteredCount === 1 ? "entry" : "entries"} because this workspace is already a monorepo)`);
-	body.push("", "Examples:");
-	if (firstVisible) body.push("  # Scaffold a specific template from the org", `  vp create ${orgSpec.scope}:${firstVisible.name} --no-interactive`, "");
-	body.push("  # Or use a Vite+ built-in template", "  vp create vite:application --no-interactive", "");
-	process.stderr.write(body.join("\n"));
-}
-function rejectMonorepoEntryInsideMonorepo(entry, isMonorepo) {
-	if (entry.monorepo && isMonorepo) {
-		log.info("You are already in a monorepo workspace.\nUse a different template or run this command outside the monorepo");
-		cancelAndExit("Cannot create a monorepo inside an existing monorepo", 1);
-	}
-}
-async function resolveEntry(manifest, entry) {
-	if (isRelativePath(entry.template)) return {
-		kind: "bundled",
-		bundledLocalPath: resolveBundledPath(await ensureOrgPackageExtracted(manifest), entry.template),
-		entryName: entry.name,
-		scope: manifest.scope,
-		...entry.monorepo === true ? { monorepo: true } : {}
-	};
-	return {
-		kind: "replaced",
-		templateName: entry.template
-	};
-}
-/**
-* If `selectedTemplateName` points at an `@scope[/name]` org whose
-* `@scope/create` package publishes a `createConfig.templates` manifest, apply the
-* manifest rules (picker / direct lookup / escape hatch / bundled
-* extraction) and report the outcome.
-*
-* The caller — `packages/cli/src/create/bin.ts` — decides what to do next
-* based on the returned variant.
-*/
-async function resolveOrgManifestForCreate(args) {
-	const orgSpec = parseOrgScopedSpec(args.templateName);
-	if (!orgSpec) return { kind: "passthrough" };
-	let manifest;
-	try {
-		manifest = await readOrgManifest(orgSpec.scope, orgSpec.version);
-	} catch (error) {
-		cancelAndExit(error instanceof OrgManifestSchemaError ? error.message : `Failed to read ${orgSpec.scope}/create manifest: ${error.message}`, 1);
-	}
-	if (!manifest) {
-		if (orgSpec.name !== void 0) cancelAndExit(`No \`createConfig.templates\` manifest in ${orgSpec.scope}/create — \`@org:name\` requires one.`, 1);
-		log.info(`No \`createConfig.templates\` manifest in ${orgSpec.scope}/create — running it as a normal package.`);
-		return { kind: "passthrough" };
-	}
-	if (orgSpec.name === void 0) {
-		if (!args.interactive) {
-			printNonInteractiveTable(manifest, orgSpec, args.isMonorepo);
-			process.exit(1);
-		}
-		const picked = await pickOrgTemplate(manifest, { isMonorepo: args.isMonorepo });
-		if (picked === ORG_PICKER_CANCEL) cancelAndExit();
-		if (picked === ORG_PICKER_BUILTIN_ESCAPE) {
-			if (args.isMonorepo && manifest.templates.every((t) => t.monorepo)) log.info(`No templates from ${manifest.packageName} are applicable inside a monorepo — showing Vite+ built-in templates instead.`);
-			return { kind: "escape-hatch" };
-		}
-		rejectMonorepoEntryInsideMonorepo(picked.entry, args.isMonorepo);
-		return resolveEntry(manifest, picked.entry);
-	}
-	const entry = manifest.templates.find((candidate) => candidate.name === orgSpec.name);
-	if (!entry) {
-		const available = filterManifestForContext(manifest.templates, args.isMonorepo).map((t) => t.name).join(", ");
-		cancelAndExit(`No template named "${orgSpec.name}" in ${manifest.packageName}. Available: ${available || "(none applicable in this context)"}.`, 1);
-	}
-	rejectMonorepoEntryInsideMonorepo(entry, args.isMonorepo);
-	return resolveEntry(manifest, entry);
-}
-/**
-* Read the `create` config (`defaultTemplate` + validated `templates`) from
-* a workspace's `vite.config.ts` in a single config evaluation.
-*
-* By default, walks up from `startDir` via `findWorkspaceRoot` (monorepo
-* markers only — `pnpm-workspace.yaml`, `workspaces` in `package.json`,
-* `lerna.json`) so monorepo invocations from any subdirectory still pick up
-* the root config. Pass `walkUp: false` to read `startDir` directly when the
-* caller already holds the exact workspace root.
-*
-* Best-effort for resolution: a missing or unresolvable config reads as
-* empty. A present-but-malformed `create.templates` still throws a
-* {@link CreateConfigSchemaError} so the misconfiguration surfaces.
-*
-* Pass `throwOnReadError: true` for read-modify-write callers (registration):
-* if a config file exists but cannot be evaluated, an empty read would let a
-* later write clobber the real `create` block, so the eval error is rethrown
-* instead of swallowed.
-*/
-async function getConfiguredCreate(startDir, options) {
-	const projectRoot = options?.walkUp === false ? startDir : findWorkspaceRoot(startDir) ?? startDir;
-	if (!hasViteConfig(projectRoot)) return { templates: [] };
-	let create;
-	try {
-		create = (await resolveViteConfig(projectRoot)).create;
-	} catch (error) {
-		if (options?.throwOnReadError) throw error;
-		return { templates: [] };
-	}
-	const defaultTemplate = typeof create?.defaultTemplate === "string" && create.defaultTemplate.length > 0 ? create.defaultTemplate : void 0;
-	const templates = validateCreateTemplates(create?.templates);
-	return {
-		...defaultTemplate !== void 0 ? { defaultTemplate } : {},
-		templates
-	};
-}
-/**
-* Read `create.defaultTemplate` only. Best-effort for missing or unresolvable
-* configs (returns `undefined`), but a malformed `create.templates` still
-* rethrows its {@link CreateConfigSchemaError}: swallowing it here would
-* silently drop a valid `defaultTemplate` along with the diagnostic.
-*/
-async function getConfiguredDefaultTemplate(startDir) {
-	try {
-		return (await getConfiguredCreate(startDir)).defaultTemplate;
-	} catch (error) {
-		if (error instanceof CreateConfigSchemaError) throw error;
-		return;
-	}
-}
-//#endregion
 //#region src/create/register-template.ts
 /**
 * Register a local template into `create.templates` in a monorepo's root
@@ -4275,7 +4318,7 @@ async function registerLocalTemplate(workspaceRoot, entry, silent = false) {
 	});
 	const existingEntry = existing.templates.find((t) => t.name === entry.name);
 	if (existingEntry) {
-		if (existingEntry.template !== entry.template) log.warn(`create.templates already has an entry named '${entry.name}' pointing at '${existingEntry.template}'; left unchanged.\nUpdate it by hand if it should run '${entry.template}' instead.`);
+		if (existingEntry.template !== entry.template) log$1.warn(`create.templates already has an entry named '${entry.name}' pointing at '${existingEntry.template}'; left unchanged.\nUpdate it by hand if it should run '${entry.template}' instead.`);
 		return;
 	}
 	const nextCreate = {
@@ -4293,7 +4336,7 @@ async function registerLocalTemplate(workspaceRoot, entry, silent = false) {
 function ensureViteConfig(workspaceRoot, silent) {
 	const configPath = path.join(workspaceRoot, "vite.config.ts");
 	fs.writeFileSync(configPath, `import { defineConfig } from '${VITE_PLUS_NAME}';\n\nexport default defineConfig({});\n`);
-	if (!silent) log.success(`✔ Created vite.config.ts in ${displayRelative(configPath)}`);
+	if (!silent) log$1.success(`✔ Created vite.config.ts in ${displayRelative(configPath)}`);
 	return configPath;
 }
 /**
@@ -4321,7 +4364,7 @@ function writeCreateBlock(configPath, create) {
 //#endregion
 //#region src/create/templates/generator.ts
 async function executeGeneratorScaffold(workspaceInfo, templateInfo, options) {
-	if (!options?.silent) log.step("Creating generator scaffold...");
+	if (!options?.silent) log$1.step("Creating generator scaffold...");
 	let description;
 	if (templateInfo.interactive) {
 		const defaultDescription = "Generate new components for our monorepo";
@@ -4337,10 +4380,15 @@ async function executeGeneratorScaffold(workspaceInfo, templateInfo, options) {
 	fs.chmodSync(path.join(fullPath, "bin/index.ts"), "755");
 	editJsonFile(path.join(fullPath, "package.json"), (pkg) => {
 		pkg.name = templateInfo.packageName;
+		if (!supportsCatalog(workspaceInfo.packageManager, workspaceInfo.downloadPackageManager.version, workspaceInfo.isMonorepo)) {
+			const { catalog } = readYamlFile(path.join(templatesDir, "monorepo/pnpm-workspace.yaml"));
+			const devDependencies = pkg.devDependencies;
+			for (const [name, spec] of Object.entries(devDependencies)) if (spec === "catalog:" && catalog[name]) devDependencies[name] = catalog[name];
+		}
 		if (description) pkg.description = description;
 		return pkg;
 	});
-	if (!options?.silent) log.success("Generator scaffold created");
+	if (!options?.silent) log$1.success("Generator scaffold created");
 	return {
 		exitCode: 0,
 		projectDir: templateInfo.targetDir
@@ -4352,14 +4400,14 @@ var import_picocolors = /* @__PURE__ */ __toESM(require_picocolors(), 1);
 const { gray, yellow } = import_picocolors.default;
 async function executeRemoteTemplate(workspaceInfo, templateInfo, options) {
 	const silent = options?.silent ?? false;
-	if (!silent) log.step("Generating project…");
+	if (!silent) log$1.step("Generating project…");
 	let isGitHubTemplate = templateInfo.command === "degit";
 	let result;
 	if (templateInfo.command === "node") {
 		const command = templateInfo.command;
 		const args = templateInfo.args;
 		const envs = templateInfo.envs;
-		if (!silent) log.info(`Running: ${gray(`${command} ${args.join(" ")}`)}`);
+		if (!silent) log$1.info(`Running: ${gray(`${command} ${args.join(" ")}`)}`);
 		result = await runCommandAndDetectProjectDir({
 			command,
 			args,
@@ -4369,7 +4417,7 @@ async function executeRemoteTemplate(workspaceInfo, templateInfo, options) {
 	} else {
 		if (!isGitHubTemplate) {
 			if (!await checkNpmPackageExists(templateInfo.command)) {
-				if (!silent) log.error(`Template "${templateInfo.command}" not found on npm. Run ${yellow("vp create --list")} to see available templates.`);
+				if (!silent) log$1.error(`Template "${templateInfo.command}" not found on npm. Run ${yellow("vp create --list")} to see available templates.`);
 				return { exitCode: 1 };
 			}
 		}
@@ -4377,13 +4425,13 @@ async function executeRemoteTemplate(workspaceInfo, templateInfo, options) {
 	}
 	const exitCode = result.exitCode;
 	if (exitCode === 127) {
-		log.info(yellow("\nTroubleshooting:"));
-		log.info(`  ${gray("•")} Command not found. Make sure Node.js is installed`);
+		log$1.info(yellow("\nTroubleshooting:"));
+		log$1.info(`  ${gray("•")} Command not found. Make sure Node.js is installed`);
 	} else if (isGitHubTemplate && exitCode !== 0) {
-		log.info(yellow("\nTroubleshooting:"));
-		log.info(`  ${gray("•")} Make sure the GitHub repository exists`);
-		log.info(`  ${gray("•")} Check your internet connection`);
-		log.info(`  ${gray("•")} Repository might be private (requires authentication)`);
+		log$1.info(yellow("\nTroubleshooting:"));
+		log$1.info(`  ${gray("•")} Make sure the GitHub repository exists`);
+		log$1.info(`  ${gray("•")} Check your internet connection`);
+		log$1.info(`  ${gray("•")} Repository might be private (requires authentication)`);
 	}
 	return result;
 }
@@ -4393,7 +4441,7 @@ async function runRemoteTemplateCommand(workspaceInfo, cwd, templateInfo, detect
 	const execArgs = [...templateInfo.args];
 	const envs = templateInfo.envs;
 	const { command, args } = formatDlxCommand(remotePackageName, execArgs, workspaceInfo);
-	if (!silent) log.info(`Running: ${gray(`${command} ${args.join(" ")}`)}`);
+	if (!silent) log$1.info(`Running: ${gray(`${command} ${args.join(" ")}`)}`);
 	if (detectCreatedProjectDir) return await runCommandAndDetectProjectDir({
 		command,
 		args,
@@ -4434,6 +4482,157 @@ function autoFixRemoteTemplateCommand(templateInfo, workspaceInfo) {
 	}
 }
 //#endregion
+//#region src/create/templates/monorepo.ts
+const InitialMonorepoAppDir = "apps/website";
+async function executeMonorepoTemplate(workspaceInfo, templateInfo, options) {
+	assert(templateInfo.packageName, "packageName is required");
+	assert(templateInfo.targetDir, "targetDir is required");
+	workspaceInfo.monorepoScope = getScopeFromPackageName(templateInfo.packageName);
+	const fullPath = path.join(workspaceInfo.rootDir, templateInfo.targetDir);
+	if (!options?.silent) {
+		log$1.info(`Target directory: ${formatDisplayTargetDir(templateInfo.targetDir)}`);
+		log$1.step("Creating Vite+ monorepo...");
+	}
+	copyDir(path.join(templatesDir, "monorepo"), fullPath);
+	renameFiles(fullPath);
+	editJsonFile(path.join(fullPath, "package.json"), (pkg) => {
+		pkg.name = templateInfo.packageName;
+		return pkg;
+	});
+	if (workspaceInfo.packageManager === PackageManager.pnpm) {
+		editJsonFile(path.join(fullPath, "package.json"), (pkg) => {
+			pkg.workspaces = void 0;
+			pkg.resolutions = void 0;
+			return pkg;
+		});
+		const yarnrcPath = path.join(fullPath, ".yarnrc.yml");
+		if (fs.existsSync(yarnrcPath)) fs.unlinkSync(yarnrcPath);
+	} else if (workspaceInfo.packageManager === PackageManager.yarn) {
+		editJsonFile(path.join(fullPath, "package.json"), (pkg) => {
+			pkg.pnpm = void 0;
+			return pkg;
+		});
+		const pnpmWorkspacePath = path.join(fullPath, "pnpm-workspace.yaml");
+		if (fs.existsSync(pnpmWorkspacePath)) fs.unlinkSync(pnpmWorkspacePath);
+	} else {
+		editJsonFile(path.join(fullPath, "package.json"), (pkg) => {
+			pkg.pnpm = void 0;
+			return pkg;
+		});
+		const pnpmWorkspacePath = path.join(fullPath, "pnpm-workspace.yaml");
+		if (fs.existsSync(pnpmWorkspacePath)) fs.unlinkSync(pnpmWorkspacePath);
+		const yarnrcPath = path.join(fullPath, ".yarnrc.yml");
+		if (fs.existsSync(yarnrcPath)) fs.unlinkSync(yarnrcPath);
+	}
+	if (!options?.silent) log$1.success("Monorepo template created");
+	if (!options?.silent) log$1.step("Creating default application in apps/website...");
+	const appResult = await runRemoteTemplateCommand(workspaceInfo, fullPath, discoverTemplate("create-vite@latest", [
+		InitialMonorepoAppDir,
+		"--template",
+		"vanilla-ts",
+		"--no-interactive"
+	], workspaceInfo), false, options?.silent ?? false);
+	if (appResult.exitCode !== 0) {
+		log$1.error(`Failed to create default application: ${appResult.exitCode}`);
+		return appResult;
+	}
+	const appPackageName = workspaceInfo.monorepoScope ? `${workspaceInfo.monorepoScope}/website` : "website";
+	const appProjectPath = path.join(fullPath, InitialMonorepoAppDir);
+	setPackageName(appProjectPath, appPackageName);
+	rewriteMonorepoProject(appProjectPath, workspaceInfo.packageManager, void 0, options?.silent ?? false);
+	dropAliasedRuntimeDevDeps(appProjectPath, workspaceInfo.packageManager);
+	if (!options?.silent) log$1.step("Creating default library in packages/utils...");
+	const libraryDir = "packages/utils";
+	const libraryResult = await runRemoteTemplateCommand(workspaceInfo, fullPath, discoverTemplate(LibraryTemplateRepo, [libraryDir], workspaceInfo), false, options?.silent ?? false);
+	if (libraryResult.exitCode !== 0) {
+		log$1.error(`Failed to create default library, exit code: ${libraryResult.exitCode}`);
+		return libraryResult;
+	}
+	const libraryPackageName = workspaceInfo.monorepoScope ? `${workspaceInfo.monorepoScope}/utils` : "utils";
+	const libraryProjectPath = path.join(fullPath, libraryDir);
+	setPackageName(libraryProjectPath, libraryPackageName);
+	removeNestedLibraryToolConfig(libraryProjectPath);
+	rewriteMonorepoProject(libraryProjectPath, workspaceInfo.packageManager, void 0, options?.silent ?? false);
+	alignMonorepoTypeScriptVersion(fullPath, appProjectPath, libraryProjectPath);
+	return {
+		exitCode: 0,
+		projectDir: templateInfo.targetDir
+	};
+}
+/**
+* Remove the root-only lint and format options shipped by the standalone library template.
+*
+* The same remote template is also used by `vite:library`, where this config is
+* valid. A library created as a workspace member, however, gets its lint and
+* format config from the monorepo root, so retaining them here creates invalid
+* nested config.
+*/
+function removeNestedLibraryToolConfig(projectPath) {
+	const configPath = path.join(projectPath, "vite.config.ts");
+	if (!fs.existsSync(configPath)) return;
+	for (const configKey of ["lint", "fmt"]) {
+		const result = removeConfigKey(configPath, configKey);
+		if (result.updated) fs.writeFileSync(configPath, result.content);
+	}
+}
+/**
+* Keep every scaffolded workspace member on the same TypeScript version.
+*
+* The app and library come from independently updated remote templates. If
+* their TypeScript ranges resolve to different versions, `typescript` — an
+* optional peer of vite-plus — resolves differently per member, so package
+* managers either create separate vite-plus peer instances (pnpm) or hoist a
+* compiler the other workspace member did not ask for (npm/Yarn). The library
+* template is the compatibility baseline because its declaration build may
+* require a newer compiler, so the app adopts its TypeScript range instead of
+* silently downgrading the library. The workspace catalog entry follows the
+* same baseline so members that reference `typescript: "catalog:"` (e.g. a
+* later `vite:generator` scaffold) stay on the workspace's compiler.
+*/
+function alignMonorepoTypeScriptVersion(workspaceRootPath, appProjectPath, libraryProjectPath) {
+	const typescriptVersion = JSON.parse(fs.readFileSync(path.join(libraryProjectPath, "package.json"), "utf8")).devDependencies?.typescript;
+	if (!typescriptVersion) return;
+	editJsonFile(path.join(appProjectPath, "package.json"), (pkg) => {
+		if (!pkg.devDependencies?.typescript || pkg.devDependencies.typescript === typescriptVersion) return;
+		pkg.devDependencies.typescript = typescriptVersion;
+		return pkg;
+	});
+	for (const catalogFile of ["pnpm-workspace.yaml", ".yarnrc.yml"]) {
+		const catalogPath = path.join(workspaceRootPath, catalogFile);
+		if (!fs.existsSync(catalogPath)) continue;
+		const catalogEntry = readYamlFile(catalogPath)?.catalog?.typescript;
+		if (catalogEntry === void 0 || catalogEntry === typescriptVersion) continue;
+		editYamlFile(catalogPath, (doc) => {
+			doc.setIn(["catalog", "typescript"], typescriptVersion);
+		});
+	}
+}
+/**
+* Drop the aliased `vite` / `vitest` devDeps that `create-vite` leaves on a
+* scaffolded sub-package. After migration its scripts already use `vp ...` and
+* nothing imports `'vite'` directly, so `@tiara-stack/vite-plus` provides them transitively.
+*
+* pnpm is the exception and keeps them: a package needs a DIRECT `vite` edge for
+* `vite` to resolve to @tiara-stack/vite-plus-core there (and for `vp why vite`
+* to show it) rather than pnpm auto-installing an upstream Vite to satisfy
+* Vitest's peer. Migration points that edge at the workspace catalog, which owns
+* the alias; the `vite@*` workspace override covers the transitive and peer
+* declarations instead (see `pnpmOverrideKey`). npm, yarn, and bun redirect the
+* transitive/peer vite via their root overrides/resolutions regardless of a
+* direct dep, so the aliased keys are dead weight and are dropped.
+*/
+function dropAliasedRuntimeDevDeps(appProjectPath, packageManager) {
+	if (packageManager === PackageManager.pnpm) return;
+	editJsonFile(path.join(appProjectPath, "package.json"), (pkg) => {
+		let changed = false;
+		for (const name of ["vite", "vitest"]) if (pkg.devDependencies?.[name]) {
+			delete pkg.devDependencies[name];
+			changed = true;
+		}
+		return changed ? pkg : void 0;
+	});
+}
+//#endregion
 //#region src/create/templates/builtin.ts
 async function executeBuiltinTemplate(workspaceInfo, templateInfo, options) {
 	assert(templateInfo.targetDir, "targetDir is required");
@@ -4447,14 +4646,16 @@ async function executeBuiltinTemplate(workspaceInfo, templateInfo, options) {
 		const libraryTemplateInfo = discoverTemplate(LibraryTemplateRepo, [templateInfo.targetDir], workspaceInfo);
 		const result = await runRemoteTemplateCommand(workspaceInfo, workspaceInfo.rootDir, libraryTemplateInfo, false, options?.silent ?? false);
 		if (result.exitCode !== 0) return { exitCode: result.exitCode };
-		setPackageName(path.join(workspaceInfo.rootDir, templateInfo.targetDir), templateInfo.packageName);
+		const fullPath = path.join(workspaceInfo.rootDir, templateInfo.targetDir);
+		setPackageName(fullPath, templateInfo.packageName);
+		if (workspaceInfo.isMonorepo) removeNestedLibraryToolConfig(fullPath);
 		return {
 			...result,
 			projectDir: templateInfo.targetDir
 		};
 	}
 	if (templateInfo.command.startsWith("vite:")) {
-		if (!options?.silent) log.error(`Unknown builtin template "${templateInfo.command}". Run ${import_picocolors.default.yellow("vp create --list")} to see available templates.`);
+		if (!options?.silent) log$1.error(`Unknown builtin template "${templateInfo.command}". Run ${import_picocolors.default.yellow("vp create --list")} to see available templates.`);
 		return { exitCode: 1 };
 	}
 	const result = await runRemoteTemplateCommand(workspaceInfo, workspaceInfo.rootDir, templateInfo, false, options?.silent ?? false);
@@ -4492,238 +4693,11 @@ async function executeBundledTemplate(workspaceInfo, templateInfo) {
 	};
 }
 //#endregion
-//#region src/create/templates/monorepo.ts
-const InitialMonorepoAppDir = "apps/website";
-async function executeMonorepoTemplate(workspaceInfo, templateInfo, options) {
-	assert(templateInfo.packageName, "packageName is required");
-	assert(templateInfo.targetDir, "targetDir is required");
-	workspaceInfo.monorepoScope = getScopeFromPackageName(templateInfo.packageName);
-	const fullPath = path.join(workspaceInfo.rootDir, templateInfo.targetDir);
-	if (!options?.silent) {
-		log.info(`Target directory: ${formatDisplayTargetDir(templateInfo.targetDir)}`);
-		log.step("Creating Vite+ monorepo...");
-	}
-	copyDir(path.join(templatesDir, "monorepo"), fullPath);
-	renameFiles(fullPath);
-	editJsonFile(path.join(fullPath, "package.json"), (pkg) => {
-		pkg.name = templateInfo.packageName;
-		return pkg;
-	});
-	if (workspaceInfo.packageManager === PackageManager.pnpm) {
-		editJsonFile(path.join(fullPath, "package.json"), (pkg) => {
-			pkg.workspaces = void 0;
-			pkg.resolutions = void 0;
-			return pkg;
-		});
-		const yarnrcPath = path.join(fullPath, ".yarnrc.yml");
-		if (fs.existsSync(yarnrcPath)) fs.unlinkSync(yarnrcPath);
-	} else if (workspaceInfo.packageManager === PackageManager.yarn) {
-		editJsonFile(path.join(fullPath, "package.json"), (pkg) => {
-			pkg.pnpm = void 0;
-			return pkg;
-		});
-		const pnpmWorkspacePath = path.join(fullPath, "pnpm-workspace.yaml");
-		if (fs.existsSync(pnpmWorkspacePath)) fs.unlinkSync(pnpmWorkspacePath);
-	} else {
-		editJsonFile(path.join(fullPath, "package.json"), (pkg) => {
-			pkg.pnpm = void 0;
-			return pkg;
-		});
-		const pnpmWorkspacePath = path.join(fullPath, "pnpm-workspace.yaml");
-		if (fs.existsSync(pnpmWorkspacePath)) fs.unlinkSync(pnpmWorkspacePath);
-		const yarnrcPath = path.join(fullPath, ".yarnrc.yml");
-		if (fs.existsSync(yarnrcPath)) fs.unlinkSync(yarnrcPath);
-	}
-	if (!options?.silent) log.success("Monorepo template created");
-	if (!options?.silent) log.step("Creating default application in apps/website...");
-	const appResult = await runRemoteTemplateCommand(workspaceInfo, fullPath, discoverTemplate("create-vite@latest", [
-		InitialMonorepoAppDir,
-		"--template",
-		"vanilla-ts",
-		"--no-interactive"
-	], workspaceInfo), false, options?.silent ?? false);
-	if (appResult.exitCode !== 0) {
-		log.error(`Failed to create default application: ${appResult.exitCode}`);
-		return appResult;
-	}
-	const appPackageName = workspaceInfo.monorepoScope ? `${workspaceInfo.monorepoScope}/website` : "website";
-	const appProjectPath = path.join(fullPath, InitialMonorepoAppDir);
-	setPackageName(appProjectPath, appPackageName);
-	rewriteMonorepoProject(appProjectPath, workspaceInfo.packageManager, void 0, options?.silent ?? false);
-	dropAliasedRuntimeDevDeps(appProjectPath, workspaceInfo.packageManager);
-	if (!options?.silent) log.step("Creating default library in packages/utils...");
-	const libraryDir = "packages/utils";
-	const libraryResult = await runRemoteTemplateCommand(workspaceInfo, fullPath, discoverTemplate(LibraryTemplateRepo, [libraryDir], workspaceInfo), false, options?.silent ?? false);
-	if (libraryResult.exitCode !== 0) {
-		log.error(`Failed to create default library, exit code: ${libraryResult.exitCode}`);
-		return libraryResult;
-	}
-	const libraryPackageName = workspaceInfo.monorepoScope ? `${workspaceInfo.monorepoScope}/utils` : "utils";
-	const libraryProjectPath = path.join(fullPath, libraryDir);
-	setPackageName(libraryProjectPath, libraryPackageName);
-	rewriteMonorepoProject(libraryProjectPath, workspaceInfo.packageManager, void 0, options?.silent ?? false);
-	return {
-		exitCode: 0,
-		projectDir: templateInfo.targetDir
-	};
-}
-/**
-* Drop the aliased `vite` / `vitest` devDeps that `create-vite` leaves on a
-* scaffolded sub-package. After migration its scripts already use `vp ...` and
-* nothing imports `'vite'` directly, so `vite-plus` provides them transitively.
-*
-* pnpm is the exception and keeps them: pnpm only surfaces the
-* pnpm-workspace.yaml `overrides.vite: catalog:` entry through a package that
-* directly depends on `vite`, so keeping the aliased devDep lets `vp why vite`
-* reflect the override (resolving to @voidzero-dev/vite-plus-core). npm, yarn,
-* and bun redirect the transitive/peer vite via their root
-* overrides/resolutions regardless of a direct dep, so the aliased keys are
-* dead weight and are dropped.
-*/
-function dropAliasedRuntimeDevDeps(appProjectPath, packageManager) {
-	if (packageManager === PackageManager.pnpm) return;
-	editJsonFile(path.join(appProjectPath, "package.json"), (pkg) => {
-		let changed = false;
-		for (const name of ["vite", "vitest"]) if (pkg.devDependencies?.[name]) {
-			delete pkg.devDependencies[name];
-			changed = true;
-		}
-		return changed ? pkg : void 0;
-	});
-}
-function getScopeFromPackageName(packageName) {
-	if (packageName.startsWith("@")) return packageName.split("/")[0];
-	return "";
-}
-//#endregion
 //#region src/create/bin.ts
-const helpMessage = renderCliDoc({
-	usage: "vp create [TEMPLATE] [OPTIONS] [-- TEMPLATE_OPTIONS]",
-	summary: "Use any builtin, local or remote template with Vite+.",
-	documentationUrl: "https://viteplus.dev/guide/create",
-	sections: [
-		{
-			title: "Arguments",
-			rows: [{
-				label: "TEMPLATE",
-				description: [
-					`Template name. Run \`${accent("vp create --list")}\` to see available templates.`,
-					`- Default: ${accent("vite:monorepo")}, ${accent("vite:application")}, ${accent("vite:library")}, ${accent("vite:generator")}`,
-					"- Remote: vite, @tanstack/start, create-next-app,",
-					"  create-nuxt, github:user/repo, https://github.com/user/template-repo, etc.",
-					"- Local: a `create.templates` entry name from vite.config.ts (monorepo)",
-					`- Org scope: ${accent("@your-org")} → picker from ${accent("@your-org/create")}'s ${accent("createConfig.templates")} manifest`,
-					`- Org entry: ${accent("@your-org:web")} → manifest entry "web" from ${accent("@your-org/create")}`,
-					`When omitted, uses \`create.defaultTemplate\` from vite.config.ts if set.`
-				]
-			}]
-		},
-		{
-			title: "Options",
-			rows: [
-				{
-					label: "--directory DIR",
-					description: "Target directory for the generated project."
-				},
-				{
-					label: "--agent NAME",
-					description: "Write coding agent instructions to AGENTS.md, CLAUDE.md, etc."
-				},
-				{
-					label: "--no-agent",
-					description: "Skip writing coding agent instructions"
-				},
-				{
-					label: "--editor NAME",
-					description: "Write editor config files for the specified editor."
-				},
-				{
-					label: "--no-editor",
-					description: "Skip writing editor config files"
-				},
-				{
-					label: "--git",
-					description: "Initialize a git repository"
-				},
-				{
-					label: "--no-git",
-					description: "Skip git repository initialization"
-				},
-				{
-					label: "--hooks",
-					description: "Set up pre-commit hooks (default in non-interactive mode)"
-				},
-				{
-					label: "--no-hooks",
-					description: "Skip pre-commit hooks setup"
-				},
-				{
-					label: "--package-manager NAME",
-					description: "Use specified package manager (pnpm, npm, yarn, bun)"
-				},
-				{
-					label: "--approve-builds",
-					description: "Approve and run gated dependency build scripts without prompting"
-				},
-				{
-					label: "--verbose",
-					description: "Show detailed scaffolding output"
-				},
-				{
-					label: "--no-interactive",
-					description: "Run in non-interactive mode"
-				},
-				{
-					label: "--list",
-					description: "List all available templates"
-				},
-				{
-					label: "-h, --help",
-					description: "Show this help message"
-				}
-			]
-		},
-		{
-			title: "Template Options",
-			lines: ["  Any arguments after -- are passed directly to the template."]
-		},
-		{
-			title: "Examples",
-			lines: [
-				`  ${muted("# Interactive mode")}`,
-				`  ${accent("vp create")}`,
-				"",
-				`  ${muted("# Use existing templates (shorthand expands to create-* packages)")}`,
-				`  ${accent("vp create vite")}`,
-				`  ${accent("vp create @tanstack/start")}`,
-				`  ${accent("vp create svelte")}`,
-				`  ${accent("vp create vite -- --template react-ts")}`,
-				"",
-				`  ${muted("# Full package names also work")}`,
-				`  ${accent("vp create create-vite")}`,
-				`  ${accent("vp create create-next-app")}`,
-				"",
-				`  ${muted("# Create Vite+ monorepo, application, library, or generator scaffolds")}`,
-				`  ${accent("vp create vite:monorepo")}`,
-				`  ${accent("vp create vite:application")}`,
-				`  ${accent("vp create vite:library")}`,
-				`  ${accent("vp create vite:generator")}`,
-				"",
-				`  ${muted("# Use templates from GitHub (via degit)")}`,
-				`  ${accent("vp create github:user/repo")}`,
-				`  ${accent("vp create https://github.com/user/template-repo")}`,
-				"",
-				`  ${muted("# Pick from an org that publishes @scope/create with createConfig.templates")}`,
-				`  ${accent("vp create @your-org")} ${muted("# interactive picker")}`,
-				`  ${accent("vp create @your-org:web")} ${muted("# direct manifest-entry selection")}`
-			]
-		}
-	]
-});
 const listTemplatesMessage = renderCliDoc({
 	usage: "vp create --list",
 	summary: "List available builtin and popular project templates.",
-	documentationUrl: "https://viteplus.dev/guide/create",
+	documentationUrl: documentationUrl$1("/guide/create"),
 	sections: [
 		{
 			title: "Vite+ Built-in Templates",
@@ -4794,52 +4768,23 @@ const listTemplatesMessage = renderCliDoc({
 		}
 	]
 });
-function normalizeAgentOption(agent) {
-	if (!Array.isArray(agent)) return agent;
-	if (agent.includes(false)) return false;
-	return agent.filter((value) => typeof value === "string");
-}
 function parseArgs() {
-	const args = process.argv.slice(3);
-	const separatorIndex = args.indexOf("--");
-	const viteArgs = separatorIndex >= 0 ? args.slice(0, separatorIndex) : args;
-	const templateArgs = separatorIndex >= 0 ? args.slice(separatorIndex + 1) : [];
-	const parsed = lib_default(viteArgs, {
-		alias: { h: "help" },
-		boolean: [
-			"help",
-			"list",
-			"all",
-			"interactive",
-			"hooks",
-			"verbose",
-			"git",
-			"approve-builds"
-		],
-		string: [
-			"directory",
-			"agent",
-			"editor",
-			"package-manager"
-		],
-		default: { interactive: defaultInteractive() }
-	});
+	const parsed = unwrapCliParseOutcome(parseCreateArgs(process.argv.slice(3)));
 	return {
-		templateName: parsed._[0],
+		templateName: parsed.templateName,
 		options: {
 			directory: parsed.directory,
-			interactive: parsed.interactive,
-			list: parsed.list || false,
-			help: parsed.help || false,
-			verbose: parsed.verbose || false,
-			agent: normalizeAgentOption(parsed.agent),
-			editor: normalizeEditorOption(parsed.editor),
+			interactive: parsed.interactive ?? defaultInteractive(),
+			list: parsed.list ?? false,
+			verbose: parsed.verbose ?? false,
+			agent: parsed.agent,
+			editor: parsed.editor,
 			git: parsed.git,
 			hooks: parsed.hooks,
-			packageManager: parsed["package-manager"],
-			approveBuilds: parsed["approve-builds"] || false
+			packageManager: parsed.packageManager,
+			approveBuilds: parsed.approveBuilds ?? false
 		},
-		templateArgs
+		templateArgs: parsed.templateArgs
 	};
 }
 function describeScaffold(templateName, templateArgs) {
@@ -4875,44 +4820,33 @@ function formatTemplateName(templateName) {
 	const baseName = isTypeScript ? templateName.slice(0, -3) : templateName;
 	return `${templateAliases[baseName] ?? baseName.split(/[-_]/).map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1)).join(" ")} + ${isTypeScript ? "TypeScript" : "JavaScript"}`;
 }
-function formatDuration(durationMs) {
-	if (durationMs < 1e3) return `${Math.max(1, durationMs)}ms`;
-	const durationSeconds = durationMs / 1e3;
-	if (durationSeconds < 10) return `${durationSeconds.toFixed(1)}s`;
-	return `${Math.round(durationSeconds)}s`;
-}
 function getNextCommand(projectDir, command) {
 	if (!projectDir || projectDir === ".") return command;
-	return `cd ${projectDir} && ${command}`;
+	return `cd ${formatProjectDirArgument(projectDir)} && ${command}`;
 }
-function findGitRoot(startPath) {
-	let dir = startPath;
-	while (true) {
-		if (fs.existsSync(path.join(dir, ".git"))) return dir;
-		const parent = path.dirname(dir);
-		if (parent === dir) return;
-		dir = parent;
-	}
+function formatProjectDirArgument(projectDir) {
+	const argument = projectDir.startsWith("-") ? `./${projectDir}` : projectDir;
+	return /^[A-Za-z0-9_@./\\-]+$/.test(argument) ? argument : JSON.stringify(argument);
 }
 function getCopilotSetupRoot(projectRoot, isExistingMonorepo) {
 	if (!isExistingMonorepo) return projectRoot;
 	return findGitRoot(projectRoot) ?? projectRoot;
 }
 function showCreateSummary(options) {
-	const { description, installSummary, nextCommand, packageManager, packageManagerVersion, projectDir } = options;
-	log$1(`${styleText("magenta", "◇")} Scaffolded ${accent(projectDir)}${description ? ` with ${description}` : ""}`);
-	log$1(`${styleText("gray", "•")} Node ${process.versions.node}  ${packageManager} ${packageManagerVersion}`);
-	if (installSummary?.status === "installed") log$1(`${styleText("green", "✓")} Dependencies installed in ${formatDuration(installSummary.durationMs)}`);
-	log$1(`${styleText("blue", "→")} Next: ${accent(nextCommand)}`);
+	const { description, gitInitialized, installSummary, nextCommand, packageManager, packageManagerVersion, projectDir } = options;
+	log(`${styleText("magenta", "◇")} Scaffolded ${accent(projectDir)}${description ? ` with ${description}` : ""}`);
+	log(`${styleText("gray", "•")} Node ${process.versions.node}  ${packageManager} ${packageManagerVersion}`);
+	if (installSummary?.status === "installed") log(`${styleText("green", "✓")} Dependencies installed in ${formatDuration(installSummary.durationMs)}`);
+	if (gitInitialized) {
+		const git = !projectDir || projectDir === "." ? "git" : `git -C ${formatProjectDirArgument(projectDir)}`;
+		const gitCommand = `${git} add -A && ${git} commit -m "chore: initial commit"`;
+		log(`${styleText("blue", "→")} Git (optional): ${accent(gitCommand)}`);
+	}
+	log(`${styleText("blue", "→")} Next: ${accent(nextCommand)}`);
 }
 async function main() {
 	const { templateName, options, templateArgs } = parseArgs();
 	let compactOutput = !options.verbose;
-	if (options.help) {
-		printHeader();
-		log$1(helpMessage);
-		return;
-	}
 	if (options.list) {
 		await showAvailableTemplates();
 		return;
@@ -4923,7 +4857,7 @@ async function main() {
 	if (options.directory) {
 		const formatted = formatTargetDir(options.directory);
 		if (formatted.error) {
-			log.error(formatted.error);
+			log$1.error(formatted.error);
 			cancelAndExit("The --directory option is invalid", 1);
 		}
 		targetDir = formatted.directory;
@@ -4944,6 +4878,7 @@ async function main() {
 	let selectedEditors;
 	let selectedParentDir;
 	let remoteTargetDir;
+	let gitInitialized = false;
 	let shouldSetupHooks = false;
 	let bundled;
 	let skipShorthandExpansion = false;
@@ -4956,7 +4891,7 @@ async function main() {
 		if (!selectedTemplateName && configuredCreate.defaultTemplate) selectedTemplateName = configuredCreate.defaultTemplate;
 	} catch (error) {
 		if (error instanceof CreateConfigSchemaError) cancelAndExit(error.message, 1);
-		log.warn(`Could not read \`create\` config from the workspace vite.config (${error.message}); local templates are unavailable`);
+		log$1.warn(`Could not read \`create\` config from the workspace vite.config (${error.message}); local templates are unavailable`);
 	}
 	else if (!selectedTemplateName) {
 		let defaultTemplate;
@@ -5019,15 +4954,15 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 	if (!isDirectScaffoldTemplate) compactOutput = false;
 	if (targetDir && !isDirectScaffoldTemplate) cancelAndExit("The --directory option is only available for builtin and bundled @org templates", 1);
 	if (selectedTemplateName === BuiltinTemplate.monorepo && isMonorepo) {
-		log.info("You are already in a monorepo workspace.\nUse a different template or run this command outside the monorepo");
+		log$1.info("You are already in a monorepo workspace.\nUse a different template or run this command outside the monorepo");
 		cancelAndExit("Cannot create a monorepo inside an existing monorepo", 1);
 	}
 	if (selectedTemplateName === BuiltinTemplate.generator && !isMonorepo) {
-		log.info("The vite:generator template requires a monorepo workspace.\nRun this command inside a Vite+ monorepo, or create one first with `vp create vite:monorepo`");
+		log$1.info("The vite:generator template requires a monorepo workspace.\nRun this command inside a Vite+ monorepo, or create one first with `vp create vite:monorepo`");
 		cancelAndExit("Cannot create a generator outside a monorepo", 1);
 	}
 	if (isMonorepo && options.git !== void 0) cancelAndExit("The --git/--no-git options are not available when adding a package to an existing monorepo", 1);
-	if (isInSubdirectory && !compactOutput) log.info(`Detected monorepo root at ${accent(workspaceInfoOptional.rootDir)}`);
+	if (isInSubdirectory && !compactOutput) log$1.info(`Detected monorepo root at ${accent(workspaceInfoOptional.rootDir)}`);
 	if (isMonorepo && options.interactive && !targetDir) {
 		let parentDir;
 		if (workspaceInfoOptional.parentDirs.length > 0 || isInSubdirectory) {
@@ -5046,10 +4981,11 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 				value: "other",
 				hint: "Enter a custom target directory"
 			});
+			const defaultParentDir = shouldOfferCwdOption ? cwdRelativeToRoot : inferParentDir(selectedTemplateName, workspaceInfoOptional, isLocalTemplate) ?? workspaceInfoOptional.parentDirs[0];
 			const selected = await select({
 				message: "Where should the new package be added to the monorepo:",
 				options: dirOptions,
-				initialValue: shouldOfferCwdOption ? cwdRelativeToRoot : inferParentDir(selectedTemplateName, workspaceInfoOptional, isLocalTemplate) ?? workspaceInfoOptional.parentDirs[0]
+				initialValue: defaultParentDir
 			});
 			if (isCancel(selected)) cancelAndExit();
 			if (selected !== "other") parentDir = selected;
@@ -5068,48 +5004,50 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 		selectedParentDir = parentDir;
 	}
 	if (isMonorepo && !options.interactive && !targetDir) {
-		if (isInSubdirectory && !compactOutput) log.info(`Use ${accent("--directory")} to specify a different target location.`);
+		if (isInSubdirectory && !compactOutput) log$1.info(`Use ${accent("--directory")} to specify a different target location.`);
 		selectedParentDir = inferParentDir(selectedTemplateName, workspaceInfoOptional, isLocalTemplate) ?? workspaceInfoOptional.parentDirs[0];
 	}
-	if (isGitHubUrl(selectedTemplateName)) if (hasExplicitTargetDir(selectedTemplateArgs)) remoteTargetDir = selectedTemplateArgs[0];
-	else {
-		const inferredTargetDir = inferGitHubRepoName(selectedTemplateName) ?? "template";
-		const remoteTargetBaseDir = selectedParentDir ? path.join(workspaceInfoOptional.rootDir, selectedParentDir) : workspaceInfoOptional.rootDir;
-		const defaultTargetDir = suggestAvailableTargetDir(inferredTargetDir, remoteTargetBaseDir);
-		if (defaultTargetDir !== inferredTargetDir && options.interactive) log.info(`  Target directory "${inferredTargetDir}" already exists. Suggested: ${accent(defaultTargetDir)}`);
-		remoteTargetDir = await promptTargetDir(defaultTargetDir, options.interactive, { cwd: remoteTargetBaseDir });
-		selectedTemplateArgs = [remoteTargetDir, ...selectedTemplateArgs];
+	if (isGitHubUrl(selectedTemplateName)) {
+		if (hasExplicitTargetDir(selectedTemplateArgs)) remoteTargetDir = selectedTemplateArgs[0];
+		else {
+			const inferredTargetDir = inferGitHubRepoName(selectedTemplateName) ?? "template";
+			const remoteTargetBaseDir = selectedParentDir ? path.join(workspaceInfoOptional.rootDir, selectedParentDir) : workspaceInfoOptional.rootDir;
+			const defaultTargetDir = suggestAvailableTargetDir(inferredTargetDir, remoteTargetBaseDir);
+			if (defaultTargetDir !== inferredTargetDir && options.interactive) log$1.info(`  Target directory "${inferredTargetDir}" already exists. Suggested: ${accent(defaultTargetDir)}`);
+			remoteTargetDir = await promptTargetDir(defaultTargetDir, options.interactive, { cwd: remoteTargetBaseDir });
+			selectedTemplateArgs = [remoteTargetDir, ...selectedTemplateArgs];
+		}
 	}
 	const directScaffoldFallbackName = bundled ? `vite-plus-${bundled.entryName}` : selectedTemplateName === BuiltinTemplate.monorepo ? "vite-plus-monorepo" : `vite-plus-${selectedTemplateName.split(":")[1]}`;
-	if (isDirectScaffoldTemplate && (!targetDir || targetDir === ".")) if (targetDir === ".") {
-		packageName = deriveDefaultPackageName(cwd, workspaceInfoOptional.monorepoScope, directScaffoldFallbackName);
-		if (isMonorepo) {
-			if (!cwdRelativeToRoot) cancelAndExit("Cannot scaffold into the monorepo root directory. Use --directory to specify a target directory", 1);
-			const enclosingPackage = workspaceInfoOptional.packages.find((pkg) => cwdRelativeToRoot === pkg.path || cwdRelativeToRoot.startsWith(`${pkg.path}/`));
-			if (enclosingPackage) cancelAndExit(`Cannot scaffold inside existing package "${enclosingPackage.name}" (${enclosingPackage.path}). Use --directory to specify a different location`, 1);
-			targetDir = cwdRelativeToRoot;
+	if (isDirectScaffoldTemplate && (!targetDir || targetDir === ".")) {
+		if (targetDir === ".") {
+			packageName = deriveDefaultPackageName(cwd, workspaceInfoOptional.monorepoScope, directScaffoldFallbackName);
+			if (isMonorepo) {
+				if (!cwdRelativeToRoot) cancelAndExit("Cannot scaffold into the monorepo root directory. Use --directory to specify a target directory", 1);
+				const enclosingPackage = workspaceInfoOptional.packages.find((pkg) => cwdRelativeToRoot === pkg.path || cwdRelativeToRoot.startsWith(`${pkg.path}/`));
+				if (enclosingPackage) cancelAndExit(`Cannot scaffold inside existing package "${enclosingPackage.name}" (${enclosingPackage.path}). Use --directory to specify a different location`, 1);
+				targetDir = cwdRelativeToRoot;
+			}
+			log$1.info(`Using package name: ${accent(packageName)}`);
+		} else if (selectedTemplateName === BuiltinTemplate.monorepo) {
+			const selected = await promptPackageNameAndTargetDir(getRandomProjectName({ fallbackName: "vite-plus-monorepo" }), options.interactive);
+			packageName = selected.packageName;
+			targetDir = selected.targetDir;
+		} else {
+			const selected = await promptPackageNameAndTargetDir(getRandomProjectName({
+				scope: workspaceInfoOptional.monorepoScope,
+				fallbackName: directScaffoldFallbackName
+			}), options.interactive);
+			packageName = selected.packageName;
+			targetDir = selectedParentDir ? path.join(selectedParentDir, selected.targetDir).split(path.sep).join("/") : selected.targetDir;
 		}
-		log.info(`Using package name: ${accent(packageName)}`);
-	} else if (selectedTemplateName === BuiltinTemplate.monorepo) {
-		const selected = await promptPackageNameAndTargetDir(getRandomProjectName({ fallbackName: "vite-plus-monorepo" }), options.interactive);
-		packageName = selected.packageName;
-		targetDir = selected.targetDir;
-	} else {
-		const selected = await promptPackageNameAndTargetDir(getRandomProjectName({
-			scope: workspaceInfoOptional.monorepoScope,
-			fallbackName: directScaffoldFallbackName
-		}), options.interactive);
-		packageName = selected.packageName;
-		targetDir = selectedParentDir ? path.join(selectedParentDir, selected.targetDir).split(path.sep).join("/") : selected.targetDir;
 	}
-	if (options.packageManager && !Object.values(PackageManager).includes(options.packageManager)) {
-		const valid = Object.values(PackageManager).join(", ");
-		log.error(`Invalid package manager: ${options.packageManager}. Must be one of: ${valid}`);
-		cancelAndExit("Invalid --package-manager value", 1);
-	}
-	const packageManager = workspaceInfoOptional.packageManager ?? options.packageManager ?? await selectPackageManager(options.interactive, compactOutput);
+	const requestedPackageManager = options.packageManager;
+	const detectedPackageManager = workspaceInfoOptional.packageManager;
+	const packageManager = (isMonorepo ? detectedPackageManager ?? requestedPackageManager : requestedPackageManager ?? detectedPackageManager) ?? await selectPackageManager(options.interactive, compactOutput);
+	const packageManagerVersion = packageManager === detectedPackageManager ? workspaceInfoOptional.packageManagerVersion : "latest";
 	const shouldSilencePackageManagerInstallLog = compactOutput || isMonorepo && workspaceInfoOptional.packageManager !== void 0;
-	const downloadResult = await downloadPackageManager$1(packageManager, workspaceInfoOptional.packageManagerVersion, options.interactive, shouldSilencePackageManagerInstallLog);
+	const downloadResult = await downloadPackageManager$1(packageManager, packageManagerVersion, options.interactive, shouldSilencePackageManagerInstallLog);
 	const workspaceInfo = {
 		...workspaceInfoOptional,
 		packageManager,
@@ -5136,7 +5074,7 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 		onCancel: () => cancelAndExit()
 	});
 	const shouldSetupGit = await resolveGitInit(options, isMonorepo);
-	if (!isMonorepo) shouldSetupHooks = await promptGitHooks(options);
+	if (!isMonorepo && (!options.interactive || shouldSetupGit || options.hooks === true)) shouldSetupHooks = await promptGitHooks(options);
 	const createProgress = options.interactive && compactOutput ? spinner({ indicator: "timer" }) : void 0;
 	let createProgressStarted = false;
 	let createProgressMessage = "Scaffolding project";
@@ -5178,7 +5116,8 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 	const handleIgnoredBuilds = async (projectPath, installCwd, summary) => {
 		if (summary?.status !== "installed") return;
 		const reportedBuilds = [.../* @__PURE__ */ new Set([...summary.pendingBuilds ?? [], ...migratePendingBuilds])];
-		const targets = resolveApproveBuildTargets(projectPath, await detectGatedBuilds(installCwd, workspaceInfo.packageManager, reportedBuilds), workspaceInfo.packageManager);
+		const pendingBuilds = await detectGatedBuilds(installCwd, workspaceInfo.packageManager, reportedBuilds);
+		const targets = resolveApproveBuildTargets(projectPath, pendingBuilds, workspaceInfo.packageManager);
 		if (targets.length === 0) return;
 		pauseCreateProgress();
 		const approved = await approveBuilds({
@@ -5205,19 +5144,6 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 		resumeCreateProgress();
 	}
 	if (templateInfo.command === BuiltinTemplate.monorepo || isBundledMonorepo) {
-		let shouldInitGit = shouldSetupGit;
-		if (options.interactive && !compactOutput && options.git === void 0) {
-			pauseCreateProgress();
-			const selected = await confirm({
-				message: "Initialize git repository:",
-				initialValue: true
-			});
-			resumeCreateProgress();
-			if (isCancel(selected)) {
-				log.info("Operation cancelled. Skipping git initialization");
-				shouldInitGit = false;
-			} else shouldInitGit = selected;
-		} else if (shouldInitGit && !compactOutput) log.info("Initializing git repository (default: yes)");
 		updateCreateProgress("Creating monorepo");
 		await checkProjectDirExists(path.join(workspaceInfo.rootDir, targetDir), options.interactive);
 		const result = isBundledMonorepo ? await executeBundledTemplate(workspaceInfo, {
@@ -5235,18 +5161,15 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 			cancelAndExit(`Failed to create monorepo, exit code: ${result.exitCode}`, result.exitCode);
 		}
 		const fullPath = path.join(workspaceInfo.rootDir, projectDir);
-		if (shouldInitGit) {
-			const gitResult = import_cross_spawn.default.sync("git", ["init"], {
-				stdio: "pipe",
-				cwd: fullPath
-			});
-			if (gitResult.status === 0) {
-				if (!compactOutput) log.success("Git repository initialized");
-				ensureGitignoreNodeModules(fullPath);
-			} else {
-				log.warn("Failed to initialize git repository");
-				if (gitResult.stderr) log.info(gitResult.stderr.toString());
-			}
+		const scaffoldedWorkspace = await detectWorkspace$1(fullPath);
+		workspaceInfo.isMonorepo = true;
+		workspaceInfo.workspacePatterns = scaffoldedWorkspace.workspacePatterns;
+		workspaceInfo.parentDirs = scaffoldedWorkspace.parentDirs;
+		workspaceInfo.packages = scaffoldedWorkspace.packages;
+		if (shouldSetupGit) {
+			updateCreateProgress("Initializing git repository");
+			gitInitialized = await initGitRepository(fullPath);
+			if (gitInitialized) ensureDefaultGitignoreEntries(fullPath);
 		}
 		updateCreateProgress("Writing agent instructions");
 		pauseCreateProgress();
@@ -5268,19 +5191,17 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 			editorId: selectedEditors,
 			interactive: options.interactive,
 			silent: compactOutput,
-			extraVsCodeSettings: { "npm.scriptRunner": "vp" }
+			extraVsCodeSettings: { "npm.scriptRunner": "vp" },
+			packageManager
 		});
 		if (selectedEditors?.includes("vscode")) ensureGitignoreVsCodeEditorConfigs(fullPath);
 		resumeCreateProgress();
 		workspaceInfo.rootDir = fullPath;
 		updateCreateProgress("Integrating monorepo");
-		rewriteMonorepo(workspaceInfo, void 0, compactOutput);
-		if (shouldSetupGit) {
-			updateCreateProgress("Initializing git repository");
-			await initGitRepository(fullPath);
-		}
+		const skipStagedMigration = shouldSkipStagedMigrationForHooks(fullPath, shouldSetupHooks, workspaceInfo.packageManager, workspaceInfo.packages);
+		rewriteMonorepo(workspaceInfo, skipStagedMigration, compactOutput);
 		if (bundled?.monorepo) injectCreateDefaultTemplate(fullPath, bundled.scope, compactOutput);
-		if (shouldSetupHooks) installGitHooks(fullPath, compactOutput, void 0, workspaceInfo.packageManager);
+		if (shouldSetupHooks) installGitHooks(fullPath, compactOutput, void 0, workspaceInfo.packageManager, workspaceInfo.packages);
 		updateCreateProgress("Installing dependencies");
 		const installSummary = await runViteInstall(fullPath, options.interactive, installArgs, {
 			silent: compactOutput,
@@ -5294,6 +5215,7 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 		clearCreateProgress();
 		showCreateSummary({
 			description: describeScaffold(selectedTemplateName, selectedTemplateArgs),
+			gitInitialized,
 			installSummary,
 			nextCommand: getNextCommand(projectDir, "vp run"),
 			packageManager: workspaceInfo.packageManager,
@@ -5359,7 +5281,7 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 				template: generatorTemplatePath
 			}, compactOutput);
 		} catch (error) {
-			log.warn(`Could not register the generator in create.templates (${error.message}).\nAdd it by hand: { name: '${generatorName || path.basename(projectDir)}', template: '${generatorTemplatePath}' }`);
+			log$1.warn(`Could not register the generator in create.templates (${error.message}).\nAdd it by hand: { name: '${generatorName || path.basename(projectDir)}', template: '${generatorTemplatePath}' }`);
 		}
 		resumeCreateProgress();
 	}
@@ -5385,12 +5307,13 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 			editorId: selectedEditors,
 			interactive: options.interactive,
 			silent: compactOutput,
-			extraVsCodeSettings: { "npm.scriptRunner": "vp" }
+			extraVsCodeSettings: { "npm.scriptRunner": "vp" },
+			packageManager
 		});
 		if (selectedEditors?.includes("vscode")) ensureGitignoreVsCodeEditorConfigs(fullPath);
 		resumeCreateProgress();
 	}
-	const shouldMigrateLintFmtTools = detectEslintProject(fullPath).hasDependency || detectPrettierProject(fullPath).hasDependency;
+	const shouldMigrateLintFmtTools = detectEslintProject(fullPath).hasDependency || detectPrettierProject(fullPath).hasDependency || detectTsupProject(fullPath).hasDependency;
 	let installSummary;
 	const installAndMigrate = async (installCwd) => {
 		setPackageManager(fullPath, workspaceInfo.downloadPackageManager);
@@ -5407,14 +5330,15 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 		});
 		if (installSummary.status !== "installed") return;
 		if (installSummary.pendingBuilds && installSummary.pendingBuilds.length > 0) migratePendingBuilds = installSummary.pendingBuilds;
-		updateCreateProgress("Migrating lint and format tools");
+		updateCreateProgress("Migrating lint, format & pack tools");
 		pauseCreateProgress();
 		await promptEslintMigration(fullPath, false);
 		await promptPrettierMigration(fullPath, false);
+		await promptTsupMigration(fullPath, false, packageManager);
 		resumeCreateProgress();
 	};
 	if (isMonorepo) {
-		if (!compactOutput) log.step("Monorepo integration...");
+		if (!compactOutput) log$1.step("Monorepo integration...");
 		if (workspaceInfo.packages.length > 0) {
 			if (options.interactive) {
 				pauseCreateProgress();
@@ -5449,7 +5373,8 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 		updateWorkspaceConfig(projectDir, workspaceInfo);
 		if (shouldMigrateLintFmtTools) await installAndMigrate(workspaceInfo.rootDir);
 		updateCreateProgress("Integrating into monorepo");
-		rewriteMonorepoProject(fullPath, workspaceInfo.packageManager, void 0, compactOutput);
+		const skipStagedMigration = shouldSkipStagedMigrationForHooks(fullPath, shouldSetupHooks, workspaceInfo.packageManager);
+		rewriteMonorepoProject(fullPath, workspaceInfo.packageManager, skipStagedMigration, compactOutput);
 		for (const framework of detectFramework(fullPath)) if (!hasFrameworkShim(fullPath, framework)) addFrameworkShim(fullPath, framework);
 		updateCreateProgress("Installing dependencies");
 		installSummary = await runViteInstall(workspaceInfo.rootDir, options.interactive, installArgs, {
@@ -5463,14 +5388,16 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 		const fmtPaths = registeredConfigPath ? [projectDir, path.relative(workspaceInfo.rootDir, registeredConfigPath)] : [projectDir];
 		await runViteFmt(workspaceInfo.rootDir, options.interactive, fmtPaths, { silent: compactOutput });
 	} else {
-		if (shouldMigrateLintFmtTools) await installAndMigrate(fullPath);
-		updateCreateProgress("Applying Vite+ project setup");
-		rewriteStandaloneProject(fullPath, workspaceInfo, void 0, compactOutput);
-		for (const framework of detectFramework(fullPath)) if (!hasFrameworkShim(fullPath, framework)) addFrameworkShim(fullPath, framework);
 		if (shouldSetupGit) {
 			updateCreateProgress("Initializing git repository");
-			await initGitRepository(fullPath);
+			gitInitialized = await initGitRepository(fullPath);
+			if (gitInitialized) ensureDefaultGitignoreEntries(fullPath);
 		}
+		if (shouldMigrateLintFmtTools) await installAndMigrate(fullPath);
+		updateCreateProgress("Applying Vite+ project setup");
+		const skipStagedMigration = shouldSkipStagedMigrationForHooks(fullPath, shouldSetupHooks, workspaceInfo.packageManager);
+		rewriteStandaloneProject(fullPath, workspaceInfo, skipStagedMigration, compactOutput);
+		for (const framework of detectFramework(fullPath)) if (!hasFrameworkShim(fullPath, framework)) addFrameworkShim(fullPath, framework);
 		if (shouldSetupHooks) installGitHooks(fullPath, compactOutput, void 0, workspaceInfo.packageManager);
 		updateCreateProgress("Installing dependencies");
 		installSummary = await runViteInstall(fullPath, options.interactive, installArgs, {
@@ -5486,6 +5413,7 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 	clearCreateProgress();
 	showCreateSummary({
 		description: describeScaffold(selectedTemplateName, selectedTemplateArgs),
+		gitInitialized,
 		installSummary,
 		nextCommand: getNextCommand(projectDir, "vp run"),
 		packageManager: workspaceInfo.packageManager,
@@ -5495,10 +5423,10 @@ Use \`vp create --list\` to list all available templates, or run \`vp create --h
 }
 async function showAvailableTemplates() {
 	printHeader();
-	log$1(listTemplatesMessage);
+	log(listTemplatesMessage);
 }
 main().catch((err) => {
-	log.error(err.message);
+	log$1.error(err.message);
 	console.error(err);
 	cancelAndExit(`Failed to generate code: ${err.message}`, 1);
 });

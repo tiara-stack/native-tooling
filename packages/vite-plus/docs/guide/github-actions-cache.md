@@ -36,7 +36,7 @@ Measure before you add a GitHub Actions cache for Vite Task. Compare workflow du
 Only commands run through `vp run` use Vite Task caching. A direct command such as `vp build` does not use the task cache. Define a task in `vite.config.ts` for each command you want to cache in CI:
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   run: {
@@ -48,7 +48,7 @@ export default defineConfig({
 });
 ```
 
-This guide assumes each task already hits locally. If a task misses, fix its tracking config in `vite.config.ts` before adding the GitHub Actions cache steps. See [Automatic Data Tracking](/guide/automatic-data-tracking) and [`run.tasks`](/config/run#tasks).
+This guide assumes each task already hits locally. If a task misses, fix its tracking config in `vite.config.ts` before adding the GitHub Actions cache steps. See [Automatic Data Tracking](/guide/automatic-data-tracking) and [`run.tasks`](/config/run#run-tasks).
 
 Run each task twice:
 
@@ -62,6 +62,10 @@ vp run lint # should print "cache hit"
 ## 2. Restore The Cache After Install
 
 Restore `node_modules/.vite/task-cache` after `vp install`, because package installation can recreate or modify `node_modules`.
+
+Set `<setup-vp-version>` below to an exact version from the [`setup-vp` releases page](https://github.com/voidzero-dev/setup-vp/releases). You can use a commit SHA instead.
+
+See [Automatic Version Updates](/guide/ci#automatic-version-updates) to configure Dependabot or Renovate.
 
 ```yaml [.github/workflows/ci.yml]
 name: CI
@@ -80,7 +84,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: voidzero-dev/setup-vp@v1
+      - uses: voidzero-dev/setup-vp@<setup-vp-version>
         with:
           node-version: '24'
           cache: true
@@ -129,7 +133,7 @@ If GitHub restores a cache but Vite Task prints a cache miss, the workflow resto
 
 ## Keep Task Tracking Stable
 
-If GitHub restores a cache but `vp run` prints a cache miss, fix the task fingerprint before changing the Actions cache key. See [Automatic Data Tracking](/guide/automatic-data-tracking) and [`run.tasks`](/config/run#tasks).
+If GitHub restores a cache but `vp run` prints a cache miss, fix the task fingerprint before changing the Actions cache key. See [Automatic Data Tracking](/guide/automatic-data-tracking) and [`run.tasks`](/config/run#run-tasks).
 
 ## Choose A Cache Key
 

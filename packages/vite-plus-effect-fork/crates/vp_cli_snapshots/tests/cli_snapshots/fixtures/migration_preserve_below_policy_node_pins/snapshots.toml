@@ -1,0 +1,10 @@
+[[case]]
+name = "migration_preserve_below_policy_node_pins"
+vp = "global"
+steps = [
+  { argv = ["vp", "migrate", "--no-interactive"], comment = "upgrade the incompatible runtime pin without changing the public engine contract" },
+  { argv = ["vpt", "print-file", ".node-version"], comment = "upgraded from 24.3.0 to 24.11.0" },
+  { argv = ["vpt", "print-file", "package.json"], comment = "engines.node stays 24.x and devEngines.runtime node stays ^24 (preserved, not raised)", continue-on-failure = true },
+  { argv = ["vpt", "print-file", "pnpm-workspace.yaml"], comment = "catalog is migrated" },
+  { argv = ["vp", "migrate", "--no-interactive"], comment = "rerun preserves the upgraded runtime and public engine contract" },
+]

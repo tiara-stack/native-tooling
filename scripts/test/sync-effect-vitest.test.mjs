@@ -5,11 +5,34 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { test } from "node:test";
+import { removeMissingDeclarationMapReferences } from "../lib/declaration-source-maps.mjs";
 
 const generator = fileURLToPath(new URL("../sync-effect-vitest.mjs", import.meta.url));
 const upstreamReadme = fileURLToPath(
   new URL("../../packages/effect-smol-fork/packages/vitest/README.md", import.meta.url),
 );
+
+test("package normalization removes only missing local declaration-map references", async () => {
+  const root = mkdtempSync(join(tmpdir(), "declaration-source-maps-"));
+  try {
+    const declaration = "export declare const value: number;\n";
+    const valid = `${declaration}//# sourceMappingURL=present.d.cts.map\n`;
+    const inline = `${declaration}//# sourceMappingURL=data:application/json;base64,e30=\n`;
+    const javascript = "export const value = 1;\n//# sourceMappingURL=missing.mjs.map\n";
+    writeFileSync(join(root, "missing.d.mts"), `${declaration}//# sourceMappingURL=missing.map\n`);
+    writeFileSync(join(root, "present.d.cts"), valid);
+    writeFileSync(join(root, "present.d.cts.map"), "{}");
+    writeFileSync(join(root, "inline.d.ts"), inline);
+    writeFileSync(join(root, "index.mjs"), javascript);
+    await removeMissingDeclarationMapReferences(root);
+    assert.equal(readFileSync(join(root, "missing.d.mts"), "utf8"), declaration);
+    assert.equal(readFileSync(join(root, "present.d.cts"), "utf8"), valid);
+    assert.equal(readFileSync(join(root, "inline.d.ts"), "utf8"), inline);
+    assert.equal(readFileSync(join(root, "index.mjs"), "utf8"), javascript);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
 
 function fixture(runner) {
   const root = mkdtempSync(join(tmpdir(), "effect-vitest-sync-"));
@@ -19,7 +42,21 @@ function fixture(runner) {
     writeFileSync(target, value);
   };
   write("package.json", JSON.stringify({ type: "module" }));
-  write("packages/vite-plus/package.json", JSON.stringify({ dependencies: { vitest: runner } }));
+  write(
+    "packages/vite-plus/package.json",
+    JSON.stringify({
+      name: "@tiara-stack/vite-plus",
+      version: "1.0.0",
+      dependencies: { vitest: runner },
+      exports: { "./test": { types: "./dist/test/index.d.ts", default: "./dist/test/index.js" } },
+    }),
+  );
+  write("packages/vite-plus/dist/test/index.js", 'export * from "vitest";\n');
+  write("packages/vite-plus/dist/test/index.d.ts", 'export * from "vitest";\n');
+  write(
+    "packages/effect-vitest/package.json",
+    JSON.stringify({ peerDependencies: { effect: "^4.0.1", "@tiara-stack/vite-plus": "^0.2.2" } }),
+  );
   write(
     "packages/effect-smol-fork/packages/vitest/package.json",
     JSON.stringify({
@@ -38,6 +75,14 @@ function fixture(runner) {
     'export { assert } from "vitest";\n',
   );
   write("packages/effect-smol-fork/packages/vitest/LICENSE", "MIT\n");
+  write(
+    "packages/vite-plus-effect-fork/packages/cli/node_modules/oxfmt/package.json",
+    JSON.stringify({ type: "module", exports: "./index.mjs" }),
+  );
+  write(
+    "packages/vite-plus-effect-fork/packages/cli/node_modules/oxfmt/index.mjs",
+    "export async function format(_path, code) { return { code, errors: [] }; }\n",
+  );
   copyFileSync(upstreamReadme, join(root, "packages/effect-smol-fork/packages/vitest/README.md"));
   write("packages/effect-vitest/src/index.ts", "existing helper\n");
   write("packages/effect-vitest/LICENSE", "existing license\n");
@@ -92,6 +137,9 @@ test("sync accepts a compatible runner without requiring the source development 
     assert.match(internal, /from "effect\/Arbitrary"/);
     assert.match(internal, /from "@tiara-stack\/vite-plus\/test"/);
     assert.match(internal, /V\.TestRunner\.getCurrentSuite/);
+    const pkg = JSON.parse(readFileSync(join(root, "packages/effect-vitest/package.json"), "utf8"));
+    assert.equal(pkg.peerDependencies["@tiara-stack/vite-plus"], ">=1.0.0 <2.0.0");
+    assert.equal(pkg.peerDependencies.effect, "^4.0.1");
     const readme = readFileSync(join(root, "packages/effect-vitest/README.md"), "utf8");
     assert.match(readme, /npm install -D @tiara-stack\/vite-plus @tiara-stack\/effect-vitest/);
     assert.doesNotMatch(readme, /npm install -D vitest/);
@@ -129,3 +177,85 @@ test("sync rejects an unexpected README installation command before replacing th
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+for (const missing of [
+  "runtime export",
+  "type export",
+  "built runtime",
+  "source rewrite",
+  "TestRunner API",
+]) {
+  test(`sync preserves the retained helper when missing ${missing}`, () => {
+    const root = fixture("5.0.1");
+    try {
+      const manifestPath = join(root, "packages/vite-plus/package.json");
+      const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+      if (missing === "runtime export") delete manifest.exports["./test"].default;
+      if (missing === "type export") delete manifest.exports["./test"].types;
+      writeFileSync(manifestPath, JSON.stringify(manifest));
+      if (missing === "built runtime") rmSync(join(root, "packages/vite-plus/dist/test/index.js"));
+      if (missing === "source rewrite")
+        writeFileSync(
+          join(root, "packages/effect-smol-fork/packages/vitest/src/utils.ts"),
+          'export { assert } from "changed-runner";\n',
+        );
+      if (missing === "TestRunner API")
+        writeFileSync(
+          join(root, "packages/effect-smol-fork/packages/vitest/src/internal/internal.ts"),
+          'import * as V from "vitest";\n',
+        );
+      const result = spawnSync(process.execPath, ["scripts/sync-effect-vitest.mjs"], {
+        cwd: root,
+        encoding: "utf8",
+      });
+      assert.notEqual(result.status, 0, missing);
+      assert.equal(
+        readFileSync(join(root, "packages/effect-vitest/src/index.ts"), "utf8"),
+        "existing helper\n",
+      );
+      assert.equal(
+        readFileSync(join(root, "packages/effect-vitest/README.md"), "utf8"),
+        "existing readme\n",
+      );
+      const pkg = JSON.parse(
+        readFileSync(join(root, "packages/effect-vitest/package.json"), "utf8"),
+      );
+      assert.equal(pkg.peerDependencies["@tiara-stack/vite-plus"], "^0.2.2");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+}
+
+for (const failure of ["missing formatter", "formatter error"]) {
+  test(`sync preserves the retained helper on ${failure}`, () => {
+    const root = fixture("5.0.1");
+    try {
+      const formatter = join(
+        root,
+        "packages/vite-plus-effect-fork/packages/cli/node_modules/oxfmt",
+      );
+      if (failure === "missing formatter") rmSync(formatter, { recursive: true });
+      else
+        writeFileSync(
+          join(formatter, "index.mjs"),
+          "export async function format(path, code) { return { code, errors: path.endsWith('utils.ts') ? [{ message: 'formatting failed' }] : [] }; }\n",
+        );
+      const result = spawnSync(process.execPath, ["scripts/sync-effect-vitest.mjs"], {
+        cwd: root,
+        encoding: "utf8",
+        env: { ...process.env, NODE_PATH: "" },
+      });
+      assert.notEqual(result.status, 0);
+      assert.match(result.stderr, failure === "missing formatter" ? /oxfmt/ : /formatting failed/);
+      for (const [path, expected] of [
+        ["src/index.ts", "existing helper\n"],
+        ["LICENSE", "existing license\n"],
+        ["README.md", "existing readme\n"],
+      ])
+        assert.equal(readFileSync(join(root, "packages/effect-vitest", path), "utf8"), expected);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+}

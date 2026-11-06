@@ -1,0 +1,548 @@
+{
+ "format": "tia314-review-packet-v1",
+ "kind": "legacy-contract",
+ "source_epoch": "5ecd568db620ea01f23465c064fe6b02cfa8377a",
+ "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+ "records": [
+  {
+   "target": {
+    "id": "T0340",
+    "path": "packages/vite-plus/dist/test/suite.js",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/dist/test/suite.js",
+     "mode": "100644",
+     "blob": "eb6590faf82bf6b6bc4dad59943f6108b68952d9",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/dist/test/suite.js",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "eb6590faf82bf6b6bc4dad59943f6108b68952d9",
+    "preimage_mode": "100644",
+    "preimage_sha256": "1489c1243a8a29879a7dc26cee0049e36630197aabdd2de6d9ea25ead8c566cf",
+    "hook_context": [
+     {
+      "start_line": 1,
+      "end_line": 1,
+      "text": "export * from 'vitest/suite';"
+     }
+    ],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/build.ts",
+     "packages/vite-plus/package.json",
+     "packages/effect-vitest/src/internal/internal.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0349",
+    "path": "packages/vite-plus/dist/tsconfig-fvpxgUq2.js",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/dist/tsconfig-fvpxgUq2.js",
+     "mode": "100644",
+     "blob": "6f5a048c4324cb0bf3258aaaf0ff35894b3c0e3c",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/dist/tsconfig-fvpxgUq2.js",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "6f5a048c4324cb0bf3258aaaf0ff35894b3c0e3c",
+    "preimage_mode": "100644",
+    "preimage_sha256": "f4277de2bf3cfb80c7f02e4eb5bad86e3430bef04fbe6b2e3f9d5c2e93c1483a",
+    "hook_context": [
+     {
+      "start_line": 4213,
+      "end_line": 4234,
+      "text": "\tif (isMonorepo) return false;\n\treturn promptGitInit(options);\n}\nfunction defaultInteractive() {\n\treturn !process.env.CI && process.stdin.isTTY;\n}\n//#endregion\n//#region src/utils/tsconfig.ts\n/**\n* Check if tsconfig.json has compilerOptions.baseUrl set.\n* oxlint's TypeScript checker (tsgolint) does not support baseUrl,\n* so typeAware/typeCheck must be disabled when it is present.\n*/\nfunction hasBaseUrlInTsconfigFile(filePath) {\n\ttry {\n\t\treturn parse(fs.readFileSync(filePath, \"utf-8\"))?.compilerOptions?.baseUrl != null;\n\t} catch {\n\t\treturn false;\n\t}\n}\nconst TSCONFIG_FILE_RE = /^tsconfig(\\.[\\w-]+)?\\.json$/i;\nfunction findTsconfigFiles(projectPath) {"
+     }
+    ],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0350",
+    "path": "packages/vite-plus/dist/tsgolint-path-B-yOos8p.js",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/dist/tsgolint-path-B-yOos8p.js",
+     "mode": "100644",
+     "blob": "e2f4ea61f1ff39bd256279decfdc1af99a085649",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/dist/tsgolint-path-B-yOos8p.js",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "e2f4ea61f1ff39bd256279decfdc1af99a085649",
+    "preimage_mode": "100644",
+    "preimage_sha256": "d1104db65efca637aea02dd8940458bea2ef7bd0d574bbd9e527775352d0a31a",
+    "hook_context": [
+     {
+      "start_line": 1,
+      "end_line": 44,
+      "text": "import { dirname, join } from \"node:path\";\nimport { existsSync, realpathSync } from \"node:fs\";\nimport { fileURLToPath } from \"node:url\";\nimport { createRequire } from \"node:module\";\nconst require = createRequire(import.meta.url);\n//#region src/utils/tsgolint-path.ts\nfunction resolveWindowsTsgolintExecutable(pathCandidates, options) {\n\tlet oxlintTsgolintPath = pathCandidates.find((p) => options.exists(p)) ?? \"\";\n\tif (!oxlintTsgolintPath && options.getRealpathCandidates) try {\n\t\toxlintTsgolintPath = options.getRealpathCandidates().find((p) => options.exists(p)) ?? \"\";\n\t} catch {}\n\tif (!oxlintTsgolintPath) throw new Error(\"Unable to resolve oxlint-tsgolint executable, tried:\\n\" + pathCandidates.map((path) => `- ${path}`).join(\"\\n\"));\n\treturn oxlintTsgolintPath;\n}\nfunction resolveTiaraTsgolintExecutable() {\n\tlet packagedTsgolintPath;\n\ttry {\n\t\tpackagedTsgolintPath = require.resolve(\"@tiara-stack/tsgolint-effect/bin/tsgolint-effect\");\n\t} catch {}\n\tconst candidate = process.env.TIARA_TSGOLINT_EFFECT_PATH ?? packagedTsgolintPath;\n\treturn candidate && existsSync(candidate) ? candidate : undefined;\n}\nfunction resolveTsgolintExecutable(tsgolintBinPath, scriptUrl) {\n\tconst tiaraTsgolintPath = resolveTiaraTsgolintExecutable();\n\tif (tiaraTsgolintPath) return tiaraTsgolintPath;\n\tif (process.platform !== \"win32\") return tsgolintBinPath;\n\tconst scriptDir = dirname(fileURLToPath(scriptUrl));\n\tconst localBinDir = join(scriptDir, \"..\", \"node_modules\", \".bin\");\n\tconst projectBinDir = join(dirname(dirname(tsgolintBinPath)), \"..\", \".bin\");\n\treturn resolveWindowsTsgolintExecutable([\n\t\tjoin(localBinDir, \"tsgolint.exe\"),\n\t\tjoin(localBinDir, \"tsgolint.cmd\"),\n\t\tjoin(projectBinDir, \"tsgolint.exe\"),\n\t\tjoin(projectBinDir, \"tsgolint.cmd\")\n\t], {\n\t\texists: existsSync,\n\t\tgetRealpathCandidates: () => {\n\t\t\tconst realBinDir = join(dirname(realpathSync(join(scriptDir, \"..\"))), \".bin\");\n\t\t\treturn [join(realBinDir, \"tsgolint.exe\"), join(realBinDir, \"tsgolint.cmd\")];\n\t\t}\n\t});\n}\n//#endregion\nexport { resolveWindowsTsgolintExecutable as n, resolveTsgolintExecutable as t };"
+     }
+    ],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs",
+     "packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts",
+     "packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0351",
+    "path": "packages/vite-plus/dist/tsgolint-path.d.ts",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/dist/tsgolint-path.d.ts",
+     "mode": "100644",
+     "blob": "161771e8da2620d06f59f308683a321421be9847",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/dist/tsgolint-path.d.ts",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "161771e8da2620d06f59f308683a321421be9847",
+    "preimage_mode": "100644",
+    "preimage_sha256": "c7c999674c1a768d73caad9b1a6e755c7693981a5454c0e6558c627f725b96b1",
+    "hook_context": [
+     {
+      "start_line": 1,
+      "end_line": 8,
+      "text": "//#region src/utils/tsgolint-path.d.ts\ndeclare function resolveWindowsTsgolintExecutable(pathCandidates: string[], options: {\n  exists: (path: string) => boolean;\n  getRealpathCandidates?: () => string[];\n}): string;\ndeclare function resolveTsgolintExecutable(tsgolintBinPath: string, scriptUrl: string): string;\n//#endregion\nexport { resolveTsgolintExecutable, resolveWindowsTsgolintExecutable };"
+     }
+    ],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs",
+     "packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts",
+     "packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0352",
+    "path": "packages/vite-plus/dist/tsgolint-path.js",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/dist/tsgolint-path.js",
+     "mode": "100644",
+     "blob": "133ed4a04807709112750ffd05079efabdcacb41",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/dist/tsgolint-path.js",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "133ed4a04807709112750ffd05079efabdcacb41",
+    "preimage_mode": "100644",
+    "preimage_sha256": "94a93f0c4d35e2ae37ea674cf7b233438844335cdfb4da5ff020a591e9409802",
+    "hook_context": [
+     {
+      "start_line": 1,
+      "end_line": 2,
+      "text": "import { n as resolveWindowsTsgolintExecutable, t as resolveTsgolintExecutable } from \"./tsgolint-path-B-yOos8p.js\";\nexport { resolveTsgolintExecutable, resolveWindowsTsgolintExecutable };"
+     }
+    ],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs",
+     "packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts",
+     "packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0366",
+    "path": "packages/vite-plus/dist/wrap-ansi-DNjkuBEp.js",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/dist/wrap-ansi-DNjkuBEp.js",
+     "mode": "100644",
+     "blob": "13d8406a5dd7ce3a9035370b8ab29d12fb77ef30",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/dist/wrap-ansi-DNjkuBEp.js",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "13d8406a5dd7ce3a9035370b8ab29d12fb77ef30",
+    "preimage_mode": "100644",
+    "preimage_sha256": "1f06759e20ba7ba1424e5f5389ffc36015d7915f9170656a351ccd2ab6bbcd78",
+    "hook_context": [],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0367",
+    "path": "packages/vite-plus/dist/wrap-ansi-DUi52C6W.js",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/dist/wrap-ansi-DUi52C6W.js",
+     "mode": "100644",
+     "blob": "60a5e5e542a7538b9558f52bd15971e60a1c1756",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/dist/wrap-ansi-DUi52C6W.js",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "60a5e5e542a7538b9558f52bd15971e60a1c1756",
+    "preimage_mode": "100644",
+    "preimage_sha256": "6447a4a06ef96a52fb3cbdfae95a4b67acc03fa6a6119c76d171dbe118f6422b",
+    "hook_context": [],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0368",
+    "path": "packages/vite-plus/docs/_data/team.ts",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/docs/_data/team.ts",
+     "mode": "100644",
+     "blob": "8835832aa264d538f3683d25278b932ebc3d924e",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/docs/_data/team.ts",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "8835832aa264d538f3683d25278b932ebc3d924e",
+    "preimage_mode": "100644",
+    "preimage_sha256": "79307ddde4c0ee737850cf1c8d996c93037ed34804354ad6301f9c736caa2279",
+    "hook_context": [],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0408",
+    "path": "packages/vite-plus/docs/package.json",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/docs/package.json",
+     "mode": "100644",
+     "blob": "0a04318a97fb5e654e3114f56da503b8188e5f55",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/docs/package.json",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "0a04318a97fb5e654e3114f56da503b8188e5f55",
+    "preimage_mode": "100644",
+    "preimage_sha256": "b490b380d0c6ad2f4059263efe3226264a03aebe09f2fb083f08af7b0f244b5f",
+    "hook_context": [],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0409",
+    "path": "packages/vite-plus/docs/pnpm-lock.yaml",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/docs/pnpm-lock.yaml",
+     "mode": "100644",
+     "blob": "8f487e55aeccab648ea9378ebfa5e2bcca2c44d4",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/docs/pnpm-lock.yaml",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "8f487e55aeccab648ea9378ebfa5e2bcca2c44d4",
+    "preimage_mode": "100644",
+    "preimage_sha256": "5a7a62f0b37b02b20f0957f388e43be9618ee9723aaa695ef421662c8a04101b",
+    "hook_context": [],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0410",
+    "path": "packages/vite-plus/docs/pnpm-workspace.yaml",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/docs/pnpm-workspace.yaml",
+     "mode": "100644",
+     "blob": "88ad9faed4364dde2840633123916651c2ab0777",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/docs/pnpm-workspace.yaml",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "88ad9faed4364dde2840633123916651c2ab0777",
+    "preimage_mode": "100644",
+    "preimage_sha256": "42bd28e708477bbeccfbd44081c90cb7290a01a0897314defade77f081f5950c",
+    "hook_context": [],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0411",
+    "path": "packages/vite-plus/docs/public/checkmark.svg",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/docs/public/checkmark.svg",
+     "mode": "100644",
+     "blob": "4d0d244f7d3fd82929107da0e3f2385e85716932",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/docs/public/checkmark.svg",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "4d0d244f7d3fd82929107da0e3f2385e85716932",
+    "preimage_mode": "100644",
+    "preimage_sha256": "1072d7e078f31a5f2d6777170aa8acad1bb541fcc17f5892dfa65b4e19ed73c4",
+    "hook_context": [],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0412",
+    "path": "packages/vite-plus/docs/public/cta-background.jpg",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/docs/public/cta-background.jpg",
+     "mode": "100644",
+     "blob": "ca73a8541b8d3a39684854e28018f85714913b8e",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/docs/public/cta-background.jpg",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "ca73a8541b8d3a39684854e28018f85714913b8e",
+    "preimage_mode": "100644",
+    "preimage_sha256": "cc9e802e3f7fe5be6e5f2c825beb44fa42b9815fe3eea2cb8a1f7c3bf07ac3a0",
+    "hook_context": [],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0413",
+    "path": "packages/vite-plus/docs/public/favicon.svg",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/docs/public/favicon.svg",
+     "mode": "100644",
+     "blob": "f8a50ff7b1b1333a0c2251d46ee45ea1660277d8",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/docs/public/favicon.svg",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "f8a50ff7b1b1333a0c2251d46ee45ea1660277d8",
+    "preimage_mode": "100644",
+    "preimage_sha256": "eb4c28ed300d7fd36a82875872a15201a3d8206382615497b60028dde2ed6579",
+    "hook_context": [],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0414",
+    "path": "packages/vite-plus/docs/public/icon.svg",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/docs/public/icon.svg",
+     "mode": "100644",
+     "blob": "a4ce2286bb191ddc112fec8928bad21d1a3a4213",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/docs/public/icon.svg",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "a4ce2286bb191ddc112fec8928bad21d1a3a4213",
+    "preimage_mode": "100644",
+    "preimage_sha256": "b0669622111705d31bd56de6a67ce7784bd0907b2dc7913074a9eacab4807a75",
+    "hook_context": [],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0415",
+    "path": "packages/vite-plus/docs/public/logo.svg",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/docs/public/logo.svg",
+     "mode": "100644",
+     "blob": "4dacb70e689200c1857fad66361cc3c353811ce5",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/docs/public/logo.svg",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "4dacb70e689200c1857fad66361cc3c353811ce5",
+    "preimage_mode": "100644",
+    "preimage_sha256": "0fc366821fa7b564d2903d255abc0f53e5b37c9c31e86901957906601f951046",
+    "hook_context": [],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  },
+  {
+   "target": {
+    "id": "T0416",
+    "path": "packages/vite-plus/docs/public/og.jpg",
+    "view": "removed contract",
+    "before": {
+     "path": "packages/vite-plus/docs/public/og.jpg",
+     "mode": "100644",
+     "blob": "4283b7106eefd969944117628ba16f377609317f",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": null,
+    "actual_sha256": null
+   },
+   "contract_and_bounded_preimage_context": {
+    "path": "packages/vite-plus/docs/public/og.jpg",
+    "status": "D",
+    "preimage_ref": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+    "preimage_blob": "4283b7106eefd969944117628ba16f377609317f",
+    "preimage_mode": "100644",
+    "preimage_sha256": "5cf6e601b224e99b0d8ec6a58d6dd9d1f1f7de503ceb76b78317400ce42d33b8",
+    "hook_context": [],
+    "replacement_interfaces": [
+     "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+     "packages/vite-plus-effect-fork/packages/core/build.ts",
+     "packages/effect-vitest/vite.config.ts"
+    ],
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+   }
+  }
+ ]
+}

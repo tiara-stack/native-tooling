@@ -1,0 +1,37 @@
+{
+ "format": "tia314-review-packet-v1",
+ "kind": "generated-map",
+ "source_epoch": "5ecd568db620ea01f23465c064fe6b02cfa8377a",
+ "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+ "records": [
+  {
+   "target": {
+    "id": "T0424",
+    "path": "packages/vite-plus/templates/monorepo/vite.config.ts",
+    "view": "generated transformation output",
+    "before": {
+     "path": "packages/vite-plus/templates/monorepo/vite.config.ts",
+     "mode": "100644",
+     "blob": "ad499096064eea8869a11af7d0d6e7306a61628a",
+     "ref": "e088d5c9784d2779684d02524fab62a0fa5e656a"
+    },
+    "after": {
+     "path": "packages/vite-plus/templates/monorepo/vite.config.ts",
+     "mode": "100644",
+     "blob": "809a5f06de594b3588ae19cb99d09dc8a8a4ea30",
+     "ref": "5ecd568db620ea01f23465c064fe6b02cfa8377a"
+    },
+    "actual_sha256": "234013bed59c687a563ddcec9d204dedd7c97427b118bf959e68f74fa05c6441"
+   },
+   "input_output_consumer_mapping": {
+    "sha256": "234013bed59c687a563ddcec9d204dedd7c97427b118bf959e68f74fa05c6441",
+    "git_mode": "100644",
+    "producer": "scripts/sync-vite-plus.mjs",
+    "mapping": "exact source copy plus shared scoped-specifier rewrite, including Markdown",
+    "source": "packages/vite-plus-effect-fork/packages/cli/templates/monorepo/vite.config.ts",
+    "source_sha256": "97fa6ff26ba8e8b275400936c99759c3062f6140255d4b6f71ae07db87e8c543"
+   },
+   "assessment": "Assess shared generator/adapter code once with this exact output binding; embedded stock algorithms remain context."
+  }
+ ]
+}
