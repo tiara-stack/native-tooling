@@ -1,8 +1,8 @@
 {
  "format": "tia314-review-index-v1",
- "source_epoch": "4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f",
+ "source_epoch": "5ecd568db620ea01f23465c064fe6b02cfa8377a",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
- "source_tree": "8de0dff768d7679c9e6829aabc8106fb5edd0b68",
+ "source_tree": "683d7c087a0915b6036cbcceb62e0d5dada001c6",
  "source_targets": 442,
  "source_classes": {
   "mixed": 13,
@@ -15,475 +15,475 @@
   {
    "path": ".review-packets/tia314/01-code.json",
    "bytes": 65412,
-   "sha256": "6a1bda7995a811a58c19e8286ebb3a2f008a180f5405beec8f8ed7e24b12778d",
+   "sha256": "295c03aa9becf86d36b36c9c68b72dcb89957b9bd9282caa1aef917748c3475b",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/02-code.json",
    "bytes": 65438,
-   "sha256": "26ed932ea4e3d159b074a6516d6e833817a93a62fd20b76b7d9ea6940d311598",
+   "sha256": "fdb21fee1fc49abf0c5d6f4005c6feafa23c5b66be4c0d6249ed8b91f5db4aa8",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/03-code.json",
    "bytes": 65519,
-   "sha256": "94669efe0cf56d69548be3bf3b73016cd42d97862811aea940a0123d83c75140",
+   "sha256": "11fda3239916acf899dfbf21de21a71ad5257baa2fee9edda4c1b8b0a431975b",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/04-code.json",
    "bytes": 65531,
-   "sha256": "597f7b987baa7b3003c2d8ee608389283072b3090639e540cd361005c47b8328",
+   "sha256": "649060a174438e3ec06bd7aa55f709f2ee64eb1c6f28079278ca01d82be591f7",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/05-code.json",
    "bytes": 65381,
-   "sha256": "2cf13142fed2b71b810873a179231076e23e09ca118f16ec0b633fa7592045ed",
+   "sha256": "ddf218c76678451e0ce3b663d39dae0f73221a81e882127dcec8f1aa808a696f",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/06-code.json",
    "bytes": 65479,
-   "sha256": "a2d2f2620e8c57289ca3ee3bedd7f25efa216d5eb6d209d7241e6b43b9c65afd",
+   "sha256": "6fef8d5c9abd13d882288d0fc093195400296982e4315f103ef22946d4d235e6",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/07-code.json",
    "bytes": 65388,
-   "sha256": "218356e5bbc2356e2cb437d4ccd56bd9d2d2bc810098f022015f42f3cba034dc",
+   "sha256": "e0efd831e6f221d62a28e338177fd0525305fd9ddeaa7916a679be865a6dc255",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/08-code.json",
    "bytes": 65436,
-   "sha256": "2a54c0ce2e1ec9e22c6758147a9d5c75f4196aefcc728d31f333444f259035df",
+   "sha256": "2f616366da4d3eb796a6990a56964b086d5c2b4fe4024d948369c1c2810055c9",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/09-code.json",
    "bytes": 65529,
-   "sha256": "721873d82e4d333b3e9e3c85d664ee68f9059cf527bfdb730780eaf2dc509001",
+   "sha256": "aa979f14f4600f32fc04f3aea682455995ad1391a27dc433c8dbb190dddd7002",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/10-code.json",
    "bytes": 65435,
-   "sha256": "ba3dc270594162e5762649dc7fa62b8caa0dabb81d6164416d51688d63191410",
+   "sha256": "f62b62de2c768c71e6242b71dd4f32b852179f16a3c3d3893e33f2cda61f0e5e",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/11-code.json",
    "bytes": 65482,
-   "sha256": "81fbea471bf567cd26c20d98d8c5d96b8d9d13ff6cc3a0689846675acbd53535",
+   "sha256": "f59b63cbaf1f5433a89b024925b2ecd18ecdd0f18dc5022a9396074898a63e2a",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/12-code.json",
    "bytes": 65456,
-   "sha256": "b4829c33b75908e640b13c73957d7fdf6a8194d90f0b2c980b0b4fa9da679f64",
+   "sha256": "86826e25fe7ce5f5eab6345f5cc113f79600095f440efe792decae7cf9bcc0cb",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/13-code.json",
    "bytes": 65512,
-   "sha256": "2a8b2f055d1e1ec27e78bd375062f9723f3b2b858c298007bc0472387a8c8641",
+   "sha256": "caef44ee624a9c7d2c222b482a81d7cb8ea1f5ceab13c8395aa9cafd168d189e",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/14-code.json",
    "bytes": 64353,
-   "sha256": "759734d9eb082e5f87d2319f695f9199035d9410b88c35841b08caa79d67aef6",
+   "sha256": "6875ff51c766df25b7e6f6940e9fcc4bb290724d04cf2fd37ee5c26c49848be6",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/15-code.json",
-   "bytes": 61728,
-   "sha256": "73c1fa54ef0ef3373806d14220466e1cb4dfbcdf44753519352812d26cbf7ac9",
+   "bytes": 62121,
+   "sha256": "8aedf35c6f6e16bb587c064e49b12ca30ee10ce4d0512158f2dafd1caa8d8f5e",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/16-code.json",
-   "bytes": 65528,
-   "sha256": "7662941720b79b41ee3f6f91fc58e41625a43b5bc6d4f8431bf23ef6a6a349e0",
+   "bytes": 65498,
+   "sha256": "a8328757099f0cf5cd1f98d06d978da782036bd181cbd4d9064c7e125fd9c84c",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/17-code.json",
    "bytes": 65444,
-   "sha256": "7deca5c57fc783a88dea741eeef8c1779fdae6d41c23cbb7b12a0e66bf0a05c0",
+   "sha256": "a91cdc835642f84491b3663a1a3a542847bfdbaca00a8e08a8e8f96a77889598",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/18-code.json",
    "bytes": 65477,
-   "sha256": "88e6a9b9ac46afb2325221ca5195b01c58756857c81bb6277f6483069de0be5d",
+   "sha256": "2321722262ef9ee94465309d518df624df08029c8eae780ac0187c4160483044",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/19-code.json",
    "bytes": 65520,
-   "sha256": "0ac3e058ee85fb121e26889e440aab0d13baf890c04ed6b5e29992b5a9546690",
+   "sha256": "ca31b789f2334bf464c68e425285600247d6dacc26114aa886b0309e435c64ab",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/20-code.json",
    "bytes": 65529,
-   "sha256": "047b5db4a51052aaa669976244eadbcca27708942a573bd049170948d31b44dc",
+   "sha256": "f29699bc5aa393e49ab11fc35cf85163bcdddd8cb0c54e026a5b23631a5e5ba7",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/21-code.json",
    "bytes": 65445,
-   "sha256": "11539cd92ddb262611277cdb62f7fb381ad29f5f304597cf20a4dcff3bd645bd",
+   "sha256": "d268237defbb3572b0a7cb8720dae92ccb7558e133b4269ab8645f8d1117fec6",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/22-code.json",
    "bytes": 65529,
-   "sha256": "60fcf1f066aa3c5c53242d5896e9ae23587020f00bf75bfc30d701d55e831087",
+   "sha256": "e586054141c3f1582025ef31441b5bd747fb62a810ff2a4520afb12b2439f500",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/23-code.json",
    "bytes": 65495,
-   "sha256": "b981ddd18f05516c69ed88369b4bbfb14d33dd145bf806d72734c030f02b442d",
+   "sha256": "cd11ecd90a931054493e7bb28effc566e26bf5d18b810fd2e6c0b912241ee956",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/24-code.json",
    "bytes": 65517,
-   "sha256": "0f4b619851c783097fa5f81e48ac52ac1c90ab16cf69b8e028fe06dd18a0f7e9",
+   "sha256": "b2faecbaf8f1891ffe48fe2e89d6cdd6d01f90fe6ef78b2dee8239d803658c91",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/25-code.json",
    "bytes": 65406,
-   "sha256": "b4541255131bdc210590d9169702adcceafb431e9ef6ee9bd7d3f78ffc73b31e",
+   "sha256": "a4f9824fb38105d0756bfe73ad994c49503e7e80dec8a1c42aba6eb0182a880e",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/26-code.json",
    "bytes": 65447,
-   "sha256": "cfc4fb8e675eb754b758cf4e03f5e16ff2c47636c1d06b5bd09628968a4459a1",
+   "sha256": "fd5eace604f80da195221feebcc11014a1e1f5235f7e70bf5542fa7dc4df6e9f",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/27-code.json",
    "bytes": 65459,
-   "sha256": "de9394aa55884c68c2a3ad96135c617f08e763e22630131b1fb350dbea3c5167",
+   "sha256": "3bb06b5992d03fd71b42e25f1b67949786a1a191b435561e14e7da308f07d9dc",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/28-code.json",
    "bytes": 65517,
-   "sha256": "354d2ffe53bc4b750956db9f5ffc430433227b376c9952025a0b4d88d096d365",
+   "sha256": "01df157002dd2e218a4d8b7dec5bc67c29ed4715bfcd8fa7bf8f1ed06adeb402",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/29-code.json",
    "bytes": 65453,
-   "sha256": "6446d07301b8f613080723ec8060cfa9c257a11932e5b165b6929eae193efbe1",
+   "sha256": "c3aef5be015a4f218ac3f1071b50290f0bf338ac35369ad4f6e3992b1e8dbed4",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/30-code.json",
    "bytes": 65511,
-   "sha256": "b619731767195364587066986e380c5b792a07ad962145257a08e8e61b9bcf68",
+   "sha256": "965f9581d86ce35deef3963fbfd71912b144b731b583b496ca189b00329f68c7",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/31-code.json",
    "bytes": 65526,
-   "sha256": "b144824cb2224c36733ce526dc98f7bd007f065e08addf39580677724caa074f",
+   "sha256": "d042a625fd7d4fcadd4f538fa1b4a098136d68a91b74241bcb70ced2235e9e20",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/32-code.json",
    "bytes": 65530,
-   "sha256": "d28d91f8e6522251b6c0d9d1a76a7c3d532b69cfceb4dad40a6242cd17161770",
+   "sha256": "d608b5c9a6e95e6b66cdabde11c090d84b6c82ea085dbbbaa63b8cce98be2147",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/33-code.json",
    "bytes": 65457,
-   "sha256": "11fe02eed0cc894af21972437952da1eb628ab96e02c5533168e869919278907",
+   "sha256": "0d7caacddeeb291c93561c25c2e50a3f05adac69fb36c9e425fe1d8f18c48e78",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/34-code.json",
    "bytes": 65521,
-   "sha256": "6e0bda5f8282d62fba2cb83e2c8fe38696823a4cea8c9eee4cf300ad98cf781c",
+   "sha256": "56285b5590d14b2d4166ad079e7135f4f00462acf51bbd77043c020c58b6563b",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/35-code.json",
    "bytes": 65525,
-   "sha256": "72c7b8e23348d870f4137e38d88d4e4f4e7885bb860d188523ade455e570b346",
+   "sha256": "3dcdda6111590d2763b34641cd1fa15135d9336d7bf0e210ff824a6717cd039c",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/36-code.json",
    "bytes": 65412,
-   "sha256": "a487495529302705218b8d9f072a1205ef88a1f1a0692c01b5542d494d7a8053",
+   "sha256": "1490870499df0b2ba325d31232231f408338f28b30375c5096361b5d421cd2a1",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/37-code.json",
    "bytes": 65440,
-   "sha256": "c7ae69ac50f9c3ae4422e8eff3cc49b40f69b12ccc00179dd3ca2b3ae59a0eba",
+   "sha256": "ca072ce077527a82d5c7138ec87f48d64512f02509bab52c1fd9fd6be0d2d069",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/38-code.json",
    "bytes": 65523,
-   "sha256": "6a80af3361a660eb1c86accd7f537a78875a88df3655c606aff776d4d1c24dc2",
+   "sha256": "5cf71818adad961e8daeab27ac5ef082ece1020fcd5057cf1de35568dd749eef",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/39-code.json",
    "bytes": 65462,
-   "sha256": "22ed7f7e7aedb3aee29369c1a46841ae0f268bf32ed4fa243fcfec58bc7ce51d",
+   "sha256": "5babe65f8a37556c355eba706649a79f0ed34484bdd955a4cf98a6af739a847f",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/40-code.json",
    "bytes": 65474,
-   "sha256": "fffe6ab9307169bcb67e1af445bcebe9a9aca13862b10fad6b2aa7c9d691b00d",
+   "sha256": "3b17ea7f44e61f2f0cde2c12e8781b29d58da535632a6a2eac972443576c9022",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/41-code.json",
    "bytes": 65448,
-   "sha256": "27a4c1a17f9480c31b22868eb4373903c04575f4bfe4535ead01971aa6f5cf9a",
+   "sha256": "3198bed0cd99e7127c942846e1f05b89506e9ff7c561a92f45e655b337c45a8b",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/42-code.json",
    "bytes": 65451,
-   "sha256": "ad77b8f68de6bbc40550bde463bbc5bd00108c4cd707d2e2f56954487b5fccc7",
+   "sha256": "645c237b637de8bc3c23b59d6e51fb3df5fcfb578b7f60f9394d3f3ae92ff6f3",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/43-code.json",
    "bytes": 65443,
-   "sha256": "8ec998b0cea85d4f7af3dea75f92d813e1334368f03a3993ea395a3929bfd337",
+   "sha256": "a48b08ff973a6215d03ca60bfe3008ece3d1eedf52cafa5785bf5391ddaa5acd",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/44-code.json",
    "bytes": 65523,
-   "sha256": "124f0e99cc5a357ca90f7776ac0c3fab5a22aea82f383325d17312045615aff9",
+   "sha256": "e6dce838cc15b7f09e8f5c41ff44682ffdaa4f9994cf4120909160e0e09acd42",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/45-code.json",
    "bytes": 65517,
-   "sha256": "b84e9f671d3bd2deb19e15b72e91f7ad8a86407ffb0c01f180c9032a7c33e337",
+   "sha256": "b911fa85755dcd8fdd5728193ec3035a94a155017d7a22b0bcbe3c68bccc60d8",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/46-code.json",
    "bytes": 65501,
-   "sha256": "d89869b5e53dfaa92dcf0a8a187ee1b2a1f6844e3fedbf9b82dd7394c4d7bfcb",
+   "sha256": "963094475f393cae6e175dec04119a498f8ac0ddb5a7e09f1eba168b58d6f409",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/47-code.json",
    "bytes": 65528,
-   "sha256": "bb7786ae52be1c309e38ad071383b1823ef42f3ac0d2160dd70bf9c2cb87887b",
+   "sha256": "fbf0a2d93659c77150491c73c65e1f2150268e50a0493c35ca4dba1cfd17d722",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/48-code.json",
    "bytes": 65464,
-   "sha256": "ec19af7838a6f1268fcc6109e32ae76d53dabd3d0f1416bbb4c075709af57525",
+   "sha256": "15c451a10864835ea32bdcd44848199139a426f0a16ae17bfb8ff89a412440bb",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/49-code.json",
    "bytes": 65532,
-   "sha256": "c86a2d252b8be033523e4e4054f9197f246566eadf84f01e3503e1a22125db66",
+   "sha256": "789a7bbdca0b3a5bd7cf31f8b52a7cb5afaf68d54530a1b7abcc9654b1acdbce",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/50-code.json",
    "bytes": 65497,
-   "sha256": "365f95d50bd77942c1221857eadc3943b1cbc9dfe460895edf3b7443343df509",
+   "sha256": "4d282a69e95ed68fed4fd5f73f5cc4942f37eab025b3eac839c2f9d7e25d7a05",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/51-code.json",
    "bytes": 65525,
-   "sha256": "0ca929d7ef5938addc52636f7ebd1ac2d2fcb2f90b52bcbc84067c494edc614f",
+   "sha256": "d51304271df58d18da1aaaeb7e5b051dda25e2b2b26f6f46e734adca0717424b",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/52-code.json",
    "bytes": 65514,
-   "sha256": "a65eaf022c60f5384aed72f671674315ba5e2a7572026617da1e5363a83de7e2",
+   "sha256": "77a05c5ff946df9e83a7d9d710a4c613231d3c14a7cc35049ed44bd8a1d90821",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/53-code.json",
    "bytes": 65437,
-   "sha256": "e81269ef5b7c7a5e1d2c1418e0458e7d3bde216c00abd29c997730f97f5b9b32",
+   "sha256": "1432dbb413e5229c177477fe5314b6936c81e6d5d2f00202e9fd50fa846c5946",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/54-code.json",
    "bytes": 65448,
-   "sha256": "5d4ccce7cf9e250d4dc06f2303b417fc4a3cef911fc6b7e12d1848268b2d6a60",
+   "sha256": "722bb77576c3420f472f2c016618fc5e28b461d8741e9c12641e9fd62c3a72db",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/55-code.json",
    "bytes": 65523,
-   "sha256": "5b9b93b01db12211c14afbd72df8a49bc9f643d1d9176bc431e7bf411abdda0c",
+   "sha256": "90a1fcd9caa7f09247dc76614c5ff630f7ec9437303227b13463f0aa649a14de",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/56-code.json",
    "bytes": 65523,
-   "sha256": "708b86dc23dac7ff74ed0a957828fe2a9ce38177db064ff8d32b135b6f8467b0",
+   "sha256": "d5e5e8f182eebb9a73fb2a840b47f934b1c2f9c7c658959a98911bf2470091da",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/57-code.json",
-   "bytes": 56503,
-   "sha256": "1f965238b690062c45a2ca7d83fd48bcb7ae4bf4de423e81ea9307aab59c034b",
+   "bytes": 56830,
+   "sha256": "9591bf5e18e96b8a2e16edd132f6b09ef8027215aaf07b7da6c5a1525c87e36f",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/58-code.json",
-   "bytes": 47629,
-   "sha256": "382f0980c4fbce5c622a5c7c71b4ffbc7e8a5cb56d62f76e1c51f80b010eff96",
+   "bytes": 48010,
+   "sha256": "b8c6ec2a5b9f6005c4221718976f58907bfb60898f4a71fa8d9032b683deb2c9",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/59-code.json",
    "bytes": 27304,
-   "sha256": "50caa9e17cd8176f26a1edea1737b4cf5ea652055e809271ee327ce82f71cbf4",
+   "sha256": "b7967576c7b976ee4f3de77499b3138c916da645114fef219fbda4709c0b506e",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/60-code.json",
    "bytes": 65498,
-   "sha256": "343ae966bc5b4bb5562489577818c6b689facbb29337cf1088653459e1d8ab46",
+   "sha256": "601b5a6c5ec03a3382c9e814154fd4fda2c5a26815a3859bdbce70dc76ae614e",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/61-code.json",
    "bytes": 65477,
-   "sha256": "58801d7a9dab4c2bbb9c20929b2c21dfe9408bb6acba2341130819aba856a767",
+   "sha256": "7b2dfa73552505202dff7a0e3f42b8777c0a0569d6749215e43c5775027bf91d",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/62-code.json",
    "bytes": 65488,
-   "sha256": "d55b083e39e60129e6300327a4093e12dcf182f0723506663176e03bbb344754",
+   "sha256": "418630262cac58fa865890d0d5076f720b3f57fe8dba65cae7b08d5077e1dd9c",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/63-code.json",
    "bytes": 62224,
-   "sha256": "6bd6b885533ef528bc91e7c8a966e9a04389f1cd4b1f8ea1ec257f5b0d68a791",
+   "sha256": "95d2d01e3725136ad04a5b249439e9e6e81f3969e33adaff39db50ef9f4ad90a",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/64-code.json",
    "bytes": 58969,
-   "sha256": "bdf6e4e4c586fe09f530ce0248d90998b23f4cd6284bc315371bd448e79063c9",
+   "sha256": "b6552c9420a66297b7a1285a162541f29e0c245b4243554f476d534774adc4e4",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/78-code.json",
    "bytes": 53840,
-   "sha256": "fabf9b112b8b3d810dd4e91146c359e70a6677954473a5db42f9ece6b7761055",
+   "sha256": "9a9ac963a06bb8254ae710a8f8d71fe82795452d95098b53ffca13634f0e0421",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/79-code.json",
-   "bytes": 38237,
-   "sha256": "a9463d07cff80db02a5a21829532ae4443d865c86daca3d042225f70c811f402",
+   "bytes": 44648,
+   "sha256": "c8ca6578a42c19a6b300c20bba7c35693bb20e8ddb6c727956101f95ba26e8e1",
    "kind": "code"
   },
   {
    "path": ".review-packets/tia314/65-generated-map.json",
    "bytes": 65044,
-   "sha256": "be0131523430dd1ed890428a24d7dccf81863117f7a46f5e1baeccd453717d82",
+   "sha256": "d9240579dee21c61208f0e16a1aaa8e3877b345a5c5f530377a2df420c85c56d",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/66-generated-map.json",
    "bytes": 64443,
-   "sha256": "f433687127187a8ca7d4a4e839b0367699032558b45b7a771049bedab091d21f",
+   "sha256": "1b386502d4a2551b78cd4864c1f31b56d370ae053a89491038d4c8b4158ab50a",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/67-generated-map.json",
    "bytes": 65351,
-   "sha256": "dfedd5a6eda1054ad2b4cce42e1281ea40ab7bfe274672f94db6eda808050207",
+   "sha256": "6be6c2bf98ad53ea030581f616110d44660c5a98b9ff30ec9d02273af3caa815",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/68-generated-map.json",
    "bytes": 64513,
-   "sha256": "b6e1dcef2cce8bd6ad97df002c9145e3460f40667431e8ae02341027db449ac6",
+   "sha256": "7a1d0ae7571fad6c9a0bdc220f773eb0d9c76625782acabd1569c414f491b966",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/69-generated-map.json",
    "bytes": 65234,
-   "sha256": "54e5041d475bc0ba89f934c7cb5201277795b9b0b8552d19c75eaf6fb313cae7",
+   "sha256": "b3d8b352a40b85c4ce48719f6f5e8df787dac0cb5f90e2fd5b97de7ddbd11637",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/70-generated-map.json",
    "bytes": 65086,
-   "sha256": "05ad35c52032d1d98593077eded9f4de8c38a0d3b37f8f166fffd1b69faef00a",
+   "sha256": "bea9f20b64fe057b1500ef7cb77b2366fb7821f409b2770d9cf17322c0d876e0",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/77-generated-map.json",
    "bytes": 1512,
-   "sha256": "00c7f7ab9d13dc29f0214649beddd12216121ab19d9467eef4e59625f81c1b72",
+   "sha256": "dc67870d0337210b53a06c931554ce63b4cdd9a001c17f524cee82d33cede980",
    "kind": "generated-map"
   },
   {
    "path": ".review-packets/tia314/71-legacy-contract.json",
    "bytes": 64568,
-   "sha256": "d5aae588f06ea34b875330b610d04875b414706cf7b49914d9440bf08cabcec5",
+   "sha256": "b0eee6de7f1abb70bf3ba37d91654ba8f16b53083e130d043fa88e84c4df3bb2",
    "kind": "legacy-contract"
   },
   {
    "path": ".review-packets/tia314/72-legacy-contract.json",
    "bytes": 25214,
-   "sha256": "f5c29828d2a227b2652dfea217ff5ef6062178ad99cec99bf09cf2c70c69737d",
+   "sha256": "4a72f5d9fcdabcebc1419e42f774784570d650def23b9ab9dd9f27ce143269b8",
    "kind": "legacy-contract"
   },
   {
    "path": ".review-packets/tia314/73-context.json",
    "bytes": 60826,
-   "sha256": "c104fcf6ecd5a31109ca7a44d73f57f33222c1eafdbcff46810a1cbffe23130a",
+   "sha256": "f1864aea80ffb11783e5c943b04175749eca12a437da24e0c5fd85c13aca4f25",
    "kind": "context"
   },
   {
    "path": ".review-packets/tia314/74-context.json",
    "bytes": 43925,
-   "sha256": "c4ecb65bb2ca78a982a23db8a2bdc856338f666e8a37303641ed56840ba5d80d",
+   "sha256": "caa79650efd9b68e1b494601e7ea5c6282831cf29848807f41e1740536faa836",
    "kind": "context"
   },
   {
    "path": ".review-packets/tia314/75-context.json",
    "bytes": 54011,
-   "sha256": "d885664c3e4fa577bd16dc208701956cf787794b710523da61022e0d3e96ca4d",
+   "sha256": "da21f7aac3667ecb87ec9ef5eb079994ec9f6458f3a5e01808871c2975f2779c",
    "kind": "context"
   },
   {
    "path": ".review-packets/tia314/76-context.json",
    "bytes": 38718,
-   "sha256": "4156289d85aba67db2add4a3476c08181e22831c39eadcdbc8f2eea7234b79c6",
+   "sha256": "12d2fc5fe84ec4d956e4a0452e7819106380755ad5cf048da795d3a3354b1959",
    "kind": "context"
   }
  ],
@@ -494,94 +494,54 @@
   "hosted-request.md",
   "initial-description.md"
  ],
- "canonical_code_corpus_sha256": "23682271526c0147aa7ce738db32c384c3c3f9eedccf232f4544ffe1739a211c",
+ "canonical_code_corpus_sha256": "48203324a1f2928a1e70284989189060f66a568f2840a66c77958ca634a7424f",
  "canonical_code_target_count": 44,
- "canonical_code_bytes": 3470219,
+ "canonical_code_bytes": 3476143,
  "generated_and_legacy_contracts": "Each of the other398source targets has one exact identity/mapping or removed-contract record. Shared transformation code is included among the44code targets. Stock algorithm bodies remain context. No private build/projection/evidence file is needed to read a custom code delta.",
  "delivery_scope": {
   "path": "docs/review/TIA-314/scope.json",
-  "before_blob": "b31776b3fd3a934f04b6bba8464a046b5df7e7c1",
-  "after_blob": "63d449aeec1d0f5aa844ed55eded88eabf69a2e7",
-  "after_sha256": "3f853a6a9b1a5a598e2a7dba37050ff6d8729cf57b06d42230766d2d3b574dbd",
-  "metadata_patch_sha256": "a70c1fc490b7ebd8cf206f5b43ac59681d040f0981bc61546827a19d87fe5e1a",
+  "before_blob": "63d449aeec1d0f5aa844ed55eded88eabf69a2e7",
+  "after_blob": "6217f86aab85fc4e60a8f9f6bd85249dd1d681d3",
+  "after_sha256": "55a5b524f9666644032eb2efb569de8f9688a81c056b6bbadb14bc923c80a214",
+  "metadata_patch_sha256": "26caef07763437ccdc83f380479b12dbf065758a9b6fac7181807f1193fa4df2",
   "metadata_patch_lines": [
    "--- a/docs/review/TIA-314/scope.json\n",
    "+++ b/docs/review/TIA-314/scope.json\n",
    "@@ -1,6 +1,6 @@\n",
    " {\n",
    "   \"ticket\": \"TIA-314\",\n",
-   "-  \"implementation_commit\": \"eb392e52d245e87982ccc951ad7b638325693e07\",\n",
-   "+  \"implementation_commit\": \"4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f\",\n",
+   "-  \"implementation_commit\": \"4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f\",\n",
+   "+  \"implementation_commit\": \"5ecd568db620ea01f23465c064fe6b02cfa8377a\",\n",
    "   \"base\": \"e088d5c9784d2779684d02524fab62a0fa5e656a\",\n",
    "   \"upstream\": {\n",
    "     \"repository\": \"https://github.com/voidzero-dev/vite-plus\",\n",
-   "@@ -9,18 +9,18 @@\n",
-   "   },\n",
-   "   \"policy\": \"Exclude only unchanged pinned upstream source. Keep Tiara overlays, root package/version/lock/config changes, generated artifacts, generation inputs and affected consumers. Pinned upstream metadata remains provenance context. Review mixed source as Tiara overlays against the pin.\",\n",
-   "   \"counts\": {\n",
-   "-    \"raw_changed_paths\": 6944,\n",
-   "+    \"raw_changed_paths\": 6946,\n",
-   "     \"authorized_import_exclusions\": 6420,\n",
-   "-    \"review_target_paths\": 524,\n",
-   "+    \"review_target_paths\": 526,\n",
-   "     \"mixed_or_custom_source_paths\": 13,\n",
-   "     \"skipped_reviewable_paths\": 0,\n",
-   "     \"reviewed_paths\": 0,\n",
-   "-    \"pending_review_target_paths\": 524,\n",
-   "-    \"source_adaptation_paths\": 440,\n",
-   "+    \"pending_review_target_paths\": 526,\n",
-   "+    \"source_adaptation_paths\": 442,\n",
+   "@@ -20,7 +20,7 @@\n",
    "     \"hosted_metadata_paths\": 84,\n",
    "     \"changed_existing_scope_metadata_paths\": 1\n",
    "   },\n",
-   "-  \"review_state\": \"Immutable object-extends children are shared by content across LSP refreshes; never-published children are reclaimed after root-publication failure. Distinct published snapshots retain native-reader lifetime. Source, scoped and actual packed probes and the23-test Node22 command pass. Previous b53 CI passed; current affected review and hosted clone-coverage clarification remain pending. SIGKILL cannot execute exit cleanup.\",\n",
-   "+  \"review_state\": \"Immutable source-epoch snapshot: four CLI R7 candidates are owner-valid and repaired. Paired package replacement rollback, explicit root local-source peer binding and owned config-publication cleanup pass focused source/scoped/packed controls. Assigned OCR/CLI/installed re-entry and both hosted conditions remain pending. Native and JavaScript/type compilation remain qualified unchanged reuse.\",\n",
+   "-  \"review_state\": \"Immutable source-epoch snapshot: four CLI R7 candidates are owner-valid and repaired. Paired package replacement rollback, explicit root local-source peer binding and owned config-publication cleanup pass focused source/scoped/packed controls. Assigned OCR/CLI/installed re-entry and both hosted conditions remain pending. Native and JavaScript/type compilation remain qualified unchanged reuse.\",\n",
+   "+  \"review_state\": \"Immutable source-epoch snapshot: signal handling owns cleanup before preparation and through final unlink. Startup cancellation skips native spawn; active child exit behavior is retained. Affected independent OCR/CLI/installed re-entry and both hosted conditions remain pending. Native and JavaScript/type compilation remain qualified unchanged reuse.\",\n",
    "   \"custom_overlay_patch_sha256\": \"8a25940d0c43a0dac647a79f217263bb9a2e52a8181cacbd187aad80624f20f2\",\n",
    "   \"authorized_import_exclusions\": [\n",
    "     {\n",
-   "@@ -40329,6 +40329,10 @@\n",
-   "       \"mode\": \"custom downstream package declaration normalization/interface\"\n",
-   "     },\n",
-   "     {\n",
-   "+      \"path\": \"scripts/lib/replace-package-trees.mjs\",\n",
-   "+      \"mode\": \"Tiara custom source/config diff\"\n",
-   "+    },\n",
-   "+    {\n",
-   "       \"path\": \"scripts/lib/vite-plus-build-record.mjs\",\n",
-   "       \"mode\": \"raw diff\"\n",
-   "     },\n",
-   "@@ -40355,6 +40359,10 @@\n",
-   "     {\n",
-   "       \"path\": \"scripts/test/sync-effect-vitest.test.mjs\",\n",
-   "       \"mode\": \"raw diff\"\n",
-   "+    },\n",
-   "+    {\n",
-   "+      \"path\": \"scripts/test/sync-vite-plus.test.mjs\",\n",
-   "+      \"mode\": \"Tiara custom source/config diff\"\n",
-   "     },\n",
-   "     {\n",
-   "       \"path\": \"scripts/test/vite-plus-native.test.mjs\",\n",
-   "@@ -40735,7 +40743,7 @@\n",
+   "@@ -40743,7 +40743,7 @@\n",
    "     ],\n",
    "     \"Markdown_qualification\": \"Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.\",\n",
    "     \"OCR_carry\": \"Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.\",\n",
-   "-    \"final_main_source_epoch\": \"eb392e52d245e87982ccc951ad7b638325693e07\",\n",
-   "+    \"final_main_source_epoch\": \"4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f\",\n",
+   "-    \"final_main_source_epoch\": \"4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f\",\n",
+   "+    \"final_main_source_epoch\": \"5ecd568db620ea01f23465c064fe6b02cfa8377a\",\n",
    "     \"identical_queue_squash_tree\": \"34d345e35d45df8fc931cfd2aa7312fbe0ae5a99\"\n",
    "   },\n",
    "   \"generated_output_review_policy\": {\n",
-   "@@ -40835,9 +40843,9 @@\n",
+   "@@ -40843,7 +40843,7 @@\n",
    "     }\n",
    "   ],\n",
    "   \"hosted_delivery\": {\n",
-   "-    \"source_epoch\": \"eb392e52d245e87982ccc951ad7b638325693e07\",\n",
-   "+    \"source_epoch\": \"4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f\",\n",
+   "-    \"source_epoch\": \"4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f\",\n",
+   "+    \"source_epoch\": \"5ecd568db620ea01f23465c064fe6b02cfa8377a\",\n",
    "     \"base\": \"e088d5c9784d2779684d02524fab62a0fa5e656a\",\n",
-   "-    \"source_adaptations\": 440,\n",
-   "+    \"source_adaptations\": 442,\n",
-   "     \"stock_exclusions\": 6420,\n",
-   "     \"packet_metadata_files\": 84,\n",
-   "     \"packet_paths\": [\n"
+   "     \"source_adaptations\": 442,\n",
+   "     \"stock_exclusions\": 6420,\n"
   ]
  },
  "native_parent_qualification": {
@@ -689,5 +649,15 @@
   "validation": "34Node22 controls,11actual packed adapter controls,6native source/scoped severity cases,package contract and8helper property cases via source vp test v5.0.1 match expectations. Fresh frozen fixture and owned-root installs pass.",
   "producer_impact": "Only the direct executable fork input changed.4rootdrivers,4632otherforkinputs,359compiledoutputs and10865/55Rolldown inputs/outputs exact. Root peer graph is repaired without other version/integrity changes; source compilation uses the unchanged nested lock. Actual scoped sync and packed controls are fresh.",
   "review_state": "Source-epoch snapshot, not the live gate ledger. Current OCR/CLI/installed re-entry and both hosted conditions remain pending."
+ },
+ "signal_lifecycle": {
+  "source_epoch": "5ecd568db620ea01f23465c064fe6b02cfa8377a",
+  "prior_source_epoch": "4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f",
+  "startup": "Install signal handlers before preparation; cancellation prevents spawn and enters awaited cleanup.",
+  "runtime": "Forward handled signals to the native child, then await its exit before removing snapshots.",
+  "exit": "Keep signal handlers installed until queued work and cleanup settle; preserve native exit status.",
+  "producer": "One direct-packed executable input changes;359compiled and55Rolldown outputs are unchanged reuse. Actual scoped sync/pack and source/scoped/tar-backed consumers are fresh.",
+  "limits": "SIGKILL, non-settling I/O and permanent filesystem denial retain cleanup limits. No live provider or full packed-consumer suite claim.",
+  "review_state": "Immutable source-epoch facts; affected independent re-entry and both hosted conditions are pending."
  }
 }
