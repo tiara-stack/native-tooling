@@ -20,7 +20,7 @@ overrides:
   vite: link:./packages/vite-plus-effect-fork/packages/core
   vite-plus: link:./packages/vite-plus-effect-fork/packages/cli
 
-packageExtensionsChecksum: sha256-kS1y6w+kCgPvqp2bHGgkU1Cvliw7wlOyVUwl0VWdckk=
+packageExtensionsChecksum: sha256-lylYk1F5FfIwB52XTF1bE5GEaKD6dxQQRi6UISsfEls=
 
 importers:
 
@@ -167,16 +167,19 @@ importers:
         version: 5.0.1
       oxfmt:
         specifier: '=0.70.0'
-        version: 0.70.0(vite-plus@1.0.0(@types/node@24.13.2)(@vitest/browser-playwright@5.0.1)(@vitest/browser-webdriverio@5.0.0)(@vitest/ui@5.0.1))
+        version: 0.70.0(vite-plus@packages+vite-plus-effect-fork+packages+cli)
       oxlint:
         specifier: '=1.85.0'
-        version: 1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@1.0.0(@types/node@24.13.2)(@vitest/browser-playwright@5.0.1)(@vitest/browser-webdriverio@5.0.0)(@vitest/ui@5.0.1))
+        version: 1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@packages+vite-plus-effect-fork+packages+cli)
       oxlint-tsgolint:
         specifier: '=7.0.2003'
         version: 7.0.2003
       vite:
         specifier: link:../vite-plus-effect-fork/packages/core
         version: link:../vite-plus-effect-fork/packages/core
+      vite-plus:
+        specifier: link:../vite-plus-effect-fork/packages/cli
+        version: link:../vite-plus-effect-fork/packages/cli
       vitest:
         specifier: 5.0.1
         version: 5.0.1(@types/node@24.13.2)(@vitest/browser-playwright@5.0.1)(@vitest/browser-preview@5.0.1)(@vitest/browser-webdriverio@5.0.0)(@vitest/ui@5.0.1)(vite@packages+vite-plus-effect-fork+packages+core)
@@ -2971,19 +2974,6 @@ packages:
   varint@6.0.0:
     resolution: {integrity: sha512-cXEIW6cfr15lFv563k4GuVuW/fiwjknytD37jIOLSdSWuOI6WnO/oKwmP2FQTU2l01LP8/M5TSAJpzUaGe3uWg==}
 
-  vite-plus@1.0.0:
-    resolution: {integrity: sha512-2ezzBWt+AVO+I2F9Cpb2Of0J12Lat35kWZ/FRL2monMnKZuACKfkYAA/nMqdDo1KwB8sWjTKzmD9mRCh1Q1n+g==}
-    engines: {node: ^22.18.0 || ^24.11.0 || >=26.0.0}
-    hasBin: true
-    peerDependencies:
-      '@vitest/browser-playwright': 5.0.1
-      '@vitest/browser-webdriverio': ^5.0.0-beta.5 || >=5.0.0
-    peerDependenciesMeta:
-      '@vitest/browser-playwright':
-        optional: true
-      '@vitest/browser-webdriverio':
-        optional: true
-
   vitest@5.0.1:
     resolution: {integrity: sha512-iA95lQbKEkvrtTkdAgnWbXfbipWiiWe/hDl2P5tMi6WFwD76G0NxXAGp/M9EOcYupeGJRr6wppMc7CoA41TQjg==}
     engines: {node: ^22.12.0 || ^24.0.0 || >=26.0.0}
@@ -4805,7 +4795,7 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  oxfmt@0.70.0(vite-plus@1.0.0(@types/node@24.13.2)(@vitest/browser-playwright@5.0.1)(@vitest/browser-webdriverio@5.0.0)(@vitest/ui@5.0.1)):
+  oxfmt@0.70.0(vite-plus@packages+vite-plus-effect-fork+packages+cli):
     dependencies:
       tinypool: 2.1.2
     optionalDependencies:
@@ -4828,7 +4818,7 @@ snapshots:
       '@oxfmt/binding-win32-arm64-msvc': 0.70.0
       '@oxfmt/binding-win32-ia32-msvc': 0.70.0
       '@oxfmt/binding-win32-x64-msvc': 0.70.0
-      vite-plus: 1.0.0(@types/node@24.13.2)(@vitest/browser-playwright@5.0.1)(@vitest/browser-webdriverio@5.0.0)(@vitest/ui@5.0.1)
+      vite-plus: link:packages/vite-plus-effect-fork/packages/cli
 
   oxlint-tsgolint@7.0.2003:
     optionalDependencies:
@@ -4839,7 +4829,7 @@ snapshots:
       '@oxlint-tsgolint/win32-arm64': 7.0.2003
       '@oxlint-tsgolint/win32-x64': 7.0.2003
 
-  oxlint@1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@1.0.0(@types/node@24.13.2)(@vitest/browser-playwright@5.0.1)(@vitest/browser-webdriverio@5.0.0)(@vitest/ui@5.0.1)):
+  oxlint@1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@packages+vite-plus-effect-fork+packages+cli):
     optionalDependencies:
       '@oxlint/binding-android-arm-eabi': 1.85.0
       '@oxlint/binding-android-arm64': 1.85.0
@@ -4861,7 +4851,7 @@ snapshots:
       '@oxlint/binding-win32-ia32-msvc': 1.85.0
       '@oxlint/binding-win32-x64-msvc': 1.85.0
       oxlint-tsgolint: 7.0.2003
-      vite-plus: 1.0.0(@types/node@24.13.2)(@vitest/browser-playwright@5.0.1)(@vitest/browser-webdriverio@5.0.0)(@vitest/ui@5.0.1)
+      vite-plus: link:packages/vite-plus-effect-fork/packages/cli
 
   pac-proxy-agent@7.2.0:
     dependencies:
@@ -5441,48 +5431,6 @@ snapshots:
   validate-npm-package-name@5.0.1: {}
 
   varint@6.0.0: {}
-
-  vite-plus@1.0.0(@types/node@24.13.2)(@vitest/browser-playwright@5.0.1)(@vitest/browser-webdriverio@5.0.0)(@vitest/ui@5.0.1):
-    dependencies:
-      '@oxc-project/types': 0.151.0
-      '@oxlint/plugins': 1.79.0
-      '@vitest/browser': 5.0.1(vite@packages+vite-plus-effect-fork+packages+core)(vitest@5.0.1)
-      '@vitest/browser-preview': 5.0.1(vite@packages+vite-plus-effect-fork+packages+core)(vitest@5.0.1)
-      '@vitest/mocker': 5.0.1(vite@packages+vite-plus-effect-fork+packages+core)
-      '@vitest/pretty-format': 5.0.1
-      '@vitest/snapshot': 5.0.1
-      '@vitest/spy': 5.0.1
-      '@vitest/utils': 5.0.1
-      oxfmt: 0.70.0(vite-plus@1.0.0(@types/node@24.13.2)(@vitest/browser-playwright@5.0.1)(@vitest/browser-webdriverio@5.0.0)(@vitest/ui@5.0.1))
-      oxlint: 1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@1.0.0(@types/node@24.13.2)(@vitest/browser-playwright@5.0.1)(@vitest/browser-webdriverio@5.0.0)(@vitest/ui@5.0.1))
-      oxlint-tsgolint: 7.0.2003
-      vite: link:packages/vite-plus-effect-fork/packages/core
-      vitest: 5.0.1(@types/node@24.13.2)(@vitest/browser-playwright@5.0.1)(@vitest/browser-preview@5.0.1)(@vitest/browser-webdriverio@5.0.0)(@vitest/ui@5.0.1)(vite@packages+vite-plus-effect-fork+packages+core)
-    optionalDependencies:
-      '@vitest/browser-playwright': 5.0.1(playwright@1.61.1)(vite@packages+vite-plus-effect-fork+packages+core)(vitest@5.0.1)
-      '@vitest/browser-webdriverio': 5.0.0(vite@packages+vite-plus-effect-fork+packages+core)(vitest@5.0.1)(webdriverio@9.29.1)
-      '@voidzero-dev/vite-plus-darwin-arm64': 1.0.0
-      '@voidzero-dev/vite-plus-darwin-x64': 1.0.0
-      '@voidzero-dev/vite-plus-linux-arm64-gnu': 1.0.0
-      '@voidzero-dev/vite-plus-linux-arm64-musl': 1.0.0
-      '@voidzero-dev/vite-plus-linux-x64-gnu': 1.0.0
-      '@voidzero-dev/vite-plus-linux-x64-musl': 1.0.0
-      '@voidzero-dev/vite-plus-win32-arm64-msvc': 1.0.0
-      '@voidzero-dev/vite-plus-win32-x64-msvc': 1.0.0
-    transitivePeerDependencies:
-      - '@edge-runtime/vm'
-      - '@opentelemetry/api'
-      - '@types/node'
-      - '@vitest/coverage-istanbul'
-      - '@vitest/coverage-v8'
-      - '@vitest/ui'
-      - bufferutil
-      - happy-dom
-      - jsdom
-      - msw
-      - svelte
-      - utf-8-validate
-    optional: true
 
   vitest@5.0.1(@types/node@24.13.2)(@vitest/browser-playwright@5.0.1)(@vitest/browser-preview@5.0.1)(@vitest/browser-webdriverio@5.0.0)(@vitest/ui@5.0.1)(vite@packages+vite-plus-effect-fork+packages+core):
     dependencies:

@@ -10,6 +10,9 @@ packages:
   - packages/vite-plus-core
 
 packageExtensions:
+  "@tiara-stack/vite-plus@1.0.0":
+    dependencies:
+      vite-plus: "link:../vite-plus-effect-fork/packages/cli"
   "@tiara-stack/vite-plus-core@1.0.0":
     dependencies:
       vite: "link:../vite-plus-effect-fork/packages/core"
