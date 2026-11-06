@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "67d0071a9d0f22791793fe56ab7f714432e5db49",
+ "source_epoch": "5236fab536dd15c3f0abf67d299b3ceae6b1e0c5",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,30 +13,30 @@
     "after": {
      "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "blob": "8bf0c596b1bab5395054c60a7d2f8c13eda0232f",
-     "ref": "67d0071a9d0f22791793fe56ab7f714432e5db49"
+     "blob": "82447ac969ae76491891ef3107ce0d98792e4df9",
+     "ref": "5236fab536dd15c3f0abf67d299b3ceae6b1e0c5"
     },
-    "actual_sha256": "8de58248c5c70a25a97b0f99524bf4d6d5082e966e58e61ccd2525ab33ffebc6",
-    "canonical_patch_sha256": "37dec5531e51fbaef3b2231a25f6b7d60670b3194ed0492581ae59590f02da7d",
-    "canonical_patch_bytes": 2225029
+    "actual_sha256": "bbfad88f903d0e0d314c0bb2746897ee7f4c9debdee797232ae9709b29d989f2",
+    "canonical_patch_sha256": "0420133fd14ae9ae50e4072d3d5a074738cd7d29fad6a0ee4ede8050c1998139",
+    "canonical_patch_bytes": 2225880
    },
    "fragment": {
     "part": 1,
     "parts": 42,
     "line_start": 1,
     "line_end": 1082,
-    "sha256": "af232952abc318e4f154480cd4df7369e2df3748427c21e4bcca8f9ef60f7b77"
+    "sha256": "29bc909a0d1f393493769aec073ce5adba9bfd929a8606d85e5a4f47ddd6dc73"
    },
    "canonical_patch_lines": [
     "diff --git a/docs/review/TIA-314/scope.json b/docs/review/TIA-314/scope.json\n",
     "new file mode 100644\n",
-    "index 0000000000..8bf0c596b1\n",
+    "index 0000000000..82447ac969\n",
     "--- /dev/null\n",
     "+++ b/docs/review/TIA-314/scope.json\n",
     "@@ -0,0 +1,40915 @@\n",
     "+{\n",
     "+  \"ticket\": \"TIA-314\",\n",
-    "+  \"implementation_commit\": \"9952b519018b0df3def4056f5673390ea4f83673\",\n",
+    "+  \"implementation_commit\": \"67d0071a9d0f22791793fe56ab7f714432e5db49\",\n",
     "+  \"base\": \"e088d5c9784d2779684d02524fab62a0fa5e656a\",\n",
     "+  \"upstream\": {\n",
     "+    \"repository\": \"https://github.com/voidzero-dev/vite-plus\",\n",
@@ -56,7 +56,7 @@
     "+    \"hosted_metadata_paths\": 82,\n",
     "+    \"changed_existing_scope_metadata_paths\": 1\n",
     "+  },\n",
-    "+  \"review_state\": \"Native discovery and workflow repairs at9952 pass focused source/packed/runtime/TS5.9 checks. Existing scope and delivery bodies require rebind and ordered independent re-entry. CLI4 remains non-pass; no current-head semantic review certificate.\",\n",
+    "+  \"review_state\": \"Native discovery/workflow repair checks pass at9952. Current438source adaptations and delivery metadata require qualified carry and assigned re-entry. CLI4 remains non-pass with one unnamed unreviewed file; no current semantic review certificate.\",\n",
     "+  \"custom_overlay_patch_sha256\": \"8a25940d0c43a0dac647a79f217263bb9a2e52a8181cacbd187aad80624f20f2\",\n",
     "+  \"authorized_import_exclusions\": [\n",
     "+    {\n",

@@ -1,6 +1,6 @@
 {
   "ticket": "TIA-314",
-  "implementation_commit": "67d0071a9d0f22791793fe56ab7f714432e5db49",
+  "implementation_commit": "5236fab536dd15c3f0abf67d299b3ceae6b1e0c5",
   "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
   "upstream": {
     "repository": "https://github.com/voidzero-dev/vite-plus",
@@ -20,7 +20,7 @@
     "hosted_metadata_paths": 82,
     "changed_existing_scope_metadata_paths": 1
   },
-  "review_state": "Native discovery/workflow repair checks pass at9952. Current438source adaptations and delivery metadata require qualified carry and assigned re-entry. CLI4 remains non-pass with one unnamed unreviewed file; no current semantic review certificate.",
+  "review_state": "Workflow native-lint guard and quoted-input repairs pass focused controls. Prior exact source/runtime checks carry; current workflow and affected delivery fields require assigned re-entry. Two included-only CLI calls at23ade had complete coverage and2valid workflow findings; no current clean review certificate.",
   "custom_overlay_patch_sha256": "8a25940d0c43a0dac647a79f217263bb9a2e52a8181cacbd187aad80624f20f2",
   "authorized_import_exclusions": [
     {
@@ -40719,7 +40719,7 @@
     ],
     "Markdown_qualification": "Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.",
     "OCR_carry": "Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.",
-    "final_main_source_epoch": "67d0071a9d0f22791793fe56ab7f714432e5db49",
+    "final_main_source_epoch": "5236fab536dd15c3f0abf67d299b3ceae6b1e0c5",
     "identical_queue_squash_tree": "34d345e35d45df8fc931cfd2aa7312fbe0ae5a99"
   },
   "generated_output_review_policy": {
@@ -40819,7 +40819,7 @@
     }
   ],
   "hosted_delivery": {
-    "source_epoch": "67d0071a9d0f22791793fe56ab7f714432e5db49",
+    "source_epoch": "5236fab536dd15c3f0abf67d299b3ceae6b1e0c5",
     "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
     "source_adaptations": 438,
     "stock_exclusions": 6420,
