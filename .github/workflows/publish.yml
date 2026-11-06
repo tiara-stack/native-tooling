@@ -89,10 +89,15 @@ jobs:
         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
         run: pnpm native:stage
 
-      - name: Build and test package wrappers
+      - name: Build package wrappers
+        run: pnpm build
+
+      - name: Lint package wrappers
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
+        run: pnpm lint
+
+      - name: Test package wrappers
         run: |
-          pnpm build
-          pnpm lint
           pnpm test
           pnpm check:vite-plus
 
@@ -111,8 +116,14 @@ jobs:
 
       - name: Dry-run staged publish
         if: ${{ github.event_name == 'workflow_dispatch' && inputs['dry-run'] }}
-        run: pnpm exec vp pm stage publish -r --filter "${{ inputs['package-filter'] }}" --access public --provenance --tag "${{ inputs.tag }}" --dry-run -- --no-git-checks
+        env:
+          TIARA_STAGE_PACKAGE_FILTER: ${{ inputs['package-filter'] }}
+          TIARA_STAGE_TAG: ${{ inputs.tag }}
+        run: pnpm exec vp pm stage publish -r --filter "$TIARA_STAGE_PACKAGE_FILTER" --access public --provenance --tag "$TIARA_STAGE_TAG" --dry-run -- --no-git-checks
 
       - name: Stage packages for npm trusted publishing
         if: ${{ github.event_name != 'workflow_dispatch' || !inputs['dry-run'] }}
-        run: pnpm exec vp pm stage publish -r --filter "${{ inputs['package-filter'] || './packages/*' }}" --access public --provenance --tag "${{ inputs.tag || 'latest' }}" -- --no-git-checks
+        env:
+          TIARA_STAGE_PACKAGE_FILTER: ${{ inputs['package-filter'] || './packages/*' }}
+          TIARA_STAGE_TAG: ${{ inputs.tag || 'latest' }}
+        run: pnpm exec vp pm stage publish -r --filter "$TIARA_STAGE_PACKAGE_FILTER" --access public --provenance --tag "$TIARA_STAGE_TAG" -- --no-git-checks
