@@ -227,6 +227,14 @@ else process.exit(Number(process.env.TIARA_TEST_EXIT ?? 0));
 function temporaryConfigs(directory) {
   return readdirSync(directory).filter((name) => name.startsWith(".tiara-oxlint-"));
 }
+async function waitFor(check) {
+  const deadline = Date.now() + 8000;
+  while (Date.now() < deadline) {
+    if (check()) return;
+    await new Promise((done) => setTimeout(done, 40));
+  }
+  throw new Error("Timed out waiting for native lint adapter state");
+}
 
 test("native lint adapter preserves configuration origins and cleans up a failed child", () => {
   const fixture = adapterFixture();
@@ -277,26 +285,20 @@ test("native lint adapter rejects nonserializable settings before starting a chi
 });
 
 test(
-  "native lint adapter reloads LSP settings and cleans up after termination",
-  { timeout: 15000 },
+  "native lint adapter reuses LSP snapshots and cleans up after termination",
+  { timeout: 20000 },
   async () => {
     const fixture = adapterFixture();
     let child;
     let exited;
-    const waitFor = async (check) => {
-      const deadline = Date.now() + 8000;
-      while (Date.now() < deadline) {
-        if (check()) return;
-        await new Promise((done) => setTimeout(done, 40));
-      }
-      throw new Error("Timed out waiting for native lint adapter state");
-    };
     try {
       const configPath = join(fixture.directory, "vite.config.ts");
-      writeFileSync(
-        configPath,
-        'export default { lint: { rules: { "no-debugger": "error" } } };\n',
-      );
+      const update = (version, inherited = "warn") =>
+        writeFileSync(
+          configPath,
+          `export default { lint: { settings: { react: { version: ${JSON.stringify(String(version))} } }, extends: [{ rules: { "no-console": ${JSON.stringify(inherited)} }, extends: [{ rules: { "no-alert": "error" } }] }], rules: { "no-debugger": "error" } } };\n`,
+        );
+      update(0);
       child = spawn(process.execPath, [adapter, "--lsp"], {
         cwd: fixture.directory,
         env: fixture.env,
@@ -312,14 +314,54 @@ test(
       });
       await waitFor(() => existsSync(fixture.record));
       const record = JSON.parse(readFileSync(fixture.record, "utf8"));
+      const current = () => JSON.parse(readFileSync(record.configPath, "utf8"));
+      const initial = current();
+      const initialChild = JSON.parse(readFileSync(initial.extends[0], "utf8"));
+      assert.equal(initial.rules["no-debugger"], "error");
+      assert.equal(temporaryConfigs(fixture.directory).length, 3);
+      update(1);
+      await waitFor(() => current().settings.react.version === "1");
+      assert.deepEqual(current().extends, initial.extends);
+      assert.equal(temporaryConfigs(fixture.directory).length, 3);
+
+      update(2, "off");
+      await waitFor(() => current().settings.react.version === "2");
+      assert.notDeepEqual(current().extends, initial.extends);
+      assert.equal(temporaryConfigs(fixture.directory).length, 4);
+      // A reader can hold an older root while it opens that root's children.
+      assert.deepEqual(JSON.parse(readFileSync(initial.extends[0], "utf8")), initialChild);
       assert.equal(
-        JSON.parse(readFileSync(record.configPath, "utf8")).rules["no-debugger"],
+        JSON.parse(readFileSync(initialChild.extends[0], "utf8")).rules["no-alert"],
         "error",
       );
-      writeFileSync(configPath, 'export default { lint: { rules: { "no-debugger": "off" } } };\n');
-      await waitFor(
-        () => JSON.parse(readFileSync(record.configPath, "utf8")).rules["no-debugger"] === "off",
+      update(3);
+      await waitFor(() => current().settings.react.version === "3");
+      assert.deepEqual(current().extends, initial.extends);
+      assert.equal(temporaryConfigs(fixture.directory).length, 4);
+
+      writeFileSync(
+        configPath,
+        "export default { lint: { extends: [{ rules: { invalid: () => true } }] } };\n",
       );
+      await waitFor(() => stderr.includes("serializable Rust rule settings"));
+      assert.equal(current().settings.react.version, "3");
+      assert.equal(temporaryConfigs(fixture.directory).length, 4);
+
+      // A failed root publication must reclaim its never-published children.
+      const staging = record.configPath + ".writing";
+      mkdirSync(staging);
+      update(4, "error");
+      await waitFor(() => stderr.includes("EEXIST"));
+      assert.equal(current().settings.react.version, "3");
+      assert.equal(
+        temporaryConfigs(fixture.directory).filter((name) => !name.endsWith(".writing")).length,
+        4,
+      );
+      rmSync(staging, { recursive: true });
+      update(5, "error");
+      await waitFor(() => current().settings.react.version === "5");
+      assert.equal(temporaryConfigs(fixture.directory).length, 5);
+      assert.deepEqual(JSON.parse(readFileSync(initial.extends[0], "utf8")), initialChild);
       child.kill("SIGTERM");
       assert.equal(await exited, 0, stderr);
       assert.deepEqual(temporaryConfigs(fixture.directory), []);
@@ -332,3 +374,80 @@ test(
     }
   },
 );
+
+test(
+  "native lint adapter isolates concurrently active LSP readers",
+  { timeout: 15000 },
+  async () => {
+    const fixture = adapterFixture();
+    const children = [];
+    try {
+      const configPath = join(fixture.directory, "vite.config.ts");
+      const update = (level) =>
+        writeFileSync(
+          configPath,
+          `export default { lint: { extends: [{ rules: { "no-console": "warn" } }], rules: { "no-debugger": ${JSON.stringify(level)} } } };\n`,
+        );
+      update("error");
+      for (let index = 0; index < 2; index++) {
+        const recordPath = join(fixture.directory, `record-${index}.json`);
+        const child = spawn(process.execPath, [adapter, "--lsp"], {
+          cwd: fixture.directory,
+          env: { ...fixture.env, TIARA_TEST_RECORD: recordPath },
+          stdio: ["ignore", "ignore", "pipe"],
+        });
+        const exited = new Promise((done, reject) => {
+          child.once("error", reject);
+          child.once("exit", done);
+        });
+        child.stderr.resume();
+        children.push({ child, exited, recordPath });
+      }
+      await waitFor(() => children.every(({ recordPath }) => existsSync(recordPath)));
+      const records = children.map(({ recordPath }) =>
+        JSON.parse(readFileSync(recordPath, "utf8")),
+      );
+      assert.notEqual(records[0].configPath, records[1].configPath);
+      children[0].child.kill("SIGTERM");
+      assert.equal(await children[0].exited, 0);
+      assert.equal(existsSync(records[0].configPath), false);
+      const current = () => JSON.parse(readFileSync(records[1].configPath, "utf8"));
+      assert.equal(
+        JSON.parse(readFileSync(current().extends[0], "utf8")).rules["no-console"],
+        "warn",
+      );
+      update("off");
+      await waitFor(() => current().rules["no-debugger"] === "off");
+      assert.equal(temporaryConfigs(fixture.directory).length, 2);
+      children[1].child.kill("SIGTERM");
+      assert.equal(await children[1].exited, 0);
+      assert.deepEqual(temporaryConfigs(fixture.directory), []);
+    } finally {
+      for (const { child } of children) {
+        if (child.exitCode === null) child.kill("SIGTERM");
+      }
+      await Promise.allSettled(children.map(({ exited }) => exited));
+      rmSync(fixture.directory, { recursive: true, force: true });
+    }
+  },
+);
+
+test("native lint adapter cleans up when the native child cannot start", () => {
+  const fixture = adapterFixture();
+  try {
+    writeFileSync(
+      join(fixture.directory, "vite.config.ts"),
+      'export default { lint: { extends: [{ rules: { "no-console": "warn" } }] } };\n',
+    );
+    const result = spawnSync(process.execPath, [adapter], {
+      cwd: fixture.directory,
+      encoding: "utf8",
+      env: { ...fixture.env, TIARA_OXLINT_EFFECT_PATH: join(fixture.directory, "missing") },
+    });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /ENOENT/);
+    assert.deepEqual(temporaryConfigs(fixture.directory), []);
+  } finally {
+    rmSync(fixture.directory, { recursive: true, force: true });
+  }
+});
