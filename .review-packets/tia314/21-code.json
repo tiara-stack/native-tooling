@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+ "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,21 +13,23 @@
     "after": {
      "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "blob": "0ebc55503e3be2d818232f232665f3db3fa2b4b0",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "blob": "dce3066bf96598c09119e917409875fe512e91e7",
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
-    "actual_sha256": "20b8acdee6d15a696ebe32eeca8b4d20f3972d0da53870cbaff9defd07933b07",
-    "canonical_patch_sha256": "62e4b287eba5da688c97b0277a8c2dd5e439d5f1246aeefddbbc760855310080",
-    "canonical_patch_bytes": 2225946
+    "actual_sha256": "d8cb5087832ae7865b86b3cb757ddb18f54e329b675b9c37e7ceaecc19cba145",
+    "canonical_patch_sha256": "ad2c1ad3a9a76117e613f39f484de66a04a1cb78661784ba157e1696505820d5",
+    "canonical_patch_bytes": 2225975
    },
    "fragment": {
     "part": 6,
     "parts": 42,
-    "line_start": 4746,
-    "line_end": 5617,
-    "sha256": "80ed41b1ad4d2ca0ff27915b0defa97d0839b6ab498aed002e414443910140e0"
+    "line_start": 4744,
+    "line_end": 5614,
+    "sha256": "b76fe0739ce0937c00174bb019fe2a0d3e642d547d5cf94ae4f31d2a4bf92630"
    },
    "canonical_patch_lines": [
+    "+      \"base_sha256\": null,\n",
+    "+      \"pin_sha256\": \"f33f96d97538013223d00e315de289c02029d1a446cf3f61175c6e899a3a167b\",\n",
     "+      \"head_sha256\": \"f33f96d97538013223d00e315de289c02029d1a446cf3f61175c6e899a3a167b\"\n",
     "+    },\n",
     "+    {\n",
@@ -896,10 +898,7 @@
     "+    },\n",
     "+    {\n",
     "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_env_package_manager_mismatch/snapshots/env_package_manager_list_ignores_other_family_resolution.md\",\n",
-    "+      \"base_sha256\": null,\n",
-    "+      \"pin_sha256\": \"9929cc384247b3b112ac43fc1a48cc0218476c660dee64aef257c8b6bfe4ba60\",\n",
-    "+      \"head_sha256\": \"9929cc384247b3b112ac43fc1a48cc0218476c660dee64aef257c8b6bfe4ba60\"\n",
-    "+    },\n"
+    "+      \"base_sha256\": null,\n"
    ]
   }
  ]

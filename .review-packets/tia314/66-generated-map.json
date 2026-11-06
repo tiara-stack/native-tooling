@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "generated-map",
- "source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+ "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -14,7 +14,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DtiZdigx.mjs",
      "mode": "100644",
      "blob": "b07d7f2f11dbb74aca9de5548a492a0cfd8e15bb",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "da93bb4691d1450bc0698f19c022bb5885ce5a4c7fe7c07283116fa29296a705"
    },
@@ -38,7 +38,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/constructors-DuOq7MqW.d.mts",
      "mode": "100644",
      "blob": "52f5fe0c84316955040804c4cd44aa6db6a737a6",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "ba40b180f5497a19433fbf287e1685237797ccd45a7a1b5394b534935da451c0"
    },
@@ -62,7 +62,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/constructors-xEvVj3lN.mjs",
      "mode": "100644",
      "blob": "931cb246e9c2e86eeaa6000783582b4c4716c0f4",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "087234cdd6903f7d5d1fd5e44a4cec61965c8755fa36c8d06f26a1a486d65de3"
    },
@@ -86,7 +86,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-DE7PdQ66.mjs",
      "mode": "100644",
      "blob": "5df8453366b51ca3ebaa6e5ceee8e721e0e2b236",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "bb89392f77adc591d393caee62f89a4174c9723d87840190c7e06852b6b1effb"
    },
@@ -110,7 +110,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/define-config-C7HCoqY8.d.mts",
      "mode": "100644",
      "blob": "250bf22f6106668dd88942f06b09865580d76061",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "1df52845e65851fefd84183ed1933fa2ef951446d16c678875959eb5f72b812a"
    },
@@ -134,7 +134,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/define-config-Demdg3_4.mjs",
      "mode": "100644",
      "blob": "902af91ef4919c348384c37b3dffb005476fb238",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "e887326cc80caa4248166a9ce863134fc4f7e1314ad9a3d7e380bd1a43f746ab"
    },
@@ -158,7 +158,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/dist-Cj6Gizjh.mjs",
      "mode": "100644",
      "blob": "daf910fb3e4330f525a24ff77131d92eb7bfab4d",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "f52012af9c147b61cc42630d36835c362143d73d81ae4a257264f738f59076b4"
    },
@@ -182,7 +182,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/error-C7pxws0W.mjs",
      "mode": "100644",
      "blob": "be63af1d8b0d335ca47cb34b1e205d36e5df07d9",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "cc23a45ba8a60c4980f6486590829fe3ad8fef5dfeb31b0fa2686142dbc4b051"
    },
@@ -206,7 +206,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/get-log-filter-AjBknEEO.d.mts",
      "mode": "100644",
      "blob": "c2a26bf32939a5c3e67b492f3b9e26ab7bbdb7f4",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "a57f53caa3e1283f2234c38f3614eb66549f83d0b21bddfcbb2dca1a023c2383"
    },
@@ -230,7 +230,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/load-config-DOpJzg5m.mjs",
      "mode": "100644",
      "blob": "8309ee87a5fab062937593e1130877f7a3249d40",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "bbaeeae3336fda1422479d883c3d9dbbe20c9194c53c62ca463c5f33e8b286e8"
    },
@@ -254,7 +254,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/logging-xuHO4mAy.d.mts",
      "mode": "100644",
      "blob": "98c6ac5f061d40eb097bab1a0c61cba816728aee",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "fc5ad2ec8b130a59612c5cfcc2cdca9bcdd80851adb8acdb004aaeff00cc978d"
    },
@@ -278,7 +278,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/logs-D6uA606S.mjs",
      "mode": "100644",
      "blob": "2b3affccd57b10adaed6dc39178ce3bf5adf6d91",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "7edfdf44f30af715dbac404c6a6b9909510e82bc9ca6762c127e2ef474dac3da"
    },
@@ -302,7 +302,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/misc-DOSKtd97.mjs",
      "mode": "100644",
      "blob": "de6c73dbc7ac667bd9863535fd3d9a2706e09bd4",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "a6b94bac1329695387fcaf0d0dbd583165e962a2de13c719e819fc68e4bcb04a"
    },
@@ -326,7 +326,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/normalize-string-or-regex-F14uvr6D.mjs",
      "mode": "100644",
      "blob": "3ff320f2b3d84631028b6eba20629c4bc0c35d09",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "e1cff9111ea8819b0890ae35b1cfd2938a53bf755c6c176d79387133ed7e5f1c"
    },
@@ -350,7 +350,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/parse-Cx9Y3o34.mjs",
      "mode": "100644",
      "blob": "2a9f4b7834d8f920adb45eea704c504fafb22756",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "9eafd03b8d7a82095ab1aa80249f4dc528cebc70a8e8f3552fc6f1756bacf604"
    },
@@ -374,7 +374,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/prompt-B_HmZT9L.mjs",
      "mode": "100644",
      "blob": "23a06d9a0907178b6dbf76cc9822f211fbc1c6aa",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "74dc40f54f6b8f0ebc0b4aa529e29cfd3b103a97cb557fb6af20db71bb1fa2db"
    },
@@ -398,7 +398,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/resolve-tsconfig-DHwpIs5e.mjs",
      "mode": "100644",
      "blob": "4f9cbef478025e6e4c32dd89f7d3a57bc51ad8c8",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "c02487012bccd197c5ff028924dab92cd727dcf024dd782c561fdaf19a7b1b05"
    },
@@ -422,7 +422,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/rolldown-GPZy8usn.mjs",
      "mode": "100644",
      "blob": "164ddf724fd2b92df1a4d35a03f2d4fe35050c30",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "2aa42fd3f2ea85d8ee1e47185fd633cf52588c3e6ef874c421ebf7a09b0c66e5"
    },
@@ -446,7 +446,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/transform-DK_nCt9j.d.mts",
      "mode": "100644",
      "blob": "8f9c271a67e1876f30078348620c4f582d1726d6",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "9a14344b695ee969e1a745a72e9ee8e49449e6a833077226f2773361b9f66853"
    },
@@ -470,7 +470,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/shared/watch-D2SEUBpC.mjs",
      "mode": "100644",
      "blob": "58300bc66b16241cec5786246617dceec8a038e5",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "51d13095fafaef5204a62d7df56c75d8ef2b0e038e72bf2e89f88aad2bba883b"
    },
@@ -494,7 +494,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/utils-index.d.mts",
      "mode": "100644",
      "blob": "5119fe45535a1beaa661444dc95b4828c5e83b4e",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "0e35a1614eb729f2f7e2b95037d0d0bf567b05641427a37e6b77583245abc8d3"
    },
@@ -518,7 +518,7 @@
      "path": "packages/vite-plus-core/dist/rolldown/utils-index.mjs",
      "mode": "100644",
      "blob": "01ad1bbd0ee76cbd7585e242b211c4e518e6ebec",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "14498dfeef0c0048870ce6d2d5402a32d7f8191c4a0164edead40c6bc98fd038"
    },
@@ -542,7 +542,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-CNEUXy8W.js",
      "mode": "100644",
      "blob": "359ee7521df623bed644d1dc3af60bf236a8cebb",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "28730ff4d433e537565b30f49724b2da80fbaa1be1010715a1a7bde4938471cd"
    },
@@ -566,7 +566,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/client.d.ts",
      "mode": "100644",
      "blob": "3367afa200cc5781142d450ac5eed9d3652b2c81",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "2c9f752dc487ec1a6e7a5904304c2c23a633bea1d2baec1ef57c4c436ef20ce4"
    },
@@ -590,7 +590,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-Dnz9MN5W.js",
      "mode": "100644",
      "blob": "602b50a615a1a20129ca72827bb90b5b05594c8c",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "aff7d6ee2ba1e29048d5ac115bc78bf3afff0fe1dfd135f6011e0fef0c2255ca"
    },
@@ -614,7 +614,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-n78SKrJt.js",
      "mode": "100644",
      "blob": "20b7b086634eb7cffd401e75636b416f5faaab83",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "4f95be0345beeeb96c9c291697c6e569ecd04458c3cbb39b7f5c5f24b092c624"
    },
@@ -638,7 +638,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/dist-BvQ5xRVS.js",
      "mode": "100644",
      "blob": "a638b7a56fae84fb1455488e71ad8f9fc1780dc0",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "8a7244b691c80775bf76e9cffd5a631163acbd21c1d68de6789f89213b4ac1b8"
    },
@@ -662,7 +662,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/index-types.d.ts",
      "mode": "100644",
      "blob": "8b7f2bbdb1802fcc5bf027a871544785b36b2460",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "33b6ad22ca0edc5f4d63833252435611a4c3d5f19480235804f3ef298ed26c57"
    },
@@ -686,7 +686,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/index.js",
      "mode": "100644",
      "blob": "7fc17634c25acdcf829f8afd2d6489ff43499b04",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "341282589e0ae95300ca469c913b9beb580a44b7cdb4c0442b72b7861a39071c"
    },
@@ -710,7 +710,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/main-GtGXvAGN.js",
      "mode": "100644",
      "blob": "b43090fb8d994986be3f2dffa92843996de288d2",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "41af81be6d4b6c307143e891890e95474041a1bcbaea3f71c2ded5975ea92cd8"
    },
@@ -734,7 +734,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/npm_cjs_chunk_rolldown-runtime.cjs",
      "mode": "100644",
      "blob": "18f896e92fa8f698eeae059abc18623f1518cdd9",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "ee3f363a69bd5b30a1d93c271d0ee2dae4f4cf2bbe948a566def608e12319621"
    },
@@ -758,7 +758,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/npm_entry_picomatch.cjs",
      "mode": "100644",
      "blob": "0c43a9d2448d840227c5a614446d7026e6f3b3ec",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "aa7ba65442ec2df5f61a4c018fe789a0174be7d953d7f4ba552729a651a31419"
    },
@@ -782,7 +782,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/npm_entry_tree-kill.cjs",
      "mode": "100644",
      "blob": "296200d8bd90c1ccc482aff75ad82799a8b1fdee",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "5dc8741c957b8a35ce140ccac24b7e7c595b23a672369f77cc7a601053c43743"
    },
@@ -806,7 +806,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-CqWtCnhO.js",
      "mode": "100644",
      "blob": "4e4991dd77d0b3958c711a4ef2a4119461296ae0",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "a887a8ef22e189ec6112b73d095334de1041c09cd163122c76aee54d400702d4"
    },
@@ -830,7 +830,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-DkDbuRlS.js",
      "mode": "100644",
      "blob": "8e90d648dc488d12b5961aa322a8c5b88b81c99a",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "589e42b292fd6bfda8a0050353b43531e39fed27a6882ab51226a3b9fdc5f670"
    },
@@ -854,7 +854,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/rolldown-runtime-B4iAMlE-.js",
      "mode": "100644",
      "blob": "60b3cbbdd9da91e62fa8ffe20f1c77a1858be6c0",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "aefa2acac0467f8b79c39ad8f80ac480456390bc0a607251f5e9b860675085d9"
    },
@@ -878,7 +878,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/run.js",
      "mode": "100644",
      "blob": "f251a479e6622188a45c95e7ab23236a3e9d96d0",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "e0931a377b53ca940861fc6c25ccdc8837d8347a56bdc2ae2129bc2bb63cb9d7"
    },
@@ -902,7 +902,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/src-DCtyfERi.js",
      "mode": "100644",
      "blob": "2705b32d9a626ba2d49415713d2b80c0940b3008",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "ff3f10582f25eabf44ecc62ac0313efc3d1446d411f7989f1d9415ca11605f1c"
    },
@@ -926,7 +926,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/style-DiMP8pYv-DIC5PXeH.js",
      "mode": "100644",
      "blob": "df1ec33eb861b3149d10abe203b18331576b6f1a",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "ef6d35d819c90d1300c6daed10b61362f2b4bc0a247b5270608f5ddefcd4a33d"
    },
@@ -950,7 +950,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/target-DgdLrXba-DkM-5uQn.js",
      "mode": "100644",
      "blob": "7cdbf3504e46fc7b04fcc425d23c85bd17a65b48",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "cc0a981c8f55e08cc02a2abb7ea4297be94c73ebe6bfd97e3f66cc2eacf9910a"
    },
@@ -974,7 +974,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/tsc-DDiX4JsL.js",
      "mode": "100644",
      "blob": "bf555576548a1061efa915a02b59600e07818c35",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "ef7770dd0f17264caf7767df9aa05fff0ae67a1c6e2f2f07d1d3ac35f7cf36df"
    },
@@ -998,7 +998,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/tsdown-css.js",
      "mode": "100644",
      "blob": "cab10e23c48ffbe25a6d035a69e7d0828fd5ccf8",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "e5c9d72b43682c1d8039ead4e8b3acca3acbe0bd8f94ec43b57b4439923a3ac9"
    },
@@ -1022,7 +1022,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/tsdown-exe.js",
      "mode": "100644",
      "blob": "aee37bf72ac637a414997b791136246feb6aad1a",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "4db188b80e9ce33c40d394bba808d114bdf60fa41c45b50dffa8ddfcb3870a5c"
    },
@@ -1046,7 +1046,7 @@
      "path": "packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-BXLNg3pw.js",
      "mode": "100644",
      "blob": "640a97d338fa7f89def9ff3655eb3e2e7da68f86",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "357334ac432bfb43f882d0435c4457fce34e98959a00421f19d71a3e311f1e9b"
    },
@@ -1070,7 +1070,7 @@
      "path": "packages/vite-plus-core/dist/vite/client.d.ts",
      "mode": "100644",
      "blob": "604286503942f3e69f0c819d01d44450bc0bb837",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "74b98be6ab7723114273526706070ff9885fdf990d5c4e722801addca4d264e1"
    },
@@ -1094,7 +1094,7 @@
      "path": "packages/vite-plus-core/dist/vite/client/bundledDevClient.mjs",
      "mode": "100644",
      "blob": "b7ecd0b2d71c83d37060050a0c944089a363f4b4",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "5c0f42362fd1b359858b64a8a69c19366d4de6fcc93b2cea057401e892b062eb"
    },
@@ -1118,7 +1118,7 @@
      "path": "packages/vite-plus-core/dist/vite/client/client.mjs",
      "mode": "100644",
      "blob": "5bb90064540eda8259576c101e9db201698340d9",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "5ead305d5ad47b086a86b97537e770ac1dc28ee58a7d5082d3235fb9f1affb09"
    },
@@ -1142,7 +1142,7 @@
      "path": "packages/vite-plus-core/dist/vite/client/env.mjs",
      "mode": "100644",
      "blob": "46661a84e562b404f2d8429c6a3b7ce15a7c303d",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "7734f62e2275a6178939fc19fe5ae074d83c7e955aeec6ca1739dc5aca67980f"
    },
@@ -1166,7 +1166,7 @@
      "path": "packages/vite-plus-core/dist/vite/misc/false.d.ts",
      "mode": "100644",
      "blob": "b2ba15eb1e7fc337b9bfc3097eab2cd7a2f6e34c",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "d1c8ab076d4dd44d1adf6eeebbad8d95a18146fbb5a400219a4daf6f6121ec8d"
    },
@@ -1190,7 +1190,7 @@
      "path": "packages/vite-plus-core/dist/vite/misc/false.js",
      "mode": "100644",
      "blob": "2693369b44337b7c5d3a96226f7e7eea4715618a",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "3f405f8c82812b5fd5a6ca325a1b9039479bf9de3ee1ef51d76ea80fba7d486c"
    },
@@ -1214,7 +1214,7 @@
      "path": "packages/vite-plus-core/dist/vite/misc/true.d.ts",
      "mode": "100644",
      "blob": "b2ba15eb1e7fc337b9bfc3097eab2cd7a2f6e34c",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "d1c8ab076d4dd44d1adf6eeebbad8d95a18146fbb5a400219a4daf6f6121ec8d"
    },
@@ -1238,7 +1238,7 @@
      "path": "packages/vite-plus-core/dist/vite/misc/true.js",
      "mode": "100644",
      "blob": "186b120756be198f7b34e195640ac267dba19c4e",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "1ca1ff5b531880de960715f4622cb4bfe61620ad0ab56764a00f3afe2bf2981a"
    },
@@ -1262,7 +1262,7 @@
      "path": "packages/vite-plus-core/dist/vite/node/chunks/build.js",
      "mode": "100644",
      "blob": "be4ca1a366c271d83592a4e00f9d17bf2c94cf9e",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "8f9dffd96db203868f07abffc5a803a2dc28989b091efdd2d1b9ec96f5944ad3"
    },
@@ -1286,7 +1286,7 @@
      "path": "packages/vite-plus-core/dist/vite/node/chunks/dist.js",
      "mode": "100644",
      "blob": "1cbf57c5c253a0422b884e7cbd8339be4de7f52f",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "50bf7dbff3cb6ea222531ceca2ac85559e43fa90e2b38eab5464551c387d7235"
    },
@@ -1310,7 +1310,7 @@
      "path": "packages/vite-plus-core/dist/vite/node/chunks/dist2.js",
      "mode": "100644",
      "blob": "2f3d623c9622ae15999177b304fd62042428a378",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "9ceef57cbb4daa452d7042a7b6c8be4649e3897306c0146dede982ad30908ebf"
    },
@@ -1334,7 +1334,7 @@
      "path": "packages/vite-plus-core/dist/vite/node/chunks/lib.js",
      "mode": "100644",
      "blob": "c93725ecfd876bd4e6f42062ea0a0ccf5a899404",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "56554c2bb19125938734b418a2ec01bc76f4f29e8c3e040a1e77545a8c3b377d"
    },
@@ -1358,7 +1358,7 @@
      "path": "packages/vite-plus-core/dist/vite/node/chunks/moduleRunnerTransport.d.ts",
      "mode": "100644",
      "blob": "2cff626a336548e7e26d807b2b63aeae292c7788",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
     "actual_sha256": "c911b3bd083dade8fdb7775261aa25feae695d562a3b11209650b47be90043fc"
    },

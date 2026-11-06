@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+ "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,21 +13,23 @@
     "after": {
      "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "blob": "0ebc55503e3be2d818232f232665f3db3fa2b4b0",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "blob": "dce3066bf96598c09119e917409875fe512e91e7",
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
-    "actual_sha256": "20b8acdee6d15a696ebe32eeca8b4d20f3972d0da53870cbaff9defd07933b07",
-    "canonical_patch_sha256": "62e4b287eba5da688c97b0277a8c2dd5e439d5f1246aeefddbbc760855310080",
-    "canonical_patch_bytes": 2225946
+    "actual_sha256": "d8cb5087832ae7865b86b3cb757ddb18f54e329b675b9c37e7ceaecc19cba145",
+    "canonical_patch_sha256": "ad2c1ad3a9a76117e613f39f484de66a04a1cb78661784ba157e1696505820d5",
+    "canonical_patch_bytes": 2225975
    },
    "fragment": {
     "part": 10,
     "parts": 42,
-    "line_start": 8249,
-    "line_end": 9119,
-    "sha256": "9c99a92d14e93c96fd7fa9cb77b7f7ef8561f404976efe2b324ac5aaed7da537"
+    "line_start": 8247,
+    "line_end": 9116,
+    "sha256": "e3033327883a0672aadd995b28776722e429463caee0c3438728e3dc6b1e1c7f"
    },
    "canonical_patch_lines": [
+    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_remove_bun_with_workspace/packages/app/package.json\",\n",
+    "+      \"base_sha256\": null,\n",
     "+      \"pin_sha256\": \"5feef09471cbda292469315ffa3e4bdccb4ff4d3264c352839c0c3e72a24bedf\",\n",
     "+      \"head_sha256\": \"5feef09471cbda292469315ffa3e4bdccb4ff4d3264c352839c0c3e72a24bedf\"\n",
     "+    },\n",
@@ -895,10 +897,7 @@
     "+      \"pin_sha256\": \"2f078cef6a339c9fd7324c811336b6686fd4b7fcec416813ebfdb150c049199c\",\n",
     "+      \"head_sha256\": \"2f078cef6a339c9fd7324c811336b6686fd4b7fcec416813ebfdb150c049199c\"\n",
     "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/command_update_bun_with_workspace/snapshots/command_update_bun_with_workspace.md\",\n",
-    "+      \"base_sha256\": null,\n",
-    "+      \"pin_sha256\": \"4a2dc60b04ef955e46517316ecb61a5dfe97d201e6afaa1fab8a785bdc71b39b\",\n"
+    "+    {\n"
    ]
   }
  ]

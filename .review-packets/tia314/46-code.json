@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+ "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,21 +13,26 @@
     "after": {
      "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "blob": "0ebc55503e3be2d818232f232665f3db3fa2b4b0",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "blob": "dce3066bf96598c09119e917409875fe512e91e7",
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
-    "actual_sha256": "20b8acdee6d15a696ebe32eeca8b4d20f3972d0da53870cbaff9defd07933b07",
-    "canonical_patch_sha256": "62e4b287eba5da688c97b0277a8c2dd5e439d5f1246aeefddbbc760855310080",
-    "canonical_patch_bytes": 2225946
+    "actual_sha256": "d8cb5087832ae7865b86b3cb757ddb18f54e329b675b9c37e7ceaecc19cba145",
+    "canonical_patch_sha256": "ad2c1ad3a9a76117e613f39f484de66a04a1cb78661784ba157e1696505820d5",
+    "canonical_patch_bytes": 2225975
    },
    "fragment": {
     "part": 31,
     "parts": 42,
-    "line_start": 27637,
-    "line_end": 28742,
-    "sha256": "5ca680cbcac4b2f5e4921f0cc86c6c1beaa8d1101b62fe04d33e23b96b59d1a6"
+    "line_start": 27632,
+    "line_end": 28736,
+    "sha256": "c9e77030c89abbd67ba441e88727738952597eba32f7b5f659ef75855f6e5e76"
    },
    "canonical_patch_lines": [
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-why-npm10-with-workspace/packages/app/package.json\",\n",
+    "+      \"base_sha256\": \"a70ddd560b6ebd6137c8e4226b3dc1bbdcec0ae67857a3b51e457b5666d74fb7\",\n",
+    "+      \"pin_sha256\": null,\n",
+    "+      \"head_sha256\": null\n",
     "+    },\n",
     "+    {\n",
     "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-why-npm10-with-workspace/packages/utils/package.json\",\n",
@@ -1124,12 +1129,6 @@
     "+    {\n",
     "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-eslint-legacy-already-vite-plus/snap.txt\",\n",
     "+      \"base_sha256\": \"e8a6404e672dd5f57117eae1fae69475a52c8db61587b5d93478ca98aea536d2\",\n",
-    "+      \"pin_sha256\": null,\n",
-    "+      \"head_sha256\": null\n",
-    "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/snap-tests-global/migration-eslint-legacy-already-vite-plus/steps.json\",\n",
-    "+      \"base_sha256\": \"7bd32e21692cdc7da7f50db88df69fefd13797d17731383d55faf74ca63c9450\",\n",
     "+      \"pin_sha256\": null,\n",
     "+      \"head_sha256\": null\n",
     "+    },\n",

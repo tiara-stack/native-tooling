@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+ "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,21 +13,27 @@
     "after": {
      "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "blob": "0ebc55503e3be2d818232f232665f3db3fa2b4b0",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "blob": "dce3066bf96598c09119e917409875fe512e91e7",
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
-    "actual_sha256": "20b8acdee6d15a696ebe32eeca8b4d20f3972d0da53870cbaff9defd07933b07",
-    "canonical_patch_sha256": "62e4b287eba5da688c97b0277a8c2dd5e439d5f1246aeefddbbc760855310080",
-    "canonical_patch_bytes": 2225946
+    "actual_sha256": "d8cb5087832ae7865b86b3cb757ddb18f54e329b675b9c37e7ceaecc19cba145",
+    "canonical_patch_sha256": "ad2c1ad3a9a76117e613f39f484de66a04a1cb78661784ba157e1696505820d5",
+    "canonical_patch_bytes": 2225975
    },
    "fragment": {
     "part": 29,
     "parts": 42,
-    "line_start": 25389,
-    "line_end": 26508,
-    "sha256": "ddd5054f0545353240dec8bfd8d0b6d6ff4812e29fe920f4cabe8411c9cc0de5"
+    "line_start": 25383,
+    "line_end": 26502,
+    "sha256": "d06c35ccaf9c05d08c9f1ec3ec2d99b6b7d1b4f9d43cc557d1897659c1968ba0"
    },
    "canonical_patch_lines": [
+    "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-info-no-package-json/snap.txt\",\n",
+    "+      \"base_sha256\": \"fe415971373e010a8080f19d2243e6771750c531a44b77f75d78e5f8314afaac\",\n",
+    "+      \"pin_sha256\": null,\n",
+    "+      \"head_sha256\": null\n",
+    "+    },\n",
+    "+    {\n",
     "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-info-no-package-json/steps.json\",\n",
     "+      \"base_sha256\": \"879fb15957e89f8339e144618ce53aed37473017868bbc6a5cc79802e9d9fc5e\",\n",
     "+      \"pin_sha256\": null,\n",
@@ -1140,12 +1146,6 @@
     "+    {\n",
     "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-pm-stage-pnpm11/snap.txt\",\n",
     "+      \"base_sha256\": \"703275f03d998626904eebe73bc59699bc4c7b5f6e49075efdf10617bb6293f3\",\n",
-    "+      \"pin_sha256\": null,\n",
-    "+      \"head_sha256\": null\n",
-    "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-pm-stage-pnpm11/steps.json\",\n",
-    "+      \"base_sha256\": \"36c67223e510555c330e28a81f2305b2313e7969bb4f0e121d520db60cf3cffd\",\n",
     "+      \"pin_sha256\": null,\n",
     "+      \"head_sha256\": null\n"
    ]

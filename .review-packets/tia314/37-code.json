@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+ "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,21 +13,24 @@
     "after": {
      "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "blob": "0ebc55503e3be2d818232f232665f3db3fa2b4b0",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "blob": "dce3066bf96598c09119e917409875fe512e91e7",
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
-    "actual_sha256": "20b8acdee6d15a696ebe32eeca8b4d20f3972d0da53870cbaff9defd07933b07",
-    "canonical_patch_sha256": "62e4b287eba5da688c97b0277a8c2dd5e439d5f1246aeefddbbc760855310080",
-    "canonical_patch_bytes": 2225946
+    "actual_sha256": "d8cb5087832ae7865b86b3cb757ddb18f54e329b675b9c37e7ceaecc19cba145",
+    "canonical_patch_sha256": "ad2c1ad3a9a76117e613f39f484de66a04a1cb78661784ba157e1696505820d5",
+    "canonical_patch_bytes": 2225975
    },
    "fragment": {
     "part": 22,
     "parts": 42,
-    "line_start": 18696,
-    "line_end": 19556,
-    "sha256": "9ff03c9209cd1f1ffa971c0f6e664686e65faa7f117eb72a60703da364a78517"
+    "line_start": 18693,
+    "line_end": 19552,
+    "sha256": "8bac54956619d36e9ae6179d1399397de0f85fba0f5f1dbcb80cdb89be42c64f"
    },
    "canonical_patch_lines": [
+    "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/pnpm_update_notifier/package.json\",\n",
+    "+      \"base_sha256\": null,\n",
+    "+      \"pin_sha256\": \"5cdd876d8cc1027482b9e71876cc2185f3a53736f820cea3f0d4e13e19129688\",\n",
     "+      \"head_sha256\": \"5cdd876d8cc1027482b9e71876cc2185f3a53736f820cea3f0d4e13e19129688\"\n",
     "+    },\n",
     "+    {\n",
@@ -884,11 +887,7 @@
     "+    },\n",
     "+    {\n",
     "+      \"path\": \"packages/vite-plus-effect-fork/crates/vp_cli_snapshots/tests/cli_snapshots/fixtures/shim_pnpm12_native/package.json\",\n",
-    "+      \"base_sha256\": null,\n",
-    "+      \"pin_sha256\": \"247232fef17157fd01a8816aa5bab872f46cfddbe6503b60263bef47139bd3f0\",\n",
-    "+      \"head_sha256\": \"247232fef17157fd01a8816aa5bab872f46cfddbe6503b60263bef47139bd3f0\"\n",
-    "+    },\n",
-    "+    {\n"
+    "+      \"base_sha256\": null,\n"
    ]
   }
  ]

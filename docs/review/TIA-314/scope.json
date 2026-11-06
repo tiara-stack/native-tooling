@@ -1,6 +1,6 @@
 {
   "ticket": "TIA-314",
-  "implementation_commit": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+  "implementation_commit": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
   "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
   "upstream": {
     "repository": "https://github.com/voidzero-dev/vite-plus",
@@ -20,7 +20,7 @@
     "hosted_metadata_paths": 82,
     "changed_existing_scope_metadata_paths": 1
   },
-  "review_state": "Native backend verification now dispatches directly before the local Vite source build. Finite startup-state, launcher/dispatch, existing argument/guard and formatting controls pass. Exact runtime producer bodies carry; changed workflow and delivery metadata require ordered affected review re-entry. No current-head review pass is asserted.",
+  "review_state": "Root strict installer approval for the locked Parcel watcher is repaired and locally validated against observed CI Node22/pnpm11.9 in clean, warm and empty-store states. Unknown-script enforcement remains. Dependency locks, source/runtime producers and generated bodies are unchanged; affected configuration and delivery review is pending. Historical hosted failures remain failures.",
   "custom_overlay_patch_sha256": "8a25940d0c43a0dac647a79f217263bb9a2e52a8181cacbd187aad80624f20f2",
   "authorized_import_exclusions": [
     {
@@ -40719,7 +40719,7 @@
     ],
     "Markdown_qualification": "Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.",
     "OCR_carry": "Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.",
-    "final_main_source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+    "final_main_source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
     "identical_queue_squash_tree": "34d345e35d45df8fc931cfd2aa7312fbe0ae5a99"
   },
   "generated_output_review_policy": {
@@ -40819,7 +40819,7 @@
     }
   ],
   "hosted_delivery": {
-    "source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+    "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
     "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
     "source_adaptations": 438,
     "stock_exclusions": 6420,

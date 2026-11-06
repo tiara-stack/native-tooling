@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+ "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,21 +13,25 @@
     "after": {
      "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "blob": "0ebc55503e3be2d818232f232665f3db3fa2b4b0",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "blob": "dce3066bf96598c09119e917409875fe512e91e7",
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
-    "actual_sha256": "20b8acdee6d15a696ebe32eeca8b4d20f3972d0da53870cbaff9defd07933b07",
-    "canonical_patch_sha256": "62e4b287eba5da688c97b0277a8c2dd5e439d5f1246aeefddbbc760855310080",
-    "canonical_patch_bytes": 2225946
+    "actual_sha256": "d8cb5087832ae7865b86b3cb757ddb18f54e329b675b9c37e7ceaecc19cba145",
+    "canonical_patch_sha256": "ad2c1ad3a9a76117e613f39f484de66a04a1cb78661784ba157e1696505820d5",
+    "canonical_patch_bytes": 2225975
    },
    "fragment": {
     "part": 27,
     "parts": 42,
-    "line_start": 23266,
-    "line_end": 24256,
-    "sha256": "d8555d32f5b415e77f1570c277baccc8a7389434f1b13d1b5eee8e4994c8b95e"
+    "line_start": 23262,
+    "line_end": 24254,
+    "sha256": "d47bcd3db3ff2fa27e6b99d0e63d9eca93a83847686a63413309fd1a19362e5b"
    },
    "canonical_patch_lines": [
+    "+      \"head_sha256\": \"202dd3cc40e693776a253f03736bce75f8676d1b9b579a91ec76a5d92cab67de\"\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus-effect-fork/docs/.gitignore\",\n",
     "+      \"base_sha256\": \"724fa83ff9da2c85372cb88f186b3b4bc7e359774f1f1ac5c4165b00b5cfc521\",\n",
     "+      \"pin_sha256\": \"4f9278d2735581c46a1afa71e3e0c6a501b0dc4dce2c013a2ba4807c88d5a035\",\n",
     "+      \"head_sha256\": \"4f9278d2735581c46a1afa71e3e0c6a501b0dc4dce2c013a2ba4807c88d5a035\"\n",
@@ -1016,9 +1020,7 @@
     "+      \"pin_sha256\": null,\n",
     "+      \"head_sha256\": null\n",
     "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/snap-tests-global/command-add-yarn4-with-workspace/packages/utils/package.json\",\n",
-    "+      \"base_sha256\": \"0b54a84a29f497ec5c6c9a55f72f1cac7ca82ebcf8f8aea83550c219d091fd74\",\n"
+    "+    {\n"
    ]
   }
  ]

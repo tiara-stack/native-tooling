@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+ "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,21 +13,25 @@
     "after": {
      "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "blob": "0ebc55503e3be2d818232f232665f3db3fa2b4b0",
-     "ref": "206414e9d27709fd7ccaee809bb515c636dc4c2b"
+     "blob": "dce3066bf96598c09119e917409875fe512e91e7",
+     "ref": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae"
     },
-    "actual_sha256": "20b8acdee6d15a696ebe32eeca8b4d20f3972d0da53870cbaff9defd07933b07",
-    "canonical_patch_sha256": "62e4b287eba5da688c97b0277a8c2dd5e439d5f1246aeefddbbc760855310080",
-    "canonical_patch_bytes": 2225946
+    "actual_sha256": "d8cb5087832ae7865b86b3cb757ddb18f54e329b675b9c37e7ceaecc19cba145",
+    "canonical_patch_sha256": "ad2c1ad3a9a76117e613f39f484de66a04a1cb78661784ba157e1696505820d5",
+    "canonical_patch_bytes": 2225975
    },
    "fragment": {
     "part": 37,
     "parts": 42,
-    "line_start": 34306,
-    "line_end": 35452,
-    "sha256": "75226e1fa640b6f075e589125edb3f21f723918bba34438ebfc96869dbb950f0"
+    "line_start": 34302,
+    "line_end": 35450,
+    "sha256": "47f6d0ac3b5fbc6328042c003b2b6405cab5c7b34ab899741b96b0d59863aa5b"
    },
    "canonical_patch_lines": [
+    "+      \"head_sha256\": null\n",
+    "+    },\n",
+    "+    {\n",
+    "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/snap-tests/command-exec-monorepo/packages/app-b/package.json\",\n",
     "+      \"base_sha256\": \"d668784f606c238744808961914880387ddadb2e13dc20b8f5af7ab2c0af3db9\",\n",
     "+      \"pin_sha256\": null,\n",
     "+      \"head_sha256\": null\n",
@@ -1172,9 +1176,7 @@
     "+      \"pin_sha256\": null,\n",
     "+      \"head_sha256\": null\n",
     "+    },\n",
-    "+    {\n",
-    "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/snap-tests/fmt-check-with-vite-config/snap.txt\",\n",
-    "+      \"base_sha256\": \"9a6983ad72e1e45bde809953dffbee571c1eccfd6221819ba615760e099d226e\",\n"
+    "+    {\n"
    ]
   }
  ]
