@@ -1,6 +1,6 @@
 {
   "ticket": "TIA-314",
-  "implementation_commit": "d66300261e57366cbea6a8e8ea0a99ce8632d548",
+  "implementation_commit": "eb392e52d245e87982ccc951ad7b638325693e07",
   "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
   "upstream": {
     "repository": "https://github.com/voidzero-dev/vite-plus",
@@ -9,18 +9,18 @@
   },
   "policy": "Exclude only unchanged pinned upstream source. Keep Tiara overlays, root package/version/lock/config changes, generated artifacts, generation inputs and affected consumers. Pinned upstream metadata remains provenance context. Review mixed source as Tiara overlays against the pin.",
   "counts": {
-    "raw_changed_paths": 6942,
+    "raw_changed_paths": 6944,
     "authorized_import_exclusions": 6420,
-    "review_target_paths": 522,
+    "review_target_paths": 524,
     "mixed_or_custom_source_paths": 13,
     "skipped_reviewable_paths": 0,
     "reviewed_paths": 0,
-    "pending_review_target_paths": 522,
+    "pending_review_target_paths": 524,
     "source_adaptation_paths": 440,
-    "hosted_metadata_paths": 82,
+    "hosted_metadata_paths": 84,
     "changed_existing_scope_metadata_paths": 1
   },
-  "review_state": "Source build and pack lifecycle commands now prepend a private project-aware Corepack pnpm shim, preserving strict version checks and root pnpm selection. The observed nested pnpm11.9-versus11.24 failure is reproduced. Launcher controls and fresh owned JavaScript generation, package/runtime/native consumers pass. Native compilation is qualified unchanged reuse. Repaired source and delivery review is pending; hosted CI failures remain nonpassing.",
+  "review_state": "Immutable object-extends children are shared by content across LSP refreshes; never-published children are reclaimed after root-publication failure. Distinct published snapshots retain native-reader lifetime. Source, scoped and actual packed probes and the23-test Node22 command pass. Previous b53 CI passed; current affected review and hosted clone-coverage clarification remain pending. SIGKILL cannot execute exit cleanup.",
   "custom_overlay_patch_sha256": "8a25940d0c43a0dac647a79f217263bb9a2e52a8181cacbd187aad80624f20f2",
   "authorized_import_exclusions": [
     {
@@ -40673,6 +40673,14 @@
       "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
     },
     {
+      "path": ".review-packets/tia314/78-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
+      "path": ".review-packets/tia314/79-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
       "path": ".review-packets/tia314/README.md",
       "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
     },
@@ -40727,7 +40735,7 @@
     ],
     "Markdown_qualification": "Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.",
     "OCR_carry": "Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.",
-    "final_main_source_epoch": "d66300261e57366cbea6a8e8ea0a99ce8632d548",
+    "final_main_source_epoch": "eb392e52d245e87982ccc951ad7b638325693e07",
     "identical_queue_squash_tree": "34d345e35d45df8fc931cfd2aa7312fbe0ae5a99"
   },
   "generated_output_review_policy": {
@@ -40827,11 +40835,11 @@
     }
   ],
   "hosted_delivery": {
-    "source_epoch": "d66300261e57366cbea6a8e8ea0a99ce8632d548",
+    "source_epoch": "eb392e52d245e87982ccc951ad7b638325693e07",
     "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
     "source_adaptations": 440,
     "stock_exclusions": 6420,
-    "packet_metadata_files": 82,
+    "packet_metadata_files": 84,
     "packet_paths": [
       ".review-packets/tia314/01-code.json",
       ".review-packets/tia314/02-code.json",
@@ -40910,6 +40918,8 @@
       ".review-packets/tia314/75-context.json",
       ".review-packets/tia314/76-context.json",
       ".review-packets/tia314/77-generated-map.json",
+      ".review-packets/tia314/78-code.json",
+      ".review-packets/tia314/79-code.json",
       ".review-packets/tia314/README.md",
       ".review-packets/tia314/index.json",
       ".review-packets/tia314/hosted-config.yaml",
@@ -40917,7 +40927,7 @@
       ".review-packets/tia314/initial-description.md"
     ],
     "encoding": "Existing canonical UTF-8 JSON string arrays, exact target identities and bounded contexts; generated shared transforms plus every mapping; no unchanged stock algorithm audit.",
-    "current_metadata_review_pending": 83,
+    "current_metadata_review_pending": 85,
     "no_circular_digest": "Packet body hashes are not embedded here. Actual metadata head is bound by the coordinator after commit."
   }
 }
