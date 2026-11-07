@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "0784ea178b10157c3b4d3adad98206425ace138e",
+ "source_epoch": "653e3006885852ac9d17341bac9cd3a57e6b5047",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -19,7 +19,7 @@
      "path": "pnpm-workspace.yaml",
      "mode": "100644",
      "blob": "860d1dc806da0be080abb7b92a2d7ace9baac506",
-     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
+     "ref": "653e3006885852ac9d17341bac9cd3a57e6b5047"
     },
     "actual_sha256": "ab0bd5615a574424a59a533982e7537f546bd688a0cf587e5f601a26aed94bb6",
     "canonical_patch_sha256": "6100f98db6135497435e49a571ea2e6b8c1736e5ebc6fcfe3051ba966ca64bf5",
@@ -111,7 +111,7 @@
      "path": "scripts/build-vite-plus.mjs",
      "mode": "100644",
      "blob": "ed0782930800348751abe73882e891d987de9810",
-     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
+     "ref": "653e3006885852ac9d17341bac9cd3a57e6b5047"
     },
     "actual_sha256": "af4846f325e1f1265984378f0d6ce2bf7fc6d247bb941926495de80b61aa3e43",
     "canonical_patch_sha256": "b1ac151fdbde726fd720c8f686957da38e5360f814775a31ab4e51c1582be9f7",
@@ -339,7 +339,7 @@
      "path": "scripts/check-patches.mjs",
      "mode": "100644",
      "blob": "085b17ef50bcc08491ad949147204339d9959dd7",
-     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
+     "ref": "653e3006885852ac9d17341bac9cd3a57e6b5047"
     },
     "actual_sha256": "730fe64bd567620f6b0691b6ac4f5644f077724279f48ae6c2283418de0923fc",
     "canonical_patch_sha256": "4e6bd3d8e10ab6401f5bf73d8cfe0737caa88c2e1468e91768a296e67776553a",
@@ -390,7 +390,7 @@
      "path": "scripts/check-vite-plus-package.mjs",
      "mode": "100644",
      "blob": "73840e494f4bac2cb51a7496428ae1c47048030d",
-     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
+     "ref": "653e3006885852ac9d17341bac9cd3a57e6b5047"
     },
     "actual_sha256": "503b13a87fcc3b2f093de346da2ee57e18be2ce011d667ea186d06a8620f9a60",
     "canonical_patch_sha256": "e7761d12e5102adb8e8108e416ce33120a9a20c6e947e506f65c726f8ad16480",
@@ -647,7 +647,7 @@
      "path": "scripts/lib/declaration-source-maps.d.mts",
      "mode": "100644",
      "blob": "bd53c9545149e0acb0c0891b4b12421ebc162571",
-     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
+     "ref": "653e3006885852ac9d17341bac9cd3a57e6b5047"
     },
     "actual_sha256": "12d580c0edeafa1c5fce27aa12fd75f5c696871aa8fa40ee223625173f3f5048",
     "canonical_patch_sha256": "3f61bcd3536803c35a339bf48fecafe8c0dc5ba9679237506faaa2061f40a39f",
@@ -680,7 +680,7 @@
      "path": "scripts/lib/declaration-source-maps.mjs",
      "mode": "100644",
      "blob": "727d25e1b9fc8725c552bc457abe30a8eff2d4e6",
-     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
+     "ref": "653e3006885852ac9d17341bac9cd3a57e6b5047"
     },
     "actual_sha256": "64a8984e949afd9a7fb1d9eae3274663ee1b94ed50ab27c021e6dd9a6d82733f",
     "canonical_patch_sha256": "7bfb75a97b1c90ec10068adcacce2913fc7fb9d1073bbfe09aab85c5584ef85c",
@@ -740,7 +740,7 @@
      "path": "scripts/lib/replace-package-trees.mjs",
      "mode": "100644",
      "blob": "c2897f5b4c81fbffe9faf2b2701b4c14776b42a9",
-     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
+     "ref": "653e3006885852ac9d17341bac9cd3a57e6b5047"
     },
     "actual_sha256": "d4f92a9a44f08f2e68c0139e91a50ee5ae497029e54953d71997676f4c039b56",
     "canonical_patch_sha256": "da6596366b12087ce63285fe592409a28ca3df4a6e1527ffd641aefde32aa374",
@@ -850,33 +850,33 @@
     "after": {
      "path": "scripts/lib/scoped-vite-plus.mjs",
      "mode": "100644",
-     "blob": "74e85c30e470b3dc1fd9cfe3fb427d56890d814a",
-     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
+     "blob": "3511816128ca6af0ea780d55b03bf44249ffe45f",
+     "ref": "653e3006885852ac9d17341bac9cd3a57e6b5047"
     },
-    "actual_sha256": "63e8d703506ebfc1307ed145b37fbdb341e851b04180badda6bd3436bb7d2e54",
-    "canonical_patch_sha256": "aad38d5f79c467e8a5a88995833ec80f8ec0b74e22d6be69474276f1fde510a8",
-    "canonical_patch_bytes": 6696
+    "actual_sha256": "54f22f310e30c85eb97ea67d3def965b038414ff1c411a2fd8b74cf3292c5f2b",
+    "canonical_patch_sha256": "80dd5583b038834f9bf6966705e83a08b10c23fa0e59dfce77f5fcdf6564acef",
+    "canonical_patch_bytes": 8652
    },
    "fragment": {
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 158,
-    "sha256": "aad38d5f79c467e8a5a88995833ec80f8ec0b74e22d6be69474276f1fde510a8"
+    "line_end": 211,
+    "sha256": "80dd5583b038834f9bf6966705e83a08b10c23fa0e59dfce77f5fcdf6564acef"
    },
    "canonical_patch_lines": [
     "diff --git a/scripts/lib/scoped-vite-plus.mjs b/scripts/lib/scoped-vite-plus.mjs\n",
     "new file mode 100644\n",
-    "index 0000000000..74e85c30e4\n",
+    "index 0000000000..3511816128\n",
     "--- /dev/null\n",
     "+++ b/scripts/lib/scoped-vite-plus.mjs\n",
-    "@@ -0,0 +1,152 @@\n",
+    "@@ -0,0 +1,205 @@\n",
     "+import ts from \"typescript\";\n",
     "+\n",
     "+const scope = (value) =>\n",
     "+  value\n",
-    "+    .replace(/^vite-plus(?=\\/|$)/, \"@tiara-stack/vite-plus\")\n",
-    "+    .replace(/^@voidzero-dev\\/vite-plus-core(?=\\/|$)/, \"@tiara-stack/vite-plus-core\");\n",
+    "+    .replace(/^(npm:)?vite-plus(?=\\/|@|$)/, \"$1@tiara-stack/vite-plus\")\n",
+    "+    .replace(/^(npm:)?@voidzero-dev\\/vite-plus-core(?=\\/|@|$)/, \"$1@tiara-stack/vite-plus-core\");\n",
     "+\n",
     "+export function rewriteScopedVitePlus(text, path) {\n",
     "+  if (path.endsWith(\".md\"))\n",
@@ -918,6 +918,46 @@
     "+  }\n",
     "+  const named = (node, name) => ts.isVariableDeclaration(node) && node.name.getText(tree) === name;\n",
     "+  function visit(node) {\n",
+    "+    if (\n",
+    "+      ts.isBinaryExpression(node) &&\n",
+    "+      node.operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken &&\n",
+    "+      ts.isStringLiteral(node.right) &&\n",
+    "+      scope(node.right.text) !== node.right.text\n",
+    "+    ) {\n",
+    "+      const alignment = enclosing(\n",
+    "+        node,\n",
+    "+        (item) => ts.isFunctionDeclaration(item) && item.name?.text === \"targetVersion\",\n",
+    "+      );\n",
+    "+      if (alignment && node.left.getText(tree) === alignment.parameters[0]?.name.getText(tree)) {\n",
+    "+        // These are package names to READ. Accept both namespaces while the\n",
+    "+        // protocol's upstream toolchain graph identities remain unchanged.\n",
+    "+        edits.push([\n",
+    "+          node.getStart(tree),\n",
+    "+          node.end,\n",
+    "+          `${JSON.stringify([node.right.text, scope(node.right.text)])}.includes(${node.left.getText(tree)})`,\n",
+    "+        ]);\n",
+    "+        return;\n",
+    "+      }\n",
+    "+    }\n",
+    "+    if (\n",
+    "+      ts.isCallExpression(node) &&\n",
+    "+      ts.isPropertyAccessExpression(node.expression) &&\n",
+    "+      node.expression.name.text === \"startsWith\" &&\n",
+    "+      node.arguments.length === 1 &&\n",
+    "+      ts.isStringLiteral(node.arguments[0]) &&\n",
+    "+      node.arguments[0].text === \"npm:@voidzero-dev/vite-plus-\" &&\n",
+    "+      enclosing(\n",
+    "+        node,\n",
+    "+        (item) => ts.isFunctionDeclaration(item) && item.name?.text === \"isVitePlusOverrideSpec\",\n",
+    "+      )\n",
+    "+    ) {\n",
+    "+      edits.push([\n",
+    "+        node.getStart(tree),\n",
+    "+        node.end,\n",
+    "+        `(${node.getText(tree)} || ${node.expression.getText(tree)}(\"npm:@tiara-stack/vite-plus-core@\"))`,\n",
+    "+      ]);\n",
+    "+      return;\n",
+    "+    }\n",
     "+    if (\n",
     "+      ts.isCallExpression(node) &&\n",
     "+      node.expression.getText(tree) === \"source.startsWith\" &&\n",
@@ -993,18 +1033,31 @@
     "+        const lintModule =\n",
     "+          ts.isVariableDeclaration(parent) &&\n",
     "+          /^VITE_PLUS_LINT_PLUGINS(?:_DEV)?$/.test(parent.name.getText(tree));\n",
-    "+        // This is the migrator's package to WRITE, not the literal identities\n",
-    "+        // used to recognize an existing upstream installation or catalog.\n",
-    "+        const packageOutput = named(parent, \"VITE_PLUS_NAME\");\n",
+    "+        // These constants identify the scoped CLI/core outputs. Other literal\n",
+    "+        // identities used to recognize existing installations remain inputs.\n",
+    "+        const packageOutput = named(parent, \"VITE_PLUS_NAME\") || named(parent, \"CORE_PACKAGE_NAME\");\n",
+    "+        const managedAliasOutput = enclosing(\n",
+    "+          node,\n",
+    "+          (item) =>\n",
+    "+            ts.isPropertyAssignment(item) &&\n",
+    "+            item.name.text === \"vite\" &&\n",
+    "+            enclosing(item, (declaration) => named(declaration, \"VITE_PLUS_OVERRIDE_PACKAGES\")),\n",
+    "+        );\n",
     "+        const tsconfigValue =\n",
     "+          ts.isPropertyAssignment(parent) &&\n",
     "+          parent.initializer === node &&\n",
     "+          enclosing(node, (item) => named(item, \"TSCONFIG_TYPE_REPLACEMENTS\"));\n",
-    "+        if (call || module || output || lintModule || packageOutput || tsconfigValue) {\n",
+    "+        if (\n",
+    "+          call ||\n",
+    "+          module ||\n",
+    "+          output ||\n",
+    "+          lintModule ||\n",
+    "+          packageOutput ||\n",
+    "+          managedAliasOutput ||\n",
+    "+          tsconfigValue\n",
+    "+        ) {\n",
     "+          // Keep the original quoting, template expressions, and every other byte.\n",
-    "+          const prefix = node.text.startsWith(\"vite-plus\")\n",
-    "+            ? \"vite-plus\"\n",
-    "+            : \"@voidzero-dev/vite-plus-core\";\n",
+    "+          const prefix = /^(?:npm:)?(?:vite-plus|@voidzero-dev\\/vite-plus-core)/.exec(node.text)[0];\n",
     "+          const start = node.getStart(tree) + 1;\n",
     "+          if (text.slice(start, start + prefix.length) === prefix)\n",
     "+            edits.push([start, start + prefix.length, scope(prefix)]);\n",
@@ -1035,7 +1088,7 @@
      "path": "scripts/lib/vite-plus-build-record.mjs",
      "mode": "100644",
      "blob": "9a01272830915105d7690e2363bb9eaec87878bf",
-     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
+     "ref": "653e3006885852ac9d17341bac9cd3a57e6b5047"
     },
     "actual_sha256": "b74e81e48b9e00b881679c5d6f2bdac652a6a88fa9834d808122ca797d63575b",
     "canonical_patch_sha256": "8aa0692a8d4e43555eda54bd9669dbfff79d969f6e5e87e35f586f2942659cc3",
@@ -1112,7 +1165,7 @@
      "path": "scripts/lib/vite-plus-source-environment.mjs",
      "mode": "100644",
      "blob": "1fb7963f21adbb4c50679addcf934bbaf42e967d",
-     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
+     "ref": "653e3006885852ac9d17341bac9cd3a57e6b5047"
     },
     "actual_sha256": "5c7a9bc429c92cdf6ec51d5c391bdf4eca214114578df8dcda0824503c5f9336",
     "canonical_patch_sha256": "1bc1d32b8965201701e8aa291896d7cb5af766dfdbb49f7a046e27ad06f26357",
@@ -1175,7 +1228,7 @@
      "path": "scripts/prepare-vite-plus.mjs",
      "mode": "100644",
      "blob": "34a33bceca0e3e667425511462a16bf2ac692dc6",
-     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
+     "ref": "653e3006885852ac9d17341bac9cd3a57e6b5047"
     },
     "actual_sha256": "14f1ffd7e116b45b31fbf4af5f1103a43fb194410c737b43cffbd95f88c0fc02",
     "canonical_patch_sha256": "f5de6910d7cd3e6a34be878f58ea09ed5537acad81a89dac7ccf04d712a0825a",

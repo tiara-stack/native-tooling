@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "0784ea178b10157c3b4d3adad98206425ace138e",
+ "source_epoch": "653e3006885852ac9d17341bac9cd3a57e6b5047",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,19 +13,19 @@
     "after": {
      "path": "docs/review/TIA-314/scope.json",
      "mode": "100644",
-     "blob": "8a1a5ebe1d563c01fb2674705612e4a877228252",
-     "ref": "0784ea178b10157c3b4d3adad98206425ace138e"
+     "blob": "070b6fa3b48901697a76a3c3e18b180ef39f2fc1",
+     "ref": "653e3006885852ac9d17341bac9cd3a57e6b5047"
     },
-    "actual_sha256": "df0f05254ae14d480b395406a2800fcdfb1e5c3ee72b989cf19f674ecedf3082",
-    "canonical_patch_sha256": "a98dc7155648264f8afefbb1b62306b9e0404287cce22ba912c25af8a9668889",
-    "canonical_patch_bytes": 2230152
+    "actual_sha256": "a0da294fb3cc0224bb247dddf347cd0f261704761fa18524c245a0fcfdfcf693",
+    "canonical_patch_sha256": "f911f23019cfea7e6c3dd423a944bdb779db38319412771519e2fef2303779da",
+    "canonical_patch_bytes": 2230167
    },
    "fragment": {
     "part": 41,
     "parts": 42,
     "line_start": 38611,
     "line_end": 40152,
-    "sha256": "26c0fe7c23ea7848f77008d6f25c1dba7112bf9d3ddcf37fd069f17a50140c39"
+    "sha256": "4143b4aad87e131f081bcd5c6efd9be110cf0df1e57b099e98c5dbfb2415ad1f"
    },
    "canonical_patch_lines": [
     "+      \"path\": \"packages/effect-vitest/dist/utils.mjs\",\n",
@@ -590,7 +590,7 @@
     "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs\",\n",
     "+      \"base_sha256\": null,\n",
     "+      \"pin_sha256\": null,\n",
-    "+      \"head_sha256\": \"1ad3b4254141554efd7691b1a062d98dd9b482cbac3f01731769885a5dc2de54\",\n",
+    "+      \"head_sha256\": \"f89ba58d1e1693032cee92559bf75551a61e047b17ae6b632a69bde01ad84201\",\n",
     "+      \"mode\": \"Tiara overlay against approved pin\"\n",
     "+    },\n",
     "+    {\n",
@@ -625,7 +625,7 @@
     "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts\",\n",
     "+      \"base_sha256\": \"d198749bd501756b19adc7fa6aa1295128e81b3b9340f9c9f947958417057d5d\",\n",
     "+      \"pin_sha256\": \"5038c8a643e0d5309dfe91b290d5c9ee2be211b286acc6c473760c6a80ba1f82\",\n",
-    "+      \"head_sha256\": \"7b62de433b64a391dfc1caae1f2dfdc66ec10d4309b6ad490a2efd73975ab764\",\n",
+    "+      \"head_sha256\": \"085672962a237ac23e6894845c1192f1bd2e643c9f7822f13ae7786185b7583f\",\n",
     "+      \"mode\": \"Tiara overlay against approved pin\"\n",
     "+    },\n",
     "+    {\n",
@@ -639,7 +639,7 @@
     "+      \"path\": \"packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts\",\n",
     "+      \"base_sha256\": null,\n",
     "+      \"pin_sha256\": null,\n",
-    "+      \"head_sha256\": \"a06e85c9ef525f46038cf0975f72007a9cc5449fb653e995c77a4b355e1297c1\",\n",
+    "+      \"head_sha256\": \"652ddef69fc1c1a934abaebf0513e85ad5ac092d4c73e2ac4f193b1f37e96c6c\",\n",
     "+      \"mode\": \"Tiara overlay against approved pin\"\n",
     "+    },\n",
     "+    {\n",
