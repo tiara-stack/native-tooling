@@ -293,7 +293,7 @@ const VITEST_VERSION = "5.0.1";
 const SETUP_VP_VERSION = "v1.21.1";
 const TSDOWN_MIGRATION_SKILL_URL = "https://github.com/rolldown/tsdown/blob/main/skills/tsdown-migrate/SKILL.md";
 const VITE_PLUS_OVERRIDE_PACKAGES = process.env.VP_OVERRIDE_PACKAGES ? JSON.parse(process.env.VP_OVERRIDE_PACKAGES) : {
-	vite: `npm:@voidzero-dev/vite-plus-core@${VITE_PLUS_VERSION}`,
+	vite: `npm:@tiara-stack/vite-plus-core@${VITE_PLUS_VERSION}`,
 	vitest: VITEST_VERSION
 };
 /**

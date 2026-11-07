@@ -7615,7 +7615,7 @@ function normalizeVitestPeerCatalogSpec(peerDependencies, catalogDependencyResol
 	return true;
 }
 function isVitePlusOverrideSpec(value) {
-	return Object.values(VITE_PLUS_OVERRIDE_PACKAGES).includes(value) || value.startsWith("npm:@voidzero-dev/vite-plus-");
+	return Object.values(VITE_PLUS_OVERRIDE_PACKAGES).includes(value) || (value.startsWith("npm:@voidzero-dev/vite-plus-") || value.startsWith("npm:@tiara-stack/vite-plus-core@"));
 }
 function createCatalogDependencyResolver(projectPath, packageManager) {
 	if (packageManager === PackageManager.pnpm) {

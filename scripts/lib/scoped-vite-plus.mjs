@@ -2,8 +2,8 @@ import ts from "typescript";
 
 const scope = (value) =>
   value
-    .replace(/^vite-plus(?=\/|$)/, "@tiara-stack/vite-plus")
-    .replace(/^@voidzero-dev\/vite-plus-core(?=\/|$)/, "@tiara-stack/vite-plus-core");
+    .replace(/^(npm:)?vite-plus(?=\/|@|$)/, "$1@tiara-stack/vite-plus")
+    .replace(/^(npm:)?@voidzero-dev\/vite-plus-core(?=\/|@|$)/, "$1@tiara-stack/vite-plus-core");
 
 export function rewriteScopedVitePlus(text, path) {
   if (path.endsWith(".md"))
@@ -45,6 +45,46 @@ export function rewriteScopedVitePlus(text, path) {
   }
   const named = (node, name) => ts.isVariableDeclaration(node) && node.name.getText(tree) === name;
   function visit(node) {
+    if (
+      ts.isBinaryExpression(node) &&
+      node.operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken &&
+      ts.isStringLiteral(node.right) &&
+      scope(node.right.text) !== node.right.text
+    ) {
+      const alignment = enclosing(
+        node,
+        (item) => ts.isFunctionDeclaration(item) && item.name?.text === "targetVersion",
+      );
+      if (alignment && node.left.getText(tree) === alignment.parameters[0]?.name.getText(tree)) {
+        // These are package names to READ. Accept both namespaces while the
+        // protocol's upstream toolchain graph identities remain unchanged.
+        edits.push([
+          node.getStart(tree),
+          node.end,
+          `${JSON.stringify([node.right.text, scope(node.right.text)])}.includes(${node.left.getText(tree)})`,
+        ]);
+        return;
+      }
+    }
+    if (
+      ts.isCallExpression(node) &&
+      ts.isPropertyAccessExpression(node.expression) &&
+      node.expression.name.text === "startsWith" &&
+      node.arguments.length === 1 &&
+      ts.isStringLiteral(node.arguments[0]) &&
+      node.arguments[0].text === "npm:@voidzero-dev/vite-plus-" &&
+      enclosing(
+        node,
+        (item) => ts.isFunctionDeclaration(item) && item.name?.text === "isVitePlusOverrideSpec",
+      )
+    ) {
+      edits.push([
+        node.getStart(tree),
+        node.end,
+        `(${node.getText(tree)} || ${node.expression.getText(tree)}("npm:@tiara-stack/vite-plus-core@"))`,
+      ]);
+      return;
+    }
     if (
       ts.isCallExpression(node) &&
       node.expression.getText(tree) === "source.startsWith" &&
@@ -120,18 +160,31 @@ export function rewriteScopedVitePlus(text, path) {
         const lintModule =
           ts.isVariableDeclaration(parent) &&
           /^VITE_PLUS_LINT_PLUGINS(?:_DEV)?$/.test(parent.name.getText(tree));
-        // This is the migrator's package to WRITE, not the literal identities
-        // used to recognize an existing upstream installation or catalog.
-        const packageOutput = named(parent, "VITE_PLUS_NAME");
+        // These constants identify the scoped CLI/core outputs. Other literal
+        // identities used to recognize existing installations remain inputs.
+        const packageOutput = named(parent, "VITE_PLUS_NAME") || named(parent, "CORE_PACKAGE_NAME");
+        const managedAliasOutput = enclosing(
+          node,
+          (item) =>
+            ts.isPropertyAssignment(item) &&
+            item.name.text === "vite" &&
+            enclosing(item, (declaration) => named(declaration, "VITE_PLUS_OVERRIDE_PACKAGES")),
+        );
         const tsconfigValue =
           ts.isPropertyAssignment(parent) &&
           parent.initializer === node &&
           enclosing(node, (item) => named(item, "TSCONFIG_TYPE_REPLACEMENTS"));
-        if (call || module || output || lintModule || packageOutput || tsconfigValue) {
+        if (
+          call ||
+          module ||
+          output ||
+          lintModule ||
+          packageOutput ||
+          managedAliasOutput ||
+          tsconfigValue
+        ) {
           // Keep the original quoting, template expressions, and every other byte.
-          const prefix = node.text.startsWith("vite-plus")
-            ? "vite-plus"
-            : "@voidzero-dev/vite-plus-core";
+          const prefix = /^(?:npm:)?(?:vite-plus|@voidzero-dev\/vite-plus-core)/.exec(node.text)[0];
           const start = node.getStart(tree) + 1;
           if (text.slice(start, start + prefix.length) === prefix)
             edits.push([start, start + prefix.length, scope(prefix)]);

@@ -3652,7 +3652,7 @@ function parsePackageJson(contents) {
 	return parsed;
 }
 function targetVersion(name, toolchain) {
-	if (name === "vite-plus" || name === "@voidzero-dev/vite-plus-core") return toolchain.vitePlus;
+	if (["vite-plus","@tiara-stack/vite-plus"].includes(name) || ["@voidzero-dev/vite-plus-core","@tiara-stack/vite-plus-core"].includes(name)) return toolchain.vitePlus;
 	if (name === "vitest" || isAlignableVitestEcosystemPackage(name)) return toolchain.vitest;
 }
 function alignedNpmAlias(current, toolchain) {

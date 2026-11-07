@@ -1632,7 +1632,7 @@ async function lint() {
 }
 //#endregion
 //#region src/resolve-core.ts
-const CORE_PACKAGE_NAME = "@voidzero-dev/vite-plus-core";
+const CORE_PACKAGE_NAME = "@tiara-stack/vite-plus-core";
 function checkCoreVersion(packageJsonPath, expectedVersion) {
 	const pkg = JSON.parse(readFileSync(packageJsonPath, "utf8"));
 	if (pkg.name !== CORE_PACKAGE_NAME || pkg.version !== expectedVersion) throw new Error(`Expected ${CORE_PACKAGE_NAME}@${expectedVersion}, but found ${pkg.name}@${pkg.version} at ${packageJsonPath}. Run \`vp migrate\` to align the Vite alias, then run \`vp install\`.`);
