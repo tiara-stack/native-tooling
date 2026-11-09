@@ -75,20 +75,15 @@ test("module-producing import fixes, declarations and project templates are scop
   assert.equal(rewriteScopedVitePlus(graph, "dist/toolchain.json"), graph);
 });
 
-test("scoped core identities are validated and written without changing unrelated data", () => {
+test("scoping rewrites validator and managed alias constants without changing unrelated data", () => {
   const input = `const CORE_PACKAGE_NAME = "@voidzero-dev/vite-plus-core";
 const VITE_PLUS_OVERRIDE_PACKAGES = { vite: \`npm:@voidzero-dev/vite-plus-core@\${version}\` };
 const labels = ["@voidzero-dev/vite-plus-core", "npm:@voidzero-dev/vite-plus-core@1.0.0"];
-return { accepts: pkg => pkg.name === CORE_PACKAGE_NAME, alias: VITE_PLUS_OVERRIDE_PACKAGES.vite, labels };`;
+export { CORE_PACKAGE_NAME, VITE_PLUS_OVERRIDE_PACKAGES, labels };`;
   const output = rewriteScopedVitePlus(input, "dist/core-identities.js");
-  const result = new Function("version", output)("1.0.0");
-  assert.equal(result.accepts({ name: "@tiara-stack/vite-plus-core" }), true);
-  assert.equal(result.accepts({ name: "@voidzero-dev/vite-plus-core" }), false);
-  assert.equal(result.alias, "npm:@tiara-stack/vite-plus-core@1.0.0");
-  assert.deepEqual(result.labels, [
-    "@voidzero-dev/vite-plus-core",
-    "npm:@voidzero-dev/vite-plus-core@1.0.0",
-  ]);
+  assert.match(output, /const CORE_PACKAGE_NAME = "@tiara-stack\/vite-plus-core";/);
+  assert.match(output, /vite: `npm:@tiara-stack\/vite-plus-core@\$\{version\}`/);
+  assert.ok(output.endsWith(input.slice(input.indexOf("const labels"))));
 });
 
 test("version alignment accepts both package namespaces while retaining graph identities", () => {
@@ -97,17 +92,15 @@ if (name === "vite-plus" || name === "@voidzero-dev/vite-plus-core") return tool
 if (name === "vitest") return toolchain.vitest;
 }
 const graph = { id: "vite-plus", name: "@voidzero-dev/vite-plus-core" };
-return { targetVersion, graph };`;
-  const result = new Function(rewriteScopedVitePlus(input, "dist/sync-versions/bin.js"))();
-  for (const name of [
-    "vite-plus",
-    "@tiara-stack/vite-plus",
-    "@voidzero-dev/vite-plus-core",
-    "@tiara-stack/vite-plus-core",
-  ])
-    assert.equal(result.targetVersion(name, { vitePlus: "1.0.0", vitest: "5.0.1" }), "1.0.0");
-  assert.equal(result.targetVersion("unrelated", { vitePlus: "1.0.0" }), undefined);
-  assert.deepEqual(result.graph, { id: "vite-plus", name: "@voidzero-dev/vite-plus-core" });
+export { targetVersion, graph };`;
+  const output = rewriteScopedVitePlus(input, "dist/sync-versions/bin.js");
+  assert.ok(
+    output.includes(
+      'if (["vite-plus","@tiara-stack/vite-plus"].includes(name) || ["@voidzero-dev/vite-plus-core","@tiara-stack/vite-plus-core"].includes(name)) return toolchain.vitePlus;',
+    ),
+  );
+  assert.ok(output.includes('if (name === "vitest") return toolchain.vitest;'));
+  assert.ok(output.endsWith(input.slice(input.indexOf("const graph"))));
 });
 
 test("managed catalog aliases recognize scoped core versions without accepting unrelated aliases", () => {
@@ -115,14 +108,12 @@ test("managed catalog aliases recognize scoped core versions without accepting u
 function isVitePlusOverrideSpec(value) {
 return Object.values(VITE_PLUS_OVERRIDE_PACKAGES).includes(value) || value.startsWith("npm:@voidzero-dev/vite-plus-");
 }
-return isVitePlusOverrideSpec;`;
-  const accepts = new Function(rewriteScopedVitePlus(input, "dist/editor.js"))();
-  for (const value of [
-    "custom:core",
-    "npm:@voidzero-dev/vite-plus-core@0.1.0",
-    "npm:@tiara-stack/vite-plus-core@0.1.0",
-  ])
-    assert.equal(accepts(value), true, value);
-  for (const value of ["npm:@tiara-stack/vite-plus-other@0.1.0", "npm:unrelated@0.1.0"])
-    assert.equal(accepts(value), false, value);
+export { isVitePlusOverrideSpec };`;
+  const output = rewriteScopedVitePlus(input, "dist/editor.js");
+  assert.ok(output.includes('const VITE_PLUS_OVERRIDE_PACKAGES = { vite: "custom:core" };'));
+  assert.ok(
+    output.includes(
+      'return Object.values(VITE_PLUS_OVERRIDE_PACKAGES).includes(value) || (value.startsWith("npm:@voidzero-dev/vite-plus-") || value.startsWith("npm:@tiara-stack/vite-plus-core@"));',
+    ),
+  );
 });
