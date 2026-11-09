@@ -4,14 +4,16 @@ import { styleText } from 'node:util';
 
 import * as prompts from '@voidzero-dev/vite-plus-prompts';
 import { type OxlintConfig } from 'oxlint';
+import semver from 'semver';
 
 import { rewriteEslint } from '../../../binding/index.js';
 import { type WorkspacePackage } from '../../types/index.ts';
 import { runCommandSilently } from '../../utils/command.ts';
 import { editJsonFile, isJsonFile, readJsonFile } from '../../utils/json.ts';
+import { fetchNpmResource, getNpmRegistry } from '../../utils/npm-config.ts';
 import { displayRelative } from '../../utils/path.ts';
 import { cancelAndExit } from '../../utils/prompts.ts';
-import { getSpinner } from '../../utils/spinner.ts';
+import { getSilentSpinner, getSpinner } from '../../utils/spinner.ts';
 import { hasBaseUrlInTsconfig } from '../../utils/tsconfig.ts';
 import { detectConfigs } from '../detector.ts';
 import { type MigrationReport } from '../report.ts';
@@ -86,6 +88,53 @@ export function detectEslintProject(
   return { hasDependency, configFile, legacyConfigFile };
 }
 
+function extractSkippedRules(output: Buffer): string | undefined {
+  const lines = output.toString().replaceAll('\r\n', '\n').split('\n');
+  const start = lines.findIndex((line) => /^\s*Skipped \d+ rules:/.test(line));
+  if (start === -1) {
+    return undefined;
+  }
+  const indentation = lines[start].search(/\S/);
+  const block = [lines[start].trim()];
+  for (const line of lines.slice(start + 1)) {
+    if (line.trim() === '' || line.search(/\S/) <= indentation) {
+      break;
+    }
+    block.push(`  ${line.slice(indentation)}`);
+  }
+  return block.join('\n');
+}
+
+/**
+ * Resolve the `@oxlint/migrate` version to install. `@oxlint/migrate`
+ * trails `oxlint` releases (published minutes to days later), so the exact
+ * bundled-oxlint pin can name a version the registry does not have yet.
+ * Pick the greatest published version that is not newer than the bundled
+ * Oxlint. Fall back to the exact pin when the registry cannot be reached
+ * and let the dlx step surface the failure.
+ */
+export async function resolveOxlintMigrateVersion(oxlintVersion: string): Promise<string> {
+  try {
+    const response = await fetchNpmResource(`${getNpmRegistry('@oxlint')}/@oxlint/migrate`, {
+      headers: { accept: 'application/vnd.npm.install-v1+json' },
+      timeoutMs: 5000,
+    });
+    if (!response.ok) {
+      return oxlintVersion;
+    }
+    const packument = (await response.json()) as { versions?: Record<string, unknown> };
+    if (packument.versions && Object.hasOwn(packument.versions, oxlintVersion)) {
+      return oxlintVersion;
+    }
+    const candidates = Object.keys(packument.versions ?? {}).filter(
+      (version) => semver.valid(version) && semver.lte(version, oxlintVersion),
+    );
+    return candidates.length > 0 ? candidates.toSorted(semver.rcompare)[0] : oxlintVersion;
+  } catch {
+    return oxlintVersion;
+  }
+}
+
 /**
  * Run a `vp dlx @oxlint/migrate` step with graceful error handling.
  * Returns true on success, false on failure (spawn error or non-zero exit).
@@ -98,7 +147,7 @@ async function runOxlintMigrateStep(
   spinner: ReturnType<typeof getSpinner>,
   failMessage: string,
   manualHint: string,
-): Promise<boolean> {
+): Promise<{ ok: boolean; skippedRules?: string }> {
   try {
     const result = await runCommandSilently({
       command: vpBin,
@@ -113,13 +162,13 @@ async function runOxlintMigrateStep(
         prompts.log.warn(`⚠ ${stderr}`);
       }
       prompts.log.info(manualHint);
-      return false;
+      return { ok: false };
     }
-    return true;
+    return { ok: true, skippedRules: extractSkippedRules(result.stdout) };
   } catch {
     spinner.stop(failMessage);
     prompts.log.info(manualHint);
-    return false;
+    return { ok: false };
   }
 }
 
@@ -131,26 +180,16 @@ export async function migrateEslintToOxlint(
   options?: { silent?: boolean; report?: MigrationReport },
 ): Promise<boolean> {
   const vpBin = process.env.VP_CLI_BIN ?? 'vp';
-  const spinner = options?.silent
-    ? {
-        start: () => {},
-        stop: () => {},
-        pause: () => {},
-        resume: () => {},
-        cancel: () => {},
-        error: () => {},
-        clear: () => {},
-        message: () => {},
-        isCancelled: false,
-      }
-    : getSpinner(interactive);
+  const spinner = options?.silent ? getSilentSpinner() : getSpinner(interactive);
 
   // Steps 1-2: Only run @oxlint/migrate if there's an eslint config at root
   if (eslintConfigFile) {
-    // Pin @oxlint/migrate to the bundled oxlint version.
+    // Pin @oxlint/migrate to the bundled oxlint version when the registry
+    // has it; the package trails oxlint releases, so resolve the newest
+    // published version that is not newer than the pin.
     // @ts-expect-error — resolved at runtime from dist/ → dist/versions.js
     const { versions } = await import('../versions.js');
-    const migratePackage = `@oxlint/migrate@${versions.oxlint}`;
+    const migratePackage = `@oxlint/migrate@${await resolveOxlintMigrateVersion(versions.oxlint)}`;
     const migrateArgs = [
       '--merge',
       ...(!hasBaseUrlInTsconfig(projectPath) ? ['--type-aware'] : []),
@@ -160,7 +199,7 @@ export async function migrateEslintToOxlint(
 
     // Step 1: Generate .oxlintrc.json from ESLint config
     spinner.start('Migrating ESLint config to Oxlint...');
-    const migrateOk = await runOxlintMigrateStep(
+    const migrateResult = await runOxlintMigrateStep(
       vpBin,
       projectPath,
       migratePackage,
@@ -169,14 +208,17 @@ export async function migrateEslintToOxlint(
       'ESLint migration failed',
       `You can run \`vp dlx ${migratePackage} ${migrateArgs.join(' ')}\` manually later`,
     );
-    if (!migrateOk) {
+    if (!migrateResult.ok) {
       return false;
     }
     spinner.stop('ESLint config migrated to .oxlintrc.json');
+    if (migrateResult.skippedRules) {
+      warnMigration(migrateResult.skippedRules, options?.report);
+    }
 
     // Step 2: Replace eslint-disable comments with oxlint-disable
     spinner.start('Replacing ESLint comments with Oxlint equivalents...');
-    const replaceOk = await runOxlintMigrateStep(
+    const replaceResult = await runOxlintMigrateStep(
       vpBin,
       projectPath,
       migratePackage,
@@ -185,7 +227,7 @@ export async function migrateEslintToOxlint(
       'ESLint comment replacement failed',
       `You can run \`vp dlx ${migratePackage} --replace-eslint-comments\` manually later`,
     );
-    if (replaceOk) {
+    if (replaceResult.ok) {
       spinner.stop('ESLint comments replaced');
     }
     // Continue with cleanup regardless — .oxlintrc.json was generated successfully
@@ -620,6 +662,27 @@ function jsPluginsToNamespaces(entries: NonNullable<OxlintConfig['jsPlugins']>):
   return ns;
 }
 
+function stripUnsupportedReactRefreshOption(rules: OxlintConfig['rules']): boolean {
+  const rule = rules?.['react/only-export-components'];
+  if (!Array.isArray(rule)) {
+    return false;
+  }
+  const options = rule[1];
+  if (
+    !options ||
+    typeof options !== 'object' ||
+    Array.isArray(options) ||
+    !('allowCompoundComponents' in options)
+  ) {
+    return false;
+  }
+  // eslint-plugin-react-refresh 0.5.7 enables this in its Vite preset, but
+  // @oxlint/migrate copies it into a native rule that rejects the option.
+  // Remove this workaround when the bundled Oxlint supports the option.
+  delete options.allowCompoundComponents;
+  return true;
+}
+
 /**
  * Sanitize the `.oxlintrc.json` produced by `@oxlint/migrate` (in-place)
  * before it gets merged into `vite.config.ts`. Drop references that
@@ -646,6 +709,7 @@ export function sanitizeMigratedOxlintConfig(
   // Track everything we strip so we can warn the user.
   const allDroppedJsPlugins = new Set<string>();
   const allDroppedPlugins = new Set<string>();
+  let droppedReactRefreshOption = stripUnsupportedReactRefreshOption(config.rules);
 
   // 1. Sanitize base-level jsPlugins.
   const baseSplit = partitionJsPlugins(config.jsPlugins ?? [], availablePackages);
@@ -697,6 +761,9 @@ export function sanitizeMigratedOxlintConfig(
   // namespace are still valid inside the override).
   if (Array.isArray(config.overrides)) {
     for (const override of config.overrides) {
+      if (stripUnsupportedReactRefreshOption(override.rules)) {
+        droppedReactRefreshOption = true;
+      }
       // Override jsPlugins.
       let overrideSurvivors: NonNullable<OxlintConfig['jsPlugins']> = [];
       if (override.jsPlugins) {
@@ -741,6 +808,13 @@ export function sanitizeMigratedOxlintConfig(
   }
 
   // 6. Warn.
+  if (droppedReactRefreshOption) {
+    warnMigration(
+      'The bundled Oxlint does not support react/only-export-components.allowCompoundComponents. ' +
+        'Removed this option from the migrated config; compound component exports may now report lint errors.',
+      report,
+    );
+  }
   //
   // We deliberately don't try to distinguish "we just removed this
   // package as part of the ESLint-ecosystem cleanup" from "the user

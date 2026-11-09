@@ -26,15 +26,17 @@ Pick the file by what a function _does_, not by where it happens to be called.
 | `vite-plus-bootstrap.ts` | "Already on Vite+" detection and the bootstrap/reconcile path: `detectVitePlusBootstrapPending`, `ensureVitePlusBootstrap`, `reconcileVitePlusBootstrapPackage`, the `ensure*`/`*Pending`/`*SatisfiesVitePlus` helpers. |
 | `catalog.ts`             | `pnpm-workspace.yaml` / catalog / overrides / build-allowance writers and catalog-dependency resolvers; bun catalog; `rewriteRootWorkspacePackageJson`; pnpm workspace-settings migration.                              |
 | `vitest-ecosystem.ts`    | Detecting direct vitest usage, the override-key ("dependency selector") parsing/dropping logic, managed-override sets, ecosystem alignment, legacy `vite-plus-test` wrapper-alias pruning.                              |
+| `vitest-v5.ts`           | Versioned Vitest v5 preflight, compatibility edits, and review findings. Pure AST and command transforms live under `../vitest-v5/`.                                                                                    |
 | `yarn.ts`                | `.yarnrc.yml`, Yarn PnP detection, workspace-hoisting fix, webdriverio detection.                                                                                                                                       |
 | `source-scan.ts`         | Scanning a project's source tree for signals (browser-mode, opt-in providers, `@nuxt/test-utils`, retained upstream-vitest references).                                                                                 |
 | `vite-config.ts`         | `vite.config.ts` merging, default-config injection, staged-config merge, lazy-plugin wrapping, import rewriting (`rewriteAllImports`), migrated-oxlint-config sanitization, lint-staged removal.                        |
 | `eslint.ts`              | ESLint → Oxlint migration, oxlint JS-plugin namespace handling, ESLint prompts/warnings.                                                                                                                                |
 | `prettier.ts`            | Prettier → Oxfmt migration and its prompts/warnings.                                                                                                                                                                    |
+| `tsup.ts`                | tsup → tsdown (`vp pack`) migration via `tsdown-migrate` and its prompts/warnings.                                                                                                                                      |
 | `tsconfig.ts`            | `tsconfig.json` cleanup and `types` rewriting.                                                                                                                                                                          |
 | `framework-shim.ts`      | Framework (Vue/Astro) shim detection and injection.                                                                                                                                                                     |
-| `git-hooks.ts`           | husky / lint-staged → `vp staged` hook migration.                                                                                                                                                                       |
-| `setup.ts`               | `packageManager` pin and Node version-manager file (`.nvmrc`/`.node-version`/Volta) migration.                                                                                                                          |
+| `git-hooks.ts`           | Vite+ hook defaults, project-owned hook preservation, and conservative detection of existing hook tools.                                                                                                                |
+| `setup.ts`               | `packageManager` pin, `setup-vp` GitHub Actions version, and Node version-manager file (`.nvmrc`/`.node-version`/Volta) migration.                                                                                      |
 | `core-finalization.ts`   | Finalizing an existing-Vite+ core migration (rules YAML, core package scripts).                                                                                                                                         |
 | `shared.ts`              | Cross-cutting constants, types, and tiny utilities used by **two or more** modules. The only module that other modules import from directly (see rules).                                                                |
 
@@ -109,15 +111,11 @@ import from the barrel.
 From the repo root:
 
 ```bash
-vp check                                                      # format + lint + type-check
-pnpm -F vite-plus exec vitest run src/migration               # migration unit tests
-pnpm -F vite-plus snap-test-local migration                   # local migration snap tests
-pnpm -F vite-plus snap-test-global migration                  # global migration snap tests
+vp check                                             # format + lint + type-check
+pnpm -F vite-plus exec vitest run src/migration      # migration unit tests
+just snapshot-test migration                         # migration CLI snapshot tests
 ```
 
-Always inspect the `git diff` of `snap-tests*/**/snap.txt` afterwards — the
-runner regenerates snapshots and can exit 0 even when output changed.
-
-A pure reorganization must not change `tsc` results, the unit-test count, or any
-`snap.txt`. A behavior change should be accompanied by the matching test/snap
-updates.
+Review any changed `.md` snapshots like code. A pure reorganization must not
+change type-check results, the unit-test count, or snapshots. A behavior change
+should be accompanied by the matching unit or snapshot test updates.

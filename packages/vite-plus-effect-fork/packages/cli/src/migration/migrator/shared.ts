@@ -46,20 +46,15 @@ export const REMOVE_PACKAGES = [
   '@vitest/browser-preview',
 ] as const;
 
-// The opt-in browser providers. Unlike `@vitest/browser`/preview these are NOT
-// bundled by vite-plus or stripped from users (so they stay out of
-// REMOVE_PACKAGES); each drags a heavy non-optional framework peer
-// (`playwright` / `webdriverio`) that non-browser consumers must not be forced
-// to install. The migration keeps a provider the user actually targets in their
-// own deps, pinned to the bundled vitest version.
+// WebDriverIO is community-maintained. The versioned v5 preflight ensures its
+// minimum version and framework peer; generic reconciliation must not repin it.
 export const WEBDRIVERIO_PROVIDER = '@vitest/browser-webdriverio';
 
 export const PLAYWRIGHT_PROVIDER = '@vitest/browser-playwright';
 
-// All opt-in browser providers handled identically by the migration: kept in
-// the user's deps (pinned to the bundled vitest), framework peer ensured, stale
-// forcing pins dropped, while their catalog entries are PRESERVED.
-export const OPT_IN_BROWSER_PROVIDERS = [WEBDRIVERIO_PROVIDER, PLAYWRIGHT_PROVIDER] as const;
+// Official opt-in providers track the bundled Vitest version. Keep them in the
+// user's dependencies, ensure their framework peers, and remove stale overrides.
+export const OPT_IN_BROWSER_PROVIDERS = [PLAYWRIGHT_PROVIDER] as const;
 
 // Provider names whose stale pnpm overrides / resolutions are dropped during
 // migration: everything vite-plus owns (REMOVE_PACKAGES) plus the user-owned
@@ -79,14 +74,11 @@ export const PROVIDER_OVERRIDE_DROP_NAMES = [
 // must be preserved in devDependencies so browser tests continue to work.
 export const BROWSER_PROVIDER_PEER_DEPS: Record<string, string> = {
   '@vitest/browser-playwright': 'playwright',
-  '@vitest/browser-webdriverio': 'webdriverio',
 };
 
-// Lockstep sibling packages whose declared version a browser provider's runtime
-// framework peer should reuse (they publish together). Keyed by the peer name.
-export const PROVIDER_PEER_VERSION_SIBLINGS: Record<string, readonly string[]> = {
+// Packages that include runtime peer as a dependency.
+const RUNTIME_PEER_INCLUDED_BY: Record<string, readonly string[]> = {
   playwright: ['@playwright/test'],
-  webdriverio: ['@wdio/cli', '@wdio/globals'],
 };
 
 // A package's declared spec across all four dependency fields, or undefined.
@@ -99,32 +91,26 @@ export function findDeclaredSpec(pkg: DependencyBag, name: string): string | und
   );
 }
 
-// A deterministic spec for a browser provider's framework peer instead of `*`:
-// reference the catalog when it already owns the peer, otherwise reuse a declared
-// lockstep sibling's version (concrete, or a catalog reference resolved to its
-// concrete value), falling back to `*` only when there is no sibling. See
-// npmx.dev #27.
+// A provider's runtime peer is available when declared directly or included by
+// another declared package.
+export function hasProviderPeerDependency(pkg: DependencyBag, runtimePeer: string): boolean {
+  return (
+    findDeclaredSpec(pkg, runtimePeer) !== undefined ||
+    (RUNTIME_PEER_INCLUDED_BY[runtimePeer] ?? []).some(
+      (packageName) => findDeclaredSpec(pkg, packageName) !== undefined,
+    )
+  );
+}
+
+// Reuse an existing framework catalog entry without changing its version.
 export function resolveProviderPeerSpec(
-  pkg: DependencyBag,
   peer: string,
   supportCatalog: boolean,
   catalogDependencyResolver?: CatalogDependencyResolver,
 ): string {
-  if (supportCatalog && catalogDependencyResolver?.('catalog:', peer) !== undefined) {
-    return 'catalog:';
-  }
-  for (const sibling of PROVIDER_PEER_VERSION_SIBLINGS[peer] ?? []) {
-    const spec = findDeclaredSpec(pkg, sibling);
-    const resolved = spec?.startsWith('catalog:')
-      ? catalogDependencyResolver?.(spec, sibling)
-      : spec;
-    // Only reuse a concrete version: a `catalog:` entry may itself alias another
-    // protocol, and npm:/workspace:/file: specs aren't versions to copy.
-    if (resolved && !resolved.includes(':')) {
-      return resolved;
-    }
-  }
-  return '*';
+  return supportCatalog && catalogDependencyResolver?.('catalog:', peer) !== undefined
+    ? 'catalog:'
+    : '*';
 }
 
 // Browser-provider package names that, when present in the user's deps
@@ -147,9 +133,10 @@ export const VITEST_BROWSER_DEP_NAMES = [
 // untouched (those are direct-usage signals handled elsewhere).
 //
 // The removal only applies when `vitest` is a key vite-plus actually manages in
-// the active override config. In force-override / CI mode (`VP_OVERRIDE_PACKAGES`
-// with file: tgz aliases) `vitest` is NOT in the override set, so a `vitest`
-// entry there is the user's own and must be left untouched.
+// the active override config. When a caller-supplied `VP_OVERRIDE_PACKAGES`
+// omits the `vitest` key (see the migration-vitest-unmanaged-override snap
+// test), `vitest` is NOT managed, so a `vitest` entry there is the user's own
+// and must be left untouched.
 export const VITEST_IS_MANAGED_OVERRIDE = 'vitest' in VITE_PLUS_OVERRIDE_PACKAGES;
 
 // Fallback specs used when normalizing a stale wrapper alias. Real user
@@ -159,6 +146,63 @@ export const VITEST_IS_MANAGED_OVERRIDE = 'vitest' in VITE_PLUS_OVERRIDE_PACKAGE
 export const LEGACY_WRAPPER_FALLBACK_VERSIONS: Record<string, string> = {
   vitest: VITEST_VERSION,
 };
+
+/**
+ * Managed pnpm override keys use an explicit `@*` range, not a bare package
+ * name: `vite@*`, not `vite`.
+ *
+ * pnpm applies overrides through a read-package hook. The hook replaces the
+ * declared spec on every manifest, importer manifests included, before
+ * resolution runs. A bare override key has no range, and pnpm treats a key with
+ * no range as a match for every declared spec. That includes `catalog:`. An
+ * importer that declares `vite: "catalog:"` therefore loses its link to the
+ * catalog during resolution, and `pnpm update` then writes the resolved core
+ * alias into that importer's package.json (issue #2309).
+ *
+ * The `@*` range keeps the override on the declared semver ranges that
+ * transitive and peer `vite` declarations use. Those declarations are the
+ * reason this override exists. The range leaves `catalog:` specs alone, because
+ * `catalog:` is not a valid semver range, so pnpm's `isIntersectingRange`
+ * rejects it before it compares anything. The installed result does not change:
+ * an importer that references the catalog already resolves to the aliased core
+ * through its catalog entry.
+ *
+ * Known gap on pnpm 9 to 11: a declaration that pins an EXACT prerelease, such
+ * as `vite: "8.0.0-beta.18"`, escapes the override. pnpm compares with
+ * `semver.intersects(declaredSpec, keyRange)`. That call is asymmetric for
+ * prereleases: it returns false for an exact prerelease against a wildcard
+ * range. The reversed argument order returns true. No range string avoids
+ * this, because node-semver only admits a prerelease when a comparator carries
+ * the same version tuple. A prerelease RANGE such as `^8.0.0-beta.1` still
+ * matches. pnpm 12 matches the exact form too. A bare key would cover this
+ * case, but a bare key is what clobbers `catalog:` specs. Below pnpm 12,
+ * prerelease coverage and `catalog:` safety cannot both hold.
+ *
+ * This applies to pnpm only. npm and bun `overrides`, and yarn `resolutions`,
+ * keep bare keys. Those package managers have no `catalog:` importer specs to
+ * lose. Bun catalogs live in package.json, and bun resolves them before it
+ * applies overrides.
+ */
+export function pnpmOverrideKey(dependencyName: string): string {
+  return `${dependencyName}@*`;
+}
+
+/**
+ * How a sink spells its managed override keys. pnpm's `overrides` use the
+ * range-qualified form ({@link pnpmOverrideKey}). Every other sink uses the bare
+ * package name.
+ *
+ * A pnpm sink that still holds a bare managed key predates the #2309 fix. Such a
+ * key reads as unsatisfied on purpose, so the next migration rewrites it.
+ */
+export type ManagedOverrideKeyStyle = 'bare' | 'pnpm-ranged';
+
+export function managedOverrideKey(
+  dependencyName: string,
+  keyStyle: ManagedOverrideKeyStyle,
+): string {
+  return keyStyle === 'pnpm-ranged' ? pnpmOverrideKey(dependencyName) : dependencyName;
+}
 
 export type PackageJsonDependencyField =
   | 'devDependencies'
@@ -262,4 +306,40 @@ export function readPackageJsonIfExists(packageJsonPath: string): DependencyBag 
 export function pnpmMajor(version: string | undefined): number | undefined {
   const coerced = version ? semver.coerce(version)?.version : undefined;
   return coerced ? semver.major(coerced) : undefined;
+}
+
+// Packages that own the Oxlint JS-plugin authoring API as a published contract.
+// Optional `@oxlint/plugins` is also a runtime contract for consumers of a
+// published integration. Optional `oxlint` keeps the existing tool policy.
+export const OXLINT_PLUGINS_PACKAGE = '@oxlint/plugins';
+
+export const OXLINT_PLUGIN_API_PACKAGES = ['oxlint', OXLINT_PLUGINS_PACKAGE] as const;
+
+export function packageOwnsOxlintApi(pkg: DependencyBag): boolean {
+  return (
+    pkg.optionalDependencies?.[OXLINT_PLUGINS_PACKAGE] !== undefined ||
+    OXLINT_PLUGIN_API_PACKAGES.some(
+      (name) =>
+        pkg.dependencies?.[name] !== undefined || pkg.peerDependencies?.[name] !== undefined,
+    )
+  );
+}
+
+/**
+ * Capture plugin owners before manifest edits, so the import rewriter can
+ * preserve their upstream API imports after those edits.
+ */
+export function collectOxlintOwnerDirs(
+  rootDir: string,
+  packages?: readonly { path: string }[],
+): string[] {
+  const owners: string[] = [];
+  const candidates = [rootDir, ...(packages ?? []).map((pkg) => path.join(rootDir, pkg.path))];
+  for (const dir of candidates) {
+    const pkg = readPackageJsonIfExists(path.join(dir, 'package.json'));
+    if (pkg && packageOwnsOxlintApi(pkg)) {
+      owners.push(dir);
+    }
+  }
+  return owners;
 }

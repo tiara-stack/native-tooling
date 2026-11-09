@@ -45,12 +45,10 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Setup Tiara Vite+
-        uses: tiara-stack/setup-vp@v1
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
-          version: "0.2.2"
-          cache: true
-          run-install: false
+          package_json_file: package.json
 
       - name: Setup Go
         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
@@ -73,27 +71,35 @@ jobs:
         with:
           workspaces: native/oxc-oxlint-effect-fork
 
-      - name: Install dependencies
-        run: vp install
+      - name: Install Vite+ source Rust toolchain
+        run: rustup toolchain install nightly-2026-08-02 --component rust-src --profile minimal
 
-      - name: Build and test package wrappers
-        run: |
-          vp run -w build
-          vp run -w lint
-          vp run -w test
-          vp run -w check:vite-plus
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build native tooling
         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
-        run: vp run -w native:build
+        run: pnpm native:build
 
       - name: Verify native compiler and diagnostic protocol
         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
-        run: vp run -w native:test:backend
+        run: pnpm native:test:backend
 
       - name: Stage native binaries
         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
-        run: vp run -w native:stage
+        run: pnpm native:stage
+
+      - name: Build package wrappers
+        run: pnpm build
+
+      - name: Lint package wrappers
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
+        run: pnpm lint
+
+      - name: Test package wrappers
+        run: |
+          pnpm test
+          pnpm check:vite-plus
 
       - name: Verify package binary resolution
         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
@@ -106,12 +112,18 @@ jobs:
 
       - name: Run native headless smoke test
         if: ${{ github.event_name != 'workflow_dispatch' || inputs['build-native'] }}
-        run: vp run -w native:smoke
+        run: pnpm native:smoke
 
       - name: Dry-run staged publish
         if: ${{ github.event_name == 'workflow_dispatch' && inputs['dry-run'] }}
-        run: vp pm stage publish -r --filter "${{ inputs['package-filter'] }}" --access public --provenance --tag "${{ inputs.tag }}" --dry-run -- --no-git-checks
+        env:
+          TIARA_STAGE_PACKAGE_FILTER: ${{ inputs['package-filter'] }}
+          TIARA_STAGE_TAG: ${{ inputs.tag }}
+        run: pnpm exec vp pm stage publish -r --filter "$TIARA_STAGE_PACKAGE_FILTER" --access public --provenance --tag "$TIARA_STAGE_TAG" --dry-run -- --no-git-checks
 
       - name: Stage packages for npm trusted publishing
         if: ${{ github.event_name != 'workflow_dispatch' || !inputs['dry-run'] }}
-        run: vp pm stage publish -r --filter "${{ inputs['package-filter'] || './packages/*' }}" --access public --provenance --tag "${{ inputs.tag || 'latest' }}" -- --no-git-checks
+        env:
+          TIARA_STAGE_PACKAGE_FILTER: ${{ inputs['package-filter'] || './packages/*' }}
+          TIARA_STAGE_TAG: ${{ inputs.tag || 'latest' }}
+        run: pnpm exec vp pm stage publish -r --filter "$TIARA_STAGE_PACKAGE_FILTER" --access public --provenance --tag "$TIARA_STAGE_TAG" -- --no-git-checks

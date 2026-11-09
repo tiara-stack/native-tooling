@@ -1,15 +1,24 @@
+import "../../binding/index.js";
+//#region src/types/package.d.ts
+declare const PackageManager: {
+  readonly pnpm: "pnpm";
+  readonly npm: "npm";
+  readonly yarn: "yarn";
+  readonly bun: "bun";
+};
+type PackageManager = (typeof PackageManager)[keyof typeof PackageManager];
+//#endregion
 //#region src/create/bin.d.ts
-interface Options {
+export interface Options {
   directory?: string;
   interactive: boolean;
   list: boolean;
-  help: boolean;
   verbose: boolean;
   agent?: string | string[] | false;
   editor?: string | false;
   git?: boolean;
   hooks?: boolean;
-  packageManager?: string;
+  packageManager?: PackageManager;
   /**
    * Approve and run gated dependency build scripts without prompting. Useful in
    * non-interactive runs that need a ready-to-use project.
@@ -17,4 +26,3 @@ interface Options {
   approveBuilds?: boolean;
 }
 //#endregion
-export { Options };

@@ -1,0 +1,6 @@
+{
+  "name": "migration-agent-claude",
+  "dependencies": {
+    "vitest": "^4.1.0"
+  }
+}

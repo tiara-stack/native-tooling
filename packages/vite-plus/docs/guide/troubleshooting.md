@@ -2,8 +2,8 @@
 
 Use this page when something in Vite+ is not behaving the way you expect.
 
-::: warning
-Vite+ is still in alpha. We are making frequent changes, adding features quickly, and we want feedback to help make it great.
+::: info
+Vite+ is in beta: stable, but not yet complete. We are adding features on the road to 1.0 and prioritize community feedback, so please [reach out](#asking-for-help) if something does not work as expected.
 :::
 
 ## Supported Tool Versions
@@ -15,15 +15,28 @@ Vite+ expects modern upstream tool versions.
 
 If you are migrating an existing project and it still depends on older Vite or Vitest versions, upgrade those first before adopting Vite+.
 
+Run `vp toolchain` to show the versions from the local Vite+ package. Run `vp toolchain --global` to show the versions from the global Vite+ release.
+
 ## `vp check` does not run type-aware lint rules or type checks
 
 - Confirm that `lint.options.typeAware` and `lint.options.typeCheck` are enabled in `vite.config.ts`
 - Check whether your `tsconfig.json` still uses `compilerOptions.baseUrl`
 
-The Oxlint type checker path powered by `tsgolint` does not support `baseUrl`.
-`vp migrate` and `vp lint --init` try to run the `vp dlx @andrewbranch/ts5to6 --fixBaseUrl .`
-fix before enabling type-aware linting. If that fix fails or is declined, Vite+
-skips `typeAware` and `typeCheck`.
+The Oxlint type checker path powered by `tsgolint` does not support `baseUrl`. `vp migrate` and `vp lint --init` try to run the `vp dlx @andrewbranch/ts5to6 --fixBaseUrl .` fix before enabling type-aware linting. If that fix fails or is declined, Vite+ skips `typeAware` and `typeCheck`.
+
+## Nested lint or format config is not applied
+
+When running `vp lint`, `vp fmt`, or `vp check`, configs in subdirectories do not override settings for individual files. `vp lint` and `vp fmt` let Oxlint and Oxfmt discover configuration from the working directory, so a `lint` or `fmt` block in a package config takes effect when run from that package, which we do not recommend. `vp check` selects the workspace-root `lint` and `fmt` blocks when they exist. Use `-c <path>` or `--config <path>` with `vp lint` or `vp fmt` to select another config explicitly.
+
+Keep lint and format settings in the root `vite.config.ts`. Use [`lint.overrides`](/guide/monorepo#root-config-with-overrides) and [`fmt.overrides`](/guide/monorepo#format-overrides) for file- or package-specific settings. You can also [import configuration objects](/guide/monorepo#composing-configuration-files) into the root config to keep settings in separate files.
+
+For IDE integration, `disableNestedConfig` and `fmt.disableNestedConfig` disable per-file nested lint and format configs. See [IDE Integration](/guide/ide-integration) for setup instructions for your editor.
+
+We're holding off on applying nested configs to individual files for now. Some of the factors we're considering are how implicit config discovery affects the predictability of linting and formatting, what context AI agents need to understand the settings that apply, and the potential performance cost of finding and loading multiple configs. At the same time, we recognize that keeping package-specific context close to the code may have benefits. The use cases we've heard so far haven't given us a strong enough reason to commit to those semantics. Waiting leaves room to add support later, and we'd like to hear why your project needs nested configs, especially where root-level overrides fall short.
+
+Do you need nested configs? [Share your use case and opinion on GitHub](https://github.com/voidzero-dev/vite-plus/discussions/2669), including your project structure, the reason why you want them and whether root-level overrides meet your needs.
+
+We sincerely hope to hear your feedback. This will help us decide whether to improve the current situation in the future.
 
 ## VS Code extension does not read `vite.config.ts`
 
@@ -31,15 +44,18 @@ If VS Code has multiple folders open, the shared Oxc language server may pick a 
 
 - Confirm the extension is using the intended workspace.
 
-## `vp build` does not run my build script
+## `vp dev` or `vp build` does not run my script
 
-Unlike package managers, built-in commands cannot be overwritten. If you are trying to run a `package.json` script use `vp run build` instead.
+Unlike package managers, built-in commands cannot be overwritten. If you are trying to run a `package.json` script use `vp run <script>` instead.
 
 For example:
 
+- `vp dev` always starts the built-in Vite dev server
 - `vp build` always runs the built-in Vite build
 - `vp test` always runs the built-in Vitest command
-- `vp run build` and `vp run test` run `package.json` scripts instead
+- `vp run dev`, `vp run build`, and `vp run test` run the matching `package.json` scripts instead
+
+See [Built-in Commands vs Scripts](/guide/run#built-in-commands-vs-scripts) for when to prefer each path.
 
 ::: info
 You can also run custom tasks defined in `vite.config.ts` and migrate away from `package.json` scripts entirely.
@@ -50,13 +66,18 @@ You can also run custom tasks defined in `vite.config.ts` and migrate away from 
 If `vp staged` fails or your pre-commit hook does not run:
 
 - make sure `vite.config.ts` contains a `staged` block
-- run `vp config` to install hooks
-- check whether hook installation was skipped intentionally through `VITE_GIT_HOOKS=0`
+- make sure the project-owned pre-commit hook runs `vp staged` (for example `.vite-hooks/pre-commit`)
+- run `vp hooks status` to see preference, `core.hooksPath`, and whether the dispatcher is installed
+- run `vp hooks enable` (or `vp config`) to install the hook dispatcher
+- if status shows `Preference: disabled (local)`, re-enable with `vp hooks enable`
+- check whether hooks were skipped intentionally through `VP_GIT_HOOKS=0`
+
+To stop hooks in this clone without deleting project policy files, run `vp hooks disable`. See the [Commit hooks guide](/guide/commit-hooks) for the full workflow.
 
 A minimal staged config looks like this:
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   staged: {
@@ -72,7 +93,7 @@ When `vite.config.ts` imports plugins at the top level, they are evaluated for e
 Use `lazyPlugins` to skip the plugin factory when vite-plus loads your config only to read a metadata block (`lint`, `fmt`, `check`, `staged`, `pack`, `create`, the `run`/`cache` task lookup, and editor tooling). The plugins still load whenever Vite actually runs, `dev`, `build`, `test`, `preview`, and any build your own scripts spawn (a `vp run` task, `vp exec`):
 
 ```ts [vite.config.ts]
-import { defineConfig, lazyPlugins } from 'vite-plus';
+import { defineConfig, lazyPlugins } from '@tiara-stack/vite-plus';
 import myPlugin from 'vite-plugin-foo';
 
 export default defineConfig({
@@ -83,7 +104,7 @@ export default defineConfig({
 For heavy plugins that should be lazily imported, combine with dynamic `import()`:
 
 ```ts [vite.config.ts]
-import { defineConfig, lazyPlugins } from 'vite-plus';
+import { defineConfig, lazyPlugins } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   plugins: lazyPlugins(async () => {
@@ -102,7 +123,7 @@ If you are stuck, please reach out:
 
 When reporting a problem, please include:
 
-- The full output of `vp env current` and `vp --version`
+- The full output of `vp env current`, `vp --version`, and `vp toolchain`
 - The package manager used by the project
 - The exact steps needed to reproduce the problem and your `vite.config.ts`
 - A minimal reproduction repository or runnable sandbox

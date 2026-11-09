@@ -8,6 +8,7 @@ This repo owns the native forks and publishable npm package boundaries for:
 - `@tiara-stack/oxlint-effect`
 - `@tiara-stack/effect-vitest`
 - `@tiara-stack/vite-plus`
+- `@tiara-stack/vite-plus-core`
 
 The GitHub Action that installs the scoped Vite+ package lives separately at
 `tiara-stack/setup-vp`. This repo carries the Vite+ integration fork at
@@ -45,31 +46,47 @@ Vite+ test exports. After pulling the Effect source fork, run:
 pnpm effect-vitest:sync
 ```
 
-Sync checks the source helper's Vitest peer range before replacing files. The
-Effect 4.0.1 helper requires Vitest 5. Until the runner upgrade, the retained
-Vitest 4 helper uses `effect/Arbitrary` for property tests and stays in place.
+The helper uses the Effect 4.0.1 source and the root Vitest 5 `TestRunner`
+API. Runtime and type imports go through `@tiara-stack/vite-plus/test`.
+Generation checks the runner, built exports, expected source imports, and README
+before replacing the retained helper. The scoped Vite+ peer floor is derived
+from the generated artifact's version. The optional Vitest peer describes the
+`>=5.0.0 <6.0.0` compatibility range without installing another runner.
 
-`@tiara-stack/vite-plus` is generated from the installed upstream `vite-plus`
-package with the tsgolint resolver patched to prefer
-`@tiara-stack/tsgolint-effect`. After updating the Vite+ source fork and
-installed upstream package, run:
+Vite+ is pinned to stable 1.0.0 at
+`fc287d7b1c0dc008dbc65d1d2b2f51a44e2a5ea4`, with its Vitest 5.0.1 family.
+Its source workspace bootstraps the pinned Vite and Rolldown sources, builds
+Rolldown and Vite types, builds core, then builds the CLI and native binding.
+It requires Node.js `^22.18.0 || ^24.11.0 || >=26.0.0` and the source fork's
+`nightly-2026-08-02` Rust toolchain.
+Source builds also require Corepack to select the fork's pinned pnpm 11.24.0.
 
 ```sh
+pnpm install --frozen-lockfile
+pnpm vite-plus:build:source
 pnpm vite-plus:sync
+pnpm effect-vitest:sync
 ```
 
-Use the Tiara setup action anywhere CI needs the scoped Vite+ package:
+The Vite+ generator packs these built local inputs into
+`@tiara-stack/vite-plus` and `@tiara-stack/vite-plus-core`, both version 1.0.0.
+The scoped core keeps the local build in the package dependency chain. Generation
+checks the build hashes before replacing packages and records provenance in
+`SOURCE.json`. It never copies an independently installed upstream CLI.
+Run `pnpm check:vite-plus` and `pnpm check:effect-vitest:consumer` after building
+the wrappers to check package contracts and the packed helper runtime.
 
-```yaml
-- uses: tiara-stack/setup-vp@v1
-  with:
-    version: "0.2.2"
-    node-version: "22"
-    cache: true
-```
+Repository scripts resolve `vite-plus` and `vite` to the local source workspace.
+Development linting selects explicit `TIARA_*` overrides first, then native builds
+in this checkout. Missing builds fail with their expected path. Published
+consumers resolve the native wrapper packages instead. The Vite lint config
+handoff remains enabled. The `vp-oxlint` launcher loads serializable Vite lint
+settings and passes them to the native binary while preserving relative paths.
+Use `vp-oxlint --lsp` for editor integration. It refreshes the native settings
+when the Vite configuration changes and removes its temporary files on exit.
 
-The action preserves the upstream `setup-vp` inputs, but installs
-`@tiara-stack/vite-plus` instead of `vite-plus`.
+These version labels identify local generated artifacts. They do not publish
+packages.
 
 ## Publishing Shape
 
@@ -110,6 +127,7 @@ publisher entry:
 - package: `@tiara-stack/oxlint-effect`
 - package: `@tiara-stack/effect-vitest`
 - package: `@tiara-stack/vite-plus`
+- package: `@tiara-stack/vite-plus-core`
 - owner/repository: `tiara-stack/native-tooling`
 - workflow file: `publish.yml`
 - environment: `npm`
@@ -125,7 +143,7 @@ vp pm stage approve <stage-id>
 ```
 
 The `patches/` directory contains the current consumer-side pnpm patches for
-Vite+ and Oxlint. The Vite+ fork source now lives in
-`packages/vite-plus-effect-fork`; the patch files are transitional consumer
-artifacts until app repos can depend directly on the forked packages or the
-integration is upstreamed.
+Vite+ and Oxlint. Vite+ customizations now live in
+`packages/vite-plus-effect-fork` and its generated scoped artifacts. The old
+Vite+ 0.1.15 patch is historical and is no longer checked against that retired
+release. The Oxlint patch remains a separate native tooling check.

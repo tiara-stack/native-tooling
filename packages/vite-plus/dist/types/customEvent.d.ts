@@ -1,1 +1,1 @@
-export type * from '@voidzero-dev/vite-plus-core/types/customEvent.d.ts';
+export type * from 'vite/types/customEvent.d.ts';

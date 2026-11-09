@@ -30,7 +30,7 @@ Use it for:
 - [standalone executables](https://tsdown.dev/options/exe#executable)
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   pack: {
@@ -48,7 +48,7 @@ export default defineConfig({
 Use this when you want to ship a CLI or other Node-based tool as a native executable that runs without requiring Node.js to be installed separately.
 
 ```ts [vite.config.ts]
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   pack: {

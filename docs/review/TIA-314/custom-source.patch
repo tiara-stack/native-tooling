@@ -1,0 +1,1450 @@
+diff --git aworking/packages/vite-plus-effect-fork/.gitrepo bworking/packages/vite-plus-effect-fork/.gitrepo
+new file mode 100644
+index 0000000000..9356e6a14c
+--- /dev/null
++++ bworking/packages/vite-plus-effect-fork/.gitrepo
+@@ -0,0 +1,12 @@
++; DO NOT EDIT (unless you know what you are doing)
++;
++; This subdirectory is a git "subrepo", and this file is maintained by the
++; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
++;
++[subrepo]
++	remote = https://github.com/voidzero-dev/vite-plus
++	branch = v1.0.0
++	commit = fc287d7b1c0dc008dbc65d1d2b2f51a44e2a5ea4
++	parent = cf6cd57af76949d243446b1bfd577f28b4c13a1a
++	method = merge
++	cmdver = 0.4.9
+diff --git aworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint-lsp.mjs bworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint-lsp.mjs
+new file mode 100644
+index 0000000000..d704973903
+--- /dev/null
++++ bworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint-lsp.mjs
+@@ -0,0 +1,197 @@
++import { Transform } from "node:stream";
++import { pathToFileURL } from "node:url";
++
++// Oxlint's native LSP reads options from protocol messages, not CLI flags.
++// Keep editor settings and unrelated messages while supplying the launcher's
++// effective configuration through that supported contract.
++export function bridgeLsp(child, settings, input = process.stdin, output = process.stdout) {
++  const workspaces = new Map();
++  const requests = new Map();
++  let initialized = false;
++  let editorConfiguration = false;
++  const merge = (uri, options) => {
++    if (options && typeof options === "object" && !Array.isArray(options))
++      workspaces.set(uri, options);
++    const { defaults, overrides } = settings();
++    return { ...defaults, ...workspaces.get(uri), ...overrides };
++  };
++  const encode = (message) => {
++    const body = Buffer.from(JSON.stringify(message));
++    return Buffer.concat([Buffer.from(`Content-Length: ${body.length}\r\n\r\n`), body]);
++  };
++  const workspaceOptions = () =>
++    [...workspaces].map(([workspaceUri]) => ({
++      workspaceUri,
++      options: merge(workspaceUri),
++    }));
++  function fromClient(message) {
++    if (message.method === "initialize") {
++      const params = message.params;
++      editorConfiguration = params.capabilities?.workspace?.configuration === true;
++      params.capabilities ??= {};
++      params.capabilities.workspace ??= {};
++      // The bridge can answer configuration requests for editors without this
++      // capability, including newly added workspaces after initialization.
++      params.capabilities.workspace.configuration = true;
++      const uris = params.workspaceFolders?.map((folder) => folder.uri) ?? [
++        params.rootUri ?? pathToFileURL(process.cwd()).href,
++      ];
++      // The native server otherwise creates single-file workers with defaults,
++      // without initialization options. The explicit launcher config has a cwd.
++      if (!params.workspaceFolders && !params.rootUri) params.rootUri = uris[0];
++      const initial = params.initializationOptions;
++      for (const uri of uris) {
++        const own = Array.isArray(initial)
++          ? initial.find((item) => item.workspaceUri === uri)?.options
++          : initial?.settings;
++        workspaces.set(uri, own ?? {});
++      }
++      // Let configuration-capable editors provide their current settings first.
++      if (initial != null || !editorConfiguration)
++        params.initializationOptions = workspaceOptions();
++    } else if (message.method === "initialized") {
++      initialized = true;
++    } else if (message.method === "workspace/didChangeConfiguration") {
++      const value = message.params.settings;
++      if (value != null) {
++        if (Array.isArray(value)) {
++          message.params.settings = value.map((item) => ({
++            ...item,
++            options: merge(item.workspaceUri, item.options),
++          }));
++        } else {
++          for (const uri of workspaces.keys()) merge(uri, value);
++          message.params.settings = workspaceOptions();
++        }
++      }
++    } else if (!message.method && requests.has(message.id)) {
++      const items = requests.get(message.id);
++      requests.delete(message.id);
++      const failed = Boolean(message.error);
++      const result = Array.isArray(message.result) ? message.result : [];
++      delete message.error;
++      message.result = items.map((item, index) =>
++        item.section === "oxc_language_server"
++          ? merge(item.scopeUri, failed ? undefined : (result[index] ?? {}))
++          : (result[index] ?? null),
++      );
++    }
++    return message;
++  }
++  function fromServer(message) {
++    if (message.method === "workspace/configuration") {
++      if (!editorConfiguration) {
++        child.stdin.write(
++          encode({
++            jsonrpc: "2.0",
++            id: message.id,
++            result: message.params.items.map((item) =>
++              item.section === "oxc_language_server" ? merge(item.scopeUri, {}) : null,
++            ),
++          }),
++        );
++        return;
++      }
++      requests.set(message.id, message.params.items);
++    }
++    return message;
++  }
++  function frames(transform) {
++    let pending = Buffer.alloc(0);
++    return new Transform({
++      transform(bytes, _encoding, done) {
++        try {
++          pending = Buffer.concat([pending, bytes]);
++          while (true) {
++            const end = pending.indexOf("\r\n\r\n");
++            if (end < 0) break;
++            const header = /(?:^|\r\n)Content-Length:\s*(\d+)(?:\r\n|$)/i.exec(
++              pending.subarray(0, end).toString(),
++            );
++            if (!header) throw new Error("Invalid LSP Content-Length header");
++            const length = Number(header[1]);
++            if (pending.length < end + 4 + length) break;
++            const message = JSON.parse(pending.subarray(end + 4, end + 4 + length));
++            pending = pending.subarray(end + 4 + length);
++            const value = transform(message);
++            if (value) this.push(encode(value));
++          }
++          done();
++        } catch (error) {
++          done(error);
++        }
++      },
++      flush(done) {
++        done(pending.length ? new Error("Incomplete LSP frame") : undefined);
++      },
++    });
++  }
++  const client = frames(fromClient),
++    server = frames(fromServer);
++  const failed = new Promise((_resolve, reject) => {
++    for (const stream of [client, server, child.stdin, child.stdout, input, output])
++      stream.on("error", reject);
++  });
++  input.pipe(client).pipe(child.stdin);
++  child.stdout.pipe(server).pipe(output, { end: false });
++  return {
++    failed,
++    refresh() {
++      if (!initialized || child.stdin.destroyed || child.stdin.writableEnded) return;
++      child.stdin.write(
++        encode({
++          jsonrpc: "2.0",
++          method: "workspace/didChangeConfiguration",
++          params: { settings: workspaceOptions() },
++        }),
++      );
++      const path = settings().overrides.configPath;
++      if (path)
++        child.stdin.write(
++          encode({
++            jsonrpc: "2.0",
++            method: "workspace/didChangeWatchedFiles",
++            params: { changes: [{ uri: pathToFileURL(path).href, type: 2 }] },
++          }),
++        );
++    },
++    close() {
++      input.unpipe(client);
++      input.pause();
++      child.stdout.unpipe(server);
++      client.unpipe(child.stdin);
++      server.unpipe(output);
++      client.destroy();
++      server.destroy();
++    },
++  };
++}
++
++export function lspOptions(options) {
++  const result = {};
++  for (const key of ["typeAware", "disableNestedConfig"]) {
++    if (typeof options[key] === "boolean") result[key] = options[key];
++  }
++  if (options.tsconfig != null) result.tsConfigPath = options.tsconfig;
++  if (options.reportUnusedDisableDirectives === true) result.unusedDisableDirectives = "warn";
++  else if (options.reportUnusedDisableDirectives != null)
++    result.unusedDisableDirectives = {
++      error: "deny",
++      warn: "warn",
++      off: "allow",
++      deny: "deny",
++      allow: "allow",
++    }[options.reportUnusedDisableDirectives];
++  const severity = options.reportUnusedDisableDirectivesSeverity;
++  if (severity != null)
++    result.unusedDisableDirectives = { error: "deny", warn: "warn", off: "allow" }[severity];
++  if (options.fixDangerously) result.fixKind = options.fix ? "all" : "dangerous_fix_or_suggestion";
++  else if (options.fixSuggestions) {
++    if (!options.fix)
++      throw new Error(
++        "Native LSP requires --fix with --fix-suggestions; suggestion-only fixKind is unsupported.",
++      );
++    result.fixKind = "safe_fix_or_suggestion";
++  } else if (options.fix) result.fixKind = "safe_fix";
++  return result;
++}
+diff --git aworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs bworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs
+new file mode 100755
+index 0000000000..edd6db00ea
+--- /dev/null
++++ bworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs
+@@ -0,0 +1,267 @@
++#!/usr/bin/env node
++import { spawn } from "node:child_process";
++import { createHash, randomUUID } from "node:crypto";
++import { existsSync, unwatchFile, watchFile } from "node:fs";
++import { open, rename, unlink } from "node:fs/promises";
++import { constants } from "node:os";
++import { basename, dirname, join, resolve } from "node:path";
++import { bridgeLsp, lspOptions } from "./tiara-oxlint-lsp.mjs";
++
++const args = process.argv.slice(2);
++process.env.VP_RESOLVING_CONFIG_METADATA = "1";
++let native = process.env.TIARA_OXLINT_EFFECT_PATH;
++if (!native || !process.env.OXLINT_TSGOLINT_PATH) {
++  const { resolveTiaraNative } = await import("../dist/tiara-native.js");
++  native ||= resolveTiaraNative("oxlint");
++  process.env.OXLINT_TSGOLINT_PATH ||= resolveTiaraNative("tsgolint");
++}
++
++const viteNames = [
++  "vite.config.js",
++  "vite.config.mjs",
++  "vite.config.ts",
++  "vite.config.cjs",
++  "vite.config.mts",
++  "vite.config.cts",
++];
++let configIndex = -1;
++let configCount = 0;
++let configPath;
++for (let index = 0; index < args.length && args[index] !== "--"; index++) {
++  const arg = args[index];
++  if (arg === "--config" || arg === "-c") {
++    configIndex = index;
++    configCount = 2;
++    configPath = args[index + 1];
++    break;
++  }
++  if (arg.startsWith("--config=") || (arg.startsWith("-c") && arg.length > 2)) {
++    configIndex = index;
++    configCount = 1;
++    configPath = arg.startsWith("--config=") ? arg.slice(9) : arg.slice(2);
++    break;
++  }
++}
++if (!configPath && !args.includes("--no-config")) {
++  const nativeConfigs = [
++    ".oxlintrc.json",
++    ".oxlintrc.jsonc",
++    "oxlint.config.ts",
++    "oxlint.config.js",
++    "oxlint.config.mts",
++    "oxlint.config.mjs",
++    "oxlint.config.cts",
++    "oxlint.config.cjs",
++  ];
++  let directory = process.cwd();
++  while (true) {
++    if (nativeConfigs.some((name) => existsSync(join(directory, name)))) break;
++    configPath = viteNames.map((name) => join(directory, name)).find(existsSync);
++    if (configPath || dirname(directory) === directory) break;
++    directory = dirname(directory);
++  }
++}
++const temporary = new Set();
++const watched = new Set();
++let closing = false;
++let updates = Promise.resolve();
++let preparedArgs = args;
++const lsp = args.includes("--lsp");
++let bridge;
++let effectiveLspOptions = { defaults: {}, overrides: {} };
++const explicitLsp = {};
++for (let index = 0; index < args.length && args[index] !== "--"; index++) {
++  const [flag, inline] = args[index].split(/=(.*)/s);
++  const key = {
++    "--type-aware": "typeAware",
++    "--disable-nested-config": "disableNestedConfig",
++    "--tsconfig": "tsconfig",
++    "--report-unused-disable-directives": "reportUnusedDisableDirectives",
++    "--report-unused-disable-directives-severity": "reportUnusedDisableDirectivesSeverity",
++    "--fix": "fix",
++    "--fix-suggestions": "fixSuggestions",
++    "--fix-dangerously": "fixDangerously",
++  }[flag];
++  if (key)
++    explicitLsp[key] = ["tsconfig", "reportUnusedDisableDirectivesSeverity"].includes(key)
++      ? (inline ?? args[++index])
++      : true;
++}
++if (explicitLsp.tsconfig) explicitLsp.tsconfig = resolve(explicitLsp.tsconfig);
++effectiveLspOptions.overrides = lsp ? lspOptions(explicitLsp) : {};
++if (configPath) effectiveLspOptions.overrides.configPath = resolve(configPath);
++
++async function prepareViteConfig(path) {
++  const { resolveConfig } = await import("../dist/index.js");
++  const prefix = join(dirname(path), `.tiara-oxlint-${randomUUID()}`);
++  const rootFile = prefix + "-root.json";
++  const materialized = new Set();
++  const stagingFiles = new Set();
++  async function reclaim(file) {
++    try {
++      await unlink(file);
++    } catch (error) {
++      if (error.code !== "ENOENT") return;
++    }
++    materialized.delete(file);
++    stagingFiles.delete(file);
++    temporary.delete(file);
++  }
++  async function refresh() {
++    const config = await resolveConfig(
++      { root: process.cwd(), configFile: path, logLevel: "silent" },
++      "build",
++    );
++    if (closing) return;
++    const writes = new Map();
++    const visiting = new Set();
++    function materialize(value, file) {
++      if (!value || typeof value !== "object" || Array.isArray(value))
++        throw new Error("The Vite lint configuration must be an object.");
++      if (visiting.has(value)) throw new Error("Circular Vite lint configuration extends.");
++      visiting.add(value);
++      // These are native root-config options too. Keep settings such as
++      // respectEslintDisableDirectives that have no equivalent CLI flag.
++      const json = { ...value };
++      if (json.extends && !Array.isArray(json.extends))
++        throw new Error("Vite lint extends must be an array.");
++      if (json.extends)
++        json.extends = json.extends.map((item) =>
++          typeof item === "string" ? item : materialize(item),
++        );
++      const text = JSON.stringify(json, (_key, item) => {
++        if (typeof item === "function" || typeof item === "symbol" || typeof item === "bigint")
++          throw new Error(
++            "Native Oxlint configuration must contain serializable Rust rule settings.",
++          );
++        return item;
++      });
++      file ??= `${prefix}-${createHash("sha256").update(text).digest("hex")}.json`;
++      if (file === rootFile || !materialized.has(file)) writes.set(file, text);
++      visiting.delete(value);
++      return file;
++    }
++    materialize(config.lint ?? {}, rootFile);
++    // Share unchanged immutable children across updates. Published snapshots
++    // remain valid until the native reader exits: it can still hold an old root.
++    // Replace the root only after every child exists, beside the source config.
++    const created = [];
++    try {
++      for (const file of stagingFiles) await reclaim(file);
++      for (const [file, text] of writes) {
++        if (closing) return;
++        const staging = file + ".writing";
++        const handle = await open(staging, "wx");
++        stagingFiles.add(staging);
++        temporary.add(staging);
++        let failure;
++        try {
++          await handle.writeFile(text);
++        } catch (error) {
++          failure = error;
++        }
++        try {
++          await handle.close();
++        } catch (error) {
++          failure ??= error;
++        }
++        if (failure) throw failure;
++        await rename(staging, file);
++        stagingFiles.delete(staging);
++        temporary.delete(staging);
++        temporary.add(file);
++        if (file !== rootFile) {
++          materialized.add(file);
++          created.push(file);
++        }
++      }
++    } catch (error) {
++      for (const file of stagingFiles) await reclaim(file);
++      // These files were never published, so no root reader can need them.
++      for (const file of created) await reclaim(file);
++      throw error;
++    }
++    effectiveLspOptions = {
++      defaults: lsp ? lspOptions(config.lint?.options ?? {}) : {},
++      overrides: { ...(lsp ? lspOptions(explicitLsp) : {}), configPath: rootFile },
++    };
++    bridge?.refresh();
++    if (lsp) {
++      for (const dependency of [path, ...(config.configFileDependencies ?? [])]) {
++        if (watched.has(dependency)) continue;
++        watched.add(dependency);
++        watchFile(dependency, { interval: 500, persistent: false }, () => {
++          updates = updates
++            .then(() => (closing ? undefined : refresh()))
++            .catch((error) => console.error(error.message));
++        });
++      }
++    }
++    return config;
++  }
++  await refresh();
++  if (closing) return;
++  const remaining = [...args];
++  if (configIndex >= 0) remaining.splice(configIndex, configCount);
++  preparedArgs = ["--config", rootFile, ...remaining];
++}
++
++let child;
++const handlers = new Map(
++  ["SIGINT", "SIGTERM"].map((signal) => [
++    signal,
++    () => {
++      closing = true;
++      if (child) child.kill(signal);
++      else process.exitCode = 128 + constants.signals[signal];
++    },
++  ]),
++);
++// Own interruption before creating snapshots and until cleanup has settled.
++for (const [signal, handler] of handlers) process.on(signal, handler);
++try {
++  if (configPath && viteNames.includes(basename(configPath)))
++    await prepareViteConfig(resolve(configPath));
++  if (!closing) {
++    child = spawn(native, preparedArgs, {
++      stdio: lsp ? ["pipe", "pipe", "inherit"] : "inherit",
++      env: process.env,
++    });
++    const exited = new Promise((done, reject) => {
++      child.once("error", reject);
++      child.once("exit", (code, signal) => done({ code, signal }));
++    });
++    if (lsp) bridge = bridgeLsp(child, () => effectiveLspOptions);
++    let result;
++    try {
++      result = await (bridge ? Promise.race([exited, bridge.failed]) : exited);
++    } catch (error) {
++      child.kill("SIGTERM");
++      await exited.catch(() => {});
++      throw error;
++    } finally {
++      bridge?.close();
++    }
++    process.exitCode = result.code ?? 128 + (constants.signals[result.signal] ?? 1);
++  }
++} finally {
++  closing = true;
++  for (const path of watched) unwatchFile(path);
++  try {
++    await updates;
++    const cleanup = await Promise.allSettled(
++      [...temporary].map((file) =>
++        unlink(file).catch((error) => {
++          if (error.code !== "ENOENT") throw error;
++        }),
++      ),
++    );
++    const failures = cleanup
++      .filter((result) => result.status === "rejected")
++      .map((result) => result.reason);
++    if (failures.length)
++      throw new AggregateError(failures, "Could not remove native lint snapshots");
++  } finally {
++    for (const [signal, handler] of handlers) process.off(signal, handler);
++  }
++}
+diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/package.json bworking/packages/vite-plus-effect-fork/packages/cli/package.json
+index ea09ecb84f..9284730d47 100644
+--- aapproved/packages/vite-plus-effect-fork/packages/cli/package.json
++++ bworking/packages/vite-plus-effect-fork/packages/cli/package.json
+@@ -15,6 +15,7 @@
+   },
+   "bin": {
+     "vp": "./bin/vp",
++    "vp-oxlint": "./bin/tiara-oxlint.mjs",
+     "vpr": "./bin/vpr"
+   },
+   "files": [
+@@ -347,6 +348,9 @@
+   "dependencies": {
+     "@oxc-project/types": "catalog:",
+     "@oxlint/plugins": "catalog:",
++    "@tiara-stack/oxlint-effect": "link:../../../oxlint-effect",
++    "@tiara-stack/tsgo-effect": "link:../../../tsgo-effect",
++    "@tiara-stack/tsgolint-effect": "link:../../../tsgolint-effect",
+     "@vitest/browser": "catalog:",
+     "@vitest/browser-preview": "catalog:",
+     "@vitest/mocker": "catalog:",
+diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts
+index 50b27de3dd..f45f7d4ac5 100644
+--- aapproved/packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts
++++ bworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts
+@@ -1,6 +1,8 @@
+ import { fileURLToPath } from 'node:url';
+ 
+ import { preview } from '@vitest/browser-preview';
++import { hoistMocksPlugin } from '@vitest/mocker/node';
++import { parseAst } from 'vite';
+ import { resolveConfig, type Alias, type ConfigEnv, type Plugin, type UserConfig } from 'vite';
+ import { describe, expect, it } from 'vitest';
+ 
+@@ -86,6 +88,37 @@ describe('isVitestFamilySpecifier', () => {
+ });
+ 
+ describe('vitePlusVitestResolverPlugin', () => {
++  it('recognizes scoped mock imports without changing source text or the original AST', async () => {
++    const resolver = findPlugin(defineConfig({}).plugins, RESOLVER_PLUGIN_NAME)!;
++    (resolver.config as { handler: (config: UserConfig, env: ConfigEnv) => void }).handler(
++      { environments: { __vitest__: {} } },
++      { command: 'serve', mode: 'test' },
++    );
++    const mocks = hoistMocksPlugin();
++    (resolver.configResolved as (config: { plugins: Plugin[] }) => void)({ plugins: [mocks] });
++    const code = `import { vi } from '@tiara-stack/vite-plus/test';\nvi.mock('./value.js', () => ({ value: 'mocked' }));\n`;
++    const program = parseAst(code);
++    class Context {
++      #marker = true;
++      parse() {
++        return program;
++      }
++      getCombinedSourcemap() {
++        expect(this.#marker).toBe(true);
++        return { version: 3, mappings: '', names: [], sources: ['scoped.test.js'] };
++      }
++    }
++    expect(typeof mocks.transform).toBe('function');
++    const result = (await Reflect.apply(
++      mocks.transform as (...args: unknown[]) => unknown,
++      new Context(),
++      [code, '/scoped.test.js'],
++    )) as { code: string };
++    expect(result.code).toContain("from '@tiara-stack/vite-plus/test'");
++    expect(result.code).not.toContain('There are some problems in resolving the mocks API');
++    const imported = program.body.find((node) => node.type === 'ImportDeclaration');
++    expect(imported?.source.value).toBe('@tiara-stack/vite-plus/test');
++  });
+   it.each(['serve', 'build'] as const)(
+     'leaves application dependencies unchanged during %s with browser tests configured',
+     async (command) => {
+@@ -296,15 +329,18 @@ function resolver(command: 'serve' | 'build', vitestServer: boolean): ResolveId
+ }
+ 
+ describe('workspace test API identity', () => {
+-  it('routes the wrapper through Vitest rather than the child package dependency tree', async () => {
+-    const resolveId = resolver('serve', true);
+-    const runnerApi = '/workspace/root-vitest/dist/index.js';
+-    const { ctx, calls } = makeCtx(({ id, fromProject }) =>
+-      id === 'vitest' && fromProject ? { id: runnerApi } : null,
+-    );
+-    expect(idOf(await resolveId.call(ctx, 'vite-plus/test', PROJECT_IMPORTER, {}))).toBe(runnerApi);
+-    expect(calls).toEqual([{ id: 'vitest', importer: PROJECT_IMPORTER, fromProject: true }]);
+-  });
++  it.each(['vite-plus/test', '@tiara-stack/vite-plus/test'])(
++    'routes %s through the active Vitest runtime',
++    async (id) => {
++      const resolveId = resolver('serve', true);
++      const runnerApi = '/workspace/root-vitest/dist/index.js';
++      const { ctx, calls } = makeCtx(({ id, fromProject }) =>
++        id === 'vitest' && fromProject ? { id: runnerApi } : null,
++      );
++      expect(idOf(await resolveId.call(ctx, id, PROJECT_IMPORTER, {}))).toBe(runnerApi);
++      expect(calls).toEqual([{ id: 'vitest', importer: PROJECT_IMPORTER, fromProject: true }]);
++    },
++  );
+ 
+   it.each([
+     ['serve', false],
+diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts
+index c8220e9200..b91c19e7f6 100644
+--- aapproved/packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts
++++ bworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts
+@@ -1,21 +1,39 @@
+-import { existsSync } from 'node:fs';
++import { existsSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
++import { tmpdir } from 'node:os';
++import { join } from 'node:path';
+ 
+-import { describe, expect, it } from 'vitest';
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+ 
+ import { lint, resolveWindowsTsgolintExecutable } from '../resolve-lint.js';
+ 
+ describe('resolve-lint', () => {
++  let fixture: string;
++  beforeEach(() => {
++    fixture = mkdtempSync(join(tmpdir(), 'tiara-lint-'));
++    for (const tool of ['oxlint', 'tsgolint']) {
++      const path = join(fixture, tool);
++      writeFileSync(path, '');
++      vi.stubEnv(`TIARA_${tool.toUpperCase()}_EFFECT_PATH`, path);
++    }
++  });
++  afterEach(() => {
++    vi.unstubAllEnvs();
++    rmSync(fixture, { recursive: true, force: true });
++  });
++
+   it('should resolve binPath and OXLINT_TSGOLINT_PATH to existing files', async () => {
+     const result = await lint();
+ 
+-    expect(result.binPath).toBeTruthy();
++    expect(result.binPath).toMatch(/tiara-oxlint\.mjs$/);
++    expect(result.envs.TIARA_OXLINT_EFFECT_PATH).toBe(join(fixture, 'oxlint'));
++    expect(result.envs.VP_RESOLVING_CONFIG_METADATA).toBe('1');
+     expect(
+       existsSync(result.binPath),
+       `oxlint binPath should point to an existing file, got: ${result.binPath}`,
+     ).toBe(true);
+ 
+     const tsgolintPath = result.envs.OXLINT_TSGOLINT_PATH;
+-    expect(tsgolintPath).toBeTruthy();
++    expect(tsgolintPath).toBe(join(fixture, 'tsgolint'));
+     expect(
+       existsSync(tsgolintPath),
+       `OXLINT_TSGOLINT_PATH should point to an existing file, got: ${tsgolintPath}`,
+diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/src/define-config.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/define-config.ts
+index 1b080fbffa..8264bc1f05 100644
+--- aapproved/packages/vite-plus-effect-fork/packages/cli/src/define-config.ts
++++ bworking/packages/vite-plus-effect-fork/packages/cli/src/define-config.ts
+@@ -272,6 +272,7 @@ export function isVitestFamilySpecifier(id: string): boolean {
+  */
+ function vitePlusVitestResolverPlugin(): PluginOption {
+   let isVitestServer = false;
++  const patchedMocks = new WeakSet<Plugin>();
+   return {
+     name: 'vite-plus:vitest-resolver',
+     enforce: 'pre',
+@@ -350,9 +351,48 @@ function vitePlusVitestResolverPlugin(): PluginOption {
+         return true;
+       });
+       plugins.splice(0, plugins.length, ...unique);
++      if (isVitestServer) {
++        for (const plugin of unique) {
++          if (
++            plugin.name !== 'vitest:mocks' ||
++            typeof plugin.transform !== 'function' ||
++            patchedMocks.has(plugin)
++          )
++            continue;
++          const transform = plugin.transform;
++          plugin.transform = function (code, id, ...options) {
++            if (!code.includes('@tiara-stack/vite-plus/test'))
++              return transform.call(this, code, id, ...options);
++            const context = this;
++            const parse: typeof context.parse = (...args) => {
++              const program = context.parse(...args);
++              return {
++                ...program,
++                body: program.body.map((node) =>
++                  node.type === 'ImportDeclaration' &&
++                  node.source.value === '@tiara-stack/vite-plus/test'
++                    ? { ...node, source: { ...node.source, value: 'vitest' } }
++                    : node,
++                ),
++              };
++            };
++            // Let Vitest recognize the scoped redistribution in its parser.
++            // Keep the original import text and its source-map positions.
++            const proxy = new Proxy(context, {
++              get(target, key) {
++                if (key === 'parse') return parse;
++                const value = Reflect.get(target, key, target);
++                return typeof value === 'function' ? value.bind(target) : value;
++              },
++            });
++            return transform.call(proxy, code, id, ...options);
++          };
++          patchedMocks.add(plugin);
++        }
++      }
+     },
+     async resolveId(id, importer, options) {
+-      if (isVitestServer && id === 'vite-plus/test') {
++      if (isVitestServer && /^(?:@tiara-stack\/)?vite-plus\/test$/.test(id)) {
+         // pnpm can install separate vite-plus/Vitest peer instances for a
+         // workspace's root and children. Externalizing the child wrapper lets
+         // Node load its uninitialized runner state, bypassing Vite's hooks.
+diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts
+index e7ff631a2e..c120b5e00a 100644
+--- aapproved/packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts
++++ bworking/packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts
+@@ -13,12 +13,14 @@ import {
+ } from 'vite/pack';
+ 
+ import { resolveViteConfig } from './resolve-vite-config.ts';
++import { resolveTiaraNative } from './utils/tiara-native.ts';
+ 
+ // Matches a `.d.ts` / `.d.mts` / `.d.cts` importer.
+ const RE_DTS = /\.d\.[cm]?ts$/;
+ // Bare specifier for postcss / lightningcss / vitest / `@vitest/*` /
+ // vite-plus (root or any subpath).
+-const EXTERNAL_DTS_PKG_RE = /^(?:postcss|lightningcss|vitest|@vitest\/[^/]+|vite-plus)(?:\/|$)/;
++const EXTERNAL_DTS_PKG_RE =
++  /^(?:postcss|lightningcss|vitest|@vitest\/[^/]+|(?:@tiara-stack\/)?vite-plus)(?:\/|$)/;
+ 
+ /**
+  * Rolldown plugin that keeps `postcss` / `lightningcss` / `vitest` / `@vitest/*`
+@@ -164,6 +166,19 @@ cli
+         : [viteConfig?.pack ?? {}];
+       for (const packConfig of packConfigs) {
+         const merged = { ...packConfig, ...flags };
++        if (
++          merged.dts &&
++          typeof merged.dts === 'object' &&
++          (merged.dts.generator === 'tsgo' || (!merged.dts.generator && merged.dts.tsgo === true))
++        ) {
++          const tsgo =
++            merged.dts.tsgo && typeof merged.dts.tsgo === 'object' ? merged.dts.tsgo : {};
++          merged.dts = {
++            ...merged.dts,
++            generator: 'tsgo',
++            tsgo: { ...tsgo, path: tsgo.path ?? resolveTiaraNative('tsgo') },
++          };
++        }
+         // Keep postcss/lightningcss external to the dts bundle (see plugin doc)
+         if (merged.dts) {
+           const existingPlugins = Array.isArray(merged.plugins) ? merged.plugins : [];
+diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts
+index f552962c4b..e774a094f9 100644
+--- aapproved/packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts
++++ bworking/packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts
+@@ -13,8 +13,8 @@
+ 
+ import { dirname, join } from 'node:path';
+ 
+-import { CONFIG_METADATA_ENV, DEFAULT_ENVS, resolve } from './utils/constants.ts';
+-import { resolveTsgolintExecutable } from './utils/tsgolint-path.ts';
++import { CONFIG_METADATA_ENV, DEFAULT_ENVS, resolveBundled } from './utils/constants.ts';
++import { resolveTiaraNative } from './utils/tiara-native.ts';
+ 
+ export { resolveWindowsTsgolintExecutable } from './utils/tsgolint-path.ts';
+ 
+@@ -32,23 +32,22 @@ export async function lint(): Promise<{
+   binPath: string;
+   envs: Record<string, string>;
+ }> {
+-  // Resolve the oxlint package path first, then navigate to the bin file.
+-  // The bin/oxlint subpath is not exported in package.json exports, so we
+-  // resolve the main entry point and derive the bin path from it.
+-  // resolve('oxlint') returns .../oxlint/dist/index.js, so we need to go up
+-  // two directories (past 'dist') to reach the package root.
+-  const oxlintMainPath = resolve('oxlint');
+-  const oxlintPackageRoot = dirname(dirname(oxlintMainPath));
+-  const binPath = join(oxlintPackageRoot, 'bin', 'oxlint');
+-  const oxlintTsgolintPath = resolveTsgolintExecutable(
+-    resolve('oxlint-tsgolint/bin/tsgolint'),
+-    import.meta.url,
++  // Use the patched native chain and retain the upstream Vite config handoff.
++  const oxlintPath = resolveTiaraNative('oxlint');
++  // Vite+ invokes lint with Node. The launcher reads Vite's lint block and
++  // forwards serializable configuration to the selected standalone binary.
++  const binPath = join(
++    dirname(resolveBundled('vite-plus/package.json')),
++    'bin',
++    'tiara-oxlint.mjs',
+   );
++  const oxlintTsgolintPath = resolveTiaraNative('tsgolint');
+   const result = {
+     binPath,
+     // TODO: provide envs inference API
+     envs: {
+       ...DEFAULT_ENVS,
++      TIARA_OXLINT_EFFECT_PATH: oxlintPath,
+       OXLINT_TSGOLINT_PATH: oxlintTsgolintPath,
+       // oxlint loads vite.config.ts only to read the `lint` block, so skip the
+       // user's Vite plugin factory (lazyPlugins) while it evaluates the config.
+diff --git aworking/packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts
+new file mode 100644
+index 0000000000..3baf29693f
+--- /dev/null
++++ bworking/packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts
+@@ -0,0 +1,73 @@
++import { spawnSync } from 'node:child_process';
++import { existsSync, readFileSync } from 'node:fs';
++import { createRequire } from 'node:module';
++import { dirname, join, resolve } from 'node:path';
++
++const require = createRequire(import.meta.url);
++const binaries = {
++  oxlint: {
++    overrides: ['TIARA_OXLINT_EFFECT_PATH', 'TIARA_REAL_OXLINT_PATH'],
++    local: ['native', 'oxc-oxlint-effect-fork', 'target', 'release', 'oxlint'],
++  },
++  tsgolint: {
++    overrides: ['TIARA_TSGOLINT_EFFECT_PATH'],
++    local: ['native', 'tsgolint-effect-fork', 'tsgolint'],
++  },
++  tsgo: {
++    overrides: ['TIARA_TSGO_EFFECT_PATH', 'TIARA_TSGO_PATH'],
++    local: ['native', 'typescript-go', 'built', 'local', 'tsgo'],
++  },
++} as const;
++
++// Source checkouts must use their own native builds, including when a published
++// wrapper happens to be installed. A missing build is an error, not a fallback.
++export function resolveTiaraNative(tool: keyof typeof binaries): string {
++  const spec = binaries[tool];
++  const override = spec.overrides.map((name) => process.env[name]).find(Boolean);
++  if (override) return assertBinary(resolve(override), tool);
++
++  const sourceRoot = findSourceRoot(process.cwd()) ?? findSourceRoot(import.meta.dirname);
++  if (sourceRoot) {
++    const parts: string[] = [...spec.local];
++    if (process.platform === 'win32') parts[parts.length - 1] += '.exe';
++    return assertBinary(join(sourceRoot, ...parts), tool);
++  }
++
++  const wrapper = resolveTiaraWrapper(tool);
++  const result = spawnSync(process.execPath, [wrapper, '--print-path'], { encoding: 'utf8' });
++  if (result.error || result.status !== 0) {
++    throw new Error(`Unable to resolve Tiara ${tool}: ${result.error?.message ?? result.stderr}`);
++  }
++  return assertBinary(result.stdout.trim(), tool);
++}
++
++export function resolveTiaraWrapper(tool: keyof typeof binaries): string {
++  return require.resolve(`@tiara-stack/${tool}-effect/bin/${tool}-effect`);
++}
++
++function assertBinary(path: string, tool: keyof typeof binaries): string {
++  if (!path || !existsSync(path)) {
++    throw new Error(
++      `Missing Tiara ${tool} build at ${path}. Build the repo-local native tool or set ${binaries[tool].overrides[0]}.`,
++    );
++  }
++  return path;
++}
++
++function findSourceRoot(start: string): string | undefined {
++  let directory = resolve(start);
++  while (true) {
++    const manifest = join(directory, 'package.json');
++    if (existsSync(manifest)) {
++      try {
++        const pkg = JSON.parse(readFileSync(manifest, 'utf8'));
++        if (pkg?.name === '@tiara-stack/native-tooling-monorepo') return directory;
++      } catch {
++        // Unrelated malformed or unreadable manifests do not identify a source root.
++      }
++    }
++    const parent = dirname(directory);
++    if (parent === directory) return undefined;
++    directory = parent;
++  }
++}
+diff --git aworking/packages/vite-plus-effect-fork/packages/cli/templates/monorepo/_gitignore bworking/packages/vite-plus-effect-fork/packages/cli/templates/monorepo/_gitignore
+new file mode 100644
+index 0000000000..1ba829c246
+--- /dev/null
++++ bworking/packages/vite-plus-effect-fork/packages/cli/templates/monorepo/_gitignore
+@@ -0,0 +1,35 @@
++# Logs
++logs
++*.log
++npm-debug.log*
++yarn-debug.log*
++yarn-error.log*
++pnpm-debug.log*
++lerna-debug.log*
++
++node_modules
++dist
++dist-ssr
++*.local
++
++# dotenv environment variable files
++.env
++.env.*
++!.env.example
++
++# Editor directories and files
++.vscode/*
++!.vscode/settings.json
++!.vscode/extensions.json
++.idea
++.DS_Store
++*.suo
++*.ntvs*
++*.njsproj
++*.sln
++*.sw?
++
++# AI agent worktrees
++.claude/worktrees/
++# Native lint snapshots live beside Vite config while the reader is active.
++.tiara-oxlint-*
+diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts bworking/packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts
+index 8a27711e6a..8b29ff21df 100644
+--- aapproved/packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts
++++ bworking/packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts
+@@ -54,6 +54,7 @@ export default defineConfig([
+       'oxlint-plugin': './src/oxlint-plugin.ts',
+       pack: './src/pack.ts',
+       'pack-bin': './src/pack-bin.ts',
++      'tiara-native': './src/utils/tiara-native.ts',
+       // Global commands — explicit entries ensure lazy loading via dynamic import in bin.ts.
+       // Without these, tsdown inlines them into bin.js, breaking on-demand loading.
+       'create/bin': './src/create/bin.ts',
+diff --git aapproved/packages/vite-plus-effect-fork/packages/core/build.ts bworking/packages/vite-plus-effect-fork/packages/core/build.ts
+index 5b806bf105..08f1b6df3a 100644
+--- aapproved/packages/vite-plus-effect-fork/packages/core/build.ts
++++ bworking/packages/vite-plus-effect-fork/packages/core/build.ts
+@@ -696,6 +696,7 @@ async function mergePackageJson() {
+   destPkg.peerDependencies = {
+     ...tsdownPkg.peerDependencies,
+     ...vitePkg.peerDependencies,
++    typescript: '^5.9.3 || ^6.0.0',
+   };
+ 
+   // Merge peerDependenciesMeta from tsdown and vite
+diff --git aapproved/packages/vite-plus-effect-fork/packages/core/package.json bworking/packages/vite-plus-effect-fork/packages/core/package.json
+index c2c2863e0f..4aac197f1d 100644
+--- aapproved/packages/vite-plus-effect-fork/packages/core/package.json
++++ bworking/packages/vite-plus-effect-fork/packages/core/package.json
+@@ -158,7 +158,7 @@
+     "sugarss": "^5.0.0",
+     "terser": "^5.16.0",
+     "tsx": "^4.8.1",
+-    "typescript": "^5.0.0 || ^6.0.0 || ^7.0.0",
++    "typescript": "^5.9.3 || ^6.0.0",
+     "unplugin-unused": ">=0.5.0",
+     "unrun": "*",
+     "yaml": "^2.4.2"
+diff --git aapproved/packages/vite-plus-effect-fork/pnpm-lock.yaml bworking/packages/vite-plus-effect-fork/pnpm-lock.yaml
+index ee293f706a..5066b5a9d8 100644
+--- aapproved/packages/vite-plus-effect-fork/pnpm-lock.yaml
++++ bworking/packages/vite-plus-effect-fork/pnpm-lock.yaml
+@@ -323,6 +323,15 @@ importers:
+       '@oxlint/plugins':
+         specifier: 'catalog:'
+         version: 1.79.0
++      '@tiara-stack/oxlint-effect':
++        specifier: link:../../../oxlint-effect
++        version: link:../../../oxlint-effect
++      '@tiara-stack/tsgo-effect':
++        specifier: link:../../../tsgo-effect
++        version: link:../../../tsgo-effect
++      '@tiara-stack/tsgolint-effect':
++        specifier: link:../../../tsgolint-effect
++        version: link:../../../tsgolint-effect
+       '@vitest/browser':
+         specifier: 'catalog:'
+         version: 5.0.1(vite@packages+core)(vitest@5.0.1)
+@@ -490,7 +499,7 @@ importers:
+         specifier: ^4.8.1
+         version: 4.23.15
+       typescript:
+-        specifier: ^5.0.0 || ^6.0.0 || ^7.0.0
++        specifier: ^5.9.3 || ^6.0.0
+         version: 6.0.3
+       unplugin-unused:
+         specifier: '>=0.5.0'
+@@ -4694,397 +4703,469 @@ packages:
+     resolution: {integrity: sha512-Oc2KInVkPfUjEB4PeV6X0NvIoyYTzDe/WmqFrTwBqKs6YKnz4A7XwWQvJTb7M0rLz9a6WgpUUiiS5QKaCi4O/g==}
+     cpu: [arm64]
+     os: [android]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-android-arm64@0.8.7':
+     resolution: {integrity: sha512-C/0zV5IhgVdYhGJTwrY0v8dknxlhiKwtVJkMUaexu9/QvRmzlV4vfU3hZlUSgqc2BxQHntL1mCVbDq8j0FRFDw==}
+     cpu: [arm64]
+     os: [android]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-android-arm64@0.9.3':
+     resolution: {integrity: sha512-viote6xAyL5cKLquV2X2wRfopSckH+msDYbaI8Hh8JAaogYs8MJZVRUbSrbsY29TaPrIFZwNRwQ8+YSxs0dkGw==}
+     cpu: [arm64]
+     os: [android]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-darwin-arm64@0.10.2':
+     resolution: {integrity: sha512-3H7eNPIHJndUJXZ4QUGBPq1zC6RGcUZfm7bymJes+/N7wTVWUn1bxZ9JcozYHpkWQNm9f23G8YWbaHD9aYH72A==}
+     cpu: [arm64]
+     os: [darwin]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-darwin-arm64@0.8.7':
+     resolution: {integrity: sha512-/u+REDMI4a0/lsJXTM4c53/w31OGZLOReZIyg62uhgLs0kc8NHsj/nOcxTdlQjq5gi0zhdkccD9LaLTXcdzPvw==}
+     cpu: [arm64]
+     os: [darwin]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-darwin-arm64@0.9.3':
+     resolution: {integrity: sha512-y2PGOLyxc724EJ+Et/5PxGfutQuV1Z2J9cxHo6W1I5CR3nk0i03J4yPrnw6rNJOfrtlISzcc7q0RrSyfPndpIg==}
+     cpu: [arm64]
+     os: [darwin]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-darwin-x64@0.10.2':
+     resolution: {integrity: sha512-AJOUpR2s3LF9AWiiub/Uyc/UoXNTWcq8hK3cVI6fUSXtwh34dG21J6hRuNlO6JVJFTo4o3ScVvZOrh/YFfUEAA==}
+     cpu: [x64]
+     os: [darwin]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-darwin-x64@0.8.7':
+     resolution: {integrity: sha512-sMMzFOwCo4WXR+/6zIBThOocSC50iIIZZdfiIDbaLvj0Ax/rWt/iavyfEAqajyvzydLyCqR/ZItdLWSRlu1umw==}
+     cpu: [x64]
+     os: [darwin]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-darwin-x64@0.9.3':
+     resolution: {integrity: sha512-xZ9UpXUOLmsrKVUp7MRXxWU3drNiilRC42OLpjWEhnOehIGVF1bZgzHcqRYJxVyU53RMrkRMsaxplkGd6Qo/ow==}
+     cpu: [x64]
+     os: [darwin]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-freebsd-x64@0.10.2':
+     resolution: {integrity: sha512-ms7DcZu87u5CiK/wMwvpKAvAmtaqKjCQIXNweMLypG6qbuiaOMQf1jpbB5+j46xBcgCovo8TQMcv0bCQLKIL9w==}
+     cpu: [x64]
+     os: [freebsd]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-freebsd-x64@0.8.7':
+     resolution: {integrity: sha512-MpdpKXix9P+Y1rKgjvcNeNtGjXeL1CmttNhYINrWls8kRpm4xM/oBGTmn6w7to8lAlwj5jm8q03dQPl5mRv4Qw==}
+     cpu: [x64]
+     os: [freebsd]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-freebsd-x64@0.9.3':
+     resolution: {integrity: sha512-RGCYSZw3VonreVTpur9iOfnbMngR2/f7UOE7gwcDx5WoHjIhtmTK9EIq9qs78ARdMFAPzKp5OzHljl5QMaGJ7g==}
+     cpu: [x64]
+     os: [freebsd]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm-gnu@0.10.2':
+     resolution: {integrity: sha512-xJDpYAsKV5+eaiBhTYl05fvT6sst4PsCeuIFMRu9b0/WCSrNQPfCDtAQ5/MS6xNpsdujdZEPR+gmfWk3ZG5i3A==}
+     cpu: [arm]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm-gnu@0.8.7':
+     resolution: {integrity: sha512-rr1srFLlPAmC1vtxfc9C1YLDe3iH09YjfSeeIidBqKhzx1MATjOAq4mjlRUOnhr/L27MotWIYOFKwVsd5JZFOg==}
+     cpu: [arm]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm-gnu@0.9.3':
+     resolution: {integrity: sha512-kjIJIw39GSPTF0hnq+jnM0tR+J5WlariAAWetxMtawNskITDT1ZigaK3YF5hMhDz2mAofaM1t+63qtx+7aXjeg==}
+     cpu: [arm]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm-musl@0.10.2':
+     resolution: {integrity: sha512-qfTkgd7AEx61l4K9VtXWCGTxc/fmXJ4ZheDz3i+/AAJUtg4sa0bPrc0VBxPggB/rayR8Z3+JfrBItuyanBJJ9Q==}
+     cpu: [arm]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm-musl@0.8.7':
+     resolution: {integrity: sha512-eAufXh8qBRpiSO6ueaMDL+yyoXIGLhpUce72YbcACtZU2qhExwBIJyEtQf5kH2Ki0X2aqkSjSfog4OPtKXan3Q==}
+     cpu: [arm]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm-musl@0.9.3':
+     resolution: {integrity: sha512-TVHeVdzaS4ub86URrQufiy4t01ZtdyKDZ5sTPqWFKAUbQJ7rQ0o5vIT+/jCeHQbP+Yf9p5peRdmPbcZewoDNiA==}
+     cpu: [arm]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm64-gnu@0.10.2':
+     resolution: {integrity: sha512-4e6Mifm/4UdjtU3D8mATIrvgP+xEiH8xtQOjd0zpd72XKWT7ug3sdyhq2utkkZFP6BvYp7SgZrI+aR4VeIOHdw==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm64-gnu@0.8.7':
+     resolution: {integrity: sha512-gw4w6wPoHObBrdIC4duVWLmJOvpdE25j5D7yrM5mACNlK4klRz/lv8hK+ssQk9EJHBgZjSaqZIJVFgqNYbfv7A==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm64-gnu@0.9.3':
+     resolution: {integrity: sha512-9aQeeLh1qaCa2GcyzHnwLKGfFrsI+KOyhnh4+fICSq5kyhzCWQfXVCCK4RTEZPLcyuVwfN5Id0JEYavRN4oNTQ==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm64-musl@0.10.2':
+     resolution: {integrity: sha512-RdsJrUfDYFVV3JOmWFUWwSu31fa1APn12xDeIKxgl/YWxrabwtxsDBNjF2561c7tmcbiewdCUvngqRs8AyGVLA==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm64-musl@0.8.7':
+     resolution: {integrity: sha512-L68N6Y4XkqcIaKo3Ra88JEvBEH4AHff44A4INcrxeVWZ8CZtu2tCpfVxe3hR8qQQMcvBSQlDn24KpkCKEhVvfA==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm64-musl@0.9.3':
+     resolution: {integrity: sha512-TLXA5Hd1nr8VSP2MtxcFddsBIHj+DPpyG5eberEGMATndgG7STlKQmle51MV0MZ8UgsdYM6CybIVpzlCPQwP9w==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-x64-gnu@0.10.2':
+     resolution: {integrity: sha512-mVzWimEPPreaPyXIUvxsHoJzvO7ckZ5j0LgQFHz04zQIRwt9A9T2hA7K5/jYjJKkMxWG/U2VjhGNwVhtyU+uqg==}
+     cpu: [x64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-x64-gnu@0.8.7':
+     resolution: {integrity: sha512-dzyAbltJmf3Cqlb8HcFuYIf5Yn0fl1vTr3XJ9HiVNNvOlhqPSArOqtw9vI1p6/VTXTjrMLXlU+s+/kNHiIy/Cw==}
+     cpu: [x64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-x64-gnu@0.9.3':
+     resolution: {integrity: sha512-tk0BFbF3Clb9k9biPH3qmr+Qwk24rRM26+HY91hYXmZlzlepZG0scQ6OffZFWtzwKE5JjlZpMdcWj1lTiHbEjA==}
+     cpu: [x64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-x64-musl@0.10.2':
+     resolution: {integrity: sha512-Y77fyISurmr2mvO1yeq3u+x/WJbACgPR4w+lzEVx30ViCxZzIGrZPRN1yEdZ9xUNPNsIO5thBHIdRNG+UGUG+Q==}
+     cpu: [x64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-x64-musl@0.8.7':
+     resolution: {integrity: sha512-Otw4MH3404q0Bbvl+YTdW9aoUV5vXmUw8260bWvt1XlaoIX/ceSgI4ygheRDMfBPoHt6FDayQaO9OLVUZAgkFA==}
+     cpu: [x64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-x64-musl@0.9.3':
+     resolution: {integrity: sha512-xo+pXshsCXruEEkDMbwHqkeTyC4XHb6A6oXr6x2YK3jOMcS5kZz0e26BmTCr40J0nY/K3ysmwG9R1xHygtiuwQ==}
+     cpu: [x64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-win32-arm64@0.10.2':
+     resolution: {integrity: sha512-1+tGLyG0u5YYy0lev4ck7/0sd8xJ9SZde0dLut7qLDPZV5WVTV8x6OxNXUne/PGuHZyO1vK+txPQzzHOyXHGSw==}
+     cpu: [arm64]
+     os: [win32]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-win32-arm64@0.8.7':
+     resolution: {integrity: sha512-qo/jyrzryiBuKEsFiuWaBCBe3tRMynQ0qFWFgOEjcCMQeZfBm+wKiVEUEFXXLc7bh8YezguAWp0Mtnhq4ARNyA==}
+     cpu: [arm64]
+     os: [win32]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-win32-arm64@0.9.3':
+     resolution: {integrity: sha512-70gAQo6HZzMgIJTjeMZOEO2XaRj4GcNGP/n81R9tXQv0x8d4ZHnZDv+ygeWfHo+xchAUPwpnrVZA4p6RhJa3GQ==}
+     cpu: [arm64]
+     os: [win32]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-win32-x64@0.10.2':
+     resolution: {integrity: sha512-8a2SExRohRbwC0MY4VpOF0/RSckrJ2ASZqAor5/RYSJJaeadR93n10gZzcKT6pY9ukiSOIZCRKVRD2tH73T0qA==}
+     cpu: [x64]
+     os: [win32]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-win32-x64@0.8.7':
+     resolution: {integrity: sha512-D5lDsVDx6m00E6bWySlWdH72Ca4TPSaphDqB6QjU6MpuNLIJqoGoatYyq2rOmBE8Zv/kunot/o58KGL03P3eiA==}
+     cpu: [x64]
+     os: [win32]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-win32-x64@0.9.3':
+     resolution: {integrity: sha512-7Hz3NGlq6qBBR8zMEk6GMZivofNjnYZpMXSoUwUgz9Ur2LaivuP23HQh0ern+T6HVkTJEvilw4VJrg1rX1Ugcg==}
+     cpu: [x64]
+     os: [win32]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-parser/binding-android-arm64@0.10.2':
+     resolution: {integrity: sha512-2VPBU9fRGRAQ2xPAvghnec3oou5Nrxm2Bezhf+13UMspAxQSkF/32r+ySKXSwIPA5/RivumDJDxAxc301Sgicw==}
+     cpu: [arm64]
+     os: [android]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-android-arm64@0.8.7':
+     resolution: {integrity: sha512-eGKYiUDX7Y0V7tDTmg+JTVnXnjMqfXXsorZ+EDf5kxwchQ3Or1HS14MzI2fw+jFhHR85fCWt+mtX33Yao73hIQ==}
+     cpu: [arm64]
+     os: [android]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-android-arm64@0.9.3':
+     resolution: {integrity: sha512-z3tDGTaUXD5Q4IuebFOY/QHxhR/SqujMhkMv9C5bh25upyFEXdafp0MsXQIIheWhVZzn5VMOniyxFni/7s9LgQ==}
+     cpu: [arm64]
+     os: [android]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-darwin-arm64@0.10.2':
+     resolution: {integrity: sha512-LD+PMZE51tCYTOss5HBkm3/AE39MvcMDBfWJx7A4yDcjfNbAQDnHZKtzSOuqrswx+TQHY0ws5xn6+fWOwtmfBA==}
+     cpu: [arm64]
+     os: [darwin]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-darwin-arm64@0.8.7':
+     resolution: {integrity: sha512-Re0RHelKLnjEURulY2/KxW+Ngb8zuNA4BRZuMwgGQNzVumT6u4U2N2hc01oeYVNVof0i7GrXE4UCNBgbpRRnjQ==}
+     cpu: [arm64]
+     os: [darwin]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-darwin-arm64@0.9.3':
+     resolution: {integrity: sha512-hzKvKSKS7z3ufnu1VkQYEoxmS6A5uNnkwukKnc2atxpWdq648nLVOqut4h1jUXjbM2WcoTfuZLF6AHAGFf8cmg==}
+     cpu: [arm64]
+     os: [darwin]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-darwin-x64@0.10.2':
+     resolution: {integrity: sha512-mmZ8cND+AoIIMRERyMinlg5ApHxP23B9jH2B5wT7T+dliPa9rubLxneB/SUjFwyUjGaFnB5G7t4YvpfbO5zbkQ==}
+     cpu: [x64]
+     os: [darwin]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-darwin-x64@0.8.7':
+     resolution: {integrity: sha512-Hn8DROtQkjlA1ACbPgj4a7eP9IuVOI504oiTwpkWPbpaDWD9KdmnVYCqW+1LfenNK/g7O9NhWGpXEdaCNX7lIA==}
+     cpu: [x64]
+     os: [darwin]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-darwin-x64@0.9.3':
+     resolution: {integrity: sha512-OM2PiVlPATvzlj/KGHNlu+t8FC3YzM5joVNjhsz/EaigQ8x2UUQ1Q0agQLiv5GZ2L8TSzrLUwBCZ7YOvP8q+tw==}
+     cpu: [x64]
+     os: [darwin]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-freebsd-x64@0.10.2':
+     resolution: {integrity: sha512-gVIjaaIddbRfAhHlC8N809wQWml7mxfSVnzaLtzGXObTeFTPAg/YVnQXt1UOhPM1ah5eG/8Y0RUlNpB4GVe7eQ==}
+     cpu: [x64]
+     os: [freebsd]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-freebsd-x64@0.8.7':
+     resolution: {integrity: sha512-bAP2OV8wRuzplX/jYxv9+vvqQT8JxyNphI8fLfXGL054Xs+4/J5u33cIm3y4rxY8rdoLmmdiJs2Tq7r7lrDRfA==}
+     cpu: [x64]
+     os: [freebsd]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-freebsd-x64@0.9.3':
+     resolution: {integrity: sha512-WMn9M4LHNVysGNwsAJ9gpRPqQIW2lcPrDNGcyk0agx3IYqCJq1MQugh6Be8Otc5U08eGdE39o8Kx9YWJmXz7GA==}
+     cpu: [x64]
+     os: [freebsd]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-arm-gnu@0.10.2':
+     resolution: {integrity: sha512-q/XPPQQAPdlw05aPj30ygBhekmQryGOwxVraBgApjKK8yY1kNQgqq6XCYLF1WHSee+lhxclrTO7W0/bt7dR1GA==}
+     cpu: [arm]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-arm-gnu@0.8.7':
+     resolution: {integrity: sha512-kTYwJQQgmZeAWdDIWabiReIZMpmfLueIj1tCmjStUtFGhR1Z0qwxonKVfUC4N7h/VhGGzLZ//7O1kgt1QKqgCg==}
+     cpu: [arm]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-arm-gnu@0.9.3':
+     resolution: {integrity: sha512-vqKjwiyW1FWvbykYMEQIcAJwA17WxK3rxxqDuyCvQwcNVaLEUxI4BXiUdlF3kHucc7MnoFQhoRPkySgOzlLM+Q==}
+     cpu: [arm]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-arm-musl@0.10.2':
+     resolution: {integrity: sha512-A+Cb0I1hFF4wilTQpWs79k1aNnj4B2tkrHx3zsuUNF9BtVY2zPZ4yeQEM/zjXrS/qJlNMZVK9NrWJjwdpnTrfg==}
+     cpu: [arm]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-arm-musl@0.8.7':
+     resolution: {integrity: sha512-uL4jE8HPT2BLlxAXyD10LqgPuXa9eDa0BKpCdSANmzIJghq/2eZo3/gQNtaxPZMupWoxjYzSad9IXrwu7aYPXQ==}
+     cpu: [arm]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-arm-musl@0.9.3':
+     resolution: {integrity: sha512-qohilhYOT+zkt2gYzym4F1T6BzRdvPqS9/sFB03pmnVV8LrvjOXVsGwEBAa3CEvzJKhAZjdTmVz7zsVdjyHWLg==}
+     cpu: [arm]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-arm64-gnu@0.10.2':
+     resolution: {integrity: sha512-aGNSzqIqqphFwAdIFwVvKIyXD1Iy3CxrEJVIZAT87Ecyi4vCmmDD2v2l9h+Gd3/wSy3JZlOI792LJbKAjyy9rQ==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-arm64-gnu@0.8.7':
+     resolution: {integrity: sha512-3gVN4pWSKZmXiNX7cU164dR9MPvesCHnlH6nPfpK+yQsCuYphjKKplcb4SnZBrhiqmXbgb2HR0c2TS0IZUPhgA==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-arm64-gnu@0.9.3':
+     resolution: {integrity: sha512-tvTIyUvTGkeee68i4JIo9o27As+Ug6LXOZvElGgFbTs6+KBdb5LGhvugaIQljdfIsm2XnIbOLG6OnQSXHMLB9w==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-arm64-musl@0.10.2':
+     resolution: {integrity: sha512-Ddl1sF0rtuCXyHGSOV6dcmdx+ETv1iD+IVFqQuOjzkJZWclxJxdBWX6ZJMRtTiGqGUTbqLEKiTXxpR/Bvqk+2A==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-arm64-musl@0.8.7':
+     resolution: {integrity: sha512-S0mwfEjoLpxzXeZw802Wa4RaELsQiPtWqG6INcy8j4GtvNFtl4LCX3eGO1XLn9pyLAISLzTRyU3zUCBUPin8lg==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-arm64-musl@0.9.3':
+     resolution: {integrity: sha512-OWZBHW1wuChBpFlrF+On1yiBcFPMRrj2g0VKsM/PCBGffu1OM0ORkS+vLS3Snu6wYwndM5Dd9Ctvux6eUlrQjA==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-x64-gnu@0.10.2':
+     resolution: {integrity: sha512-/nlcpR6IF5U+0m5L9wvAIXeQa2DT+BXuvqKDsTcOTlcc0B4dHNyqE5hTXsS4hAyimpy2ZK8A1zMNF5hTrjg2cg==}
+     cpu: [x64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-x64-gnu@0.8.7':
+     resolution: {integrity: sha512-lnbWdPmerE5D1uH1G4IEZKnPzCrWCStRGrtgpSIe1RibAo5bZIjDbbbPYXmMHCEh4F+x/JaJpElh26a3r+BPbg==}
+     cpu: [x64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-x64-gnu@0.9.3':
+     resolution: {integrity: sha512-/tbk1h0dlADOCngbiQO9V3SHwBIJkoGBq8BDEraSw2CC3nGxPEPTCCYUDp5738Ij2FxVwy1FWVuhFkHvpMrPbQ==}
+     cpu: [x64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-x64-musl@0.10.2':
+     resolution: {integrity: sha512-GX80dxTQD/M/OryyuxJcFzFENzry3cDFPvCFTyWogNWQH3fSHfMrNfpwpl1YzMos1eV9NygK5GSDG7VArQlb4w==}
+     cpu: [x64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-x64-musl@0.8.7':
+     resolution: {integrity: sha512-769uwndMvMzUvATWbAcEvyLHKA+DzhHSCl/obBUrRdYfRo26yxui6S8y3z7uJ+Naup7UKrDxrpK7OnQkxkl9KQ==}
+     cpu: [x64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-linux-x64-musl@0.9.3':
+     resolution: {integrity: sha512-u3+0sCso/mcjDvtc3866D2giV7l34PDyDVBkMesAWa3DWbIWPlybehi2SSnmScgArV22ctqSSgUzdBBVJ6zYAg==}
+     cpu: [x64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-win32-arm64@0.10.2':
+     resolution: {integrity: sha512-agePQBV4VHewiGU0ACSjscZ/hJd283f9JfAF19Gf1rI5+wy5tTgx4GS36i0b3xim15AQ4RCpDRosEvhLZ4zAOw==}
+     cpu: [arm64]
+     os: [win32]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-win32-arm64@0.8.7':
+     resolution: {integrity: sha512-mEB/9PlaAkisJ6KWGz0zvywXoU6+80dTlR2LwS7s/jcXXoU6fm2+sitBZXtqu3+Q4DcDgPxM45uWMCzPs0TSRw==}
+     cpu: [arm64]
+     os: [win32]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-win32-arm64@0.9.3':
+     resolution: {integrity: sha512-xnGEvdhyjRkXozHtpXVpEEkyGZWAxJ3RoILv7XRV5SvTEztaTCk5GQyfcOzI9An/EJtcL4ERCI8QmS0TpDPJiA==}
+     cpu: [arm64]
+     os: [win32]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-win32-x64@0.10.2':
+     resolution: {integrity: sha512-s8//CMpgL5+y1lvDCdyh1rwGI5+ytDJywFJRe1vnhI7n0j+caxshNucurikYLLVeQ2SYFex6aPrzgQxkabBQRA==}
+     cpu: [x64]
+     os: [win32]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-win32-x64@0.8.7':
+     resolution: {integrity: sha512-8vNB2DP0ou61nGb8tc/qfi41gfyDXz1MHr2zqL3nR+cJ6CEbiuWV/l/a/vv151gCgiZLLAyGkQGENpozdg716w==}
+     cpu: [x64]
+     os: [win32]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-win32-x64@0.9.3':
+     resolution: {integrity: sha512-N5eShGcuwnrXEprePFmEjtng6acZmtnC4zgazK9xxkavcx1q1uX8Nz8lU5RS973EMlNr902cIc6Cd2D4tqZDBg==}
+     cpu: [x64]
+     os: [win32]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-toolchain/types@0.10.2':
+     resolution: {integrity: sha512-sSeo4SSSToiS+sSD+bwn/s94EEcaLJ7tG5LCp8gFYC1G5VzxzX7fqB6m9RU1yMD8KTpu6zdU/I1NlQf8hVBJ9Q==}
