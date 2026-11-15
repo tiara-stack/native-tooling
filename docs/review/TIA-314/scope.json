@@ -1,6 +1,6 @@
 {
   "ticket": "TIA-314",
-  "implementation_commit": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04",
+  "implementation_commit": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9",
   "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
   "upstream": {
     "repository": "https://github.com/voidzero-dev/vite-plus",
@@ -9,21 +9,21 @@
   },
   "policy": "Exclude only unchanged pinned upstream source. Keep Tiara overlays, root package/version/lock/config changes, generated artifacts, generation inputs and affected consumers. Pinned upstream metadata remains provenance context. Review mixed source as Tiara overlays against the pin.",
   "counts": {
-    "raw_changed_paths": 6961,
+    "raw_changed_paths": 6962,
     "authorized_import_exclusions": 6419,
-    "review_target_paths": 542,
+    "review_target_paths": 543,
     "mixed_or_custom_source_paths": 15,
     "skipped_reviewable_paths": 0,
     "reviewed_paths": 0,
-    "pending_review_target_paths": 542,
+    "pending_review_target_paths": 543,
     "source_adaptation_paths": 454,
-    "hosted_metadata_paths": 88,
+    "hosted_metadata_paths": 89,
     "changed_existing_scope_metadata_paths": 1,
     "historical_import_update_exclusions": 6420,
     "newly_mixed_import_paths": 1
   },
-  "review_state": "Immutable source-epoch snapshot: LSP options validate before staging/publication. Failed refresh preserves the published root and bridge generation. Source and scoped44-case lifecycle suites,package,format and overlay checks pass; one direct-packed launcher and two producer copies refreshed. Affected independent local and external gates remain pending.",
-  "custom_overlay_patch_sha256": "cdc8453c008a16321c4da3c7b7ba0bc193c0c83eaa2b9f633f25c8d942f65ef6",
+  "review_state": "Immutable R4 source-epoch snapshot: effective LSP precedence/cache/drain, scoped bundled-runner detection, complete JS-input invalidation and fixture readiness/signal repairs pass affected checks. Fresh JS/declaration production and actual scoped generation are bound below; native compilation is exact reuse. Independent local re-entry and external gates remain pending.",
+  "custom_overlay_patch_sha256": "2c1ddff2c29ab0423e46955c51a1413179a41cb96f38f87c830e088ffcbe6bae",
   "authorized_import_exclusions": [
     {
       "path": "packages/vite-plus-effect-fork/.claude/agents/cargo-workspace-merger.md",
@@ -38830,7 +38830,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DPBybJV1.mjs",
+      "path": "packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DeSceppM.mjs",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -38842,7 +38842,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-z9tfdr3B.mjs",
+      "path": "packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-DLjQmstW.mjs",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -38854,7 +38854,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/dist-D2P1s4_R.mjs",
+      "path": "packages/vite-plus-core/dist/rolldown/shared/dist-BrOkQYx7.mjs",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -38866,7 +38866,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/load-config-BiiBolfa.mjs",
+      "path": "packages/vite-plus-core/dist/rolldown/shared/load-config-zgE_B6KC.mjs",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -38886,11 +38886,11 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/parse-De9PCajd.mjs",
+      "path": "packages/vite-plus-core/dist/rolldown/shared/parse-ClDaqyja.mjs",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/prompt-C6rFTVm4.mjs",
+      "path": "packages/vite-plus-core/dist/rolldown/shared/prompt-Bq7DJfKQ.mjs",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -38898,7 +38898,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/rolldown-DeWTZWR_.mjs",
+      "path": "packages/vite-plus-core/dist/rolldown/shared/rolldown-DjkfKFe_.mjs",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -38906,7 +38906,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/rolldown/shared/watch-BFId5KRN.mjs",
+      "path": "packages/vite-plus-core/dist/rolldown/shared/watch-B6R5VMW-.mjs",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -38918,7 +38918,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-B97bUe6r.js",
+      "path": "packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-DqTC_pe8.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -38926,15 +38926,15 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-Dv0qXBQO.js",
+      "path": "packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-BIT_p6tM.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-CA0t6ZI1.js",
+      "path": "packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-Db7go0DB.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/dist-DmsDu7my.js",
+      "path": "packages/vite-plus-core/dist/tsdown/dist-BDvaLIYu.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -38946,7 +38946,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/main-RJSjZfzp.js",
+      "path": "packages/vite-plus-core/dist/tsdown/main-Bm9ctBqa.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -38962,11 +38962,11 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-C9u53Wjd.js",
+      "path": "packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-5g0bJSpw.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-hk-Nyn9Y.js",
+      "path": "packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-C_CpBcIR.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -38978,7 +38978,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/src-DaTFx-3f.js",
+      "path": "packages/vite-plus-core/dist/tsdown/src-Dnaj_Fzx.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -38986,11 +38986,11 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/target-DgdLrXba-BngL9aSY.js",
+      "path": "packages/vite-plus-core/dist/tsdown/target-DgdLrXba-DVjxSeJQ.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/tsc-CVPiBJQO.js",
+      "path": "packages/vite-plus-core/dist/tsdown/tsc-DDwzbr-g.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39002,7 +39002,7 @@
       "mode": "raw diff"
     },
     {
-      "path": "packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-jJD4zZs9.js",
+      "path": "packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-BaDiiUbf.js",
       "mode": "generated transformation mapping; stock algorithms context"
     },
     {
@@ -39164,7 +39164,7 @@
       "path": "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs",
       "base_sha256": null,
       "pin_sha256": null,
-      "head_sha256": "f2066df0416c90c6714719133d6ccdf371b85d10f3c544a43b6af719a63cbeae",
+      "head_sha256": "859ca83dbb9df9d2aca475bc46512dab137e763e24ec61718dc837573ff774bb",
       "mode": "Tiara overlay against approved pin"
     },
     {
@@ -39231,7 +39231,7 @@
       "path": "packages/vite-plus-effect-fork/packages/core/build.ts",
       "base_sha256": "3b5cfdff3b95b884fa0637dbf41c7b577b1153d2b5a6e75d05b5496b51c9c2a4",
       "pin_sha256": "58a0c071eb412c18e884544df0e791a5d87d8657297341234b3c638fd02d2ca3",
-      "head_sha256": "1bbf54b62f61a93ca038742e8c7702961ad84c241f2222210d354b7739817902",
+      "head_sha256": "f3d81d783f020a3abaef59cd893753f7438c17f50857d332a7bcdf788a3b163f",
       "mode": "Tiara overlay against approved pin"
     },
     {
@@ -40749,6 +40749,10 @@
       "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
     },
     {
+      "path": ".review-packets/tia314/84-code.json",
+      "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
+    },
+    {
       "path": ".review-packets/tia314/README.md",
       "mode": "hosted delivery metadata; decoded source coverage and selection require verification"
     },
@@ -40803,7 +40807,7 @@
     ],
     "Markdown_qualification": "Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.",
     "OCR_carry": "Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.",
-    "final_main_source_epoch": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04",
+    "final_main_source_epoch": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9",
     "identical_queue_squash_tree": "34d345e35d45df8fc931cfd2aa7312fbe0ae5a99"
   },
   "generated_output_review_policy": {
@@ -40903,12 +40907,12 @@
     }
   ],
   "hosted_delivery": {
-    "source_epoch": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04",
+    "source_epoch": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9",
     "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
     "source_adaptations": 454,
     "stock_exclusions": 6419,
     "historical_stock_update_exclusions": 6420,
-    "packet_metadata_files": 88,
+    "packet_metadata_files": 89,
     "packet_paths": [
       ".review-packets/tia314/01-code.json",
       ".review-packets/tia314/02-code.json",
@@ -40993,6 +40997,7 @@
       ".review-packets/tia314/81-code.json",
       ".review-packets/tia314/82-code.json",
       ".review-packets/tia314/83-code.json",
+      ".review-packets/tia314/84-code.json",
       ".review-packets/tia314/README.md",
       ".review-packets/tia314/index.json",
       ".review-packets/tia314/hosted-config.yaml",
@@ -41000,7 +41005,7 @@
       ".review-packets/tia314/initial-description.md"
     ],
     "encoding": "Existing canonical UTF-8 JSON string arrays, exact target identities and bounded contexts; generated shared transforms plus every mapping; no unchanged stock algorithm audit.",
-    "current_metadata_review_pending": 89,
+    "current_metadata_review_pending": 90,
     "no_circular_digest": "Packet body hashes are not embedded here. Actual metadata head is bound by the coordinator after commit."
   },
   "import_exclusion_accounting": {

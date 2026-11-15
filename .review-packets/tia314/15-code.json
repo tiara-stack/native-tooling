@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04",
+ "source_epoch": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -18,23 +18,23 @@
     "after": {
      "path": "README.md",
      "mode": "100644",
-     "blob": "0f9d3fd5e13a19aaada5e7a13379df4627e82c1e",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "blob": "5e605e655c6f0bae337b08acf5110673390f38f3",
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
-    "actual_sha256": "43b5605742f4d0d6a4883fb00ad2c4542634752f1bb2eb5bd77c7a28da2f5f3d",
-    "canonical_patch_sha256": "3c0e720a453a19fed51ce5f87b35d22e642b61ffe240b18e1e59322c4d80271a",
-    "canonical_patch_bytes": 4662
+    "actual_sha256": "4f9e4a22691defa29f948e75e4204c1d1be65b989edc56811f4d7af9dbe5a167",
+    "canonical_patch_sha256": "06e9e039933e7131e57ad5f7b064cfcc69caa3be2e40dbf89d6d91b3fe6d70e5",
+    "canonical_patch_bytes": 5489
    },
    "fragment": {
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 100,
-    "sha256": "3c0e720a453a19fed51ce5f87b35d22e642b61ffe240b18e1e59322c4d80271a"
+    "line_end": 114,
+    "sha256": "06e9e039933e7131e57ad5f7b064cfcc69caa3be2e40dbf89d6d91b3fe6d70e5"
    },
    "canonical_patch_lines": [
     "diff --git a/README.md b/README.md\n",
-    "index c9c02bbfc5..0f9d3fd5e1 100644\n",
+    "index c9c02bbfc5..5e605e655c 100644\n",
     "--- a/README.md\n",
     "+++ b/README.md\n",
     "@@ -8,6 +8,7 @@ This repo owns the native forks and publishable npm package boundaries for:\n",
@@ -113,7 +113,21 @@
     " \n",
     " ## Publishing Shape\n",
     " \n",
-    "@@ -110,6 +127,7 @@ publisher entry:\n",
+    "@@ -79,6 +96,13 @@ The current packages resolve binaries in this order:\n",
+    " 2. `vendor/<platform>-<arch>/<binary>` in the published package\n",
+    " 3. local development builds under `native/`\n",
+    " \n",
+    "+The currently declared native platform packages are Linux x64 builds. On\n",
+    "+Windows, tsgolint resolution still accepts an Effect-enabled `tsgolint.exe`\n",
+    "+from the vendor or local-build paths, or `TIARA_TSGOLINT_EFFECT_PATH`. A missing\n",
+    "+Effect backend fails explicitly; an upstream `node_modules/.bin/tsgolint.cmd`\n",
+    "+does not substitute for that backend or guarantee Effect diagnostics. This is\n",
+    "+the existing native-binary boundary, not a promise of a Windows prebuilt package.\n",
+    "+\n",
+    " Release CI should build native binaries per platform, stage them with\n",
+    " `pnpm native:stage`, and upload package builds through Vite+'s staged\n",
+    " publishing passthrough:\n",
+    "@@ -110,6 +134,7 @@ publisher entry:\n",
     " - package: `@tiara-stack/oxlint-effect`\n",
     " - package: `@tiara-stack/effect-vitest`\n",
     " - package: `@tiara-stack/vite-plus`\n",
@@ -121,7 +135,7 @@
     " - owner/repository: `tiara-stack/native-tooling`\n",
     " - workflow file: `publish.yml`\n",
     " - environment: `npm`\n",
-    "@@ -125,7 +143,7 @@ vp pm stage approve <stage-id>\n",
+    "@@ -125,7 +150,7 @@ vp pm stage approve <stage-id>\n",
     " ```\n",
     " \n",
     " The `patches/` directory contains the current consumer-side pnpm patches for\n",

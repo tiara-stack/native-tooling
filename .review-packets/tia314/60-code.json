@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "code",
- "source_epoch": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04",
+ "source_epoch": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -13,29 +13,30 @@
     "after": {
      "path": "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint-lsp.mjs",
      "mode": "100644",
-     "blob": "d70497390384a0cd692874b36bb7aeb9b048f92d",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "blob": "d93680a4449df6050951930fe2faa075ffd80d4f",
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
-    "actual_sha256": "b68badafaf91fbfa7fd203e689f52fd2e6df2cbec09544adc5104219413006b2",
-    "canonical_patch_sha256": "fcb52ed9299cf925143ffb06026e90cb0c7b7a8da72a38287fead18168134dc0",
-    "canonical_patch_bytes": 8104,
+    "actual_sha256": "82db96d5c58b6d1f53efe7ac4aebfe0354eca424c4dedd5715c1388f8a1c86b9",
+    "canonical_patch_sha256": "234662eb1b6c03b008708990492dfa87068ba2df0a4d7b4eb9b7ecd723ee817f",
+    "canonical_patch_bytes": 8692,
     "parent_preimage": null
    },
    "fragment": {
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 203,
-    "sha256": "fcb52ed9299cf925143ffb06026e90cb0c7b7a8da72a38287fead18168134dc0"
+    "line_end": 214,
+    "sha256": "234662eb1b6c03b008708990492dfa87068ba2df0a4d7b4eb9b7ecd723ee817f"
    },
    "canonical_patch_lines": [
     "diff --git aworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint-lsp.mjs bworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint-lsp.mjs\n",
     "new file mode 100644\n",
-    "index 0000000000..d704973903\n",
+    "index 0000000000..d93680a444\n",
     "--- /dev/null\n",
     "+++ bworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint-lsp.mjs\n",
-    "@@ -0,0 +1,197 @@\n",
+    "@@ -0,0 +1,208 @@\n",
     "+import { Transform } from \"node:stream\";\n",
+    "+import { finished } from \"node:stream/promises\";\n",
     "+import { pathToFileURL } from \"node:url\";\n",
     "+\n",
     "+// Oxlint's native LSP reads options from protocol messages, not CLI flags.\n",
@@ -49,6 +50,7 @@
     "+  const merge = (uri, options) => {\n",
     "+    if (options && typeof options === \"object\" && !Array.isArray(options))\n",
     "+      workspaces.set(uri, options);\n",
+    "+    else if (typeof uri === \"string\" && !workspaces.has(uri)) workspaces.set(uri, {});\n",
     "+    const { defaults, overrides } = settings();\n",
     "+    return { ...defaults, ...workspaces.get(uri), ...overrides };\n",
     "+  };\n",
@@ -123,7 +125,7 @@
     "+            jsonrpc: \"2.0\",\n",
     "+            id: message.id,\n",
     "+            result: message.params.items.map((item) =>\n",
-    "+              item.section === \"oxc_language_server\" ? merge(item.scopeUri, {}) : null,\n",
+    "+              item.section === \"oxc_language_server\" ? merge(item.scopeUri) : null,\n",
     "+            ),\n",
     "+          }),\n",
     "+        );\n",
@@ -173,6 +175,9 @@
     "+  child.stdout.pipe(server).pipe(output, { end: false });\n",
     "+  return {\n",
     "+    failed,\n",
+    "+    drain() {\n",
+    "+      return finished(server, { cleanup: true });\n",
+    "+    },\n",
     "+    refresh() {\n",
     "+      if (!initialized || child.stdin.destroyed || child.stdin.writableEnded) return;\n",
     "+      child.stdin.write(\n",
@@ -204,7 +209,7 @@
     "+  };\n",
     "+}\n",
     "+\n",
-    "+export function lspOptions(options) {\n",
+    "+export function lspOptions(options, effective = options) {\n",
     "+  const result = {};\n",
     "+  for (const key of [\"typeAware\", \"disableNestedConfig\"]) {\n",
     "+    if (typeof options[key] === \"boolean\") result[key] = options[key];\n",
@@ -222,14 +227,20 @@
     "+  const severity = options.reportUnusedDisableDirectivesSeverity;\n",
     "+  if (severity != null)\n",
     "+    result.unusedDisableDirectives = { error: \"deny\", warn: \"warn\", off: \"allow\" }[severity];\n",
-    "+  if (options.fixDangerously) result.fixKind = options.fix ? \"all\" : \"dangerous_fix_or_suggestion\";\n",
-    "+  else if (options.fixSuggestions) {\n",
-    "+    if (!options.fix)\n",
-    "+      throw new Error(\n",
-    "+        \"Native LSP requires --fix with --fix-suggestions; suggestion-only fixKind is unsupported.\",\n",
-    "+      );\n",
-    "+    result.fixKind = \"safe_fix_or_suggestion\";\n",
-    "+  } else if (options.fix) result.fixKind = \"safe_fix\";\n",
+    "+  // Fix flags jointly select one native option. Translate the effective\n",
+    "+  // config/CLI combination, while only forcing fixKind for a source that\n",
+    "+  // actually supplied fix flags. Unrelated CLI flags must not override editors.\n",
+    "+  if ([\"fix\", \"fixSuggestions\", \"fixDangerously\"].some((key) => options[key] != null)) {\n",
+    "+    if (effective.fixDangerously)\n",
+    "+      result.fixKind = effective.fix ? \"all\" : \"dangerous_fix_or_suggestion\";\n",
+    "+    else if (effective.fixSuggestions) {\n",
+    "+      if (!effective.fix)\n",
+    "+        throw new Error(\n",
+    "+          \"Native LSP requires --fix with --fix-suggestions; suggestion-only fixKind is unsupported.\",\n",
+    "+        );\n",
+    "+      result.fixKind = \"safe_fix_or_suggestion\";\n",
+    "+    } else if (effective.fix) result.fixKind = \"safe_fix\";\n",
+    "+  }\n",
     "+  return result;\n",
     "+}\n"
    ]
@@ -243,28 +254,28 @@
     "after": {
      "path": "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs",
      "mode": "100755",
-     "blob": "701ea05910c67538f1d67128d92bfa06c0ff0ff2",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "blob": "1749a2274539ad6056adc545c47ae61668bf191d",
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
-    "actual_sha256": "f2066df0416c90c6714719133d6ccdf371b85d10f3c544a43b6af719a63cbeae",
-    "canonical_patch_sha256": "6a145edcd7b73db81faf6692af826e823eea455eca67459f9bdf216124b2b1ae",
-    "canonical_patch_bytes": 10035,
+    "actual_sha256": "859ca83dbb9df9d2aca475bc46512dab137e763e24ec61718dc837573ff774bb",
+    "canonical_patch_sha256": "7a57d0e47f73e4c2f5406a6eab763ed905b4396c162c030c5607a98a4f1371dd",
+    "canonical_patch_bytes": 10404,
     "parent_preimage": null
    },
    "fragment": {
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 274,
-    "sha256": "6a145edcd7b73db81faf6692af826e823eea455eca67459f9bdf216124b2b1ae"
+    "line_end": 279,
+    "sha256": "7a57d0e47f73e4c2f5406a6eab763ed905b4396c162c030c5607a98a4f1371dd"
    },
    "canonical_patch_lines": [
     "diff --git aworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs bworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs\n",
     "new file mode 100755\n",
-    "index 0000000000..701ea05910\n",
+    "index 0000000000..1749a22745\n",
     "--- /dev/null\n",
     "+++ bworking/packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs\n",
-    "@@ -0,0 +1,268 @@\n",
+    "@@ -0,0 +1,273 @@\n",
     "+#!/usr/bin/env node\n",
     "+import { spawn } from \"node:child_process\";\n",
     "+import { createHash, randomUUID } from \"node:crypto\";\n",
@@ -355,7 +366,10 @@
     "+      : true;\n",
     "+}\n",
     "+if (explicitLsp.tsconfig) explicitLsp.tsconfig = resolve(explicitLsp.tsconfig);\n",
-    "+effectiveLspOptions.overrides = lsp ? lspOptions(explicitLsp) : {};\n",
+    "+const viteConfig = configPath && viteNames.includes(basename(configPath));\n",
+    "+// A Vite config can supply the other half of a CLI fix-option combination.\n",
+    "+// Standalone native configs retain explicit-option validation here.\n",
+    "+effectiveLspOptions.overrides = lsp && !viteConfig ? lspOptions(explicitLsp) : {};\n",
     "+if (configPath) effectiveLspOptions.overrides.configPath = resolve(configPath);\n",
     "+\n",
     "+async function prepareViteConfig(path) {\n",
@@ -409,9 +423,11 @@
     "+      return file;\n",
     "+    }\n",
     "+    materialize(config.lint ?? {}, rootFile);\n",
+    "+    const options = config.lint?.options ?? {};\n",
+    "+    const effective = { ...options, ...explicitLsp };\n",
     "+    const nextLspOptions = {\n",
-    "+      defaults: lsp ? lspOptions(config.lint?.options ?? {}) : {},\n",
-    "+      overrides: { ...(lsp ? lspOptions(explicitLsp) : {}), configPath: rootFile },\n",
+    "+      defaults: lsp ? lspOptions(options, effective) : {},\n",
+    "+      overrides: { ...(lsp ? lspOptions(explicitLsp, effective) : {}), configPath: rootFile },\n",
     "+    };\n",
     "+    // Share unchanged immutable children across updates. Published snapshots\n",
     "+    // remain valid until the native reader exits: it can still hold an old root.\n",
@@ -488,8 +504,7 @@
     "+// Own interruption before creating snapshots and until cleanup has settled.\n",
     "+for (const [signal, handler] of handlers) process.on(signal, handler);\n",
     "+try {\n",
-    "+  if (configPath && viteNames.includes(basename(configPath)))\n",
-    "+    await prepareViteConfig(resolve(configPath));\n",
+    "+  if (viteConfig) await prepareViteConfig(resolve(configPath));\n",
     "+  if (!closing) {\n",
     "+    child = spawn(native, preparedArgs, {\n",
     "+      stdio: lsp ? [\"pipe\", \"pipe\", \"inherit\"] : \"inherit\",\n",
@@ -497,12 +512,13 @@
     "+    });\n",
     "+    const exited = new Promise((done, reject) => {\n",
     "+      child.once(\"error\", reject);\n",
-    "+      child.once(\"exit\", (code, signal) => done({ code, signal }));\n",
+    "+      child.once(\"close\", (code, signal) => done({ code, signal }));\n",
     "+    });\n",
     "+    if (lsp) bridge = bridgeLsp(child, () => effectiveLspOptions);\n",
     "+    let result;\n",
     "+    try {\n",
     "+      result = await (bridge ? Promise.race([exited, bridge.failed]) : exited);\n",
+    "+      if (bridge) await Promise.race([bridge.drain(), bridge.failed]);\n",
     "+    } catch (error) {\n",
     "+      child.kill(\"SIGTERM\");\n",
     "+      await exited.catch(() => {});\n",
@@ -551,11 +567,11 @@
      "path": "packages/vite-plus-effect-fork/packages/cli/package.json",
      "mode": "100644",
      "blob": "9284730d474c3f72c76f3e6e3c4495139162dfbd",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
     "actual_sha256": "92bf6b9db21a0f099373999aaf8157a15a0c08e991099e9be27e14b360c6d0dc",
-    "canonical_patch_sha256": "8185dfdf963ec3b8b31276a13e4e4666289e281d4cdba4ce509d889a251bb5ac",
-    "canonical_patch_bytes": 897,
+    "canonical_patch_sha256": "6378375a274e7648d08ca966e6f17695808e8c2c6d70cf9bf1ca7e16b86e0d08",
+    "canonical_patch_bytes": 895,
     "parent_preimage": {
      "path": "packages/vite-plus-effect-fork/packages/cli/package.json",
      "mode": "100644",
@@ -568,12 +584,12 @@
     "parts": 1,
     "line_start": 1,
     "line_end": 22,
-    "sha256": "8185dfdf963ec3b8b31276a13e4e4666289e281d4cdba4ce509d889a251bb5ac"
+    "sha256": "6378375a274e7648d08ca966e6f17695808e8c2c6d70cf9bf1ca7e16b86e0d08"
    },
    "canonical_patch_lines": [
-    "diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/package.json bworking/packages/vite-plus-effect-fork/packages/cli/package.json\n",
+    "diff --git aworking/packages/vite-plus-effect-fork/packages/cli/package.json bworking/packages/vite-plus-effect-fork/packages/cli/package.json\n",
     "index ea09ecb84f..9284730d47 100644\n",
-    "--- aapproved/packages/vite-plus-effect-fork/packages/cli/package.json\n",
+    "--- aworking/packages/vite-plus-effect-fork/packages/cli/package.json\n",
     "+++ bworking/packages/vite-plus-effect-fork/packages/cli/package.json\n",
     "@@ -15,6 +15,7 @@\n",
     "   },\n",
@@ -611,11 +627,11 @@
      "path": "packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts",
      "mode": "100644",
      "blob": "f45f7d4ac55ca44c8b95e08a7581951866e06aa8",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
     "actual_sha256": "1cdf1a09b66a57e970a7bb39d17749fd6e2c959b95a499c6f3442e6ca0bed3c6",
-    "canonical_patch_sha256": "1bff3638df578f3abb8443c7e81e72944351ef9adb98dd9ea3aada23a9cf4bc5",
-    "canonical_patch_bytes": 3964,
+    "canonical_patch_sha256": "0af5a97fd87da6f049c90015744183b5ed40c40957128b644daeeb9a659cad45",
+    "canonical_patch_bytes": 3962,
     "parent_preimage": {
      "path": "packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts",
      "mode": "100644",
@@ -628,12 +644,12 @@
     "parts": 1,
     "line_start": 1,
     "line_end": 79,
-    "sha256": "1bff3638df578f3abb8443c7e81e72944351ef9adb98dd9ea3aada23a9cf4bc5"
+    "sha256": "0af5a97fd87da6f049c90015744183b5ed40c40957128b644daeeb9a659cad45"
    },
    "canonical_patch_lines": [
-    "diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts\n",
+    "diff --git aworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts\n",
     "index 50b27de3dd..f45f7d4ac5 100644\n",
-    "--- aapproved/packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts\n",
+    "--- aworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts\n",
     "+++ bworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/define-config-vitest-resolver.spec.ts\n",
     "@@ -1,6 +1,8 @@\n",
     " import { fileURLToPath } from 'node:url';\n",
@@ -728,11 +744,11 @@
      "path": "packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts",
      "mode": "100644",
      "blob": "b91c19e7f6ac76f1cdfe44a669076b8688ac2515",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
     "actual_sha256": "7622d8a86b9d24b453b8c06e714ed0d0f5af06f198cea50443b635e3b1f5379a",
-    "canonical_patch_sha256": "7ba4a040a7959706501f15af6b4715d0cc729d8a26c163f5ae6314daa910056d",
-    "canonical_patch_bytes": 2087,
+    "canonical_patch_sha256": "ae03c8a7ee5d227e91614e3bd5bf7514a6158ffedc66635db069c2727c3394d9",
+    "canonical_patch_bytes": 2085,
     "parent_preimage": {
      "path": "packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts",
      "mode": "100644",
@@ -745,12 +761,12 @@
     "parts": 1,
     "line_start": 1,
     "line_end": 48,
-    "sha256": "7ba4a040a7959706501f15af6b4715d0cc729d8a26c163f5ae6314daa910056d"
+    "sha256": "ae03c8a7ee5d227e91614e3bd5bf7514a6158ffedc66635db069c2727c3394d9"
    },
    "canonical_patch_lines": [
-    "diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts\n",
+    "diff --git aworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts\n",
     "index c8220e9200..b91c19e7f6 100644\n",
-    "--- aapproved/packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts\n",
+    "--- aworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts\n",
     "+++ bworking/packages/vite-plus-effect-fork/packages/cli/src/__tests__/resolve-lint.spec.ts\n",
     "@@ -1,21 +1,39 @@\n",
     "-import { existsSync } from 'node:fs';\n",
@@ -814,11 +830,11 @@
      "path": "packages/vite-plus-effect-fork/packages/cli/src/define-config.ts",
      "mode": "100644",
      "blob": "8264bc1f0565e1c4a0945f7a3579ceea91114317",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
     "actual_sha256": "1fd438bd949442e23197881c5c7a4a4f82e39488568bc0d0a4e8c4d16417874a",
-    "canonical_patch_sha256": "641fbb3105e5cf0638498f0182a95e0aed5b46e3a780e7ddabbf0c44fe7996f1",
-    "canonical_patch_bytes": 2891,
+    "canonical_patch_sha256": "fc021161ea694c6302da683041ccab95ffcf82cfa847fcf14d1647af0e87eeb6",
+    "canonical_patch_bytes": 2889,
     "parent_preimage": {
      "path": "packages/vite-plus-effect-fork/packages/cli/src/define-config.ts",
      "mode": "100644",
@@ -831,12 +847,12 @@
     "parts": 1,
     "line_start": 1,
     "line_end": 62,
-    "sha256": "641fbb3105e5cf0638498f0182a95e0aed5b46e3a780e7ddabbf0c44fe7996f1"
+    "sha256": "fc021161ea694c6302da683041ccab95ffcf82cfa847fcf14d1647af0e87eeb6"
    },
    "canonical_patch_lines": [
-    "diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/src/define-config.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/define-config.ts\n",
+    "diff --git aworking/packages/vite-plus-effect-fork/packages/cli/src/define-config.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/define-config.ts\n",
     "index 1b080fbffa..8264bc1f05 100644\n",
-    "--- aapproved/packages/vite-plus-effect-fork/packages/cli/src/define-config.ts\n",
+    "--- aworking/packages/vite-plus-effect-fork/packages/cli/src/define-config.ts\n",
     "+++ bworking/packages/vite-plus-effect-fork/packages/cli/src/define-config.ts\n",
     "@@ -272,6 +272,7 @@ export function isVitestFamilySpecifier(id: string): boolean {\n",
     "  */\n",
@@ -914,11 +930,11 @@
      "path": "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
      "mode": "100644",
      "blob": "c120b5e00af6adbdb65a3910ea42de551a748436",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
     "actual_sha256": "085672962a237ac23e6894845c1192f1bd2e643c9f7822f13ae7786185b7583f",
-    "canonical_patch_sha256": "0b6cd0adf1d7f8f2393fd4b20bd47084af929d09ffd1d1114ce022cc45a9ed9d",
-    "canonical_patch_bytes": 1878,
+    "canonical_patch_sha256": "5552794eaa034a86926dc381206e70d66db8ce64bb83e4d88e2c9e1b11385360",
+    "canonical_patch_bytes": 1876,
     "parent_preimage": {
      "path": "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
      "mode": "100644",
@@ -931,12 +947,12 @@
     "parts": 1,
     "line_start": 1,
     "line_end": 40,
-    "sha256": "0b6cd0adf1d7f8f2393fd4b20bd47084af929d09ffd1d1114ce022cc45a9ed9d"
+    "sha256": "5552794eaa034a86926dc381206e70d66db8ce64bb83e4d88e2c9e1b11385360"
    },
    "canonical_patch_lines": [
-    "diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts\n",
+    "diff --git aworking/packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts\n",
     "index e7ff631a2e..c120b5e00a 100644\n",
-    "--- aapproved/packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts\n",
+    "--- aworking/packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts\n",
     "+++ bworking/packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts\n",
     "@@ -13,12 +13,14 @@ import {\n",
     " } from 'vite/pack';\n",
@@ -992,11 +1008,11 @@
      "path": "packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts",
      "mode": "100644",
      "blob": "e774a094f9e7cdc1d7c7da27e4169a8219723f70",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
     "actual_sha256": "93ca538c179f738169f1b30771ea8621be3bdea534f4479cf9b408982026882f",
-    "canonical_patch_sha256": "b77325802800f01d118f0bf12a9a636b2d83416c842a5734c12f8615da261246",
-    "canonical_patch_bytes": 2421,
+    "canonical_patch_sha256": "729d78cd6b2ccec13fc49331712e12bf0dc349cac0d213c364e7d699be394e8b",
+    "canonical_patch_bytes": 2419,
     "parent_preimage": {
      "path": "packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts",
      "mode": "100644",
@@ -1009,12 +1025,12 @@
     "parts": 1,
     "line_start": 1,
     "line_end": 49,
-    "sha256": "b77325802800f01d118f0bf12a9a636b2d83416c842a5734c12f8615da261246"
+    "sha256": "729d78cd6b2ccec13fc49331712e12bf0dc349cac0d213c364e7d699be394e8b"
    },
    "canonical_patch_lines": [
-    "diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts\n",
+    "diff --git aworking/packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts bworking/packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts\n",
     "index f552962c4b..e774a094f9 100644\n",
-    "--- aapproved/packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts\n",
+    "--- aworking/packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts\n",
     "+++ bworking/packages/vite-plus-effect-fork/packages/cli/src/resolve-lint.ts\n",
     "@@ -13,8 +13,8 @@\n",
     " \n",
@@ -1073,7 +1089,7 @@
      "path": "packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts",
      "mode": "100644",
      "blob": "3baf29693ff3587efbed685e25033e39bdecf0f0",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
     "actual_sha256": "652ddef69fc1c1a934abaebf0513e85ad5ac092d4c73e2ac4f193b1f37e96c6c",
     "canonical_patch_sha256": "f692d31b0a0472dcc244d320ed43eb7ea8992e388af114b197f1b3fe48d25cf6",
@@ -1179,7 +1195,7 @@
      "path": "packages/vite-plus-effect-fork/packages/cli/templates/monorepo/_gitignore",
      "mode": "100644",
      "blob": "1ba829c2464dca4a2bf562146d50ee559faae274",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
     "actual_sha256": "12225a35463f529fec2f755a7b4ef0e1c8c441e45fe6d5de89d41468c7dd68da",
     "canonical_patch_sha256": "037f07450b150945c8f203f0570a118e97d805cd111bf821d08de14f9db5df0b",
@@ -1258,11 +1274,11 @@
      "path": "packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts",
      "mode": "100644",
      "blob": "8b29ff21dfba30129e8c57f770545f1a08012e2f",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
     "actual_sha256": "7727babe67b7ff93dc65e69a68ea8170481ed917d7aa40d98a817ff948272c9c",
-    "canonical_patch_sha256": "99709b8ad272727c6e7e3228311c4a1f95e542b9ed447ecdcc4295892e6b24c3",
-    "canonical_patch_bytes": 786,
+    "canonical_patch_sha256": "0595cf3ff9d5063acbd1334641360a7ffd6a373329cc8289c53ca00edd463562",
+    "canonical_patch_bytes": 784,
     "parent_preimage": {
      "path": "packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts",
      "mode": "100644",
@@ -1275,12 +1291,12 @@
     "parts": 1,
     "line_start": 1,
     "line_end": 12,
-    "sha256": "99709b8ad272727c6e7e3228311c4a1f95e542b9ed447ecdcc4295892e6b24c3"
+    "sha256": "0595cf3ff9d5063acbd1334641360a7ffd6a373329cc8289c53ca00edd463562"
    },
    "canonical_patch_lines": [
-    "diff --git aapproved/packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts bworking/packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts\n",
+    "diff --git aworking/packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts bworking/packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts\n",
     "index 8a27711e6a..8b29ff21df 100644\n",
-    "--- aapproved/packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts\n",
+    "--- aworking/packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts\n",
     "+++ bworking/packages/vite-plus-effect-fork/packages/cli/tsdown.config.ts\n",
     "@@ -54,6 +54,7 @@ export default defineConfig([\n",
     "       'oxlint-plugin': './src/oxlint-plugin.ts',\n",
@@ -1307,12 +1323,12 @@
     "after": {
      "path": "packages/vite-plus-effect-fork/packages/core/build.ts",
      "mode": "100644",
-     "blob": "08f1b6df3a7754b1865cfc27f07eb6b49d83033d",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "blob": "8e330fc6e816e0d271aa3e525dc40122a9a63687",
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
-    "actual_sha256": "1bbf54b62f61a93ca038742e8c7702961ad84c241f2222210d354b7739817902",
-    "canonical_patch_sha256": "45c6b63599e504e908b18c52c03abc1c1c759b9c246d4385bcf4a87f7bc569a0",
-    "canonical_patch_bytes": 566,
+    "actual_sha256": "f3d81d783f020a3abaef59cd893753f7438c17f50857d332a7bcdf788a3b163f",
+    "canonical_patch_sha256": "8256a8d2289ecb488ea041be9462ccddf3c24acac27752778a7341e823ab7804",
+    "canonical_patch_bytes": 946,
     "parent_preimage": {
      "path": "packages/vite-plus-effect-fork/packages/core/build.ts",
      "mode": "100644",
@@ -1324,15 +1340,24 @@
     "part": 1,
     "parts": 1,
     "line_start": 1,
-    "line_end": 12,
-    "sha256": "45c6b63599e504e908b18c52c03abc1c1c759b9c246d4385bcf4a87f7bc569a0"
+    "line_end": 21,
+    "sha256": "8256a8d2289ecb488ea041be9462ccddf3c24acac27752778a7341e823ab7804"
    },
    "canonical_patch_lines": [
-    "diff --git aapproved/packages/vite-plus-effect-fork/packages/core/build.ts bworking/packages/vite-plus-effect-fork/packages/core/build.ts\n",
-    "index 5b806bf105..08f1b6df3a 100644\n",
-    "--- aapproved/packages/vite-plus-effect-fork/packages/core/build.ts\n",
+    "diff --git aworking/packages/vite-plus-effect-fork/packages/core/build.ts bworking/packages/vite-plus-effect-fork/packages/core/build.ts\n",
+    "index 5b806bf105..8e330fc6e8 100644\n",
+    "--- aworking/packages/vite-plus-effect-fork/packages/core/build.ts\n",
     "+++ bworking/packages/vite-plus-effect-fork/packages/core/build.ts\n",
-    "@@ -696,6 +696,7 @@ async function mergePackageJson() {\n",
+    "@@ -318,6 +318,8 @@ async function bundleRolldownPluginutils() {\n",
+    " }\n",
+    " \n",
+    " async function bundleRolldown() {\n",
+    "+  // A new Rolldown graph can retire shared chunks from the previous build.\n",
+    "+  await rm(join(projectDir, 'dist/rolldown'), { recursive: true, force: true });\n",
+    "   await mkdir(join(projectDir, 'dist/rolldown'), { recursive: true });\n",
+    " \n",
+    "   const rolldownFiles = new Set<string>();\n",
+    "@@ -696,6 +698,7 @@ async function mergePackageJson() {\n",
     "   destPkg.peerDependencies = {\n",
     "     ...tsdownPkg.peerDependencies,\n",
     "     ...vitePkg.peerDependencies,\n",
@@ -1358,11 +1383,11 @@
      "path": "packages/vite-plus-effect-fork/packages/core/package.json",
      "mode": "100644",
      "blob": "4aac197f1da12f077b8cc44e3c4c00f25a08b8cd",
-     "ref": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04"
+     "ref": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9"
     },
     "actual_sha256": "e5f4fc5e70a469612fdcc1ed21a997d83b183558ebea920f9112667009d2cf8f",
-    "canonical_patch_sha256": "0cb79269a1d3d0978aa7bcba520ffb7286d334b5deefde0f00472fecfc1f70d6",
-    "canonical_patch_bytes": 583,
+    "canonical_patch_sha256": "50716665a4040f5ac146e812d7c728a0ad814f7688f802719b32fed7e9ef76b6",
+    "canonical_patch_bytes": 581,
     "parent_preimage": {
      "path": "packages/vite-plus-effect-fork/packages/core/package.json",
      "mode": "100644",
@@ -1375,12 +1400,12 @@
     "parts": 1,
     "line_start": 1,
     "line_end": 13,
-    "sha256": "0cb79269a1d3d0978aa7bcba520ffb7286d334b5deefde0f00472fecfc1f70d6"
+    "sha256": "50716665a4040f5ac146e812d7c728a0ad814f7688f802719b32fed7e9ef76b6"
    },
    "canonical_patch_lines": [
-    "diff --git aapproved/packages/vite-plus-effect-fork/packages/core/package.json bworking/packages/vite-plus-effect-fork/packages/core/package.json\n",
+    "diff --git aworking/packages/vite-plus-effect-fork/packages/core/package.json bworking/packages/vite-plus-effect-fork/packages/core/package.json\n",
     "index c2c2863e0f..4aac197f1d 100644\n",
-    "--- aapproved/packages/vite-plus-effect-fork/packages/core/package.json\n",
+    "--- aworking/packages/vite-plus-effect-fork/packages/core/package.json\n",
     "+++ bworking/packages/vite-plus-effect-fork/packages/core/package.json\n",
     "@@ -158,7 +158,7 @@\n",
     "     \"sugarss\": \"^5.0.0\",\n",

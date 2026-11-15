@@ -1,7 +1,7 @@
 {
  "format": "tia314-review-packet-v1",
  "kind": "legacy-contract",
- "source_epoch": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04",
+ "source_epoch": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9",
  "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
  "records": [
   {
@@ -111,9 +111,11 @@
     "replacement_interfaces": [
      "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
      "packages/vite-plus-effect-fork/packages/core/build.ts",
-     "packages/effect-vitest/vite.config.ts"
+     "packages/effect-vitest/vite.config.ts",
+     "packages/vite-plus-effect-fork/packages/cli/src/migration/migrator/tsconfig.ts"
     ],
-    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval."
+    "review_requirement": "Compare actual old custom hooks/contract with replacement; stock code remains context. Complete preimage available through canonical git show; absence of a signal is not semantic approval.",
+    "current_replacement_qualification": "R4 metadata repair adds the actual cleanupDeprecatedTsconfigOptions/rewriteTsconfigTypes wrapper. Original fixed-base preimage, hooks and control authorship remain unchanged."
    }
   },
   {
