@@ -201,6 +201,26 @@ for (const configuration of [false, true, "type-aware", "type-aware-cli"]) {
         assert.match(stderr, /serializable Rust rule settings/);
         const temporary = readdirSync(directory).find((name) => name.endsWith("-root.json"));
         assert.equal(JSON.parse(readFileSync(join(directory, temporary))).rules[rule], "error");
+        const published = readFileSync(join(directory, temporary), "utf8");
+        writeFileSync(
+          config,
+          "export default " +
+            JSON.stringify({
+              lint: {
+                rules: { [rule]: "off" },
+                options: { fixSuggestions: true },
+              },
+            }) +
+            ";\n",
+        );
+        const optionDeadline = Date.now() + 5000;
+        while (
+          !stderr.includes("suggestion-only fixKind is unsupported") &&
+          Date.now() < optionDeadline
+        )
+          await new Promise((resolve) => setTimeout(resolve, 30));
+        assert.match(stderr, /suggestion-only fixKind is unsupported/);
+        assert.equal(readFileSync(join(directory, temporary), "utf8"), published);
         messages.length = 0;
         update("off");
         await wait((message) => diagnostics(message) && message.params.diagnostics.length === 0);

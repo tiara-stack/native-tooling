@@ -142,6 +142,10 @@ async function prepareViteConfig(path) {
       return file;
     }
     materialize(config.lint ?? {}, rootFile);
+    const nextLspOptions = {
+      defaults: lsp ? lspOptions(config.lint?.options ?? {}) : {},
+      overrides: { ...(lsp ? lspOptions(explicitLsp) : {}), configPath: rootFile },
+    };
     // Share unchanged immutable children across updates. Published snapshots
     // remain valid until the native reader exits: it can still hold an old root.
     // Replace the root only after every child exists, beside the source config.
@@ -181,10 +185,7 @@ async function prepareViteConfig(path) {
       for (const file of created) await reclaim(file);
       throw error;
     }
-    effectiveLspOptions = {
-      defaults: lsp ? lspOptions(config.lint?.options ?? {}) : {},
-      overrides: { ...(lsp ? lspOptions(explicitLsp) : {}), configPath: rootFile },
-    };
+    effectiveLspOptions = nextLspOptions;
     bridge?.refresh();
     if (lsp) {
       for (const dependency of [path, ...(config.configFileDependencies ?? [])]) {

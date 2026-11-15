@@ -286,6 +286,70 @@ test("native lint adapter rejects nonserializable settings before starting a chi
   }
 });
 
+for (const mode of ["config", "explicit", "non-lsp"]) {
+  test(`native lint adapter validates LSP options before creating snapshots: ${mode}`, () => {
+    const fixture = adapterFixture();
+    try {
+      const trace = join(fixture.directory, "snapshot-writes.json");
+      const preloader = join(fixture.directory, "observe-writes.mjs");
+      writeFileSync(
+        preloader,
+        [
+          'import fs from "node:fs/promises";',
+          'import { writeFileSync } from "node:fs";',
+          'import { syncBuiltinESMExports } from "node:module";',
+          `const trace = ${JSON.stringify(trace)}, writes = [];`,
+          "const open = fs.open;",
+          "writeFileSync(trace, JSON.stringify(writes));",
+          "fs.open = async (path, ...args) => {",
+          '  if (String(path).includes(".tiara-oxlint-")) {',
+          "    writes.push(String(path)); writeFileSync(trace, JSON.stringify(writes));",
+          "  }",
+          "  return open(path, ...args);",
+          "};",
+          "syncBuiltinESMExports();",
+        ].join("\n"),
+      );
+      writeFileSync(
+        join(fixture.directory, "vite.config.ts"),
+        "export default " +
+          JSON.stringify({
+            lint: {
+              extends: [{ rules: { "no-console": "warn" } }],
+              options: mode === "explicit" ? {} : { fixSuggestions: true },
+            },
+          }) +
+          ";\n",
+      );
+      const result = spawnSync(
+        process.execPath,
+        [
+          "--import",
+          preloader,
+          adapter,
+          ...(mode === "non-lsp" ? [] : ["--lsp"]),
+          ...(mode === "explicit" ? ["--fix-suggestions"] : []),
+        ],
+        { cwd: fixture.directory, encoding: "utf8", env: fixture.env },
+      );
+      const writes = JSON.parse(readFileSync(trace, "utf8"));
+      if (mode === "non-lsp") {
+        assert.equal(result.status, 0, result.stderr);
+        assert.equal(existsSync(fixture.record), true);
+        assert.equal(writes.length, 2);
+      } else {
+        assert.notEqual(result.status, 0);
+        assert.match(result.stderr, /suggestion-only fixKind is unsupported/);
+        assert.equal(existsSync(fixture.record), false);
+        assert.deepEqual(writes, [], "Rejected LSP options must not stage or publish snapshots");
+      }
+      assert.deepEqual(temporaryConfigs(fixture.directory), []);
+    } finally {
+      rmSync(fixture.directory, { recursive: true, force: true });
+    }
+  });
+}
+
 test(
   "native lint adapter reuses LSP snapshots and cleans up after termination",
   { timeout: 20000 },
@@ -348,6 +412,16 @@ test(
       await waitFor(() => stderr.includes("serializable Rust rule settings"));
       assert.equal(current().settings.react.version, "3");
       assert.equal(temporaryConfigs(fixture.directory).length, 4);
+
+      const published = readFileSync(record.configPath, "utf8");
+      const snapshots = temporaryConfigs(fixture.directory).sort();
+      writeFileSync(
+        configPath,
+        'export default { lint: { settings: { react: { version: "invalid" } }, extends: [{ rules: { "no-console": "error" } }], options: { fixSuggestions: true } } };\n',
+      );
+      await waitFor(() => stderr.includes("suggestion-only fixKind is unsupported"));
+      assert.equal(readFileSync(record.configPath, "utf8"), published);
+      assert.deepEqual(temporaryConfigs(fixture.directory).sort(), snapshots);
 
       // A failed root publication must reclaim its never-published children.
       const staging = record.configPath + ".writing";

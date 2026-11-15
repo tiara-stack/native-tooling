@@ -14606,7 +14606,7 @@
     "crates/vp_trampoline/src/main.rs": "c28b77426b62090a3f889592fa4f009ff1d3e6b5afb0dfb6414a4a49854a3979",
     "crates/vp_trampoline/src/win.rs": "495959eb5e2dc003effc991eb21e0e2213f11d47311faa4d8e685ebfdf0b1f33",
     "packages/cli/bin/tiara-oxlint-lsp.mjs": "b68badafaf91fbfa7fd203e689f52fd2e6df2cbec09544adc5104219413006b2",
-    "packages/cli/bin/tiara-oxlint.mjs": "f89ba58d1e1693032cee92559bf75551a61e047b17ae6b632a69bde01ad84201",
+    "packages/cli/bin/tiara-oxlint.mjs": "f2066df0416c90c6714719133d6ccdf371b85d10f3c544a43b6af719a63cbeae",
     "packages/cli/bin/vp": "a44bf8b7327c9e98e6efe20d246dad893ef5565d69d10ff202d5c75ba76d14b3",
     "packages/cli/bin/vpr": "1ee0e64efcfb4faed356f511a899ca0cfdae1c11c1509c5f927ee926e9040150",
     "packages/cli/binding/Cargo.toml": "dc05475b357b8b9e66456da3f44bdf058aba75cc3ea6b158f5d6fe38705fc188",
@@ -16007,22 +16007,21 @@
     "rolldown": "REUSED_ALL_10865_INPUTS_AND_55_OUTPUTS",
     "directPackedTemplates": "Included in the canonical source-build collector; staged publication and rollback separately exercised.",
     "directPackInput": {
+      "baseline_ref": "06278062cff31ba9b03207e62e06e821964ec682",
+      "baseline_path": "packages/vite-plus/SOURCE.json",
+      "baseline_manifest_sha256": "7e8f04275e9d50365959ea842b306546711bb59e8e58188f44c6920425088db6",
       "changed_inputs": {
-        "packages/cli/bin/tiara-oxlint-lsp.mjs": {
-          "before": "8702491d40172caa76b0253d03bf07751edea1198c54cdb041ba10b61f36319f",
-          "after": "b68badafaf91fbfa7fd203e689f52fd2e6df2cbec09544adc5104219413006b2"
-        },
         "packages/cli/bin/tiara-oxlint.mjs": {
-          "before": "ff32d8e54ab6808c7bbd804c3ca8f8089ee2034e8ddd0b8c238f11861d0e1f17",
-          "after": "f89ba58d1e1693032cee92559bf75551a61e047b17ae6b632a69bde01ad84201"
+          "before": "f89ba58d1e1693032cee92559bf75551a61e047b17ae6b632a69bde01ad84201",
+          "after": "f2066df0416c90c6714719133d6ccdf371b85d10f3c544a43b6af719a63cbeae"
         }
       },
-      "compiled_outputs": "All359 exact after the final affected CLI JavaScript/declaration build",
+      "compiled_outputs": "All359exact; direct executable input is not compiled into them.",
       "evidence": {
-        "path": "/opt/data/worktrees/native-tooling/t3-62588537/.tmp/TIA-314/hosted-assess-repair-r2/direct-pack-final-refresh.json",
-        "sha256": "f1f44f17f724e3d1e385fea8e1bc95432b6592b5b1662bebc34737a80292834d"
+        "path": "/opt/data/worktrees/native-tooling/t3-62588537/.tmp/TIA-314/hosted-assess-repair-r3/producer-impact.json",
+        "sha256": "70fa1ca272b0ec0e120a83be139660d3a833c9473c116cd40a0a5a1e0f7f8d89"
       },
-      "qualification": "Bin modules are copied directly by pack; their parser/transport/lifecycle consumers and actual scoped sync are revalidated. This is not another native/compiler build."
+      "qualification": "Only the direct-packed executable changes. Its bin path, resolve-lint interface, compilation entrypoints, nested lock and dependencies remain exact. The LSP validation reorder is direct-packed; its new public startup/refresh regression tests are not compilation inputs. Actual scoped sync/pack and lifecycle consumers are required; this is producer reuse, not a clean CI build."
     }
   }
 }
