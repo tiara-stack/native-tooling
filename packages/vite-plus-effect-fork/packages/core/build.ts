@@ -318,6 +318,8 @@ async function bundleRolldownPluginutils() {
 }
 
 async function bundleRolldown() {
+  // A new Rolldown graph can retire shared chunks from the previous build.
+  await rm(join(projectDir, 'dist/rolldown'), { recursive: true, force: true });
   await mkdir(join(projectDir, 'dist/rolldown'), { recursive: true });
 
   const rolldownFiles = new Set<string>();

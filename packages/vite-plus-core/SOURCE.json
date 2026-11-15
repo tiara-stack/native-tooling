@@ -15063,7 +15063,7 @@
     "packages/core/build-support/rewrite-imports.ts": "1c1717fca8d3476208c96e64caf80d50b5e57879efa1399d7f47b33438803922",
     "packages/core/build-support/rewrite-module-specifiers.ts": "f8a824576e8fa8d828eff01bc4f29777e68508b75d31252f4d94274508c26f96",
     "packages/core/build-support/rewrite-rolldown-binding.ts": "276dcd3a696a2e717db754cee3a0db9a7ce2f8156afb48ac0834dcbcbc18319a",
-    "packages/core/build.ts": "1bbf54b62f61a93ca038742e8c7702961ad84c241f2222210d354b7739817902",
+    "packages/core/build.ts": "f3d81d783f020a3abaef59cd893753f7438c17f50857d332a7bcdf788a3b163f",
     "packages/core/package.json": "e5f4fc5e70a469612fdcc1ed21a997d83b183558ebea920f9112667009d2cf8f",
     "packages/core/tsconfig.json": "7063fe0862149cac141419da4c33f6f35094c43800d253d4b568b8715c6c5684",
     "packages/prompts/LICENSE": "07bd5668b72f8778e37d55a77d49e7031d188b480405e70c5c3705fee285233d",
@@ -16112,34 +16112,26 @@
     "packages/core/dist/rolldown/rolldown-binding.linux-x64-gnu.node": "3f970de12415e204f058977c1f415e8de55da7e75d40ef3515f5278d51c9e100",
     "packages/core/dist/rolldown/shared/binding-BTa6BPQe.d.mts": "98137390854c0f377037ccdee5f3964c34c0179ca58ae8f386132125f6fc5ecc",
     "packages/core/dist/rolldown/shared/binding-BY0qR5iS.mjs": "8c571a4e4ac9561df9d6d7370d6c0d506922b6c106fd693cb2b75b47c3ab028a",
-    "packages/core/dist/rolldown/shared/bindingify-input-options-DPBybJV1.mjs": "7c7e74e89733be78c23bd2163926e8bab56ecfd77826ef399ce3e586697e7ae5",
     "packages/core/dist/rolldown/shared/bindingify-input-options-DeSceppM.mjs": "fbd7e62e9a2a50a89e02058ac65157fa38989f03e6b38a43f64d53c2418245ac",
     "packages/core/dist/rolldown/shared/constructors-DuOq7MqW.d.mts": "ba40b180f5497a19433fbf287e1685237797ccd45a7a1b5394b534935da451c0",
     "packages/core/dist/rolldown/shared/constructors-xEvVj3lN.mjs": "087234cdd6903f7d5d1fd5e44a4cec61965c8755fa36c8d06f26a1a486d65de3",
     "packages/core/dist/rolldown/shared/create-bundler-option-DLjQmstW.mjs": "e5321ddeb60aa13c20296507a66addf5c750a369e8fe8feac75385a1bfe30cfd",
-    "packages/core/dist/rolldown/shared/create-bundler-option-z9tfdr3B.mjs": "9506cc4196b89ad2bd584c5734b0ea09b77e3d21671f266f5a0badaf169e1592",
     "packages/core/dist/rolldown/shared/define-config-C7HCoqY8.d.mts": "5962266983338b1980b9811b31897639898dbedd1a6c639a674ac81a4915333b",
     "packages/core/dist/rolldown/shared/define-config-Demdg3_4.mjs": "e887326cc80caa4248166a9ce863134fc4f7e1314ad9a3d7e380bd1a43f746ab",
     "packages/core/dist/rolldown/shared/dist-BrOkQYx7.mjs": "0175ad93650d0a544c042abd3b05268f9ca8e7cd796c14ce10b28d6b6b84920f",
-    "packages/core/dist/rolldown/shared/dist-D2P1s4_R.mjs": "aab155f1481a79d3c85cbdcb51acaa4befb5062c711a0461ef5c4f48c6403ad3",
     "packages/core/dist/rolldown/shared/error-C7pxws0W.mjs": "cc23a45ba8a60c4980f6486590829fe3ad8fef5dfeb31b0fa2686142dbc4b051",
     "packages/core/dist/rolldown/shared/get-log-filter-AjBknEEO.d.mts": "a57f53caa3e1283f2234c38f3614eb66549f83d0b21bddfcbb2dca1a023c2383",
-    "packages/core/dist/rolldown/shared/load-config-BiiBolfa.mjs": "d23dc97908a86810344744d08def272bfdfec6e0867f0f13b63b26c033585404",
     "packages/core/dist/rolldown/shared/load-config-zgE_B6KC.mjs": "77e6156f23ca2f5c7e3b20b2b53e699304d4f81a8522f2942f823fba7a802496",
     "packages/core/dist/rolldown/shared/logging-xuHO4mAy.d.mts": "fc5ad2ec8b130a59612c5cfcc2cdca9bcdd80851adb8acdb004aaeff00cc978d",
     "packages/core/dist/rolldown/shared/logs-D6uA606S.mjs": "7edfdf44f30af715dbac404c6a6b9909510e82bc9ca6762c127e2ef474dac3da",
     "packages/core/dist/rolldown/shared/misc-DOSKtd97.mjs": "a6b94bac1329695387fcaf0d0dbd583165e962a2de13c719e819fc68e4bcb04a",
     "packages/core/dist/rolldown/shared/normalize-string-or-regex-F14uvr6D.mjs": "e1cff9111ea8819b0890ae35b1cfd2938a53bf755c6c176d79387133ed7e5f1c",
     "packages/core/dist/rolldown/shared/parse-ClDaqyja.mjs": "98a9cec41c928a2ec548588196e5d8fb0a6484b37918e78c54859247fa4f1b81",
-    "packages/core/dist/rolldown/shared/parse-De9PCajd.mjs": "0a3a206675aa476e9a2b467aa4bdf5ec09f4a0a73c8af82d89d69b46d6d1f797",
     "packages/core/dist/rolldown/shared/prompt-Bq7DJfKQ.mjs": "b8e9937694e9ca9a3e9a71b0c18c18dcda1f10705c8bf4eba952cb6171a14c15",
-    "packages/core/dist/rolldown/shared/prompt-C6rFTVm4.mjs": "1bba7bcc52c376797eaa7b7f7d73d59396de61e4cbe7361212783e8e24cb144b",
     "packages/core/dist/rolldown/shared/resolve-tsconfig-DHwpIs5e.mjs": "c02487012bccd197c5ff028924dab92cd727dcf024dd782c561fdaf19a7b1b05",
-    "packages/core/dist/rolldown/shared/rolldown-DeWTZWR_.mjs": "e18537f7db4b3bc2ce25f8ddf152e0cb60343f06af5901794a11ce22f331536f",
     "packages/core/dist/rolldown/shared/rolldown-DjkfKFe_.mjs": "4ccc6cd33b457aa77ac13a4f4f5e7bd53ab856f18d1f9396215a61e69dd14ea6",
     "packages/core/dist/rolldown/shared/transform-DK_nCt9j.d.mts": "9a14344b695ee969e1a745a72e9ee8e49449e6a833077226f2773361b9f66853",
     "packages/core/dist/rolldown/shared/watch-B6R5VMW-.mjs": "59062c34e646c68e91f65be733e86bef4a0088018ac0a7132a48eb3390731939",
-    "packages/core/dist/rolldown/shared/watch-BFId5KRN.mjs": "445995e7625abe6af5c90af58a49067b343c6239e2b54b645746e4fac340a98d",
     "packages/core/dist/rolldown/utils-index.d.mts": "388eb4af0b6ec8deb91ea8d8c578c7ace9d6cebeb3a0825d6d36dafc1009c4a4",
     "packages/core/dist/rolldown/utils-index.mjs": "2ae6c79bc70ed0dfa8ae2020fb05d9580f8c9d2852cff8ae09e2d1c845f6d9a5",
     "packages/core/dist/tsdown/build-JVmLFaZt-DqTC_pe8.js": "6a33ff9934d712e5efcdeb826d0376650211e6625e96d0ea0ecf7f95797d3962",
@@ -16231,7 +16223,21 @@
       ]
     ],
     "nativeCompilation": "Exact retained native/Rust inputs and bytes; not rerun",
-    "changedDirectPackedInputs": {
+    "changedProducerInputs": {
+      "packages/cli/bin/tiara-oxlint-lsp.mjs": {
+        "before": "b68badafaf91fbfa7fd203e689f52fd2e6df2cbec09544adc5104219413006b2",
+        "after": "82db96d5c58b6d1f53efe7ac4aebfe0354eca424c4dedd5715c1388f8a1c86b9"
+      },
+      "packages/cli/bin/tiara-oxlint.mjs": {
+        "before": "f2066df0416c90c6714719133d6ccdf371b85d10f3c544a43b6af719a63cbeae",
+        "after": "859ca83dbb9df9d2aca475bc46512dab137e763e24ec61718dc837573ff774bb"
+      },
+      "packages/core/build.ts": {
+        "before": "1bbf54b62f61a93ca038742e8c7702961ad84c241f2222210d354b7739817902",
+        "after": "f3d81d783f020a3abaef59cd893753f7438c17f50857d332a7bcdf788a3b163f"
+      }
+    },
+    "directPackedInputs": {
       "packages/cli/bin/tiara-oxlint-lsp.mjs": {
         "before": "b68badafaf91fbfa7fd203e689f52fd2e6df2cbec09544adc5104219413006b2",
         "after": "82db96d5c58b6d1f53efe7ac4aebfe0354eca424c4dedd5715c1388f8a1c86b9"

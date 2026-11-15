@@ -942,10 +942,19 @@ index 8a27711e6a..8b29ff21df 100644
        // Without these, tsdown inlines them into bin.js, breaking on-demand loading.
        'create/bin': './src/create/bin.ts',
 diff --git aworking/packages/vite-plus-effect-fork/packages/core/build.ts bworking/packages/vite-plus-effect-fork/packages/core/build.ts
-index 5b806bf105..08f1b6df3a 100644
+index 5b806bf105..8e330fc6e8 100644
 --- aworking/packages/vite-plus-effect-fork/packages/core/build.ts
 +++ bworking/packages/vite-plus-effect-fork/packages/core/build.ts
-@@ -696,6 +696,7 @@ async function mergePackageJson() {
+@@ -318,6 +318,8 @@ async function bundleRolldownPluginutils() {
+ }
+ 
+ async function bundleRolldown() {
++  // A new Rolldown graph can retire shared chunks from the previous build.
++  await rm(join(projectDir, 'dist/rolldown'), { recursive: true, force: true });
+   await mkdir(join(projectDir, 'dist/rolldown'), { recursive: true });
+ 
+   const rolldownFiles = new Set<string>();
+@@ -696,6 +698,7 @@ async function mergePackageJson() {
    destPkg.peerDependencies = {
      ...tsdownPkg.peerDependencies,
      ...vitePkg.peerDependencies,
