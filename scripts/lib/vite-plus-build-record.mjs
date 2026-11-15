@@ -26,10 +26,20 @@ export async function rolldownBuildRecord(source) {
     ".tiara-source.json",
     "packages/rolldown/build.ts",
     "packages/rolldown/build-binding.ts",
+    "packages/rolldown/copy-addon-plugin.ts",
     "packages/rolldown/package.json",
+    "packages/rolldown/tsconfig.json",
+    "package.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    "tsconfig.json",
+    "../package.json",
+    "../pnpm-lock.yaml",
+    "../pnpm-workspace.yaml",
   ])
     await hash(path, inputs);
   await walk("crates", inputs);
+  await walk("packages/rolldown/src", inputs);
   await walk("packages/rolldown/dist", outputs);
   for (const file of await readdir(join(root, "packages/rolldown/src"))) {
     if (/binding.*\.(?:node|cjs|cts)$/.test(file))

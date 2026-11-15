@@ -1,4 +1,5 @@
 import { Transform } from "node:stream";
+import { finished } from "node:stream/promises";
 import { pathToFileURL } from "node:url";
 
 // Oxlint's native LSP reads options from protocol messages, not CLI flags.
@@ -12,6 +13,7 @@ export function bridgeLsp(child, settings, input = process.stdin, output = proce
   const merge = (uri, options) => {
     if (options && typeof options === "object" && !Array.isArray(options))
       workspaces.set(uri, options);
+    else if (typeof uri === "string" && !workspaces.has(uri)) workspaces.set(uri, {});
     const { defaults, overrides } = settings();
     return { ...defaults, ...workspaces.get(uri), ...overrides };
   };
@@ -86,7 +88,7 @@ export function bridgeLsp(child, settings, input = process.stdin, output = proce
             jsonrpc: "2.0",
             id: message.id,
             result: message.params.items.map((item) =>
-              item.section === "oxc_language_server" ? merge(item.scopeUri, {}) : null,
+              item.section === "oxc_language_server" ? merge(item.scopeUri) : null,
             ),
           }),
         );
@@ -136,6 +138,9 @@ export function bridgeLsp(child, settings, input = process.stdin, output = proce
   child.stdout.pipe(server).pipe(output, { end: false });
   return {
     failed,
+    drain() {
+      return finished(server, { cleanup: true });
+    },
     refresh() {
       if (!initialized || child.stdin.destroyed || child.stdin.writableEnded) return;
       child.stdin.write(
@@ -167,7 +172,7 @@ export function bridgeLsp(child, settings, input = process.stdin, output = proce
   };
 }
 
-export function lspOptions(options) {
+export function lspOptions(options, effective = options) {
   const result = {};
   for (const key of ["typeAware", "disableNestedConfig"]) {
     if (typeof options[key] === "boolean") result[key] = options[key];
@@ -185,13 +190,19 @@ export function lspOptions(options) {
   const severity = options.reportUnusedDisableDirectivesSeverity;
   if (severity != null)
     result.unusedDisableDirectives = { error: "deny", warn: "warn", off: "allow" }[severity];
-  if (options.fixDangerously) result.fixKind = options.fix ? "all" : "dangerous_fix_or_suggestion";
-  else if (options.fixSuggestions) {
-    if (!options.fix)
-      throw new Error(
-        "Native LSP requires --fix with --fix-suggestions; suggestion-only fixKind is unsupported.",
-      );
-    result.fixKind = "safe_fix_or_suggestion";
-  } else if (options.fix) result.fixKind = "safe_fix";
+  // Fix flags jointly select one native option. Translate the effective
+  // config/CLI combination, while only forcing fixKind for a source that
+  // actually supplied fix flags. Unrelated CLI flags must not override editors.
+  if (["fix", "fixSuggestions", "fixDangerously"].some((key) => options[key] != null)) {
+    if (effective.fixDangerously)
+      result.fixKind = effective.fix ? "all" : "dangerous_fix_or_suggestion";
+    else if (effective.fixSuggestions) {
+      if (!effective.fix)
+        throw new Error(
+          "Native LSP requires --fix with --fix-suggestions; suggestion-only fixKind is unsupported.",
+        );
+      result.fixKind = "safe_fix_or_suggestion";
+    } else if (effective.fix) result.fixKind = "safe_fix";
+  }
   return result;
 }

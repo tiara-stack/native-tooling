@@ -96,6 +96,13 @@ The current packages resolve binaries in this order:
 2. `vendor/<platform>-<arch>/<binary>` in the published package
 3. local development builds under `native/`
 
+The currently declared native platform packages are Linux x64 builds. On
+Windows, tsgolint resolution still accepts an Effect-enabled `tsgolint.exe`
+from the vendor or local-build paths, or `TIARA_TSGOLINT_EFFECT_PATH`. A missing
+Effect backend fails explicitly; an upstream `node_modules/.bin/tsgolint.cmd`
+does not substitute for that backend or guarantee Effect diagnostics. This is
+the existing native-binary boundary, not a promise of a Windows prebuilt package.
+
 Release CI should build native binaries per platform, stage them with
 `pnpm native:stage`, and upload package builds through Vite+'s staged
 publishing passthrough:

@@ -39,12 +39,73 @@ export function rewriteScopedVitePlus(text, path) {
   if (tree.parseDiagnostics.length) throw new Error(`Cannot parse scoped package input ${path}`);
   const edits = [];
   let migrationTables = 0;
+  const bundledNames = ["vite-plus", "@tiara-stack/vite-plus"];
+  const bundledInputs = { declaration: 0, catalog: 0, lookups: 0, expected: 0, installed: 0 };
   function enclosing(node, predicate) {
     for (let current = node.parent; current; current = current.parent)
       if (predicate(current)) return current;
   }
   const named = (node, name) => ts.isVariableDeclaration(node) && node.name.getText(tree) === name;
   function visit(node) {
+    const inFunction = (name) =>
+      enclosing(node, (item) => ts.isFunctionDeclaration(item) && item.name?.text === name);
+    if (
+      named(node, "vitePlus") &&
+      inFunction("sourceVersion") &&
+      ts.isCallExpression(node.initializer) &&
+      node.initializer.expression.getText(tree) === "dependency" &&
+      node.initializer.arguments[1]?.text === "vite-plus"
+    ) {
+      const statement = node.parent.parent;
+      if (!ts.isVariableStatement(statement) || node.parent.declarations.length !== 1)
+        throw new Error(`Unexpected bundled runner declaration in ${path}`);
+      edits.push([
+        statement.getStart(tree),
+        statement.end,
+        'const vitePlusName = dependency(pkg, "@tiara-stack/vite-plus") ? "@tiara-stack/vite-plus" : "vite-plus";\nconst vitePlus = dependency(pkg, vitePlusName);',
+      ]);
+      bundledInputs.declaration++;
+      return;
+    }
+    if (ts.isCallExpression(node) && inFunction("sourceVersion")) {
+      const name = node.expression.getText(tree);
+      if (name === "catalog" && node.arguments[1]?.text === "vite-plus") {
+        edits.push([node.arguments[1].getStart(tree), node.arguments[1].end, "vitePlusName"]);
+        bundledInputs.catalog++;
+        return;
+      }
+      if (name === "installedSourceVersion" && node.arguments[1]?.text === "vite-plus") {
+        for (const argument of [node.arguments[1], node.arguments[2]]) {
+          if (argument?.text !== "vite-plus")
+            throw new Error(`Unexpected bundled runner lookup in ${path}`);
+          edits.push([argument.getStart(tree), argument.end, "vitePlusName"]);
+        }
+        bundledInputs.lookups++;
+        return;
+      }
+    }
+    if (
+      ts.isBinaryExpression(node) &&
+      node.operatorToken.kind === ts.SyntaxKind.ExclamationEqualsEqualsToken &&
+      node.left.getText(tree) === "installed.name" &&
+      inFunction("installedSourceVersion")
+    ) {
+      const names = JSON.stringify(bundledNames);
+      if (node.right.getText(tree) === "expectedPackage") {
+        edits.push([
+          node.getStart(tree),
+          node.end,
+          `(installed.name !== expectedPackage && !(${names}.includes(expectedPackage) && ${names}.includes(installed.name)))`,
+        ]);
+        bundledInputs.expected++;
+        return;
+      }
+      if (node.right.text === "vite-plus") {
+        edits.push([node.getStart(tree), node.end, `!${names}.includes(installed.name)`]);
+        bundledInputs.installed++;
+        return;
+      }
+    }
     if (
       ts.isBinaryExpression(node) &&
       node.operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken &&
@@ -199,6 +260,12 @@ export function rewriteScopedVitePlus(text, path) {
   visit(tree);
   if (/(?:^|\/)vitest-v5-entry-points-[^/]+\.js$/.test(path) && migrationTables !== 1)
     throw new Error(`Missing pinned Vitest migration table in ${path}`);
+  if (
+    /(?:^|\/)migration\/bin\.js$/.test(path) &&
+    JSON.stringify(bundledInputs) !==
+      JSON.stringify({ declaration: 1, catalog: 1, lookups: 2, expected: 1, installed: 1 })
+  )
+    throw new Error(`Missing pinned bundled-runner input boundary in ${path}`);
   for (const [start, end, value] of edits.sort((a, b) => b[0] - a[0]))
     text = text.slice(0, start) + value + text.slice(end);
   return text;

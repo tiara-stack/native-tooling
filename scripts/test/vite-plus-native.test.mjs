@@ -204,13 +204,15 @@ function adapterFixture() {
   writeFileSync(
     native,
     `#!/usr/bin/env node
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, renameSync, writeFileSync } from "node:fs";
 const args = process.argv.slice(2);
+if (args.includes("--lsp")) process.on("SIGTERM", () => process.exit(0));
 const configPath = args[args.indexOf("--config") + 1];
 const config = JSON.parse(readFileSync(configPath, "utf8"));
 const record = { args, configPath, config, inherited: (config.extends ?? []).map((path) => JSON.parse(readFileSync(path, "utf8"))), metadata: process.env.VP_RESOLVING_CONFIG_METADATA, backend: process.env.OXLINT_TSGOLINT_PATH };
-writeFileSync(process.env.TIARA_TEST_RECORD, JSON.stringify(record));
-if (args.includes("--lsp")) { process.on("SIGTERM", () => process.exit(0)); setInterval(() => {}, 1000); }
+writeFileSync(process.env.TIARA_TEST_RECORD + ".writing", JSON.stringify(record));
+renameSync(process.env.TIARA_TEST_RECORD + ".writing", process.env.TIARA_TEST_RECORD);
+if (args.includes("--lsp")) setInterval(() => {}, 1000);
 else process.exit(Number(process.env.TIARA_TEST_EXIT ?? 0));
 `,
     { mode: 0o755 },
@@ -229,6 +231,192 @@ else process.exit(Number(process.env.TIARA_TEST_EXIT ?? 0));
 function temporaryConfigs(directory) {
   return readdirSync(directory).filter((name) => name.startsWith(".tiara-oxlint-"));
 }
+
+for (const [options, flags] of [
+  [{ fix: true }, ["--fix-suggestions"]],
+  [{ fixSuggestions: true }, ["--fix"]],
+]) {
+  test(`native LSP startup combines configuration ${JSON.stringify(options)} and ${flags}`, async () => {
+    const f = adapterFixture();
+    let child;
+    let exited;
+    let stderr = "";
+    try {
+      writeFileSync(
+        join(f.directory, "vite.config.ts"),
+        `export default ${JSON.stringify({ lint: { options } })};\n`,
+      );
+      child = spawn(process.execPath, [adapter, "--lsp", ...flags], {
+        cwd: f.directory,
+        env: f.env,
+        stdio: ["ignore", "ignore", "pipe"],
+      });
+      child.stderr.on("data", (data) => {
+        stderr += data;
+      });
+      exited = new Promise((done, reject) => {
+        child.once("error", reject);
+        child.once("close", done);
+      });
+      await waitFor(() => {
+        if (child.exitCode !== null) throw new Error(stderr);
+        return existsSync(f.record);
+      });
+      child.kill("SIGTERM");
+      assert.equal(await exited, 0, stderr);
+      assert.deepEqual(temporaryConfigs(f.directory), []);
+    } finally {
+      if (child && child.exitCode === null) {
+        child.kill("SIGTERM");
+        await exited;
+      }
+      rmSync(f.directory, { recursive: true, force: true });
+    }
+  });
+}
+
+for (const invariant of ["atomic publication", "signal ownership"])
+  test(`native fixture readiness guarantees ${invariant}`, async () => {
+    const f = adapterFixture();
+    const opened = join(f.directory, "opened.json");
+    const release = join(f.directory, "release");
+    const preloader = join(f.directory, "observe-readiness.mjs");
+    let child;
+    let exited;
+    try {
+      writeFileSync(
+        preloader,
+        [
+          'import fs from "node:fs";',
+          'import { syncBuiltinESMExports } from "node:module";',
+          `const record = ${JSON.stringify(f.record)}, opened = ${JSON.stringify(opened)}, release = ${JSON.stringify(release)};`,
+          "const write = fs.writeFileSync;",
+          "fs.writeFileSync = (path, data, ...args) => {",
+          '  if (String(path) === record || String(path) === record + ".writing") {',
+          '    const fd = fs.openSync(path, "w");',
+          '    write(opened, JSON.stringify({ signalOwned: process.listenerCount("SIGTERM") > 0 }));',
+          "    const deadline = Date.now() + 5000;",
+          "    while (!fs.existsSync(release) && Date.now() < deadline) Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 10);",
+          "    try { return write(fd, data, ...args); } finally { fs.closeSync(fd); }",
+          "  }",
+          "  return write(path, data, ...args);",
+          "};",
+          "syncBuiltinESMExports();",
+        ].join("\n"),
+      );
+      const config = join(f.directory, "config.json");
+      writeFileSync(config, "{}");
+      child = spawn(
+        process.execPath,
+        ["--import", preloader, f.env.TIARA_OXLINT_EFFECT_PATH, "--config", config, "--lsp"],
+        { env: f.env, stdio: "ignore" },
+      );
+      exited = new Promise((done, reject) => {
+        child.once("error", reject);
+        child.once("close", done);
+      });
+      await waitFor(() => existsSync(opened));
+      if (invariant === "signal ownership")
+        assert.equal(
+          JSON.parse(readFileSync(opened, "utf8")).signalOwned,
+          true,
+          "readiness writes must follow signal handler installation",
+        );
+      else
+        assert.equal(
+          existsSync(f.record),
+          false,
+          "a record opened for writing must not advertise readiness",
+        );
+      writeFileSync(release, "");
+      await waitFor(() => existsSync(f.record));
+      assert.equal(JSON.parse(readFileSync(f.record, "utf8")).configPath, config);
+      child.kill("SIGTERM");
+      assert.equal(await exited, 0);
+    } finally {
+      writeFileSync(release, "");
+      if (child && child.exitCode === null) {
+        child.kill("SIGTERM");
+        await exited;
+      }
+      rmSync(f.directory, { recursive: true, force: true });
+    }
+  });
+
+test(
+  "native LSP drains framed output after child exit and before closing the bridge",
+  { timeout: 15000 },
+  async () => {
+    const f = adapterFixture();
+    const preloader = join(f.directory, "late-stdio.mjs");
+    try {
+      writeFileSync(join(f.directory, "vite.config.ts"), "export default { lint: {} };\n");
+      writeFileSync(
+        preloader,
+        [
+          'import cp from "node:child_process";',
+          'import { EventEmitter } from "node:events";',
+          'import { PassThrough } from "node:stream";',
+          'import { syncBuiltinESMExports } from "node:module";',
+          "const spawn = cp.spawn;",
+          `const native = ${JSON.stringify(f.env.TIARA_OXLINT_EFFECT_PATH)};`,
+          "cp.spawn = (command, ...args) => {",
+          "  if (command !== native) return spawn(command, ...args);",
+          "  const child = new EventEmitter(); child.stdin = new PassThrough(); child.stdout = new PassThrough(); child.kill = () => false;",
+          "  setImmediate(() => {",
+          '    child.emit("exit", 7, null);',
+          "    setTimeout(() => {",
+          '      const frames = Array.from({ length: 32 }, (_, index) => { const body = Buffer.from(JSON.stringify({ jsonrpc: "2.0", method: "notice", params: { index, text: "日本語".repeat(8192) } })); return Buffer.concat([Buffer.from(`Content-Length: ${body.length}\\r\\n\\r\\n`), body]); });',
+          '      child.stdout.once("end", () => child.emit("close", 7, null));',
+          "      child.stdout.end(Buffer.concat(frames));",
+          "    }, 30);",
+          "  });",
+          "  return child;",
+          "};",
+          "syncBuiltinESMExports();",
+        ].join("\n"),
+      );
+      const child = spawn(process.execPath, ["--import", preloader, adapter, "--lsp"], {
+        cwd: f.directory,
+        env: f.env,
+        stdio: ["ignore", "pipe", "pipe"],
+      });
+      const chunks = [];
+      let stderr = "";
+      child.stdout.on("data", (bytes) => chunks.push(bytes));
+      child.stderr.on("data", (bytes) => {
+        stderr += bytes;
+      });
+      child.stdout.pause();
+      const exited = new Promise((done, reject) => {
+        child.once("error", reject);
+        child.once("close", done);
+      });
+      setTimeout(() => child.stdout.resume(), 200);
+      assert.equal(await exited, 7, stderr);
+      let data = Buffer.concat(chunks);
+      const messages = [];
+      while (data.length) {
+        const header = data.indexOf("\r\n\r\n");
+        assert.ok(header >= 0, "complete framing header");
+        const length = Number(
+          /Content-Length:\s*(\d+)/i.exec(data.subarray(0, header).toString())[1],
+        );
+        assert.ok(data.length >= header + 4 + length, "complete framing body");
+        messages.push(JSON.parse(data.subarray(header + 4, header + 4 + length)));
+        data = data.subarray(header + 4 + length);
+      }
+      assert.deepEqual(
+        messages.map((message) => message.params.index),
+        Array.from({ length: 32 }, (_, index) => index),
+      );
+      assert.ok(messages.every((message) => message.params.text === "日本語".repeat(8192)));
+      assert.deepEqual(temporaryConfigs(f.directory), []);
+    } finally {
+      rmSync(f.directory, { recursive: true, force: true });
+    }
+  },
+);
 async function waitFor(check) {
   const deadline = Date.now() + 8000;
   while (Date.now() < deadline) {

@@ -88,7 +88,10 @@ for (let index = 0; index < args.length && args[index] !== "--"; index++) {
       : true;
 }
 if (explicitLsp.tsconfig) explicitLsp.tsconfig = resolve(explicitLsp.tsconfig);
-effectiveLspOptions.overrides = lsp ? lspOptions(explicitLsp) : {};
+const viteConfig = configPath && viteNames.includes(basename(configPath));
+// A Vite config can supply the other half of a CLI fix-option combination.
+// Standalone native configs retain explicit-option validation here.
+effectiveLspOptions.overrides = lsp && !viteConfig ? lspOptions(explicitLsp) : {};
 if (configPath) effectiveLspOptions.overrides.configPath = resolve(configPath);
 
 async function prepareViteConfig(path) {
@@ -142,9 +145,11 @@ async function prepareViteConfig(path) {
       return file;
     }
     materialize(config.lint ?? {}, rootFile);
+    const options = config.lint?.options ?? {};
+    const effective = { ...options, ...explicitLsp };
     const nextLspOptions = {
-      defaults: lsp ? lspOptions(config.lint?.options ?? {}) : {},
-      overrides: { ...(lsp ? lspOptions(explicitLsp) : {}), configPath: rootFile },
+      defaults: lsp ? lspOptions(options, effective) : {},
+      overrides: { ...(lsp ? lspOptions(explicitLsp, effective) : {}), configPath: rootFile },
     };
     // Share unchanged immutable children across updates. Published snapshots
     // remain valid until the native reader exits: it can still hold an old root.
@@ -221,8 +226,7 @@ const handlers = new Map(
 // Own interruption before creating snapshots and until cleanup has settled.
 for (const [signal, handler] of handlers) process.on(signal, handler);
 try {
-  if (configPath && viteNames.includes(basename(configPath)))
-    await prepareViteConfig(resolve(configPath));
+  if (viteConfig) await prepareViteConfig(resolve(configPath));
   if (!closing) {
     child = spawn(native, preparedArgs, {
       stdio: lsp ? ["pipe", "pipe", "inherit"] : "inherit",
@@ -230,12 +234,13 @@ try {
     });
     const exited = new Promise((done, reject) => {
       child.once("error", reject);
-      child.once("exit", (code, signal) => done({ code, signal }));
+      child.once("close", (code, signal) => done({ code, signal }));
     });
     if (lsp) bridge = bridgeLsp(child, () => effectiveLspOptions);
     let result;
     try {
       result = await (bridge ? Promise.race([exited, bridge.failed]) : exited);
+      if (bridge) await Promise.race([bridge.drain(), bridge.failed]);
     } catch (error) {
       child.kill("SIGTERM");
       await exited.catch(() => {});

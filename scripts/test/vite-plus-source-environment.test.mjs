@@ -5,6 +5,89 @@ import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import test from "node:test";
 import { sourceEnvironment } from "../lib/vite-plus-source-environment.mjs";
+import { rolldownBuildRecord } from "../lib/vite-plus-build-record.mjs";
+
+function rolldownFixture() {
+  const source = mkdtempSync(join(tmpdir(), "rolldown-inputs-"));
+  const files = [
+    "package.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    ...[
+      "Cargo.toml",
+      "Cargo.lock",
+      ".cargo/config.toml",
+      ".tiara-source.json",
+      "package.json",
+      "pnpm-lock.yaml",
+      "pnpm-workspace.yaml",
+      "tsconfig.json",
+      "crates/test/lib.rs",
+      "packages/rolldown/build.ts",
+      "packages/rolldown/build-binding.ts",
+      "packages/rolldown/copy-addon-plugin.ts",
+      "packages/rolldown/package.json",
+      "packages/rolldown/tsconfig.json",
+      "packages/rolldown/src/index.ts",
+      "packages/rolldown/src/nested/helper.ts",
+      "packages/rolldown/src/rolldown-binding.linux-x64-gnu.node",
+      "packages/rolldown/dist/index.mjs",
+      "packages/rolldown/dist/rolldown-binding.linux-x64-gnu.node",
+      "examples/unrelated.ts",
+    ].map((path) => "rolldown/" + path),
+  ];
+  for (const path of files) {
+    mkdirSync(join(source, path, ".."), { recursive: true });
+    writeFileSync(join(source, path), path + "\n");
+  }
+  return source;
+}
+
+for (const input of [
+  "packages/rolldown/src/index.ts",
+  "packages/rolldown/src/nested/helper.ts",
+  "packages/rolldown/copy-addon-plugin.ts",
+  "packages/rolldown/tsconfig.json",
+  "tsconfig.json",
+  "../pnpm-lock.yaml",
+  "crates/test/lib.rs",
+]) {
+  test(`Rolldown reuse invalidates when build input changes: ${input}`, async () => {
+    const source = rolldownFixture();
+    try {
+      const before = await rolldownBuildRecord(source);
+      const file = join(source, "rolldown", input);
+      const original = readFileSync(file);
+      writeFileSync(file, Buffer.concat([original, Buffer.from("changed\n")]));
+      const after = await rolldownBuildRecord(source);
+      assert.notDeepEqual(
+        after.inputs,
+        before.inputs,
+        "recorded outputs alone cannot authorize reuse",
+      );
+      assert.deepEqual(after.outputs, before.outputs);
+      writeFileSync(file, original);
+      assert.deepEqual(await rolldownBuildRecord(source), before);
+    } finally {
+      rmSync(source, { recursive: true, force: true });
+    }
+  });
+}
+
+test("Rolldown reuse keeps unrelated examples outside inputs and validates output bytes", async () => {
+  const source = rolldownFixture();
+  try {
+    const before = await rolldownBuildRecord(source);
+    writeFileSync(join(source, "rolldown/examples/unrelated.ts"), "unrelated change");
+    assert.deepEqual(await rolldownBuildRecord(source), before);
+    writeFileSync(join(source, "rolldown/packages/rolldown/dist/index.mjs"), "changed output");
+    const after = await rolldownBuildRecord(source);
+    assert.deepEqual(after.inputs, before.inputs);
+    assert.notDeepEqual(after.outputs, before.outputs);
+  } finally {
+    rmSync(source, { recursive: true, force: true });
+  }
+});
 
 function fixture(corepack) {
   const root = mkdtempSync(join(tmpdir(), "source environment "));

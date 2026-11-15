@@ -2712,7 +2712,7 @@ function unambiguousRunnerVersion(range) {
 }
 function installedSourceVersion(directory, name, expectedPackage, expectedRange) {
 	const installed = detectPackageMetadata(directory, name);
-	if (!installed || expectedPackage && installed.name !== expectedPackage) return;
+	if (!installed || expectedPackage && (installed.name !== expectedPackage && !(["vite-plus","@tiara-stack/vite-plus"].includes(expectedPackage) && ["vite-plus","@tiara-stack/vite-plus"].includes(installed.name)))) return;
 	if (expectedRange && import_semver.default.validRange(expectedRange) && !import_semver.default.satisfies(installed.version, expectedRange, { includePrerelease: true })) return;
 	if (installed.name === "vitest") return import_semver.default.valid(installed.version) ?? void 0;
 	const pkg = readJson(path.join(installed.path, "package.json"));
@@ -2720,7 +2720,7 @@ function installedSourceVersion(directory, name, expectedPackage, expectedRange)
 		const version = record(pkg.peerDependencies)?.["@vitest/ui"];
 		return typeof version === "string" ? import_semver.default.valid(version) ?? void 0 : void 0;
 	}
-	if (installed.name !== "vite-plus") return;
+	if (!["vite-plus","@tiara-stack/vite-plus"].includes(installed.name)) return;
 	const bundled = dependency(pkg, "vitest");
 	if (bundled?.startsWith("catalog:")) return installedSourceVersion(installed.path, "vitest");
 	if (bundled && import_semver.default.validRange(bundled)) {
@@ -2731,8 +2731,9 @@ function installedSourceVersion(directory, name, expectedPackage, expectedRange)
 }
 function sourceVersion(directory, root, pkg, manager) {
 	const catalog = createCatalogDependencyResolver(root, manager ?? PackageManager.pnpm);
-	const vitePlus = dependency(pkg, "vite-plus");
-	const vitePlusRange = vitePlus?.startsWith("catalog:") ? catalog?.(vitePlus, "vite-plus") : vitePlus;
+	const vitePlusName = dependency(pkg, "@tiara-stack/vite-plus") ? "@tiara-stack/vite-plus" : "vite-plus";
+const vitePlus = dependency(pkg, vitePlusName);
+	const vitePlusRange = vitePlus?.startsWith("catalog:") ? catalog?.(vitePlus, vitePlusName) : vitePlus;
 	let spec = dependency(pkg, "vitest");
 	if (spec?.startsWith("catalog:")) spec = catalog?.(spec, "vitest");
 	const legacyAlias = spec?.startsWith(`npm:${LEGACY_RUNNER}@`);
@@ -2742,7 +2743,7 @@ function sourceVersion(directory, root, pkg, manager) {
 		"devDependencies",
 		"optionalDependencies"
 	].some((field) => typeof record(pkg[field])?.vitest === "string") && vitePlus) {
-		const bundled = installedSourceVersion(directory, "vite-plus", "vite-plus", vitePlusRange);
+		const bundled = installedSourceVersion(directory, vitePlusName, vitePlusName, vitePlusRange);
 		if (bundled) return bundled;
 	}
 	const expectedRunnerPackage = legacyAlias ? LEGACY_RUNNER : void 0;
@@ -2753,7 +2754,7 @@ function sourceVersion(directory, root, pkg, manager) {
 	if (legacyAlias) return "4.0.0";
 	if (spec && import_semver.default.validRange(spec)) return unambiguousRunnerVersion(spec);
 	if (vitePlus) {
-		const bundled = installedSourceVersion(directory, "vite-plus", "vite-plus", vitePlusRange);
+		const bundled = installedSourceVersion(directory, vitePlusName, vitePlusName, vitePlusRange);
 		if (bundled) return bundled;
 	}
 	if (directory !== root) return sourceVersion(root, root, readJson(path.join(root, "package.json")), manager);

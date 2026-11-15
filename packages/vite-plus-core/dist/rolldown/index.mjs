@@ -1,7 +1,7 @@
 import { n as __toESM, t as require_binding } from "./shared/binding-BY0qR5iS.mjs";
-import { n as onExit, t as watch } from "./shared/watch-BFId5KRN.mjs";
-import { T as VERSION, s as RolldownMagicString } from "./shared/bindingify-input-options-DPBybJV1.mjs";
-import { t as rolldown } from "./shared/rolldown-DeWTZWR_.mjs";
+import { n as onExit, t as watch } from "./shared/watch-B6R5VMW-.mjs";
+import { T as VERSION, s as RolldownMagicString } from "./shared/bindingify-input-options-DeSceppM.mjs";
+import { t as rolldown } from "./shared/rolldown-DjkfKFe_.mjs";
 import { t as defineConfig } from "./shared/define-config-Demdg3_4.mjs";
 import { isMainThread } from "node:worker_threads";
 //#region src/setup.ts

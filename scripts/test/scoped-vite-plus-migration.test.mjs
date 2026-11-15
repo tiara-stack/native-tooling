@@ -1,12 +1,112 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import test from "node:test";
+import ts from "typescript";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
+
+test("generated bundled-runner detection handles scoped names, aliases, catalogs and explicit runners", async () => {
+  const directory = join(root, "packages/vite-plus/dist/migration");
+  const original = readFileSync(join(directory, "bin.js"), "utf8");
+  const tree = ts.createSourceFile("bin.js", original, ts.ScriptTarget.Latest, true);
+  const bootstrap = tree.statements.filter(
+    (node) =>
+      ts.isExpressionStatement(node) &&
+      ts.isCallExpression(node.expression) &&
+      ts.isPropertyAccessExpression(node.expression.expression) &&
+      ts.isCallExpression(node.expression.expression.expression) &&
+      node.expression.expression.expression.expression.getText(tree) === "main",
+  );
+  assert.equal(bootstrap.length, 1, "the test suppresses only the CLI bootstrap, not the planner");
+  const node = bootstrap[0];
+  const moduleFile = join(directory, `.tiara-runner-detection-${process.pid}-${Date.now()}.mjs`);
+  const fixture = mkdtempSync(join(tmpdir(), "bundled-runner-"));
+  try {
+    writeFileSync(
+      moduleFile,
+      original.slice(0, node.getStart(tree)) +
+        original.slice(node.end) +
+        "\nexport { planVitestV5Migration, detectPackageMetadata };\n",
+    );
+    const { planVitestV5Migration, detectPackageMetadata } = await import(
+      pathToFileURL(moduleFile).href
+    );
+    for (const [key, installedName, spec, ownRunner, expected] of [
+      ["@tiara-stack/vite-plus", "@tiara-stack/vite-plus", "^1.0.0", undefined, "5.0.1"],
+      ["vite-plus", "vite-plus", "^1.0.0", undefined, "5.0.1"],
+      [
+        "vite-plus",
+        "@tiara-stack/vite-plus",
+        "npm:@tiara-stack/vite-plus@^1.0.0",
+        undefined,
+        "5.0.1",
+      ],
+      ["@tiara-stack/vite-plus", "@tiara-stack/vite-plus", "catalog:", undefined, "5.0.1"],
+      ["@tiara-stack/vite-plus", "@tiara-stack/vite-plus", "^1.0.0", "4.0.18", "4.0.18"],
+      ["@tiara-stack/vite-plus", "unrelated", "^1.0.0", undefined, "4.0.0"],
+      ["@tiara-stack/vite-plus", "@tiara-stack/vite-plus", "^2.0.0", undefined, "4.0.0"],
+    ]) {
+      const project = mkdtempSync(join(fixture, "project-"));
+      writeFileSync(
+        join(project, "package.json"),
+        JSON.stringify({
+          name: "fixture",
+          private: true,
+          scripts: { test: "vp test" },
+          devDependencies: { [key]: spec, ...(ownRunner ? { vitest: "^4.0.0" } : {}) },
+          peerDependencies: { vitest: "^4.0.0" },
+        }),
+      );
+      writeFileSync(join(project, "pnpm-workspace.yaml"), `catalog:\n  "${key}": "^1.0.0"\n`);
+      const container = join(project, "node_modules", key);
+      mkdirSync(container, { recursive: true });
+      writeFileSync(
+        join(container, "package.json"),
+        JSON.stringify({
+          name: installedName,
+          version: "1.0.0",
+          exports: { ".": { import: "./unbuilt.mjs" } },
+          dependencies: { vitest: "5.0.1" },
+        }),
+      );
+      const runner = join(container, "node_modules/vitest");
+      mkdirSync(runner, { recursive: true });
+      writeFileSync(join(runner, "package.json"), '{"name":"vitest","version":"5.0.1"}');
+      if (ownRunner) {
+        mkdirSync(join(project, "node_modules/vitest"), { recursive: true });
+        writeFileSync(
+          join(project, "node_modules/vitest/package.json"),
+          JSON.stringify({ name: "vitest", version: ownRunner }),
+        );
+      }
+      assert.equal(
+        detectPackageMetadata(project, key).name,
+        installedName,
+        "scoped package metadata resolves before its runtime is inferred",
+      );
+      const plan = planVitestV5Migration({ rootDir: project, packageManager: "pnpm" });
+      assert.equal(
+        plan.projects[0].sourceVersion,
+        expected,
+        `${key}/${installedName}/${spec}/${ownRunner}`,
+      );
+      assert.equal(plan.projects[0].options.preserveV4, expected.startsWith("4."));
+      assert.equal(
+        planVitestV5Migration({ rootDir: project, packageManager: "pnpm" }).projects[0]
+          .sourceVersion,
+        expected,
+        "stateless rerun retains the original runner",
+      );
+    }
+  } finally {
+    rmSync(moduleFile, { force: true });
+    rmSync(fixture, { recursive: true, force: true });
+  }
+});
 test("the generated migrator rewrites scoped and unscoped removed tsconfig exports", async () => {
   const dist = join(root, "packages/vite-plus/dist");
   const file = readdirSync(dist).find(

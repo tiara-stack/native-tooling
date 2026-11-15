@@ -154,6 +154,73 @@ test("LSP bridge supplies initial, newly-added workspace and single-file options
   }
 });
 
+test("LSP configuration pulls preserve cached editor settings and register new workspaces", () => {
+  const f = fixture();
+  try {
+    const uri = "file:///project";
+    f.send(f.input, {
+      id: 1,
+      method: "initialize",
+      params: {
+        rootUri: uri,
+        capabilities: {},
+        initializationOptions: { settings: { typeAware: true, run: "onSave" } },
+      },
+    });
+    f.send(f.input, { method: "initialized", params: {} });
+    const pull = (scopeUri) => {
+      f.send(f.child.stdout, {
+        id: 44,
+        method: "workspace/configuration",
+        params: { items: [{ scopeUri, section: "oxc_language_server" }] },
+      });
+      return f.received.at(-1).result[0];
+    };
+    assert.equal(pull(uri).run, "onSave");
+    f.send(f.input, { method: "workspace/didChangeConfiguration", params: { settings: null } });
+    assert.equal(pull(uri).run, "onSave");
+    f.send(f.input, {
+      method: "workspace/didChangeConfiguration",
+      params: { settings: [{ workspaceUri: uri, options: { run: "onType" } }] },
+    });
+    assert.equal(pull(uri).run, "onType");
+    pull("file:///new");
+    f.bridge.refresh();
+    assert.equal(
+      f.received.at(-2).params.settings.find((item) => item.workspaceUri === uri).options.run,
+      "onType",
+    );
+    assert.ok(
+      f.received.at(-2).params.settings.some((item) => item.workspaceUri === "file:///new"),
+    );
+    f.send(f.input, { method: "workspace/didChangeConfiguration", params: { settings: {} } });
+    assert.equal(pull(uri).run, undefined, "an explicit empty editor setting clears the cache");
+  } finally {
+    f.close();
+  }
+});
+
+test("effective LSP fix options combine configuration and explicit flags", () => {
+  const cases = [
+    [{ fix: true }, { fixSuggestions: true }, "safe_fix_or_suggestion"],
+    [{ fixSuggestions: true }, { fix: true }, "safe_fix_or_suggestion"],
+    [{ fix: true, fixDangerously: true }, { fixSuggestions: true }, "all"],
+    [{ fix: false }, { fixSuggestions: true }, undefined],
+  ];
+  for (const [defaults, explicit, expected] of cases) {
+    const effective = { ...defaults, ...explicit };
+    if (!expected) {
+      assert.throws(() => lspOptions(explicit, effective), /suggestion-only fixKind/);
+    } else {
+      assert.equal(lspOptions(defaults, effective).fixKind, expected);
+      assert.equal(lspOptions(explicit, effective).fixKind, expected);
+    }
+  }
+  assert.deepEqual(lspOptions({ typeAware: true }, { fix: true, typeAware: true }), {
+    typeAware: true,
+  });
+});
+
 test("LSP bridge reports malformed framing rather than forwarding corrupted messages", async () => {
   const f = fixture();
   try {
