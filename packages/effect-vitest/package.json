@@ -1,6 +1,6 @@
 {
   "name": "@tiara-stack/effect-vitest",
-  "version": "4.0.0-beta.93.tiara.2",
+  "version": "4.0.1",
   "description": "Tiara Stack fork of @effect/vitest wired to Vite+ test exports.",
   "bugs": {
     "url": "https://github.com/tiara-stack/native-tooling/issues"
@@ -38,17 +38,23 @@
     "format": "vp fmt --check",
     "format:apply": "vp fmt",
     "lint": "vp lint src",
-    "test": "node node_modules/@tiara-stack/vite-plus/bin/vp test --run --maxWorkers=2 && node --test ../../scripts/test/sync-effect-vitest.test.mjs"
+    "test": "vp test --run --maxWorkers=2 && node --test ../../scripts/test/sync-effect-vitest.test.mjs"
   },
   "devDependencies": {
-    "@tiara-stack/vite-plus": "^0.2.2",
+    "@tiara-stack/vite-plus": "link:../vite-plus-effect-fork/packages/cli",
     "@types/node": "catalog:",
     "effect": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
   },
   "peerDependencies": {
-    "@tiara-stack/vite-plus": "^0.2.2",
-    "effect": "^4.0.1"
+    "@tiara-stack/vite-plus": ">=1.0.0 <2.0.0",
+    "effect": "^4.0.1",
+    "vitest": ">=5.0.0 <6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vitest": {
+      "optional": true
+    }
   }
 }

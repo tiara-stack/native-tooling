@@ -1,0 +1,1136 @@
+{
+ "format": "tia314-review-index-v1",
+ "source_epoch": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9",
+ "base": "e088d5c9784d2779684d02524fab62a0fa5e656a",
+ "source_tree": "5120614e6296df0457905a528931838cac8cef12",
+ "source_targets": 454,
+ "source_classes": {
+  "mixed": 15,
+  "custom": 40,
+  "generated": 334,
+  "removed_contracts": 65
+ },
+ "stock_source_exclusions": 6419,
+ "historical_stock_update_exclusions": 6420,
+ "newly_mixed_import_paths": [
+  "packages/vite-plus-effect-fork/packages/cli/templates/monorepo/_gitignore"
+ ],
+ "payload_files": [
+  {
+   "path": ".review-packets/tia314/01-code.json",
+   "bytes": 65412,
+   "sha256": "a46c6f9ec919c688f2847f4360e28a3594804a33d9c2920ea562ae854f650763",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/02-code.json",
+   "bytes": 65438,
+   "sha256": "d3d06bb62d81005c94c868d457fcc25b10ddbc9b92c701874741aab622a49832",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/03-code.json",
+   "bytes": 65519,
+   "sha256": "54708b0530bf50da296b49060fa302ad8297bb3ba9cbbf2b3e4e920bb2742b35",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/04-code.json",
+   "bytes": 65531,
+   "sha256": "67240af41fc0e6322dec55389716cc8110597d8c94b9ae5cd843b50cbe1971e4",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/05-code.json",
+   "bytes": 65381,
+   "sha256": "48b91012b143989495cb866a5459a9d350bd266c4da7ba26958274663384f703",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/06-code.json",
+   "bytes": 65479,
+   "sha256": "fff0d519c2f5a5f150b6481c331f4b6e1feb5f9e67f70706bf231dec072e41bd",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/07-code.json",
+   "bytes": 65388,
+   "sha256": "fbb8c5a3dded448c66826f07cad9f2a08fa3e6fccb32dc0e95c65ec8bdf079b3",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/08-code.json",
+   "bytes": 65436,
+   "sha256": "ea62050ef95ec238874f0db9dfaf07795f5e46c99b500a6cbfc993f3666b0b42",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/09-code.json",
+   "bytes": 65529,
+   "sha256": "cbded9501269c1fd7c9f8d4cbff35504557603ae4833296877fecd521fc5a33a",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/10-code.json",
+   "bytes": 65435,
+   "sha256": "812120de322939c8ce17d9141f51359850cec96530a7039b0b451562a350e332",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/11-code.json",
+   "bytes": 65482,
+   "sha256": "9bb6c89e31b295364f77e7f11c6ab3a7e39fe973546069b4b8f02bcad527bc3a",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/12-code.json",
+   "bytes": 65456,
+   "sha256": "801c381df376ee89015540c1e05146f629ea4d78a40fb8af6f51fcd2a5b4ab59",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/13-code.json",
+   "bytes": 65512,
+   "sha256": "628207322b894a5e232407131b4df6cbf9a92e9cb90dd561a004a65945b47d9d",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/14-code.json",
+   "bytes": 59135,
+   "sha256": "c6cedab6377b08969f4b98adbf5d4d9a70ddde833115e02b45f49b25627550ce",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/15-code.json",
+   "bytes": 7624,
+   "sha256": "122c1f5490a502905f74697dec1e3f9c65ff0c5ab319bc2f01101449f0da726b",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/16-code.json",
+   "bytes": 65509,
+   "sha256": "564e297cc020310ad290d52e42186b243667106042dc2eacadf5eaaed3c2ef71",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/17-code.json",
+   "bytes": 13481,
+   "sha256": "f26f51a8adc35c354204f2b29884192ce661fa253e2ade4f22d62fa532f6afbf",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/18-code.json",
+   "bytes": 65462,
+   "sha256": "a6985364276eaac2446c741647a5e9cbbca04cb514565405f5e8ab979c90db36",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/19-code.json",
+   "bytes": 65531,
+   "sha256": "ab2daffd4c150c8eabdcae61668c72bf94ca0dc20e29993b4245af6fe6e4fe55",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/20-code.json",
+   "bytes": 65493,
+   "sha256": "635f3a8f8665f03e8a22644065a79a4416491622beb670a63e6b9aebf91af6c0",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/21-code.json",
+   "bytes": 65520,
+   "sha256": "693377887b1bc9d41b9e77cb95c50a65f9f350dd81b4d1213787de0a3686a4b6",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/22-code.json",
+   "bytes": 65529,
+   "sha256": "ae0377a961a23bf779451d2e4cc6365f9b353915f31877b25009e798072c9db2",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/23-code.json",
+   "bytes": 65445,
+   "sha256": "6b9e0c59606288e2b71a7edd78aa050e006f7460711c11f5856f904b99fcea5b",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/24-code.json",
+   "bytes": 65529,
+   "sha256": "9d301ecd49da89b3bc60a1ecaad1d1d6fb3ed29f0ff0e0a3fe56105c3ab5dd8f",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/25-code.json",
+   "bytes": 65495,
+   "sha256": "b8dcced8f94f15b1745ea8d402b4c03b4dd727e53b961439a56e69cac936700c",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/26-code.json",
+   "bytes": 65517,
+   "sha256": "ab0aa4ed610a23a566691380d30b4d86964f7ee3f1233eca04793c79d1527ce3",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/27-code.json",
+   "bytes": 65406,
+   "sha256": "9e9eac9a3b7a0a0cbc125f997feccea99c9f9d9f62138b633a03bb4462741c7b",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/28-code.json",
+   "bytes": 65447,
+   "sha256": "cfba98392a861e7cc337e677483ad9876b38c0215ae22e2881e9af6cf6b5b80c",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/29-code.json",
+   "bytes": 65459,
+   "sha256": "2c8073abc1ffaeb2815ccc00afe1ee3d2a801c4633c02b2fb3ac4788415ab016",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/30-code.json",
+   "bytes": 65517,
+   "sha256": "44c8484e60361c03f53bf584acc9a9304b805babdd42eea4ebc609b312320862",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/31-code.json",
+   "bytes": 65453,
+   "sha256": "f604581788ba652ca5b3b14cf84bfeb67245c401bcb503d3133ff3f543b70abb",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/32-code.json",
+   "bytes": 65511,
+   "sha256": "9f30c1424f46c48c6b53c19ac2268d0e8349bc888b086472a20ef67b13fe98ba",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/33-code.json",
+   "bytes": 65526,
+   "sha256": "11de57c60362a1a31f1acff1d64ee5589abaec186164ab66dd218bfe960bc39f",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/34-code.json",
+   "bytes": 65530,
+   "sha256": "b43c11bf507ada5b5e099b7204750a21f7cbea61200dc534fe20b163e8d9ecf6",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/35-code.json",
+   "bytes": 65457,
+   "sha256": "35a244a42ec0db1951ada457deefcdfc7fe00bcffbff640782d8ada1df6c30b4",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/36-code.json",
+   "bytes": 65521,
+   "sha256": "758bc2289386b3de2037537d0311f01c857bd4c6ffb526a40295dfc620f54f1c",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/37-code.json",
+   "bytes": 65525,
+   "sha256": "698a5b8f806da738826b792d8b1e5e8b42a65a46ed3b62e3651be207a0690744",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/38-code.json",
+   "bytes": 65412,
+   "sha256": "16febf93e62a67d8d5e3adc17065983fa3b4335ba73cb291f616fdfad11404ef",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/39-code.json",
+   "bytes": 65440,
+   "sha256": "665920e9ac8d98de0c9c1041e37532f26479d1e33d51ea53e796a7f68e8e387a",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/40-code.json",
+   "bytes": 65523,
+   "sha256": "1ed2d837be3b2fa519779dd01c25f8347847fd1df5860931f2519e1c3b080183",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/41-code.json",
+   "bytes": 65462,
+   "sha256": "803967ba3118b855697056f9e2df270331224bf44790ad8a9748e5dd0e17b359",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/42-code.json",
+   "bytes": 65474,
+   "sha256": "ed6b87ee8b4951214719771b19650b572718509c71b1dff2470462981d4a2201",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/43-code.json",
+   "bytes": 65448,
+   "sha256": "7caa9281582c9f08198f17778ba028422185bb5347d2237f6cb71496f4c3fb0c",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/44-code.json",
+   "bytes": 65451,
+   "sha256": "8f4556a8a4437061133176132e5cef563cce35da033b1abb7a3f52cdc5a24a07",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/45-code.json",
+   "bytes": 65443,
+   "sha256": "5eca5479a535965b3800dc0ddfa10d6145c43994d2aa74bc9c448ab15fc841b5",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/46-code.json",
+   "bytes": 65523,
+   "sha256": "6f862c2c99a619dec5d2fc0575da7f77dd7f5664be03776ad0551df47a4b5270",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/47-code.json",
+   "bytes": 65517,
+   "sha256": "d487380aa1042807ccb779514b8b09d89425cbda624df41ddf266ebb8941b256",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/48-code.json",
+   "bytes": 65501,
+   "sha256": "b8cdb2e9070afb8b0c3440f5e8cf19be777959546ad83859f64fafbe62da587c",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/49-code.json",
+   "bytes": 65528,
+   "sha256": "420d3e4e5e4ad34f2b99561253789996291a695ee0cb01f087f91534d7135e43",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/50-code.json",
+   "bytes": 65464,
+   "sha256": "c4a219d1d524dd3ced9877fe9211de619c45664059f1a45e2dd1e597bc6538f4",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/51-code.json",
+   "bytes": 65532,
+   "sha256": "f620ef1b9aeaf47883d8c621c11baab83b48b9195c1521acb2ee3dcd58c5bc35",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/52-code.json",
+   "bytes": 65497,
+   "sha256": "72a704a09127483bea0b118a9f3c76b962169a13bc169ebdd53d6c0272cbbce7",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/53-code.json",
+   "bytes": 65525,
+   "sha256": "f96fca3b3471dae1edd706ec52e34c41d9b69cf8d0df5c1728d864f68b7f0ebb",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/54-code.json",
+   "bytes": 65514,
+   "sha256": "fa31f10880c45a4ddc4119424e7f1354669883e75babd9c65a0c55990df65b3b",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/55-code.json",
+   "bytes": 65437,
+   "sha256": "86f5319470deb0a84215f9fd5b633a8e7a674e4082a9036dabd8bafd61d5f603",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/56-code.json",
+   "bytes": 65448,
+   "sha256": "a32d41c1f5549138088b42e15f8ea72e964983c44073848bd562ed42341cfc16",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/57-code.json",
+   "bytes": 65503,
+   "sha256": "92c34ede5b939462a0ff7170c8f17f011d3423e35e75ecbddac00e4195f9300e",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/58-code.json",
+   "bytes": 65502,
+   "sha256": "b4f9a626f38a0f64d55d679f977fd2e1cdf96592cf0827bf05b52f986c34180f",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/59-code.json",
+   "bytes": 60100,
+   "sha256": "4787c9c6f54510148684662f5e60efeba04def01e1e88b3199951af78fa39ce3",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/60-code.json",
+   "bytes": 65533,
+   "sha256": "b2adae7bb30fe51c3dba9bb1aff257c30af08dd9bdb37f6e1b206e93a09bc6b2",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/61-code.json",
+   "bytes": 27368,
+   "sha256": "55767d6b8706684dafd74cd9f4393559319cb330716da34525ff5cb09aeb43db",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/62-code.json",
+   "bytes": 65498,
+   "sha256": "514cbe0ac5a38757db295b70da8a4b34e293abcf2636af550fab03f6ee5aeec8",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/63-code.json",
+   "bytes": 65477,
+   "sha256": "260d4e00229125d20e52d620864b4b7ed0b9283ccf5f88d7c66b527b383dd696",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/64-code.json",
+   "bytes": 65488,
+   "sha256": "98688bb935fc99cc4ab59ea5f54a8063de60933f4bbda5512d3daab40c6a55a2",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/78-code.json",
+   "bytes": 62224,
+   "sha256": "6aeb76afc1daf848fac481460049a6fef3219b69acfbc6f71ef32cce9fd43fff",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/79-code.json",
+   "bytes": 65483,
+   "sha256": "242007c77e17ee7c917c00ab834d5d2649e523b35dfa7282bd20fe93652a8014",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/80-code.json",
+   "bytes": 53400,
+   "sha256": "4b13b7e20eee71b4932154db18f917c74ebdc79298260cbdcca9ff7c3d72b1f4",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/81-code.json",
+   "bytes": 56781,
+   "sha256": "cffba80643a656cd681ccb9087e62fe79da6d7b02d04568f1ebbb7388e51386c",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/82-code.json",
+   "bytes": 28335,
+   "sha256": "087fc0ea82f2c606b7b2b7669d14cd9f26291bc0c3c14e7d3ae8ccdd387db0ef",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/83-code.json",
+   "bytes": 60413,
+   "sha256": "95106a40dd6f325921607278472ef42b4d0c5c8e49978ac8bd6be09a44da8388",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/84-code.json",
+   "bytes": 9132,
+   "sha256": "f0aa83a6f84748592271a15d29770c877730f72d4604d98ce78c4cb688f13bc4",
+   "kind": "code"
+  },
+  {
+   "path": ".review-packets/tia314/65-generated-map.json",
+   "bytes": 64791,
+   "sha256": "444b6710c756ad0bb083b6586093c795ab69a6bbb17dad78414e12f401619201",
+   "kind": "generated-map"
+  },
+  {
+   "path": ".review-packets/tia314/66-generated-map.json",
+   "bytes": 65485,
+   "sha256": "2c5d2966b5cc004656167323f573c5d2e9c2a2d23a996319297e65e3ee6efcc1",
+   "kind": "generated-map"
+  },
+  {
+   "path": ".review-packets/tia314/67-generated-map.json",
+   "bytes": 64744,
+   "sha256": "35010240f3c8f578ac13a3e7f022c7397159d4767f603b647367ac1e619eaf34",
+   "kind": "generated-map"
+  },
+  {
+   "path": ".review-packets/tia314/68-generated-map.json",
+   "bytes": 64792,
+   "sha256": "32dddb92c449c85fd2f04530d6453e7091cac16bdf99e9c574323745270fdd35",
+   "kind": "generated-map"
+  },
+  {
+   "path": ".review-packets/tia314/69-generated-map.json",
+   "bytes": 64908,
+   "sha256": "87f9d2212540a56a0cac1262b4d6a8de91c41bdbe8c49850196bf1a86275626e",
+   "kind": "generated-map"
+  },
+  {
+   "path": ".review-packets/tia314/70-generated-map.json",
+   "bytes": 64659,
+   "sha256": "79a240a31d54465a8eb653e6cb47e1bfbc2534f702da84ecdaa4b63a77ff0205",
+   "kind": "generated-map"
+  },
+  {
+   "path": ".review-packets/tia314/77-generated-map.json",
+   "bytes": 28970,
+   "sha256": "d33e0d74071685b3b240b6f6b557b016ccd83e9f7809ab079a71af9c6eb3031b",
+   "kind": "generated-map"
+  },
+  {
+   "path": ".review-packets/tia314/71-legacy-contract.json",
+   "bytes": 64874,
+   "sha256": "1e46f6f750d951ef121ee42722e32fe34b6834c8633939c5cd20459461b48797",
+   "kind": "legacy-contract"
+  },
+  {
+   "path": ".review-packets/tia314/72-legacy-contract.json",
+   "bytes": 25214,
+   "sha256": "c474b1bc7dc468ce65c7390af105639aab5d1ba10c8ab25051e67c0f1f3ccad6",
+   "kind": "legacy-contract"
+  },
+  {
+   "path": ".review-packets/tia314/73-context.json",
+   "bytes": 60826,
+   "sha256": "59139da73bbefed5dffdcadcd7bae42c27a35d7508a63f2a95052b68e4ff9cb1",
+   "kind": "context"
+  },
+  {
+   "path": ".review-packets/tia314/74-context.json",
+   "bytes": 43925,
+   "sha256": "cd7cb09af1bea7400301ef0b7592ca1206cb2562b1e8d3e31e2dd757b2922369",
+   "kind": "context"
+  },
+  {
+   "path": ".review-packets/tia314/75-context.json",
+   "bytes": 54011,
+   "sha256": "411a670fd259dacf20dd4f3a5b5f0b8ace8af3dfef3e059f8e218e4208a416dd",
+   "kind": "context"
+  },
+  {
+   "path": ".review-packets/tia314/76-context.json",
+   "bytes": 65363,
+   "sha256": "0a5aa9b720ed43f42eaf4014092966a64472c9dc40a1ea059675c537f97299be",
+   "kind": "context"
+  }
+ ],
+ "controls": [
+  "README.md",
+  "index.json",
+  "hosted-config.yaml",
+  "hosted-request.md",
+  "initial-description.md"
+ ],
+ "canonical_code_corpus_sha256": "101b54ab379088d3aa1783a375178f0518240bf613becfa661ddb896c2635a53",
+ "canonical_code_target_count": 55,
+ "canonical_code_bytes": 3592953,
+ "generated_and_legacy_contracts": "Each of the other 399 source targets has one exact identity/mapping or removed-contract record. Shared transformation code is included among the 55 code targets. Stock algorithm bodies remain context. No private build/projection/evidence file is needed to read a custom code delta.",
+ "delivery_scope": {
+  "path": "docs/review/TIA-314/scope.json",
+  "before_blob": "ce64ef5b5f579bd5373486861595c09d9dc6526c",
+  "after_blob": "3b7ec2edf28a2ed276bca04e814e95586b0b195c",
+  "after_sha256": "35ae9cf828365cb2f045ef44d3679685a30930fdf7fd5420ce62298fc9489cd8",
+  "metadata_patch_sha256": "454c32e8ed43d5c41255990e758e947f0fa26c4556a34fec195a0eea72359696",
+  "metadata_patch_lines": [
+   "--- a/docs/review/TIA-314/scope.json\n",
+   "+++ b/docs/review/TIA-314/scope.json\n",
+   "@@ -1,6 +1,6 @@\n",
+   " {\n",
+   "   \"ticket\": \"TIA-314\",\n",
+   "-  \"implementation_commit\": \"d1d2da60ac2fa1fca0caa9012d7dc88f36051e04\",\n",
+   "+  \"implementation_commit\": \"9aefcd2d9d2a9c63371024bc658cdecacf01d6a9\",\n",
+   "   \"base\": \"e088d5c9784d2779684d02524fab62a0fa5e656a\",\n",
+   "   \"upstream\": {\n",
+   "     \"repository\": \"https://github.com/voidzero-dev/vite-plus\",\n",
+   "@@ -9,21 +9,21 @@\n",
+   "   },\n",
+   "   \"policy\": \"Exclude only unchanged pinned upstream source. Keep Tiara overlays, root package/version/lock/config changes, generated artifacts, generation inputs and affected consumers. Pinned upstream metadata remains provenance context. Review mixed source as Tiara overlays against the pin.\",\n",
+   "   \"counts\": {\n",
+   "-    \"raw_changed_paths\": 6961,\n",
+   "+    \"raw_changed_paths\": 6962,\n",
+   "     \"authorized_import_exclusions\": 6419,\n",
+   "-    \"review_target_paths\": 542,\n",
+   "+    \"review_target_paths\": 543,\n",
+   "     \"mixed_or_custom_source_paths\": 15,\n",
+   "     \"skipped_reviewable_paths\": 0,\n",
+   "     \"reviewed_paths\": 0,\n",
+   "-    \"pending_review_target_paths\": 542,\n",
+   "+    \"pending_review_target_paths\": 543,\n",
+   "     \"source_adaptation_paths\": 454,\n",
+   "-    \"hosted_metadata_paths\": 88,\n",
+   "+    \"hosted_metadata_paths\": 89,\n",
+   "     \"changed_existing_scope_metadata_paths\": 1,\n",
+   "     \"historical_import_update_exclusions\": 6420,\n",
+   "     \"newly_mixed_import_paths\": 1\n",
+   "   },\n",
+   "-  \"review_state\": \"Immutable source-epoch snapshot: LSP options validate before staging/publication. Failed refresh preserves the published root and bridge generation. Source and scoped44-case lifecycle suites,package,format and overlay checks pass; one direct-packed launcher and two producer copies refreshed. Affected independent local and external gates remain pending.\",\n",
+   "-  \"custom_overlay_patch_sha256\": \"cdc8453c008a16321c4da3c7b7ba0bc193c0c83eaa2b9f633f25c8d942f65ef6\",\n",
+   "+  \"review_state\": \"Immutable R4 source-epoch snapshot: effective LSP precedence/cache/drain, scoped bundled-runner detection, complete JS-input invalidation and fixture readiness/signal repairs pass affected checks. Fresh JS/declaration production and actual scoped generation are bound below; native compilation is exact reuse. Independent local re-entry and external gates remain pending.\",\n",
+   "+  \"custom_overlay_patch_sha256\": \"2c1ddff2c29ab0423e46955c51a1413179a41cb96f38f87c830e088ffcbe6bae\",\n",
+   "   \"authorized_import_exclusions\": [\n",
+   "     {\n",
+   "       \"path\": \"packages/vite-plus-effect-fork/.claude/agents/cargo-workspace-merger.md\",\n",
+   "@@ -38830,7 +38830,7 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DPBybJV1.mjs\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DeSceppM.mjs\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -38842,7 +38842,7 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-z9tfdr3B.mjs\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-DLjQmstW.mjs\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -38854,7 +38854,7 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/dist-D2P1s4_R.mjs\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/dist-BrOkQYx7.mjs\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -38866,7 +38866,7 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/load-config-BiiBolfa.mjs\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/load-config-zgE_B6KC.mjs\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -38886,11 +38886,11 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/parse-De9PCajd.mjs\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/parse-ClDaqyja.mjs\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/prompt-C6rFTVm4.mjs\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/prompt-Bq7DJfKQ.mjs\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -38898,7 +38898,7 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/rolldown-DeWTZWR_.mjs\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/rolldown-DjkfKFe_.mjs\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -38906,7 +38906,7 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/watch-BFId5KRN.mjs\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/rolldown/shared/watch-B6R5VMW-.mjs\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -38918,7 +38918,7 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-B97bUe6r.js\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-DqTC_pe8.js\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -38926,15 +38926,15 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-Dv0qXBQO.js\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-BIT_p6tM.js\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-CA0t6ZI1.js\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-Db7go0DB.js\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/tsdown/dist-DmsDu7my.js\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/tsdown/dist-BDvaLIYu.js\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -38946,7 +38946,7 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/tsdown/main-RJSjZfzp.js\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/tsdown/main-Bm9ctBqa.js\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -38962,11 +38962,11 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-C9u53Wjd.js\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-5g0bJSpw.js\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-hk-Nyn9Y.js\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-C_CpBcIR.js\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -38978,7 +38978,7 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/tsdown/src-DaTFx-3f.js\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/tsdown/src-Dnaj_Fzx.js\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -38986,11 +38986,11 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/tsdown/target-DgdLrXba-BngL9aSY.js\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/tsdown/target-DgdLrXba-DVjxSeJQ.js\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/tsdown/tsc-CVPiBJQO.js\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/tsdown/tsc-DDwzbr-g.js\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -39002,7 +39002,7 @@\n",
+   "       \"mode\": \"raw diff\"\n",
+   "     },\n",
+   "     {\n",
+   "-      \"path\": \"packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-jJD4zZs9.js\",\n",
+   "+      \"path\": \"packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-BaDiiUbf.js\",\n",
+   "       \"mode\": \"generated transformation mapping; stock algorithms context\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -39164,7 +39164,7 @@\n",
+   "       \"path\": \"packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs\",\n",
+   "       \"base_sha256\": null,\n",
+   "       \"pin_sha256\": null,\n",
+   "-      \"head_sha256\": \"f2066df0416c90c6714719133d6ccdf371b85d10f3c544a43b6af719a63cbeae\",\n",
+   "+      \"head_sha256\": \"859ca83dbb9df9d2aca475bc46512dab137e763e24ec61718dc837573ff774bb\",\n",
+   "       \"mode\": \"Tiara overlay against approved pin\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -39231,7 +39231,7 @@\n",
+   "       \"path\": \"packages/vite-plus-effect-fork/packages/core/build.ts\",\n",
+   "       \"base_sha256\": \"3b5cfdff3b95b884fa0637dbf41c7b577b1153d2b5a6e75d05b5496b51c9c2a4\",\n",
+   "       \"pin_sha256\": \"58a0c071eb412c18e884544df0e791a5d87d8657297341234b3c638fd02d2ca3\",\n",
+   "-      \"head_sha256\": \"1bbf54b62f61a93ca038742e8c7702961ad84c241f2222210d354b7739817902\",\n",
+   "+      \"head_sha256\": \"f3d81d783f020a3abaef59cd893753f7438c17f50857d332a7bcdf788a3b163f\",\n",
+   "       \"mode\": \"Tiara overlay against approved pin\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -40746,6 +40746,10 @@\n",
+   "     },\n",
+   "     {\n",
+   "       \"path\": \".review-packets/tia314/83-code.json\",\n",
+   "+      \"mode\": \"hosted delivery metadata; decoded source coverage and selection require verification\"\n",
+   "+    },\n",
+   "+    {\n",
+   "+      \"path\": \".review-packets/tia314/84-code.json\",\n",
+   "       \"mode\": \"hosted delivery metadata; decoded source coverage and selection require verification\"\n",
+   "     },\n",
+   "     {\n",
+   "@@ -40803,7 +40807,7 @@\n",
+   "     ],\n",
+   "     \"Markdown_qualification\": \"Approved-pin import and concrete doccopy/pack mappings remain separate from runtime producer359output proof.\",\n",
+   "     \"OCR_carry\": \"Retain original436model/rule/spec/hunk/content/mode attribution and explicit B002 fixed-input lexical limitation; only this scope metadata binding newly changed.\",\n",
+   "-    \"final_main_source_epoch\": \"d1d2da60ac2fa1fca0caa9012d7dc88f36051e04\",\n",
+   "+    \"final_main_source_epoch\": \"9aefcd2d9d2a9c63371024bc658cdecacf01d6a9\",\n",
+   "     \"identical_queue_squash_tree\": \"34d345e35d45df8fc931cfd2aa7312fbe0ae5a99\"\n",
+   "   },\n",
+   "   \"generated_output_review_policy\": {\n",
+   "@@ -40903,12 +40907,12 @@\n",
+   "     }\n",
+   "   ],\n",
+   "   \"hosted_delivery\": {\n",
+   "-    \"source_epoch\": \"d1d2da60ac2fa1fca0caa9012d7dc88f36051e04\",\n",
+   "+    \"source_epoch\": \"9aefcd2d9d2a9c63371024bc658cdecacf01d6a9\",\n",
+   "     \"base\": \"e088d5c9784d2779684d02524fab62a0fa5e656a\",\n",
+   "     \"source_adaptations\": 454,\n",
+   "     \"stock_exclusions\": 6419,\n",
+   "     \"historical_stock_update_exclusions\": 6420,\n",
+   "-    \"packet_metadata_files\": 88,\n",
+   "+    \"packet_metadata_files\": 89,\n",
+   "     \"packet_paths\": [\n",
+   "       \".review-packets/tia314/01-code.json\",\n",
+   "       \".review-packets/tia314/02-code.json\",\n",
+   "@@ -40993,6 +40997,7 @@\n",
+   "       \".review-packets/tia314/81-code.json\",\n",
+   "       \".review-packets/tia314/82-code.json\",\n",
+   "       \".review-packets/tia314/83-code.json\",\n",
+   "+      \".review-packets/tia314/84-code.json\",\n",
+   "       \".review-packets/tia314/README.md\",\n",
+   "       \".review-packets/tia314/index.json\",\n",
+   "       \".review-packets/tia314/hosted-config.yaml\",\n",
+   "@@ -41000,7 +41005,7 @@\n",
+   "       \".review-packets/tia314/initial-description.md\"\n",
+   "     ],\n",
+   "     \"encoding\": \"Existing canonical UTF-8 JSON string arrays, exact target identities and bounded contexts; generated shared transforms plus every mapping; no unchanged stock algorithm audit.\",\n",
+   "-    \"current_metadata_review_pending\": 89,\n",
+   "+    \"current_metadata_review_pending\": 90,\n",
+   "     \"no_circular_digest\": \"Packet body hashes are not embedded here. Actual metadata head is bound by the coordinator after commit.\"\n",
+   "   },\n",
+   "   \"import_exclusion_accounting\": {\n"
+  ]
+ },
+ "native_parent_qualification": {
+  "source_product_epoch": "15205e8d8a7a22401838591c61238afd6e0e0950",
+  "oxlint_sha256": "8a0114fca10417d1768ff8fc8df674b4b0e803e999a9c6e2b93657be5a1a6b15",
+  "source_Vite_TSconfig_and_severity_checks": "Fresh source Vite1.0 and scoped launcher checks passed repo-local native resolution with overrides cleared and TypeScript config Effect warn/error/off diagnostics; native hashes match the accepted producer.",
+  "producer_carry": "Current producer facts are in current_producer: fresh affected JavaScript/declarations; native compilation only is retained by matching accepted Rust/native inputs and bytes."
+ },
+ "B002": "Original conditional workspace-filter lexical-rewrite concern retained. Owner accepts fixed-approved-input limitation; not repaired or withdrawn. No arbitrary future shell-parser guarantee.",
+ "metadata_head": "The eventual docs(review) commit is bound out-of-band; no self-digest or circular metadata epoch.",
+ "function_constructor_test_repair": {
+  "source_epoch": "3c15b992ac3c43ade63b0af87c32031a8575173f",
+  "prior_source_epoch": "aea6e07f15905dab8dcb8de050b952d1bf581f8f",
+  "finding": "TIA314-B-R17-001",
+  "owner_facts": "Five prohibited Function constructor evaluations removed from two tests. Scoped constants,graph labels,version-guard relation and catalog prefix structure are checked directly. Public migration/default/version planners remain exercised;12focused tests,zero prohibited calls and formatting pass. Independent affected re-entry remains pending.",
+  "producer": "Test-only. Production transformer and generated/scoped/native/compiled artifact bytes are unchanged. No sync,build or install rerun.",
+  "limits": "Internal non-exported predicates are inspected structurally; unchanged prior real scoped consumer red/green evidence remains at its original epoch. This source snapshot is not live review or CI acceptance."
+ },
+ "hosted_feedback_r3_repair": {
+  "source_epoch": "d1d2da60ac2fa1fca0caa9012d7dc88f36051e04",
+  "prior_review_head": "06278062cff31ba9b03207e62e06e821964ec682",
+  "review_id": 5821051849,
+  "source_finding": "TIA314-HOSTED-R3-001",
+  "metadata_nit": "TIA314-HOSTED-R3-NIT-001",
+  "owner_facts": "LSP translation validates before staging; only after successful root publication do bridge options advance. Baseline startup and refresh invariants failed, then44source and44scoped lifecycle/bridge/native cases passed. Count wording has spaces without changing counts or selection. Affected independent review remains pending.",
+  "producer_manifest_sha256": "84a33193dee63a33888559c3cd2b4f2f16a5af560beb0fb62454d2f48d4600fe",
+  "producer": "One direct-packed launcher input changes; actual scoped sync changes it and two SOURCE.json copies among399files. The4root drivers,4645other fork inputs,359compiled outputs and10865/55Rolldown boundary remain exact reused compilation.",
+  "hosted_coverage": "Clone-backed analysis warning and complete filtered semantic coverage remain open. Root owns external follow-up; green status and coveredCommit alone supply no acceptance."
+ },
+ "hosted_selection": {
+  "config": {
+   "path": ".review-packets/tia314/hosted-config.yaml",
+   "sha256": "091c225d85c5608c1ed5d89d16c48ec39947abebcb2756f480acdc10d8bc303e"
+  },
+  "request": {
+   "path": ".review-packets/tia314/hosted-request.md",
+   "sha256": "275b25c871eda457b5575f262c5d54fd0e80442f4c904f9a400689cb788fd08b"
+  },
+  "matching": "Exact 89 positive paths restrict review; any matching exclusion wins regardless of order. Git sparse-checkout is separate.",
+  "documentation": "https://docs.coderabbit.ai/configuration/path-instructions#how-path-filters-combine",
+  "review_only_config": "inheritance:false; omitted settings use defaults; global overrides still apply."
+ },
+ "declaration_map_repair": {
+  "source_epoch": "e950c30522144df372973a1ac91b8b59c7fd41e6",
+  "prior_review_head": "c3fd9c55b725245d9e0d628a05618eb4ae01f0c9",
+  "finding": "TIA314-META-C-001",
+  "owner_status": "Independently resolved by original C at73ce; five declaration outputs and ten JS/maps remain exact through current native discovery repair. Raw finding and earlier proposal retained.",
+  "normalizer": "scripts/lib/declaration-source-maps.mjs",
+  "type_interface": "scripts/lib/declaration-source-maps.d.mts",
+  "changed_declaration_outputs_at_repair": 5,
+  "unchanged_JS_and_maps_at_repair": 10
+ },
+ "native_discovery_repair": {
+  "runtime_epoch": "9952b519018b0df3def4056f5673390ea4f83673",
+  "source_epoch": "5236fab536dd15c3f0abf67d299b3ceae6b1e0c5",
+  "valid_findings": [
+   "TIA314-CLI-001",
+   "TIA314-CLI-002",
+   "TIA314-CLI-003",
+   "TIA314-CLI-005"
+  ],
+  "owner_status": "Native source/packed/package/TS5.9 bodies retain accepted9952validation and original reviewer attribution; current workflow repair is separate.",
+  "nonactionable_candidate": "TIA314-CLI-004 retains its raw claim. Pinned tsdown0.23/rolldown-plugin-dts0.28.6 object options do not select generator; actual options controls preserve inferred oxc and explicit tsgo path. No pack-bin change.",
+  "CLI4": "InitialCLI4exit1/completed_with_warnings/unreviewed1with no identity is preserved, not converted to coverage. Separate new calls at23ade cover the174pending components but raised2valid workflow findings; no current clean pass. No retry or paid flag."
+ },
+ "workflow_staging_repair": {
+  "source_epoch": "5236fab536dd15c3f0abf67d299b3ceae6b1e0c5",
+  "prior_review_head": "23adeaa42d84aaaa7cf6cf7ab4a0a4a770bd257e",
+  "valid_candidates": [
+   "TIA314-CLI-006",
+   "TIA314-CLI-007"
+  ],
+  "owner_status": "Native-disabled lint guard and quoted environment handoff implemented;10focused controls and source formatter pass; affected independent re-entry pending.",
+  "producer_impact": "Workflow-only change; native/Vite/helper/package producer inputs and outputs exact, no rebuild."
+ },
+ "workflow_startup_repair": {
+  "source_epoch": "206414e9d27709fd7ccaee809bb515c636dc4c2b",
+  "prior_review_head": "68b6219ec0c33b550f25415fa1c0e5baaa0038bd",
+  "source_policy": "Before the source CLI exists, dispatch the native backend Node test directly. Later source CLI calls follow the completed local core-before-CLI producer.",
+  "focused_validation": "Actual old pnpm dispatch reproduces missing dist/bin.js; direct dispatch passes with no source dist. Four launcher import states,36workflow startup rows,10guard/literal-input controls and source formatting pass. Native protocol and full runtime validation retain exact accepted9952evidence.",
+  "producer_impact": "Workflow-only change; all3root/4633fork producer inputs and359outputs unchanged. No native/Vite/helper rebuild.",
+  "status": "Affected independent review re-entry pending; this is source-epoch metadata, not a current gate certificate."
+ },
+ "ci_install_repair": {
+  "source_epoch": "fd212bfe0543f4b8b30c4886adbde8d9f64233ae",
+  "prior_review_head": "5173dc866fd1937228b32f19615d521459ce5954",
+  "source_policy": "Explicitly approve only the already locked Parcel watcher installer; retain strict unknown-script enforcement.",
+  "observed_root_CI": "Node22.23.4/pnpm11.9.0, frozen root install; both initial root jobs failed at5173. Effect-source Node26.4job success is separate. Observations do not add permanent pins.",
+  "focused_validation": "Exact10project fresh/warm failures, reduced watcher reproduction; approved clean/warm/empty-content-store installs pass with unchanged lock. Unknown-esbuild control still fails. Real locked native watcher event and default/source-opt-in installer controls pass; source opt-in uses a recorder, not compilation.",
+  "producer_impact": "Root installer policy revalidated. All3root/4633fork/359producer and428output/28input identities unchanged; source-fork own installer configuration is separate and its producer uses ignore-scripts. No native/Vite/helper rebuild.",
+  "status": "Owner repair validated, affected independent review pending. This source-epoch snapshot is not a hosted CI pass."
+ },
+ "ci_corepack_repair": {
+  "source_epoch": "d66300261e57366cbea6a8e8ea0a99ce8632d548",
+  "prior_review_head": "fed0520df29ac66c358fa581f35d565441c6cc36",
+  "repair": "Both build and pack use the shared private Corepack pnpm shim, selected per source working directory. Root manager and strict version enforcement remain intact.",
+  "focused_validation": "Observed nested version failure reproduced;10real launcher cases including cold/warm/direct/Corepack/pack/stale/strict-negative states pass, plus2subprocess regressions. CI explicitly includes the new launcher test; its exact3file command passes21tests. Actual native leaf recording is not compilation.",
+  "producer_impact": "Fresh RolldownJS,Vite types,core,prompts,CLI build-ts and scoped generation;4633source inputs and37native outputs exact, native compilation reused. Fresh source-native/config/severity and packed bindings/TS5.9/helper singleVitest consumers pass. Owned relocated license context is qualified separately from clean default CI.",
+  "status": "Source repair and actual generated boundaries validated; affected independent review pending. This immutable source-epoch snapshot is not a hosted CI pass."
+ },
+ "hosted_lsp_repair": {
+  "source_epoch": "eb392e52d245e87982ccc951ad7b638325693e07",
+  "prior_review_head": "b53d94c98ce14696bc7b8ec521639ae197c1202b",
+  "finding": "TIA314-HOSTED-R1-001",
+  "repair": "Share identical immutable child configs and reclaim never-published children on root-publication failure. Published snapshots retain child-reader lifetime.",
+  "focused_validation": "Node22 red/green reproduction;23CItests including delayed reader,A-to-B-to-A reuse,invalid refresh,publication failure/retry,concurrent sessions,spawn failure and graceful cleanup. Source/scoped/tar-backed no-op refreshes remain3files instead of3-to-11.",
+  "producer_impact": "The sole changed fork input is the direct bin/tiara-oxlint.mjs executable packed without compilation. All4rootdrivers,4632otherforkinputs,359compiledoutputs and10865Rolldowninputs/55outputs remain exact. Native and JavaScript/type compilation are qualified unchanged reuse. Actual scoped generation and new tar-backed executable consumers pass; source/scoped TypeScript config and native severity checks pass. Markdown retains separate approved-pin/copy qualification.",
+  "limitations": "SIGKILL cannot run in-process cleanup. Distinct published snapshots remain valid until native exit. Current hosted clone warning is a separate open semantic coverage condition.",
+  "review_state": "Affected independent local re-entry and exact-head hosted finding/coverage assessment pending. Historical completed local/CI gates remain bound to b53."
+ },
+ "cli_publication_peer_repair": {
+  "source_epoch": "4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f",
+  "prior_review_head": "f8920e2401de3249832cc1f276e34bf92c53d52d",
+  "findings": [
+   "TIA314-CLI-R7-001",
+   "TIA314-CLI-R7-002",
+   "TIA314-CLI-R7-003",
+   "TIA314-CLI-R7-004"
+  ],
+  "owner_snapshot": "All four candidates independently confirmed against source/installed graph; ordinary source repairs and focused validation completed. Assigned review re-entry remains pending.",
+  "paired_generation": "Back up retained entries across both packages, preserve node_modules and roll back partial replacement. Incomplete rollback reports failure and retains its backup. No crash-atomic or concurrent-reader multi-tree guarantee.",
+  "configuration_publication": "Clear reclaimed/missing unpublished children without hiding the publication error, continue independent cleanup, and track only successfully created staging files. Failed writes/renames reclaim owned staging; pre-existing files remain untouched.",
+  "root_peer_binding": "Root package extension binds oxfmt/oxlint optional vite-plus peers to the local CLI. pnpm regenerated only those bindings and removed the registry vite-plus package; all other versions and integrities are unchanged.",
+  "validation": "34Node22 controls,11actual packed adapter controls,6native source/scoped severity cases,package contract and8helper property cases via source vp test v5.0.1 match expectations. Fresh frozen fixture and owned-root installs pass.",
+  "producer_impact": "Only the direct executable fork input changed.4rootdrivers,4632otherforkinputs,359compiledoutputs and10865/55Rolldown inputs/outputs exact. Root peer graph is repaired without other version/integrity changes; source compilation uses the unchanged nested lock. Actual scoped sync and packed controls are fresh.",
+  "review_state": "Source-epoch snapshot, not the live gate ledger. Current OCR/CLI/installed re-entry and both hosted conditions remain pending."
+ },
+ "signal_lifecycle": {
+  "source_epoch": "dab2c10b87ec8683afa3741cca5ef76d58152510",
+  "prior_source_epoch": "4c9289bcd0d2fd1c771a79d1c92f2be5765ac22f",
+  "startup": "Install signal handlers before preparation; cancellation prevents spawn and enters awaited cleanup.",
+  "runtime": "Forward handled signals to the native child, then await its exit before removing snapshots.",
+  "exit": "Keep signal handlers installed until queued work and cleanup settle; preserve native exit status.",
+  "producer": "One direct-packed executable input changes;359compiled and55Rolldown outputs are unchanged reuse. Actual scoped sync/pack and source/scoped/tar-backed consumers are fresh.",
+  "limits": "SIGKILL, non-settling I/O and permanent filesystem denial retain cleanup limits. No live provider or full packed-consumer suite claim.",
+  "review_state": "Immutable source-epoch facts; affected independent re-entry and both hosted conditions are pending."
+ },
+ "hosted_feedback_r2_repair": {
+  "source_epoch": "dab2c10b87ec8683afa3741cca5ef76d58152510",
+  "prior_review_head": "ce43817a542a89d9f9d0e306278789fc65286a31",
+  "review_id": 5806874440,
+  "candidates": [
+   "TIA314-HOSTED-R2-001",
+   "TIA314-HOSTED-R2-002",
+   "TIA314-HOSTED-R2-003",
+   "TIA314-HOSTED-R2-004",
+   "TIA314-HOSTED-R2-005",
+   "TIA314-HOSTED-R2-006",
+   "TIA314-HOSTED-R2-007",
+   "TIA314-HOSTED-R2-008"
+  ],
+  "owner_facts": "Seven valid and one partly valid candidate repaired. Object-valued dts.tsgo alone is not a generator selector in pinned plugin0.28.6; explicit tsgo/null and generator precedence are tested. Native LSP config/refresh, source staging, helper rollback, role-specific scoped rewrites and fixture lifetime are validated. Independent re-entry pending.",
+  "compiler_manifest_sha256": "7e8f04275e9d50365959ea842b306546711bb59e8e58188f44c6920425088db6",
+  "mixed_import_accounting": {
+   "historical_stock_update_paths": 6420,
+   "fully_pure_current_paths": 6419,
+   "new_mixed_paths": [
+    "packages/vite-plus-effect-fork/packages/cli/templates/monorepo/_gitignore"
+   ],
+   "boundary": "Imported portion remains excluded context; the new Tiara overlay is reviewable against the approved pin."
+  },
+  "hosted_coverage": "Clone-backed analysis warning remains open; counts/green check/coveredCommit markers do not prove complete semantic coverage. Root owns the bounded follow-up."
+ },
+ "cli_fixture_parent_repair": {
+  "source_epoch": "0784ea178b10157c3b4d3adad98206425ace138e",
+  "prior_review_head": "ab5f04f7d01f43efe0c4258ba05b4beffa58f5bd",
+  "raw_candidates": [
+   "TIA314-CLI-R10-001",
+   "TIA314-CLI-R10-002",
+   "TIA314-CLI-R10-003",
+   "TIA314-CLI-R10-004",
+   "TIA314-CLI-R10-005"
+  ],
+  "duplicate_pairs": [
+   [
+    "TIA314-CLI-R10-001",
+    "TIA314-CLI-R10-004"
+   ],
+   [
+    "TIA314-CLI-R10-002",
+    "TIA314-CLI-R10-005"
+   ]
+  ],
+  "owner_facts": "Two test fixture parent defects repaired;20actual LSP/declaration cases pass across absent/existing parents and foreign-sentinel preservation. Three stale overlay head digests refreshed at declared implementation; existing custom patch digest already matched. Affected independent re-entry pending.",
+  "locator_refresh": [
+   {
+    "path": "packages/vite-plus-effect-fork/packages/cli/bin/tiara-oxlint.mjs",
+    "before": "1ad3b4254141554efd7691b1a062d98dd9b482cbac3f01731769885a5dc2de54",
+    "after": "f89ba58d1e1693032cee92559bf75551a61e047b17ae6b632a69bde01ad84201"
+   },
+   {
+    "path": "packages/vite-plus-effect-fork/packages/cli/src/pack-bin.ts",
+    "before": "7b62de433b64a391dfc1caae1f2dfdc66ec10d4309b6ad490a2efd73975ab764",
+    "after": "085672962a237ac23e6894845c1192f1bd2e643c9f7822f13ae7786185b7583f"
+   },
+   {
+    "path": "packages/vite-plus-effect-fork/packages/cli/src/utils/tiara-native.ts",
+    "before": "a06e85c9ef525f46038cf0975f72007a9cc5449fb653e995c77a4b355e1297c1",
+    "after": "652ddef69fc1c1a934abaebf0513e85ad5ac092d4c73e2ac4f193b1f37e96c6c"
+   }
+  ],
+  "producer": "No producer/native/runtime input or output change; final7e8f359compiled/55Rolldown artifacts retain accepted exact-input qualifications. No new build or sync.",
+  "hosted_coverage": "Existing clone-backed coverage condition remains open; root owns current-head external gates."
+ },
+ "scoped_identity_consumer_repair": {
+  "source_epoch": "653e3006885852ac9d17341bac9cd3a57e6b5047",
+  "prior_source_epoch": "c4d257f6d538b3db721ab492d853bdee7e5d395d",
+  "owner_facts": "Scoped core validation and managed npm aliases use the scoped output identity. Version alignment and catalog recognition accept both package namespaces while preserving upstream protocol graph identities, unrelated names and explicit runtime overrides.12focused source/artifact controls pass. Actual owned build and pack exit0; dev/preview reach loopback readiness and receive controlled shutdown. Affected independent re-entry remains pending.",
+  "changed_scoped_outputs": [
+   "packages/vite-plus/dist/bin.js",
+   "packages/vite-plus/dist/constants-BqJiMVVU.js",
+   "packages/vite-plus/dist/editor-CgYujhxK.js",
+   "packages/vite-plus/dist/sync-versions/bin.js",
+   "packages/vite-plus/dist/sync-versions/bin.mjs"
+  ],
+  "transformer_sha256": "54f22f310e30c85eb97ea67d3def965b038414ff1c411a2fd8b74cf3292c5f2b",
+  "compiled_producer_manifest_sha256": "7e8f04275e9d50365959ea842b306546711bb59e8e58188f44c6920425088db6",
+  "producer": "Actual scoped sync from unchanged compiled7e8finputs/artifacts; no native/core/Rolldown or CLI compilation rerun. Native/SOURCE copies remain unchanged.",
+  "existing_overlay_locators_checked": 13,
+  "locator_refresh": [],
+  "historical_boundary": "Earlier fixture/locator repairs and their three corrected fields retain their original epoch. Current source snapshot is not the live gate ledger.",
+  "hosted_coverage": "Existing clone-backed coverage condition remains open and root-owned."
+ },
+ "current_producer": {
+  "source_epoch": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9",
+  "manifest_sha256": "65855e1ba79ec91860038d268c0e58396220445670c6db6edf29cef89f47ee55",
+  "fork_inputs": 4646,
+  "root_drivers": 4,
+  "compiled_outputs": 359,
+  "Rolldown_inputs": 11073,
+  "Rolldown_outputs": 55,
+  "fresh": "Actual Rolldown JS, Vite declaration roll/check, core, prompts and CLI JS/declaration jobs completed; actual scoped pack/rewrite followed. The source dependency closure was restored from exact-lock retained packages; no clean-install claim.",
+  "native": "Accepted Rust/native inputs and native artifact bytes match. Native compilation was not rerun.",
+  "scoped_files_before": 399,
+  "scoped_files_after": 399,
+  "changed_scoped_outputs": 71,
+  "changed_output_paths": [
+   "packages/vite-plus-core/SOURCE.json",
+   "packages/vite-plus-core/dist/rolldown/cli.mjs",
+   "packages/vite-plus-core/dist/rolldown/config.mjs",
+   "packages/vite-plus-core/dist/rolldown/experimental-index.mjs",
+   "packages/vite-plus-core/dist/rolldown/filter-index.d.mts",
+   "packages/vite-plus-core/dist/rolldown/filter-index.mjs",
+   "packages/vite-plus-core/dist/rolldown/index.mjs",
+   "packages/vite-plus-core/dist/rolldown/parallel-plugin-worker.mjs",
+   "packages/vite-plus-core/dist/rolldown/parse-ast-index.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DPBybJV1.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/bindingify-input-options-DeSceppM.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-DLjQmstW.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/create-bundler-option-z9tfdr3B.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/dist-BrOkQYx7.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/dist-D2P1s4_R.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/load-config-BiiBolfa.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/load-config-zgE_B6KC.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/parse-ClDaqyja.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/parse-De9PCajd.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/prompt-Bq7DJfKQ.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/prompt-C6rFTVm4.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/rolldown-DeWTZWR_.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/rolldown-DjkfKFe_.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/watch-B6R5VMW-.mjs",
+   "packages/vite-plus-core/dist/rolldown/shared/watch-BFId5KRN.mjs",
+   "packages/vite-plus-core/dist/rolldown/utils-index.d.mts",
+   "packages/vite-plus-core/dist/rolldown/utils-index.mjs",
+   "packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-B97bUe6r.js",
+   "packages/vite-plus-core/dist/tsdown/build-JVmLFaZt-DqTC_pe8.js",
+   "packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-BIT_p6tM.js",
+   "packages/vite-plus-core/dist/tsdown/debug-CpC4hV25-Dv0qXBQO.js",
+   "packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-CA0t6ZI1.js",
+   "packages/vite-plus-core/dist/tsdown/detect-Bg-d8iUV-Db7go0DB.js",
+   "packages/vite-plus-core/dist/tsdown/dist-BDvaLIYu.js",
+   "packages/vite-plus-core/dist/tsdown/dist-DmsDu7my.js",
+   "packages/vite-plus-core/dist/tsdown/index-types.d.ts",
+   "packages/vite-plus-core/dist/tsdown/index.js",
+   "packages/vite-plus-core/dist/tsdown/main-Bm9ctBqa.js",
+   "packages/vite-plus-core/dist/tsdown/main-RJSjZfzp.js",
+   "packages/vite-plus-core/dist/tsdown/npm_entry_picomatch.cjs",
+   "packages/vite-plus-core/dist/tsdown/npm_entry_tree-kill.cjs",
+   "packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-5g0bJSpw.js",
+   "packages/vite-plus-core/dist/tsdown/require-BbBF8Ii0-C9u53Wjd.js",
+   "packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-C_CpBcIR.js",
+   "packages/vite-plus-core/dist/tsdown/resolver-DE0_sy8o-hk-Nyn9Y.js",
+   "packages/vite-plus-core/dist/tsdown/run.js",
+   "packages/vite-plus-core/dist/tsdown/src-DaTFx-3f.js",
+   "packages/vite-plus-core/dist/tsdown/src-Dnaj_Fzx.js",
+   "packages/vite-plus-core/dist/tsdown/target-DgdLrXba-BngL9aSY.js",
+   "packages/vite-plus-core/dist/tsdown/target-DgdLrXba-DVjxSeJQ.js",
+   "packages/vite-plus-core/dist/tsdown/tsc-CVPiBJQO.js",
+   "packages/vite-plus-core/dist/tsdown/tsc-DDwzbr-g.js",
+   "packages/vite-plus-core/dist/tsdown/tsdown-css.js",
+   "packages/vite-plus-core/dist/tsdown/tsdown-exe.js",
+   "packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-BaDiiUbf.js",
+   "packages/vite-plus-core/dist/tsdown/version-CQ98ZBpL-jJD4zZs9.js",
+   "packages/vite-plus-core/dist/vite/client/bundledDevClient.mjs",
+   "packages/vite-plus-core/dist/vite/client/client.mjs",
+   "packages/vite-plus-core/dist/vite/node/chunks/build.js",
+   "packages/vite-plus-core/dist/vite/node/chunks/dist.js",
+   "packages/vite-plus-core/dist/vite/node/chunks/dist2.js",
+   "packages/vite-plus-core/dist/vite/node/chunks/lib.js",
+   "packages/vite-plus-core/dist/vite/node/chunks/node.js",
+   "packages/vite-plus-core/dist/vite/node/chunks/postcss-import.js",
+   "packages/vite-plus-core/dist/vite/node/cli.js",
+   "packages/vite-plus-core/dist/vite/node/index.d.ts",
+   "packages/vite-plus-core/dist/vite/node/module-runner.js",
+   "packages/vite-plus/SOURCE.json",
+   "packages/vite-plus/bin/tiara-oxlint-lsp.mjs",
+   "packages/vite-plus/bin/tiara-oxlint.mjs",
+   "packages/vite-plus/dist/migration/bin.js"
+  ],
+  "prior_accepted_manifest": {
+   "sha256": "84a33193dee63a33888559c3cd2b4f2f16a5af560beb0fb62454d2f48d4600fe",
+   "git_source": "718e406671711e08c28ddb5494bf76b2785e66be:packages/vite-plus/SOURCE.json"
+  },
+  "limits": "Fresh affected JS/declarations and packaging, not a native rebuild, fresh clean installation or full TIA-317 packed-consumer suite."
+ },
+ "hosted_feedback_r4_repair": {
+  "source_epoch": "9aefcd2d9d2a9c63371024bc658cdecacf01d6a9",
+  "prior_review_head": "718e406671711e08c28ddb5494bf76b2785e66be",
+  "review_id": 5912764468,
+  "candidates": [
+   "TIA314-HOSTED-R4-001",
+   "TIA314-HOSTED-R4-002",
+   "TIA314-HOSTED-R4-003",
+   "TIA314-HOSTED-R4-004",
+   "TIA314-HOSTED-R4-005",
+   "TIA314-HOSTED-R4-006",
+   "TIA314-HOSTED-R4-007",
+   "TIA314-HOSTED-R4-008",
+   "TIA314-HOSTED-R4-009"
+  ],
+  "owner_facts": "Eight valid issues repaired plus existing Windows support-boundary clarification. Effective LSP fix-option precedence, cache pull/refresh and output drain, dual bundled-runner identity, complete Rolldown JS inputs, clean copied-output boundaries and fixture atomic readiness/signal transitions pass focused red/green checks. T0180 replacement metadata includes the actual tsconfig wrapper. Independent re-entry remains pending.",
+  "validation": "61 source lifecycle/build-record,51 scoped lifecycle and24 scoped migration/generator/pack cases passed. Fresh source/scoped Vite TSconfig severity consumers,Effect helper vp test,root TypeScript5.9,package,format and overlay checks passed. These are source-epoch facts, not live review acceptance.",
+  "Windows": "Existing assigned-parent policy is unchanged:Linux-x64 prebuilt;Windows manual Effect executable via vendor/local path or explicit override. Six JavaScript platform-selection probes do not claim Windows native execution. No upstream.cmd fallback is accepted as an Effect backend.",
+  "hosted_coverage": "Prior clone/config-directory optional-analysis warnings are preserved. The acknowledged filtered review supplied nine substantive source candidates. No specific missing required Tiara semantic category is inferred solely from generic warnings; root owns new-head hosted acceptance and any smallest necessary clarification."
+ }
+}

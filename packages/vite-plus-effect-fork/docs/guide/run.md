@@ -1,6 +1,6 @@
 # Run
 
-`vp run` runs `package.json` scripts and tasks defined in `vite.config.ts`. It works like `pnpm run`, with caching, dependency ordering, and workspace-aware execution built in.
+`vp run` runs `package.json` scripts and tasks defined in `vite.config.ts`. It works like `pnpm run`, with caching, dependency ordering, and workspace-aware execution built in. The task runner is available from both the [global CLI](/guide/global-cli) and the [project-local CLI](/guide/local-cli).
 
 ::: tip
 `vpr` is available as a standalone shorthand for `vp run`. All examples below work with both `vp run` and `vpr`.
@@ -37,6 +37,21 @@ Select a task (↑/↓, Enter to run, Esc to clear):
   › build: node compile-legacy-app.js
     test: jest
 ```
+
+## Built-in Commands vs Scripts
+
+`vp dev` is a built-in command. `vp run dev` is your `dev` script. Built-in commands cannot be overwritten, so adding a `dev` script does not change what `vp dev` does:
+
+| Command                    | What it runs                                                              |
+| -------------------------- | ------------------------------------------------------------------------- |
+| `vp dev`                   | The built-in Vite dev server                                              |
+| `vp run dev` / `vpr dev`   | The `dev` script in `package.json`, or a `dev` task in `vite.config.ts`   |
+| `vp test`                  | The built-in Vitest command                                               |
+| `vp run test` / `vpr test` | The `test` script in `package.json`, or a `test` task in `vite.config.ts` |
+
+`build`, `preview`, `lint`, `fmt`, `check`, and `pack` work the same way.
+
+If the project defines that script or task, run it with `vp run <name>`. For example, with a `"dev": "astro dev"` script, `vp run dev` starts Astro, while `vp dev` ignores the script and starts Vite.
 
 ## Caching
 
@@ -80,7 +95,9 @@ export default defineConfig({
       build: {
         command: 'vp build',
         dependsOn: ['lint'],
-        env: ['NODE_ENV'],
+        cache: {
+          env: ['NODE_ENV'],
+        },
       },
       deploy: {
         command: 'deploy-script --prod',

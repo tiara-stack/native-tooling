@@ -1,6 +1,6 @@
-# Installing Dependencies
+# Package Management
 
-`vp install` installs dependencies using the current workspace's package manager.
+`vp` detects and runs the current workspace's package manager. These commands are available from both the [global CLI](/guide/global-cli) and the [project-local CLI](/guide/local-cli).
 
 ## Overview
 
@@ -19,7 +19,7 @@ Vite+ detects the package manager from the workspace root in this order:
 9. `bunfig.toml`
 10. `yarn.config.cjs`
 
-If none of those files are present, `vp` falls back to `pnpm` by default. Vite+ automatically downloads the matching package manager and uses it for the command you ran. When detection comes from lockfiles or config files, the resolved version is written to `devEngines.packageManager` so future runs are deterministic; projects that already declare `packageManager` or `devEngines.packageManager` are left as-is.
+If none of those files are present, `vp` falls back to `pnpm` by default. Vite+ automatically downloads the matching package manager and uses it for the command you ran, but package-manager detection never rewrites `package.json`. Use `vp env pin <package-manager>@<version>` when the project should declare an exact version explicitly.
 
 The [`devEngines.packageManager`](https://docs.npmjs.com/cli/v11/configuring-npm/package-json#devengines) field accepts a single object or an array of objects, and its `version` may be a semver range:
 
@@ -39,7 +39,7 @@ A range resolves to an already-downloaded satisfying version when possible, othe
 
 Vite+ currently downloads the declared package manager (the `onFail: "download"` behavior); the other `onFail` values are accepted but not yet differentiated.
 
-The explicit `packageManager` field (or the `devEngines.packageManager` declaration) also affects matching package-manager shims. If a project has `packageManager: "npm@10.9.4"`, `npm` and `npx` use npm 10.9.4. Other generated alias pairs behave the same way: `pnpm`/`pnpx`, `yarn`/`yarnpkg`, and `bun`/`bunx`. Mismatched tools are not translated; `npm` in a `pnpm` project still resolves as npm.
+The explicit `packageManager` field (or the `devEngines.packageManager` declaration) also affects matching package-manager shims. If a project has `packageManager: "npm@10.9.4"`, `npm` and `npx` use npm 10.9.4. Other generated aliases behave the same way: `pnpm`/`pnpx`/`pn`/`pnx`, `yarn`/`yarnpkg`, and `bun`/`bunx`. Mismatched tools are not translated; `npm` in a `pnpm` project still resolves as npm.
 
 ## Usage
 
@@ -69,10 +69,12 @@ Use the `-g` flag for installing, updating or removing globally installed packag
 - `vp list -g [pkg]` lists global packages
 - `vp outdated -g [pkg]` prints outdated packages
 
+Updates keep the version spec a package was installed with: a package installed from a dist-tag (e.g. `vp install -g some-pkg@nightly`) updates to the newest version of that tag, and a version range stays within the range. Reinstall with a different spec (e.g. `vp update -g some-pkg@latest`) to switch, or pass `--latest` to `vp update -g` to move packages to the `latest` tag and clear their recorded specs. `vp outdated -g` reports both the newest version matching the recorded spec (`Wanted`) and the newest version on the `latest` tag.
+
 ::: warning
 These commands do **NOT** interact with the underlying package manager's global installation directory.
 
-Instead, Vite+ manages its own global packages under `~/.vite-plus/packages`, allowing them to remain available across different Node.js versions.
+Instead, Vite+ stores its global packages in `packages/` under the resolved data directory. These packages remain available across different Node.js versions.
 
 As a result, commands such as `vp link` do not affect Vite+'s global packages and will not appear in `vp list -g`.
 :::
@@ -110,6 +112,10 @@ Use `vp install` when you want to install exactly what the current `package.json
 - `vp install --filter <pattern>` scopes install work in monorepos
 - `vp install -w` installs in the workspace root
 
+##### Git and remote tarball dependencies (npm v12+)
+
+npm v12 stops resolving git dependencies (`github:`, `git+https:`) and remote tarball URLs by default; such installs fail with `EALLOWGIT` / `EALLOWREMOTE`. Opt back in per project with npm's `allow-git` / `allow-remote` config.
+
 #### Global Install
 
 Use these commands when you want package-manager-managed tools available outside a single project.
@@ -128,6 +134,7 @@ Use `vp add` and `vp remove` for day-to-day dependency edits instead of editing 
 - `vp add -D typescript vitest`
 - `vp add -O fsevents`
 - `vp add --save-peer react`
+- `vp add react --ignore-scripts`
 - `vp remove react`
 - `vp remove --filter web react`
 
@@ -147,6 +154,8 @@ Use these when you need to understand the current state of dependencies.
 - `vp why react` explains why `react` is installed
 - `vp info react` shows registry metadata such as versions and dist-tags
 
+These commands show the packages that the package manager installed. They do not show tools that Vite+ bundles or compiles. Run `vp toolchain [tool]` to show these tools, including Vite, Rolldown, and Oxc. For readable output, `vp why` shows a hint when Vite+ also provides the package.
+
 #### Rebuild
 
 Use `vp rebuild` when native modules need to be recompiled, for example after switching Node.js versions or when a C/C++ addon fails to load.
@@ -164,6 +173,17 @@ vp rebuild -- --update-binary
 `vp rebuild` is a shorthand for `vp pm rebuild`.
 
 With pnpm v10+, bare `vp rebuild` only rebuilds packages whose build scripts are listed in `onlyBuiltDependencies` (or approved via `pnpm approve-builds`); name the package explicitly to force a rebuild that bypasses the approval gate.
+
+#### Dependency build scripts (npm v12+)
+
+npm v12 skips dependency install scripts (`preinstall` / `install` / `postinstall`, including implicit `node-gyp` builds) unless the `allowScripts` field in package.json covers them; the install succeeds and npm warns about what it skipped. `vp pm approve-builds` manages that allowlist:
+
+- `vp pm approve-builds <pkg...>` approves the named packages (`npm approve-scripts`)
+- `vp pm approve-builds !<pkg...>` denies them (`npm deny-scripts`)
+- `vp pm approve-builds --all` approves everything currently pending
+- `vp pm approve-builds` lists the packages whose scripts are not yet covered
+
+Approval only records the allowlist: scripts an earlier install skipped do not run until you run `vp rebuild <pkg>`. With npm 11.16 - 11.x the same commands work, but npm treats the allowlist as advisory and still runs scripts.
 
 #### Advanced
 
@@ -197,3 +217,12 @@ vp pm stage reject <stage-id>    # discard a staged version (2FA)
 - pnpm (`pnpm stage`, requires pnpm ≥ 11.3) and npm (`npm stage`, requires npm ≥ 11.15 and Node ≥ 22.14) pass through directly.
 - yarn (Berry) uses its npm plugin (`yarn npm publish --staged`, `yarn npm stage …`); `view`/`download` fall back to npm.
 - yarn Classic and bun have no staged-publishing support and fall back to `npm stage`.
+
+## Package-Manager Integrity Verification
+
+A `packageManager` pin can carry an integrity hash (`yarn@4.17.1+sha512.…`). `corepack use` writes that hash. Vite+ hashes the same artifact as Corepack:
+
+- the extracted CLI binary (`bin/yarn.js`) for Yarn 2 and later
+- the npm package tarball for npm, pnpm, and Yarn Classic
+
+Vite+ hashes the CLI once, when it installs Yarn, and records the pin it verified. A later command compares its own pin against that record. A pin that does not match the record fails the check, and the command stops. Corepack keeps the same kind of record for its own cache.

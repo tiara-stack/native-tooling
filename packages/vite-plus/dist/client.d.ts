@@ -1,1 +1,1 @@
-/// <reference types="@voidzero-dev/vite-plus-core/client" />
+/// <reference types="vite/client" />

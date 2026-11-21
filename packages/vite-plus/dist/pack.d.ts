@@ -1,3 +1,3 @@
-import { t as PackUserConfig } from "./pack-Ciiho0Tq.js";
-export * from "@voidzero-dev/vite-plus-core/pack";
+import { t as PackUserConfig } from "./pack-BK38MLVZ.js";
+export * from "vite/pack";
 export { PackUserConfig };

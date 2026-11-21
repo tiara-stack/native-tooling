@@ -8,6 +8,14 @@ on:
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
       - "packages/vite-plus/**"
+      - "packages/vite-plus-core/**"
+      - "packages/vite-plus-effect-fork/**"
+      - "packages/effect-vitest/**"
+      - "scripts/build-vite-plus.mjs"
+      - "scripts/prepare-vite-plus.mjs"
+      - "scripts/lib/**"
+      - "scripts/test/**"
+      - "scripts/sync-effect-vitest.mjs"
       - "packages/tsgo-effect/**"
       - "scripts/check-vite-plus-package.mjs"
       - "scripts/sync-vite-plus.mjs"
@@ -20,6 +28,14 @@ on:
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
       - "packages/vite-plus/**"
+      - "packages/vite-plus-core/**"
+      - "packages/vite-plus-effect-fork/**"
+      - "packages/effect-vitest/**"
+      - "scripts/build-vite-plus.mjs"
+      - "scripts/prepare-vite-plus.mjs"
+      - "scripts/lib/**"
+      - "scripts/test/**"
+      - "scripts/sync-effect-vitest.mjs"
       - "packages/tsgo-effect/**"
       - "scripts/check-vite-plus-package.mjs"
       - "scripts/sync-vite-plus.mjs"
@@ -38,24 +54,36 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Setup Tiara Vite+
-        uses: tiara-stack/setup-vp@v1
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
-          version: "0.2.2"
-          cache: true
-          run-install: false
+          package_json_file: package.json
+
+      - name: Install Vite+ source Rust toolchain
+        run: rustup toolchain install nightly-2026-08-02 --component rust-src --profile minimal
 
       - name: Install dependencies
-        run: vp install
+        run: pnpm install --frozen-lockfile
 
       - name: Build package wrappers
-        run: vp run -w build
+        run: pnpm build
 
       - name: Verify custom Vite+ package
-        run: vp run -w check:vite-plus
+        run: pnpm check:vite-plus
+
+      - name: Test native selection and generator lifecycle
+        run: |
+          node --test \
+            scripts/test/vite-plus-native.test.mjs \
+            scripts/test/vite-plus-source-environment.test.mjs \
+            scripts/test/sync-vite-plus.test.mjs \
+            scripts/test/sync-effect-vitest.test.mjs
 
       - name: Verify Vite+ CLI
-        run: node packages/vite-plus/bin/vp --version
+        run: node packages/vite-plus-effect-fork/packages/cli/bin/vp --version
+
+      - name: Verify packed Effect helper runtime
+        run: pnpm check:effect-vitest:consumer
 
       - name: Dry-run Vite+ npm pack
         run: npm pack --dry-run --json

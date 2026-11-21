@@ -1,1 +1,1 @@
-export * from '../_at-vitest-browser/context'
+export * from '../_at-vitest-browser/context.js'

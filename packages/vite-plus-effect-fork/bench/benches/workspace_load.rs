@@ -1,15 +1,13 @@
 #![allow(clippy::allow_attributes, clippy::disallowed_types)]
 
-use std::{ffi::OsStr, hint::black_box, path::PathBuf, sync::Arc};
+use std::{hint::black_box, path::PathBuf};
 
 use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
 use rustc_hash::FxHashMap;
 use tokio::runtime::Runtime;
-use vite_path::{AbsolutePath, AbsolutePathBuf};
-use vite_str::Str;
-use vite_task::{
-    CommandHandler, HandledCommand, Session, SessionConfig, plan_request::ScriptCommand,
-};
+use vt::{CommandHandler, HandledCommand, Session, SessionConfig, plan_request::ScriptCommand};
+use vt_path::{AbsolutePath, AbsolutePathBuf};
+use vt_str::Str;
 
 /// A no-op command handler for benchmarking purposes.
 #[derive(Debug, Default)]
@@ -30,11 +28,11 @@ impl CommandHandler for NoOpCommandHandler {
 struct NoOpUserConfigLoader;
 
 #[async_trait::async_trait(?Send)]
-impl vite_task::loader::UserConfigLoader for NoOpUserConfigLoader {
+impl vt::loader::UserConfigLoader for NoOpUserConfigLoader {
     async fn load_user_config_file(
         &self,
         _package_path: &AbsolutePath,
-    ) -> anyhow::Result<Option<vite_task::config::UserRunConfig>> {
+    ) -> anyhow::Result<Option<vt::config::UserRunConfig>> {
         Ok(None)
     }
 }
@@ -72,9 +70,8 @@ fn bench_workspace_load(c: &mut Criterion) {
         b.iter(|| {
             runtime.block_on(async {
                 let mut owned_callbacks = BenchSessionConfig::default();
-                let envs: FxHashMap<Arc<OsStr>, Arc<OsStr>> = FxHashMap::default();
                 let mut session = Session::init_with(
-                    envs,
+                    FxHashMap::default(),
                     fixture_path.clone().into(),
                     owned_callbacks.as_callbacks(),
                 )
@@ -90,10 +87,12 @@ fn bench_workspace_load(c: &mut Criterion) {
         b.iter(|| {
             runtime.block_on(async {
                 let mut owned_callbacks = BenchSessionConfig::default();
-                let envs: FxHashMap<Arc<OsStr>, Arc<OsStr>> = FxHashMap::default();
-                let mut session =
-                    Session::init_with(envs, path.clone().into(), owned_callbacks.as_callbacks())
-                        .expect("Failed to create session");
+                let mut session = Session::init_with(
+                    FxHashMap::default(),
+                    path.clone().into(),
+                    owned_callbacks.as_callbacks(),
+                )
+                .expect("Failed to create session");
                 black_box(
                     session.ensure_task_graph_loaded().await.expect("Failed to load task graph"),
                 );

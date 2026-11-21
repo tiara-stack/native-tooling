@@ -1,8 +1,8 @@
-import { CustomComparatorsRegistry } from './_at-vitest-browser';
-export { defineBrowserCommand } from './_at-vitest-browser';
+import { CustomComparatorsRegistry } from './_at-vitest-browser.js';
+export { defineBrowserCommand } from './_at-vitest-browser.js';
 import { Page, Frame, FrameLocator, BrowserContext, CDPSession, Browser, LaunchOptions, ConnectOptions, BrowserContextOptions } from 'playwright';
-import { ScreenshotMatcherOptions, ScreenshotComparatorRegistry, Locator } from './browser';
-import { BrowserProvider, BrowserModuleMocker, TestProject, CDPSession as CDPSession$1, BrowserProviderOption } from './node';
+import { ScreenshotMatcherOptions, ScreenshotComparatorRegistry, Locator } from './browser.js';
+import { BrowserProvider, BrowserModuleMocker, TestProject, CDPSession as CDPSession$1, BrowserProviderOption } from './node.js';
 
 declare const playwrightBrowsers: readonly ["firefox", "webkit", "chromium"];
 type PlaywrightBrowser = (typeof playwrightBrowsers)[number];
@@ -82,7 +82,7 @@ declare class PlaywrightBrowserProvider implements BrowserProvider {
 	getCDPSession(sessionid: string): Promise<CDPSession$1>;
 	close(): Promise<void>;
 }
-declare module './node' {
+declare module './node.js' {
 	interface BrowserCommandContext {
 		page: Page;
 		frame(): Promise<Frame>;
@@ -105,7 +105,7 @@ type PWDragAndDropOptions = NonNullable<Parameters<Page["dragAndDrop"]>[2]>;
 type PWSetInputFiles = NonNullable<Parameters<Page["setInputFiles"]>[2]>;
 type PWCDPSession = Pick<CDPSession, "send" | "on" | "off" | "once">;
 
-declare module './browser' {
+declare module './browser.js' {
 	interface UserEventHoverOptions extends PWHoverOptions {}
 	interface UserEventClickOptions extends PWClickOptions {}
 	interface UserEventDoubleClickOptions extends PWDoubleClickOptions {}

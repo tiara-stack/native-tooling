@@ -8,7 +8,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   COPILOT_SETUP_WORKFLOW_PATH,
   detectExistingAgentTargetPaths,
-  detectExistingAgentTargetPath,
   hasExistingAgentInstructions,
   replaceMarkedAgentInstructionsSection,
   resolveAgentOptions,
@@ -18,6 +17,7 @@ import {
   writeAgentInstructions,
   writeCopilotSetupWorkflow,
 } from '../agent.js';
+import { SETUP_VP_VERSION } from '../constants.js';
 import { pkgRoot } from '../path.js';
 
 type MockNode =
@@ -376,7 +376,7 @@ describe('selectAgentTargetPaths', () => {
   });
 });
 
-describe('detectExistingAgentTargetPath', () => {
+describe('detectExistingAgentTargetPaths', () => {
   it('detects all existing regular agent files', async () => {
     const dir = await createProjectDir();
     await mockFs.writeFile(path.join(dir, 'AGENTS.md'), '# Agents');
@@ -389,14 +389,14 @@ describe('detectExistingAgentTargetPath', () => {
     const dir = await createProjectDir();
     await mockFs.writeFile(path.join(dir, 'CLAUDE.md'), '# Claude');
 
-    expect(detectExistingAgentTargetPath(dir)).toBe('CLAUDE.md');
+    expect(detectExistingAgentTargetPaths(dir)).toEqual(['CLAUDE.md']);
   });
 
   it('ignores symlinked agent files', async () => {
     const dir = await createProjectDir();
     await mockFs.symlink('AGENTS.md', path.join(dir, 'CLAUDE.md'));
 
-    expect(detectExistingAgentTargetPath(dir)).toBeUndefined();
+    expect(detectExistingAgentTargetPaths(dir)).toBeUndefined();
   });
 });
 
@@ -537,7 +537,7 @@ describe('writeCopilotSetupWorkflow', () => {
     expect(content).toContain('runs-on: ubuntu-latest');
     expect(content).toContain('persist-credentials: false');
     expect(content).toContain('uses: actions/checkout@v6');
-    expect(content).toContain('uses: voidzero-dev/setup-vp@v1');
+    expect(content).toContain(`uses: voidzero-dev/setup-vp@${SETUP_VP_VERSION}`);
     expect(content).toContain('run-install: true');
     expect(content).toContain('- .github/workflows/copilot-setup-steps.yml');
 

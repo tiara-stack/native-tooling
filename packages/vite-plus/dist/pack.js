@@ -1,2 +1,2 @@
-export * from "@voidzero-dev/vite-plus-core/pack";
+export * from "vite/pack";
 export {};

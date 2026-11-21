@@ -5,8 +5,8 @@
 ;
 [subrepo]
 	remote = https://github.com/voidzero-dev/vite-plus
-	branch = v0.2.2
-	commit = 4f7fd0b66ebb5433acdb06f8660cf0f08c5a0d4b
-	parent = 1780bfa0c36870e21320b6ad1cef30a014f6bd7b
+	branch = v1.0.0
+	commit = fc287d7b1c0dc008dbc65d1d2b2f51a44e2a5ea4
+	parent = cf6cd57af76949d243446b1bfd577f28b4c13a1a
 	method = merge
 	cmdver = 0.4.9

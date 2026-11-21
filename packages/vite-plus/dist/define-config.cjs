@@ -1,5 +1,5 @@
 Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
-const require_define_config = require("./define-config-CrA3lZhQ.cjs");
+const require_define_config = require("./define-config-DN3Lf_48.cjs");
 require_define_config.init_define_config();
 exports.AUTO_INLINE_DEPS = require_define_config.AUTO_INLINE_DEPS;
 exports.assertCoverageProviderVersionMatch = require_define_config.assertCoverageProviderVersionMatch;

@@ -11,11 +11,10 @@
  * provides ESLint-compatible linting with significantly better performance.
  */
 
-import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { CONFIG_METADATA_ENV, DEFAULT_ENVS, resolve } from './utils/constants.ts';
-import { resolveTsgolintExecutable } from './utils/tsgolint-path.ts';
+import { CONFIG_METADATA_ENV, DEFAULT_ENVS, resolveBundled } from './utils/constants.ts';
+import { resolveTiaraNative } from './utils/tiara-native.ts';
 
 export { resolveWindowsTsgolintExecutable } from './utils/tsgolint-path.ts';
 
@@ -33,24 +32,22 @@ export async function lint(): Promise<{
   binPath: string;
   envs: Record<string, string>;
 }> {
-  // Resolve the oxlint package path first, then navigate to the bin file.
-  // The bin/oxlint subpath is not exported in package.json exports, so we
-  // resolve the main entry point and derive the bin path from it.
-  // resolve('oxlint') returns .../oxlint/dist/index.js, so we need to go up
-  // two directories (past 'dist') to reach the package root.
-  const oxlintMainPath = resolve('oxlint');
-  const oxlintPackageRoot = dirname(dirname(oxlintMainPath));
-  const binPath = join(oxlintPackageRoot, 'bin', 'oxlint');
-  const upstreamTsgolintPath = resolveTsgolintExecutable(
-    resolve('oxlint-tsgolint/bin/tsgolint'),
-    import.meta.url,
+  // Use the patched native chain and retain the upstream Vite config handoff.
+  const oxlintPath = resolveTiaraNative('oxlint');
+  // Vite+ invokes lint with Node. The launcher reads Vite's lint block and
+  // forwards serializable configuration to the selected standalone binary.
+  const binPath = join(
+    dirname(resolveBundled('vite-plus/package.json')),
+    'bin',
+    'tiara-oxlint.mjs',
   );
-  const oxlintTsgolintPath = resolveTiaraTsgolintExecutable() ?? upstreamTsgolintPath;
+  const oxlintTsgolintPath = resolveTiaraNative('tsgolint');
   const result = {
     binPath,
     // TODO: provide envs inference API
     envs: {
       ...DEFAULT_ENVS,
+      TIARA_OXLINT_EFFECT_PATH: oxlintPath,
       OXLINT_TSGOLINT_PATH: oxlintTsgolintPath,
       // oxlint loads vite.config.ts only to read the `lint` block, so skip the
       // user's Vite plugin factory (lazyPlugins) while it evaluates the config.
@@ -58,19 +55,4 @@ export async function lint(): Promise<{
     },
   };
   return result;
-}
-
-function resolveTiaraTsgolintExecutable(): string | undefined {
-  const candidate =
-    process.env.TIARA_TSGOLINT_EFFECT_PATH ??
-    resolveOptional('@tiara-stack/tsgolint-effect/bin/tsgolint-effect');
-  return candidate && existsSync(candidate) ? candidate : undefined;
-}
-
-function resolveOptional(path: string): string | undefined {
-  try {
-    return resolve(path);
-  } catch {
-    return undefined;
-  }
 }

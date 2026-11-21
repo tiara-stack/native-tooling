@@ -33,19 +33,26 @@ runs:
       env:
         INPUTS_ECOSYSTEM_CI_PROJECT: ${{ inputs.ecosystem-ci-project }}
 
-    - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         repository: rolldown/rolldown
         path: rolldown
         ref: ${{ steps.upstream-versions.outputs.ROLLDOWN_HASH }}
         persist-credentials: false
 
-    - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         repository: vitejs/vite
         path: vite
         ref: ${{ steps.upstream-versions.outputs.ROLLDOWN_VITE_HASH }}
         persist-credentials: false
+
+    # Match the manifests used by sync-remote when it generated the root lockfile.
+    # setup-node installs with --frozen-lockfile, so this must run before it.
+    # The runner's preinstalled Node may not support direct TypeScript execution.
+    - name: Align vendored Vite's Vitest dependencies
+      shell: bash
+      run: npx tsx packages/tools/src/vendored-vitest.ts
 
     # Disable autocrlf to preserve LF line endings on Windows
     # This prevents prettier/eslint from failing with "Delete ␍" errors

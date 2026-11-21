@@ -1,9 +1,9 @@
 export const versions = {
-  "vite": "8.1.2",
-  "rolldown": "1.1.4",
-  "tsdown": "0.22.3",
-  "oxlint": "1.72.0",
-  "oxfmt": "0.57.0",
-  "oxlint-tsgolint": "0.24.0",
-  "vitest": "4.1.9"
+  "vite": "8.3.1",
+  "rolldown": "1.2.11",
+  "vitest": "5.0.1",
+  "oxfmt": "0.70.0",
+  "oxlint": "1.85.0",
+  "oxlint-tsgolint": "7.0.2003",
+  "tsdown": "0.23.0"
 };

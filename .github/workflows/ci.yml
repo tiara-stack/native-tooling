@@ -69,12 +69,10 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Setup Tiara Vite+
-        uses: tiara-stack/setup-vp@v1
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
-          version: "0.2.2"
-          cache: true
-          run-install: false
+          package_json_file: package.json
 
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -94,32 +92,35 @@ jobs:
         with:
           workspaces: native/oxc-oxlint-effect-fork
 
+      - name: Install Vite+ source Rust toolchain
+        run: rustup toolchain install nightly-2026-08-02 --component rust-src --profile minimal
+
       - name: Install dependencies
-        run: vp install
+        run: pnpm install --frozen-lockfile
 
       - name: Build package wrappers
-        run: vp run -w build
-
-      - name: Lint package wrappers
-        run: vp run -w lint
-
-      - name: Test package wrappers
-        run: vp run -w test
-
-      - name: Verify custom Vite+ package
-        run: vp run -w check:vite-plus
+        run: pnpm build
 
       - name: Build native tooling
-        run: vp run -w native:build
+        run: pnpm native:build
 
       - name: Verify native compiler and diagnostic protocol
-        run: vp run -w native:test:backend
+        run: pnpm exec vp run -w native:test:backend
 
       - name: Verify Effect rules through the native Oxlint CLI
-        run: vp run -w native:test:oxlint
+        run: pnpm exec vp run -w native:test:oxlint
 
       - name: Stage native binaries
-        run: vp run -w native:stage
+        run: pnpm native:stage
+
+      - name: Lint package wrappers
+        run: pnpm lint
+
+      - name: Test package wrappers
+        run: pnpm test
+
+      - name: Verify custom Vite+ package
+        run: pnpm check:vite-plus
 
       - name: Verify package binary resolution
         run: |
@@ -130,4 +131,4 @@ jobs:
           node packages/oxlint-effect/bin/oxlint-effect.mjs --version
 
       - name: Run native headless smoke test
-        run: vp run -w native:smoke
+        run: pnpm native:smoke

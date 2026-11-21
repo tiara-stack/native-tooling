@@ -15,6 +15,7 @@ We recommend turning `typeCheck` on so `vp check` becomes the single command for
 ```bash
 vp check
 vp check --fix             # Format and run autofixers.
+vp check --quiet           # Hide lint warnings; still report and fail on errors.
 vp check --no-fmt          # Skip format; run lint (and type-check if enabled).
 vp check --no-lint         # Skip lint rules; keep type-check when enabled.
 vp check --no-fmt --no-lint # Type-check only (requires `typeCheck` enabled).
@@ -27,6 +28,8 @@ vp check --no-fmt --no-lint # Type-check only (requires `typeCheck` enabled).
 - [`lint`](/guide/lint#configuration) block in `vite.config.ts`
 - [`fmt`](/guide/fmt#configuration) block in `vite.config.ts`
 - TypeScript project structure and tsconfig files for type-aware linting
+
+When run from a workspace package, `vp check` uses the workspace-root `lint` and `fmt` blocks. Package configs cannot replace root format settings, lint rules, or type-check options. File paths and TypeScript projects are still resolved from the package working directory.
 
 Recommended base `lint` config:
 

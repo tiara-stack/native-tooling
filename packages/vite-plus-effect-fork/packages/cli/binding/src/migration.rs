@@ -3,6 +3,19 @@ use std::path::Path;
 use napi::{anyhow, bindgen_prelude::*};
 use napi_derive::napi;
 
+/// Parse source and resolve lexical bindings for the TypeScript migration rules.
+#[napi]
+pub fn analyze_migration_source(filename: String, source: String) -> Result<String> {
+    vp_migration::analyze_migration_source(&filename, &source).map_err(Error::from_reason)
+}
+
+/// Check inherited `.gitignore` rules without requiring the directory to exist.
+#[napi]
+pub fn is_directory_gitignored(root: String, directory: String) -> Result<bool> {
+    Ok(vp_migration::is_directory_gitignored(Path::new(&root), Path::new(&directory))
+        .map_err(anyhow::Error::from)?)
+}
+
 /// Rewrite scripts json content using rules from rules_yaml
 ///
 /// # Arguments
@@ -23,7 +36,7 @@ use napi_derive::napi;
 #[napi]
 pub fn rewrite_scripts(scripts_json: String, rules_yaml: String) -> Result<Option<String>> {
     let updated =
-        vite_migration::rewrite_scripts(&scripts_json, &rules_yaml).map_err(anyhow::Error::from)?;
+        vp_migration::rewrite_scripts(&scripts_json, &rules_yaml).map_err(anyhow::Error::from)?;
     Ok(updated)
 }
 
@@ -41,7 +54,7 @@ pub fn rewrite_scripts(scripts_json: String, rules_yaml: String) -> Result<Optio
 /// * `updated` - The updated scripts JSON string, or `null` if no changes were made
 #[napi]
 pub fn rewrite_eslint(scripts_json: String) -> Result<Option<String>> {
-    let updated = vite_migration::rewrite_eslint(&scripts_json).map_err(anyhow::Error::from)?;
+    let updated = vp_migration::rewrite_eslint(&scripts_json).map_err(anyhow::Error::from)?;
     Ok(updated)
 }
 
@@ -59,7 +72,7 @@ pub fn rewrite_eslint(scripts_json: String) -> Result<Option<String>> {
 /// * `updated` - The updated scripts JSON string, or `null` if no changes were made
 #[napi]
 pub fn rewrite_prettier(scripts_json: String) -> Result<Option<String>> {
-    let updated = vite_migration::rewrite_prettier(&scripts_json).map_err(anyhow::Error::from)?;
+    let updated = vp_migration::rewrite_prettier(&scripts_json).map_err(anyhow::Error::from)?;
     Ok(updated)
 }
 
@@ -106,7 +119,7 @@ pub fn merge_json_config(
     json_config_path: String,
     config_key: String,
 ) -> Result<MergeJsonConfigResult> {
-    let result = vite_migration::merge_json_config(
+    let result = vp_migration::merge_json_config(
         Path::new(&vite_config_path),
         Path::new(&json_config_path),
         &config_key,
@@ -157,7 +170,7 @@ pub fn upsert_json_config(
     json_config_path: String,
     config_key: String,
 ) -> Result<MergeJsonConfigResult> {
-    let result = vite_migration::upsert_json_config(
+    let result = vp_migration::upsert_json_config(
         Path::new(&vite_config_path),
         Path::new(&json_config_path),
         &config_key,
@@ -180,7 +193,24 @@ pub fn upsert_json_config(
 #[napi]
 pub fn has_config_key(vite_config_path: String, config_key: String) -> Result<bool> {
     let content = std::fs::read_to_string(&vite_config_path).map_err(anyhow::Error::from)?;
-    Ok(vite_migration::has_config_key(&content, &config_key).map_err(anyhow::Error::from)?)
+    Ok(vp_migration::has_config_key(&content, &config_key).map_err(anyhow::Error::from)?)
+}
+
+/// Remove a top-level key from a recognized Vite config object.
+#[napi]
+pub fn remove_config_key(
+    vite_config_path: String,
+    config_key: String,
+) -> Result<MergeJsonConfigResult> {
+    let content = std::fs::read_to_string(&vite_config_path).map_err(anyhow::Error::from)?;
+    let result =
+        vp_migration::remove_config_key(&content, &config_key).map_err(anyhow::Error::from)?;
+
+    Ok(MergeJsonConfigResult {
+        content: result.content,
+        updated: result.updated,
+        uses_function_callback: result.uses_function_callback,
+    })
 }
 
 /// Error from batch import rewriting
@@ -201,6 +231,8 @@ pub struct BatchRewriteResult {
     pub preserved_vitest_files: Vec<String>,
     /// Files that had errors
     pub errors: Vec<BatchRewriteError>,
+    /// Pack configurations that need manual migration
+    pub warnings: Vec<BatchRewriteError>,
 }
 
 /// Merge tsdown config into vite config by importing it
@@ -234,7 +266,7 @@ pub fn merge_tsdown_config(
     tsdown_config_path: String,
 ) -> Result<MergeJsonConfigResult> {
     let result =
-        vite_migration::merge_tsdown_config(Path::new(&vite_config_path), &tsdown_config_path)
+        vp_migration::merge_tsdown_config(Path::new(&vite_config_path), &tsdown_config_path)
             .map_err(anyhow::Error::from)?;
 
     Ok(MergeJsonConfigResult {
@@ -249,13 +281,38 @@ pub fn merge_tsdown_config(
 /// `vite-plus` when needed.
 #[napi]
 pub fn wrap_lazy_plugins(vite_config_path: String) -> Result<MergeJsonConfigResult> {
-    let result = vite_migration::wrap_lazy_plugins(Path::new(&vite_config_path))
+    let result = vp_migration::wrap_lazy_plugins(Path::new(&vite_config_path))
         .map_err(anyhow::Error::from)?;
 
     Ok(MergeJsonConfigResult {
         content: result.content,
         updated: result.updated,
         uses_function_callback: result.uses_function_callback,
+    })
+}
+
+/// Result of moving task cache settings under `cache`
+#[napi(object)]
+pub struct TaskCacheConfigResult {
+    /// The updated vite config content
+    pub content: String,
+    /// Whether any changes were made
+    pub updated: bool,
+    /// Tasks that set cache settings outside `cache` but could not be updated
+    pub manual_tasks: Vec<String>,
+}
+
+/// Move `env`, `untrackedEnv`, `input`, and `output` from the top level of
+/// each static `run.tasks` entry into its `cache` object.
+#[napi]
+pub fn migrate_task_cache_config(vite_config_path: String) -> Result<TaskCacheConfigResult> {
+    let result = vp_migration::migrate_task_cache_config(Path::new(&vite_config_path))
+        .map_err(anyhow::Error::from)?;
+
+    Ok(TaskCacheConfigResult {
+        content: result.content,
+        updated: result.updated,
+        manual_tasks: result.manual_tasks,
     })
 }
 
@@ -290,11 +347,17 @@ pub fn wrap_lazy_plugins(vite_config_path: String) -> Result<MergeJsonConfigResu
 pub fn rewrite_imports_in_directory(
     root: String,
     preserve_vitest_in_nuxt_packages: Option<bool>,
+    oxlint_owner_dirs: Option<Vec<String>>,
 ) -> Result<BatchRewriteResult> {
-    let result = vite_migration::rewrite_imports_in_directory_with_options(
+    let result = vp_migration::rewrite_imports_in_directory_with_options(
         Path::new(&root),
-        vite_migration::RewriteImportsOptions {
+        vp_migration::RewriteImportsOptions {
             preserve_vitest_in_nuxt_packages: preserve_vitest_in_nuxt_packages.unwrap_or(false),
+            oxlint_owner_dirs: oxlint_owner_dirs
+                .unwrap_or_default()
+                .into_iter()
+                .map(std::path::PathBuf::from)
+                .collect(),
         },
     )
     .map_err(anyhow::Error::from)?;
@@ -309,6 +372,14 @@ pub fn rewrite_imports_in_directory(
             .preserved_vitest_files
             .iter()
             .map(|p| p.to_string_lossy().to_string())
+            .collect(),
+        warnings: result
+            .warnings
+            .iter()
+            .map(|(p, m)| BatchRewriteError {
+                path: p.to_string_lossy().to_string(),
+                message: m.clone(),
+            })
             .collect(),
         errors: result
             .errors

@@ -1,7 +1,7 @@
 {
   "name": "@tiara-stack/vite-plus",
-  "version": "0.2.4",
-  "description": "Tiara Stack fork of Vite+ wired to native Effect tsgolint tooling.",
+  "version": "1.0.0",
+  "description": "Tiara Stack Vite+ with native Effect tooling.",
   "homepage": "https://github.com/tiara-stack/native-tooling#readme",
   "bugs": {
     "url": "https://github.com/tiara-stack/native-tooling/issues"
@@ -14,9 +14,8 @@
     "directory": "packages/vite-plus"
   },
   "bin": {
-    "oxfmt": "bin/oxfmt",
-    "oxlint": "bin/oxlint",
     "vp": "bin/vp",
+    "vp-oxlint": "bin/tiara-oxlint.mjs",
     "vpr": "bin/vpr"
   },
   "files": [
@@ -28,10 +27,10 @@
     "binding/index.d.cts",
     "binding/index.d.ts",
     "binding/index.js",
-    "dist/test",
     "docs",
     "rules",
-    "templates"
+    "templates",
+    "SOURCE.json"
   ],
   "type": "module",
   "sideEffects": false,
@@ -62,11 +61,6 @@
     "./bin": {
       "import": "./dist/bin.js"
     },
-    "./binding": {
-      "types": "./binding/index.d.cts",
-      "import": "./binding/index.cjs",
-      "require": "./binding/index.cjs"
-    },
     "./fmt": {
       "types": "./dist/fmt.d.ts",
       "import": "./dist/fmt.js"
@@ -74,6 +68,15 @@
     "./lint": {
       "types": "./dist/lint.d.ts",
       "import": "./dist/lint.js"
+    },
+    "./lint/plugins": {
+      "types": "./dist/lint-plugins.d.ts",
+      "import": "./dist/lint-plugins.js",
+      "require": "./dist/lint-plugins.cjs"
+    },
+    "./lint/plugins-dev": {
+      "types": "./dist/lint-plugins-dev.d.ts",
+      "default": "./dist/lint-plugins-dev.js"
     },
     "./oxlint-plugin": {
       "module-sync": "./dist/oxlint-plugin.js",
@@ -89,6 +92,10 @@
     },
     "./pack/client": {
       "types": "./dist/pack-client.d.ts"
+    },
+    "./toolchain": {
+      "types": "./dist/toolchain.d.ts",
+      "default": "./dist/toolchain.js"
     },
     "./versions": {
       "types": "./dist/versions.d.ts",
@@ -134,34 +141,13 @@
       "types": "./dist/test/internal/browser.d.ts",
       "default": "./dist/test/internal/browser.js"
     },
-    "./test/runners": {
-      "types": "./dist/test/runners.d.ts",
-      "default": "./dist/test/runners.js"
-    },
-    "./test/suite": {
-      "types": "./dist/test/suite.d.ts",
-      "default": "./dist/test/suite.js"
-    },
-    "./test/environments": {
-      "types": "./dist/test/environments.d.ts",
-      "default": "./dist/test/environments.js"
+    "./test/internal/traces": {
+      "default": "./dist/test/internal/traces.js"
     },
     "./test/config": {
       "types": "./dist/test/config.d.ts",
       "require": "./dist/test/config.cjs",
       "default": "./dist/test/config.js"
-    },
-    "./test/coverage": {
-      "types": "./dist/test/coverage.d.ts",
-      "default": "./dist/test/coverage.js"
-    },
-    "./test/reporters": {
-      "types": "./dist/test/reporters.d.ts",
-      "default": "./dist/test/reporters.js"
-    },
-    "./test/snapshot": {
-      "types": "./dist/test/snapshot.d.ts",
-      "default": "./dist/test/snapshot.js"
     },
     "./test/runtime": {
       "types": "./dist/test/runtime.d.ts",
@@ -170,6 +156,10 @@
     "./test/worker": {
       "types": "./dist/test/worker.d.ts",
       "default": "./dist/test/worker.js"
+    },
+    "./test/mocker": {
+      "types": "./dist/test/mocker.d.ts",
+      "default": "./dist/test/mocker.js"
     },
     "./test/browser-playwright": {
       "types": "./dist/test/browser-playwright.d.ts",
@@ -203,22 +193,6 @@
       "types": "./dist/test/browser/providers/preview/context.d.ts",
       "default": "./dist/test/browser/providers/preview/context.js"
     },
-    "./test/browser-webdriverio": {
-      "types": "./dist/test/browser-webdriverio.d.ts",
-      "default": "./dist/test/browser-webdriverio.js"
-    },
-    "./test/browser/providers/webdriverio": {
-      "types": "./dist/test/browser/providers/webdriverio.d.ts",
-      "default": "./dist/test/browser/providers/webdriverio.js"
-    },
-    "./test/browser-webdriverio/context": {
-      "types": "./dist/test/browser-webdriverio/context.d.ts",
-      "default": "./dist/test/browser-webdriverio/context.js"
-    },
-    "./test/browser/providers/webdriverio/context": {
-      "types": "./dist/test/browser/providers/webdriverio/context.d.ts",
-      "default": "./dist/test/browser/providers/webdriverio/context.js"
-    },
     "./test/browser/context": {
       "types": "./dist/test/browser/context.d.ts",
       "default": "./dist/test/browser/context.js"
@@ -245,135 +219,148 @@
       "types": "./dist/test/browser-compat.d.ts",
       "default": "./dist/test/browser-compat.js"
     },
-    "./test/plugins/runner": {
-      "default": "./dist/test/plugins/runner.js"
-    },
-    "./test/plugins/runner-utils": {
-      "default": "./dist/test/plugins/runner-utils.js"
-    },
-    "./test/plugins/runner-types": {
-      "default": "./dist/test/plugins/runner-types.js"
-    },
     "./test/plugins/utils": {
+      "types": "./dist/test/plugins/utils.d.ts",
       "default": "./dist/test/plugins/utils.js"
     },
     "./test/plugins/utils-source-map": {
+      "types": "./dist/test/plugins/utils-source-map.d.ts",
       "default": "./dist/test/plugins/utils-source-map.js"
     },
     "./test/plugins/utils-source-map-node": {
+      "types": "./dist/test/plugins/utils-source-map-node.d.ts",
       "default": "./dist/test/plugins/utils-source-map-node.js"
     },
     "./test/plugins/utils-error": {
+      "types": "./dist/test/plugins/utils-error.d.ts",
       "default": "./dist/test/plugins/utils-error.js"
     },
     "./test/plugins/utils-helpers": {
+      "types": "./dist/test/plugins/utils-helpers.d.ts",
       "default": "./dist/test/plugins/utils-helpers.js"
     },
     "./test/plugins/utils-display": {
+      "types": "./dist/test/plugins/utils-display.d.ts",
       "default": "./dist/test/plugins/utils-display.js"
     },
     "./test/plugins/utils-timers": {
+      "types": "./dist/test/plugins/utils-timers.d.ts",
       "default": "./dist/test/plugins/utils-timers.js"
     },
     "./test/plugins/utils-offset": {
+      "types": "./dist/test/plugins/utils-offset.d.ts",
       "default": "./dist/test/plugins/utils-offset.js"
     },
     "./test/plugins/utils-resolver": {
+      "types": "./dist/test/plugins/utils-resolver.d.ts",
       "default": "./dist/test/plugins/utils-resolver.js"
     },
     "./test/plugins/utils-serialize": {
+      "types": "./dist/test/plugins/utils-serialize.d.ts",
       "default": "./dist/test/plugins/utils-serialize.js"
     },
     "./test/plugins/utils-constants": {
+      "types": "./dist/test/plugins/utils-constants.d.ts",
       "default": "./dist/test/plugins/utils-constants.js"
     },
     "./test/plugins/utils-diff": {
+      "types": "./dist/test/plugins/utils-diff.d.ts",
       "default": "./dist/test/plugins/utils-diff.js"
     },
     "./test/plugins/spy": {
+      "types": "./dist/test/plugins/spy.d.ts",
       "default": "./dist/test/plugins/spy.js"
     },
-    "./test/plugins/expect": {
-      "default": "./dist/test/plugins/expect.js"
-    },
     "./test/plugins/snapshot": {
+      "types": "./dist/test/plugins/snapshot.d.ts",
       "default": "./dist/test/plugins/snapshot.js"
     },
     "./test/plugins/snapshot-environment": {
+      "types": "./dist/test/plugins/snapshot-environment.d.ts",
       "default": "./dist/test/plugins/snapshot-environment.js"
     },
     "./test/plugins/snapshot-manager": {
+      "types": "./dist/test/plugins/snapshot-manager.d.ts",
       "default": "./dist/test/plugins/snapshot-manager.js"
     },
     "./test/plugins/mocker": {
+      "types": "./dist/test/plugins/mocker.d.ts",
       "default": "./dist/test/plugins/mocker.js"
     },
     "./test/plugins/mocker-node": {
+      "types": "./dist/test/plugins/mocker-node.d.ts",
       "default": "./dist/test/plugins/mocker-node.js"
     },
     "./test/plugins/mocker-browser": {
+      "types": "./dist/test/plugins/mocker-browser.d.ts",
       "default": "./dist/test/plugins/mocker-browser.js"
     },
     "./test/plugins/mocker-redirect": {
+      "types": "./dist/test/plugins/mocker-redirect.d.ts",
       "default": "./dist/test/plugins/mocker-redirect.js"
     },
     "./test/plugins/mocker-transforms": {
+      "types": "./dist/test/plugins/mocker-transforms.d.ts",
       "default": "./dist/test/plugins/mocker-transforms.js"
     },
     "./test/plugins/mocker-automock": {
+      "types": "./dist/test/plugins/mocker-automock.d.ts",
       "default": "./dist/test/plugins/mocker-automock.js"
     },
     "./test/plugins/mocker-register": {
+      "types": "./dist/test/plugins/mocker-register.d.ts",
       "default": "./dist/test/plugins/mocker-register.js"
     },
     "./test/plugins/pretty-format": {
+      "types": "./dist/test/plugins/pretty-format.d.ts",
       "default": "./dist/test/plugins/pretty-format.js"
     },
     "./test/plugins/browser": {
+      "types": "./dist/test/plugins/browser.d.ts",
       "default": "./dist/test/plugins/browser.js"
     },
     "./test/plugins/browser-context": {
+      "types": "./dist/test/plugins/browser-context.d.ts",
       "default": "./dist/test/plugins/browser-context.js"
     },
     "./test/plugins/browser-client": {
       "default": "./dist/test/plugins/browser-client.js"
     },
     "./test/plugins/browser-locators": {
+      "types": "./dist/test/plugins/browser-locators.d.ts",
       "default": "./dist/test/plugins/browser-locators.js"
     },
     "./test/plugins/browser-playwright": {
+      "types": "./dist/test/plugins/browser-playwright.d.ts",
       "default": "./dist/test/plugins/browser-playwright.js"
     },
-    "./test/plugins/browser-webdriverio": {
-      "default": "./dist/test/plugins/browser-webdriverio.js"
-    },
     "./test/plugins/browser-preview": {
+      "types": "./dist/test/plugins/browser-preview.d.ts",
       "default": "./dist/test/plugins/browser-preview.js"
     }
   },
   "dependencies": {
-    "@oxc-project/types": "=0.138.0",
-    "@oxlint/plugins": "=1.68.0",
-    "@vitest/browser": "4.1.9",
-    "@vitest/browser-preview": "4.1.9",
-    "@vitest/expect": "4.1.9",
-    "@vitest/mocker": "4.1.9",
-    "@vitest/pretty-format": "4.1.9",
-    "@vitest/runner": "4.1.9",
-    "@vitest/snapshot": "4.1.9",
-    "@vitest/spy": "4.1.9",
-    "@vitest/utils": "4.1.9",
-    "oxfmt": "=0.57.0",
-    "oxlint": "=1.72.0",
-    "oxlint-tsgolint": "=0.24.0",
-    "vitest": "4.1.9",
-    "@voidzero-dev/vite-plus-core": "0.2.2",
+    "@oxc-project/types": "=0.151.0",
+    "@oxlint/plugins": "=1.79.0",
+    "@tiara-stack/oxlint-effect": "^0.1.2",
     "@tiara-stack/tsgo-effect": "^0.1.2",
-    "@tiara-stack/tsgolint-effect": "^0.1.2"
+    "@tiara-stack/tsgolint-effect": "^0.1.2",
+    "@vitest/browser": "5.0.1",
+    "@vitest/browser-preview": "5.0.1",
+    "@vitest/mocker": "5.0.1",
+    "@vitest/pretty-format": "5.0.1",
+    "@vitest/snapshot": "5.0.1",
+    "@vitest/spy": "5.0.1",
+    "@vitest/utils": "5.0.1",
+    "oxfmt": "=0.70.0",
+    "oxlint": "=1.85.0",
+    "oxlint-tsgolint": "=7.0.2003",
+    "vite": "npm:@tiara-stack/vite-plus-core@1.0.0",
+    "vitest": "5.0.1"
   },
   "peerDependencies": {
-    "@vitest/browser-playwright": "4.1.9",
-    "@vitest/browser-webdriverio": "4.1.9"
+    "@vitest/browser-playwright": "5.0.1",
+    "@vitest/browser-webdriverio": "^5.0.0-beta.5 || >=5.0.0"
   },
   "peerDependenciesMeta": {
     "@vitest/browser-playwright": {
@@ -385,7 +372,7 @@
   },
   "napi": {
     "binaryName": "vite-plus",
-    "packageName": "@tiara-stack/vite-plus",
+    "packageName": "@voidzero-dev/vite-plus",
     "targets": [
       "aarch64-apple-darwin",
       "x86_64-apple-darwin",
@@ -398,26 +385,26 @@
     ]
   },
   "engines": {
-    "node": "^20.19.0 || ^22.18.0 || >=24.11.0"
-  },
-  "optionalDependencies": {
-    "@voidzero-dev/vite-plus-darwin-arm64": "0.2.2",
-    "@voidzero-dev/vite-plus-darwin-x64": "0.2.2",
-    "@voidzero-dev/vite-plus-linux-arm64-gnu": "0.2.2",
-    "@voidzero-dev/vite-plus-linux-arm64-musl": "0.2.2",
-    "@voidzero-dev/vite-plus-linux-x64-gnu": "0.2.2",
-    "@voidzero-dev/vite-plus-linux-x64-musl": "0.2.2",
-    "@voidzero-dev/vite-plus-win32-x64-msvc": "0.2.2",
-    "@voidzero-dev/vite-plus-win32-arm64-msvc": "0.2.2"
+    "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
   },
   "scripts": {
-    "build": "echo 'prebuilt from packages/vite-plus-effect-fork'",
-    "format": "echo 'prebuilt package; no format step'",
-    "format:apply": "echo 'prebuilt package; no format step'",
-    "lint": "echo 'prebuilt package; no lint step'",
+    "build": "echo 'generated from the built local Vite+ fork'",
+    "format": "echo 'generated package'",
+    "format:apply": "echo 'generated package'",
+    "lint": "echo 'generated package'",
     "test": "node bin/vp --version"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "optionalDependencies": {
+    "@voidzero-dev/vite-plus-darwin-arm64": "1.0.0",
+    "@voidzero-dev/vite-plus-darwin-x64": "1.0.0",
+    "@voidzero-dev/vite-plus-linux-arm64-gnu": "1.0.0",
+    "@voidzero-dev/vite-plus-linux-arm64-musl": "1.0.0",
+    "@voidzero-dev/vite-plus-linux-x64-gnu": "1.0.0",
+    "@voidzero-dev/vite-plus-linux-x64-musl": "1.0.0",
+    "@voidzero-dev/vite-plus-win32-arm64-msvc": "1.0.0",
+    "@voidzero-dev/vite-plus-win32-x64-msvc": "1.0.0"
   }
 }

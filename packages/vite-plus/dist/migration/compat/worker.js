@@ -1,4 +1,4 @@
-import { n as addMigrationWarning, r as createMigrationReport } from "../../report-BS7ULx7A.js";
+import { n as addMigrationWarning, r as createMigrationReport } from "../../report-NhQk8VHb.js";
 import { t as ROLLDOWN_COMPAT_RESULT_PREFIX } from "../../protocol-D99W10Qi.js";
 import { writeSync } from "node:fs";
 //#region src/migration/compat/manual-chunks.ts

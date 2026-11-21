@@ -1,49 +1,34 @@
-use std::{borrow::Cow, ffi::OsStr, io::IsTerminal, process::Stdio, sync::Arc};
+use std::{borrow::Cow, process::Stdio, sync::Arc};
 
-use rustc_hash::FxHashMap;
-use vite_error::Error;
-use vite_path::AbsolutePathBuf;
-use vite_task::ExitStatus;
+use vp_error::Error;
+use vt::ExitStatus;
+use vt_path::AbsolutePathBuf;
 
 use super::{
     resolver::SubcommandResolver,
-    types::{CapturedCommandOutput, ResolvedUniversalViteConfig, SynthesizableSubcommand},
+    types::{CapturedCommandOutput, EnvMap, SynthesizableSubcommand, exit_status_from},
 };
 
 /// Resolve a subcommand into a prepared `tokio::process::Command`.
 async fn resolve_and_build_command(
     resolver: &SubcommandResolver,
     subcommand: SynthesizableSubcommand,
-    resolved_vite_config: Option<&ResolvedUniversalViteConfig>,
-    envs: &Arc<FxHashMap<Arc<OsStr>, Arc<OsStr>>>,
+    envs: &Arc<EnvMap>,
     cwd: &AbsolutePathBuf,
 ) -> Result<tokio::process::Command, Error> {
-    let resolved = resolver
-        .resolve(subcommand, resolved_vite_config, envs)
-        .await
-        .map_err(|e| Error::Anyhow(e))?;
+    let resolved = resolver.resolve(subcommand, envs, cwd).await.map_err(Error::Anyhow)?;
 
     // Resolve the program path using `which` to handle Windows .cmd/.bat files (PATHEXT)
-    let program_path = {
-        let paths = resolved.envs.iter().find_map(|(k, v)| {
-            let is_path = if cfg!(windows) {
-                k.as_ref().eq_ignore_ascii_case("PATH")
-            } else {
-                k.as_ref() == "PATH"
-            };
-            if is_path { Some(v.as_ref().to_os_string()) } else { None }
-        });
-        vite_command::resolve_bin(
-            resolved.program.as_ref().to_str().unwrap_or_default(),
-            paths.as_deref(),
-            cwd,
-        )?
-    };
+    let program_path = vp_command::resolve_bin(
+        resolved.program.as_ref().to_str().unwrap_or_default(),
+        vt::get_path_env(&resolved.envs).map(AsRef::as_ref),
+        cwd,
+    )?;
 
-    let mut cmd = vite_command::build_command(&program_path, cwd);
+    let mut cmd = vp_command::build_command(&program_path, cwd);
     cmd.args(resolved.args.iter().map(|s| s.as_str()))
         .env_clear()
-        .envs(resolved.envs.iter().map(|(k, v)| (k.as_ref(), v.as_ref())));
+        .envs(resolved.envs.iter().map(|(k, v)| (k.inner(), v)));
     Ok(cmd)
 }
 
@@ -51,8 +36,7 @@ async fn resolve_and_build_command(
 pub(super) async fn resolve_and_execute(
     resolver: &SubcommandResolver,
     subcommand: SynthesizableSubcommand,
-    resolved_vite_config: Option<&ResolvedUniversalViteConfig>,
-    envs: &Arc<FxHashMap<Arc<OsStr>, Arc<OsStr>>>,
+    envs: &Arc<EnvMap>,
     cwd: &AbsolutePathBuf,
 ) -> Result<ExitStatus, Error> {
     let is_interactive = matches!(
@@ -60,18 +44,16 @@ pub(super) async fn resolve_and_execute(
         SynthesizableSubcommand::Dev { .. } | SynthesizableSubcommand::Preview { .. }
     );
 
-    let mut cmd =
-        resolve_and_build_command(resolver, subcommand, resolved_vite_config, envs, cwd).await?;
+    let mut cmd = resolve_and_build_command(resolver, subcommand, envs, cwd).await?;
 
     // For interactive commands (dev, preview), use terminal guard to restore terminal state on exit
-    if is_interactive {
-        let status = vite_command::execute_with_terminal_guard(cmd).await?;
-        Ok(ExitStatus(status.code().unwrap_or(1) as u8))
+    let status = if is_interactive {
+        vp_command::execute_with_terminal_guard(cmd).await?
     } else {
         let mut child = cmd.spawn().map_err(|e| Error::Anyhow(e.into()))?;
-        let status = child.wait().await.map_err(|e| Error::Anyhow(e.into()))?;
-        Ok(ExitStatus(status.code().unwrap_or(1) as u8))
-    }
+        child.wait().await.map_err(|e| Error::Anyhow(e.into()))?
+    };
+    Ok(exit_status_from(status))
 }
 
 pub(super) enum FilterStream {
@@ -84,14 +66,12 @@ pub(super) enum FilterStream {
 pub(super) async fn resolve_and_execute_with_filter(
     resolver: &SubcommandResolver,
     subcommand: SynthesizableSubcommand,
-    resolved_vite_config: Option<&ResolvedUniversalViteConfig>,
-    envs: &Arc<FxHashMap<Arc<OsStr>, Arc<OsStr>>>,
+    envs: &Arc<EnvMap>,
     cwd: &AbsolutePathBuf,
     stream: FilterStream,
     filter: impl Fn(&str) -> Cow<'_, str>,
 ) -> Result<ExitStatus, Error> {
-    let mut cmd =
-        resolve_and_build_command(resolver, subcommand, resolved_vite_config, envs, cwd).await?;
+    let mut cmd = resolve_and_build_command(resolver, subcommand, envs, cwd).await?;
     match stream {
         FilterStream::Stdout => cmd.stdout(Stdio::piped()),
         FilterStream::Stderr => cmd.stderr(Stdio::piped()),
@@ -112,22 +92,25 @@ pub(super) async fn resolve_and_execute_with_filter(
         }
     }
 
-    Ok(ExitStatus(output.status.code().unwrap_or(1) as u8))
+    Ok(exit_status_from(output.status))
 }
 
 pub(crate) async fn resolve_and_capture_output(
     resolver: &SubcommandResolver,
     subcommand: SynthesizableSubcommand,
-    resolved_vite_config: Option<&ResolvedUniversalViteConfig>,
-    envs: &Arc<FxHashMap<Arc<OsStr>, Arc<OsStr>>>,
+    envs: &Arc<EnvMap>,
     cwd: &AbsolutePathBuf,
     force_color_if_terminal: bool,
 ) -> Result<CapturedCommandOutput, Error> {
-    let mut cmd =
-        resolve_and_build_command(resolver, subcommand, resolved_vite_config, envs, cwd).await?;
+    let mut cmd = resolve_and_build_command(resolver, subcommand, envs, cwd).await?;
     cmd.stdout(Stdio::piped());
     cmd.stderr(Stdio::piped());
-    if force_color_if_terminal && std::io::stdout().is_terminal() {
+    // Capturing output hides the terminal from the child. Preserve colors only when
+    // the parent supports them, without overriding an explicit FORCE_COLOR value.
+    if force_color_if_terminal
+        && console::colors_enabled()
+        && !cmd.as_std().get_envs().any(|(key, _)| key == "FORCE_COLOR")
+    {
         cmd.env("FORCE_COLOR", "1");
     }
 
@@ -135,7 +118,7 @@ pub(crate) async fn resolve_and_capture_output(
     let output = child.wait_with_output().await.map_err(|e| Error::Anyhow(e.into()))?;
 
     Ok(CapturedCommandOutput {
-        status: ExitStatus(output.status.code().unwrap_or(1) as u8),
+        status: exit_status_from(output.status),
         stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
         stderr: String::from_utf8_lossy(&output.stderr).into_owned(),
     })

@@ -1,0 +1,48 @@
+//! Shared utilities for vite-plus crates
+
+#![allow(clippy::allow_attributes)]
+#![allow(clippy::disallowed_macros)]
+#![allow(clippy::disallowed_types)]
+
+mod dirs;
+mod documentation;
+mod env_config;
+pub mod env_vars;
+mod error;
+pub mod header;
+mod http;
+mod interactivity;
+mod json_edit;
+pub mod output;
+mod package_json;
+mod path_env;
+mod process;
+pub mod progress;
+mod stdio;
+pub mod string_similarity;
+mod tls;
+mod tracing;
+
+pub use dirs::{
+    SHIM_POINTER_EXTENSION, SHIM_POINTER_HEADER, VP_BINARY_NAME, VpDirEnvError, VpDirs,
+    VpDirsLayout, is_windows_trampoline, shim_pointer_file_name, validate_vp_dir_env,
+};
+pub use documentation::documentation_url;
+pub use env_config::EnvConfig;
+pub use error::format_error_chain;
+pub use http::{HttpClientError, download_timeout, shared_http_client};
+pub use interactivity::{
+    is_ci_environment, is_interactive_terminal, is_stderr_terminal, is_stdin_terminal,
+    is_stdout_terminal,
+};
+pub use json_edit::{JsonStyle, edit_json_object, insert_after};
+pub use package_json::{
+    DevEngineDependency, DevEngineField, DevEngines, Engines, OnFail, PackageJson, dev_engine_entry,
+};
+pub use path_env::{
+    PrependOptions, ToolPathEnv, ensure_windows_pathext, prepend_tools_to_path_env,
+};
+pub use process::exit_code_from_status;
+pub use stdio::ensure_blocking_stdio;
+pub use tls::ensure_tls_provider;
+pub use tracing::init_tracing;

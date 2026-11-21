@@ -7,7 +7,7 @@
 When `vp create` is invoked with no `TEMPLATE` argument, Vite+ uses this value as if the user had typed it. Typically set to an npm scope whose `@scope/create` package publishes a `createConfig.templates` manifest — so bare `vp create` drops into the org picker.
 
 ```ts
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   create: {
@@ -23,7 +23,7 @@ Any value accepted by `vp create` as a first argument works here: `@your-org` fo
 Declare local templates available to `vp create` inside a monorepo. Each entry is listed in the `vp create` picker, and selecting it (or passing its `name` as the template argument) runs the resolved `template`.
 
 ```ts
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from '@tiara-stack/vite-plus';
 
 export default defineConfig({
   create: {

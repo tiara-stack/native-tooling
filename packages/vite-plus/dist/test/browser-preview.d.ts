@@ -1,6 +1,6 @@
-import { SelectorOptions } from './browser';
-import { BrowserProvider, TestProject, BrowserProviderOption } from './node';
-export { defineBrowserCommand } from './_at-vitest-browser';
+import { SelectorOptions } from './browser.js';
+import { BrowserProvider, TestProject, BrowserProviderOption } from './node.js';
+export { defineBrowserCommand } from './_at-vitest-browser.js';
 
 declare function preview(): BrowserProviderOption;
 declare class PreviewBrowserProvider implements BrowserProvider {
@@ -16,7 +16,7 @@ declare class PreviewBrowserProvider implements BrowserProvider {
 	openPage(_sessionId: string, url: string): Promise<void>;
 	close(): Promise<void>;
 }
-declare module './browser' {
+declare module './browser.js' {
 	interface UserEventClickOptions extends SelectorOptions {}
 	interface UserEventHoverOptions extends SelectorOptions {}
 	interface UserEventFillOptions extends SelectorOptions {}

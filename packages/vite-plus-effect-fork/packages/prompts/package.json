@@ -1,6 +1,6 @@
 {
   "name": "@voidzero-dev/vite-plus-prompts",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "The Unified Toolchain for the Web",
   "homepage": "https://viteplus.dev/guide",
   "bugs": {
@@ -27,7 +27,7 @@
     "build": "tsdown"
   },
   "dependencies": {
-    "@clack/core": "^1.0.0",
+    "@clack/core": "catalog:",
     "picocolors": "^1.0.0",
     "sisteransi": "^1.0.5"
   },

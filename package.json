@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "format": "vp run -r format",
-    "format:apply": "vp run -r format:apply",
-    "lint": "vp run -r lint",
-    "test": "vp run -r test && pnpm check:patches",
-    "build": "vp run -r build && pnpm check:tsc-build",
+    "format": "vp run --filter './packages/*' format",
+    "format:apply": "vp run --filter './packages/*' format:apply",
+    "lint": "vp run --filter './packages/*' lint",
+    "test": "vp run --filter './packages/*' test && pnpm check:patches",
+    "build": "pnpm vite-plus:build:source && pnpm vite-plus:sync && pnpm effect-vitest:sync && pnpm build:packages && pnpm check:tsc-build",
     "check:tsc-build": "tsc -b tsconfig.build.json --pretty false",
     "check:patches": "node scripts/check-patches.mjs",
     "check:vite-plus": "node scripts/check-vite-plus-package.mjs",
@@ -27,7 +27,10 @@
     "publish:stage:approve": "vp pm stage approve",
     "publish:stage:reject": "vp pm stage reject",
     "native:generate": "node scripts/generate-native.mjs",
-    "native:test:backend": "node --test scripts/test/native-backend.test.mjs"
+    "native:test:backend": "node --test scripts/test/native-backend.test.mjs",
+    "vite-plus:build:source": "node scripts/build-vite-plus.mjs",
+    "check:effect-vitest:consumer": "node scripts/test/effect-vitest-consumer.mjs",
+    "build:packages": "vp run --filter './packages/*' build"
   },
   "devDependencies": {
     "@types/node": "catalog:",

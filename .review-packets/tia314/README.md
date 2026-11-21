@@ -1,0 +1,9 @@
+# TIA-314 review corpus
+
+Source epoch `9aefcd2d9d2a9c63371024bc658cdecacf01d6a9`, parent `e088d5c9784d2779684d02524fab62a0fa5e656a`. The canonical UTF-8 JSON-array codec carries 454 Tiara targets: 15 pin-relative overlays, 40 custom deltas, 334 generated mappings and 65 removed-contract controls. Read the actual code deltas, shared transformations and every affected input/output/consumer mapping. Stock algorithms remain context. Of the 6,420 historical stock updates, 6,419 paths remain wholly imported; imported portions of mixed paths remain context.
+
+The current repair preserves effective config/CLI LSP option precedence, remembered workspace settings, and final child protocol output. It also corrects scoped bundled-runner detection, expands Rolldown JavaScript input invalidation, retires obsolete copied chunks, clarifies the existing manual Windows Effect-executable boundary and makes fixture readiness atomic with signal ownership already installed. The index binds the actual current producer and changed-output counts. JavaScript/declarations were freshly produced; native compilation is retained only against matching accepted inputs and bytes. This is not a clean installation or the full TIA-317 consumer suite.
+
+Earlier LSP publication/validation and Function-constructor test repairs retain their historical source epochs, checks and original reviewer authorship. Removed-contract controls retain their fixed-base preimages and current replacement interfaces; they are not live retired files.
+
+This immutable source snapshot is separate from the live gate ledger. Affected independent review and current-head CI/hosted acceptance remain pending. Historical nonpasses, the B002 fixed-input objection, original 65 negative-control attribution, prior exposure/parsing limits and generic hosted clone/config-directory warnings remain disclosed. Such warnings do not add cloning, optional analyses or per-file prose as project gates.

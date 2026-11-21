@@ -29,6 +29,7 @@ import {
   removeYamlMapVitestEntry,
   rewriteMonorepoProject,
   shouldDropProviderOverrideKey,
+  workspaceUsesWebdriverioProvider,
 } from '../migrator.ts';
 import {
   LEGACY_WRAPPER_FALLBACK_VERSIONS,
@@ -36,6 +37,7 @@ import {
   REMOVE_PACKAGES,
   VITEST_IS_MANAGED_OVERRIDE,
   isPlainRecord,
+  pnpmOverrideKey,
   type CatalogDependencyResolver,
   type PackageJsonDependencyField,
   type PnpmPackageJsonSettings,
@@ -71,6 +73,17 @@ const PNPM_MINIMUM_RELEASE_AGE_EXCLUDES = [
   ...VITEST_AGE_GATE_EXEMPT_PACKAGES,
 ] as const;
 
+// Whether `version` is at least `minVersion`. A non-coercible version passes
+// only when it is one of the given dist-tags, which always point at a current
+// (feature-capable) release.
+function versionAtLeast(version: string, minVersion: string, tags: string[]): boolean {
+  const coerced = semver.coerce(version);
+  if (coerced) {
+    return semver.gte(coerced, minVersion);
+  }
+  return tags.includes(version);
+}
+
 const PNPM_WORKSPACE_SETTINGS_MIN_VERSION = '10.6.2';
 
 // pnpm 10.5 started reading package.json#pnpm settings from
@@ -78,11 +91,7 @@ const PNPM_WORKSPACE_SETTINGS_MIN_VERSION = '10.6.2';
 // 10.5.1 and 10.6.2 respectively. Use the latter as the atomic migration
 // boundary so the complete object can move without splitting its ownership.
 export function pnpmSupportsWorkspaceSettings(version: string): boolean {
-  const coerced = semver.coerce(version);
-  if (coerced) {
-    return semver.gte(coerced, PNPM_WORKSPACE_SETTINGS_MIN_VERSION);
-  }
-  return version === 'latest' || version === 'next';
+  return versionAtLeast(version, PNPM_WORKSPACE_SETTINGS_MIN_VERSION, ['latest', 'next']);
 }
 
 const PNPM_CATALOG_MIN_VERSION = '9.5.0';
@@ -97,11 +106,7 @@ const PNPM_CATALOG_MIN_VERSION = '9.5.0';
 // already uses catalogs has its reconciled toolchain edges (vite/vite-plus and
 // the vitest ecosystem) inlined to concrete versions instead of kept `catalog:`.
 export function pnpmSupportsCatalog(version: string): boolean {
-  const coerced = semver.coerce(version);
-  if (coerced) {
-    return semver.gte(coerced, PNPM_CATALOG_MIN_VERSION);
-  }
-  return version === 'latest' || version === 'next';
+  return versionAtLeast(version, PNPM_CATALOG_MIN_VERSION, ['latest', 'next']);
 }
 
 const YARN_CATALOG_MIN_VERSION = '4.10.0';
@@ -115,11 +120,7 @@ const YARN_CATALOG_MIN_VERSION = '4.10.0';
 // not (yet) provably on a catalog-capable Yarn gets concrete specs instead of
 // `catalog:` references it cannot resolve. Mirrors `pnpmSupportsWorkspaceSettings`.
 export function yarnSupportsCatalog(version: string): boolean {
-  const coerced = semver.coerce(version);
-  if (coerced) {
-    return semver.gte(coerced, YARN_CATALOG_MIN_VERSION);
-  }
-  return version === 'latest' || version === 'next' || version === 'stable';
+  return versionAtLeast(version, YARN_CATALOG_MIN_VERSION, ['latest', 'next', 'stable']);
 }
 
 // Whether a `catalog:` reference resolves for this package manager and version:
@@ -262,12 +263,13 @@ export function rewritePnpmWorkspaceYaml(
   vitestEcosystemPackages: ReadonlySet<string>,
   writeWorkspaceSettings = true,
   catalogAdditions: ReadonlySet<string> = new Set(),
+  usesWebdriverioProvider = false,
 ): void {
   const pnpmWorkspaceYamlPath = path.join(projectPath, 'pnpm-workspace.yaml');
   if (!fs.existsSync(pnpmWorkspaceYamlPath)) {
     fs.writeFileSync(pnpmWorkspaceYamlPath, '');
   }
-  const managed = managedOverridePackages(usesVitest);
+  const managed = managedOverridePackages(usesVitest, usesWebdriverioProvider);
 
   editYamlFile(pnpmWorkspaceYamlPath, (doc) => {
     // catalog
@@ -311,14 +313,30 @@ export function rewritePnpmWorkspaceYaml(
     // Common case (no direct vitest): actively strip any lingering managed
     // `vitest` override so it arrives transitively through vite-plus.
     if (!usesVitest) {
-      removeYamlMapVitestEntry(doc.getIn(['overrides']));
+      removeYamlMapVitestEntry(doc.getIn(['overrides']), 'pnpm-ranged');
     }
     for (const key of Object.keys(managed)) {
-      const currentVersion = getYamlMapScalarStringValue(overrides, key);
-      const version = getCatalogDependencySpec(currentVersion, managed[key], true, {
-        preferredCatalogSpec,
-      });
-      doc.setIn(['overrides', scalarString(key)], scalarString(version));
+      // Managed keys are range-qualified (`vite@*`), so the override never
+      // rewrites an importer's `catalog:` spec. See `pnpmOverrideKey`.
+      // Move a pre-#2309 bare key's value to the new key, so a user's own
+      // `catalog:<name>` choice survives. Then delete the bare key. Two keys
+      // for one package would restore the match that clobbers `catalog:`.
+      const overrideKey = pnpmOverrideKey(key);
+      const currentVersion =
+        getYamlMapScalarStringValue(overrides, overrideKey) ??
+        getYamlMapScalarStringValue(overrides, key);
+      // @vitest/browser is an override-only entry: migration removes its direct
+      // dependency and catalog entry because Vite+ already supplies it.
+      const version =
+        key === '@vitest/browser'
+          ? managed[key]
+          : getCatalogDependencySpec(currentVersion, managed[key], true, {
+              preferredCatalogSpec,
+            });
+      if (overrides instanceof YAMLMap) {
+        overrides.delete(key);
+      }
+      doc.setIn(['overrides', scalarString(overrideKey)], scalarString(version));
     }
     // remove dependency selector from vite, e.g. "vite-plugin-svgr>vite": "npm:vite@7.0.12"
     // Snapshot the keys before deleting (mirrors the `keysSnapshot` loop above):
@@ -355,7 +373,7 @@ export function rewritePnpmWorkspaceYaml(
       allowAny.items = allowAny.items.filter((n) => n.value !== 'vitest');
     }
     const existing = new Set(allowAny.items.map((n) => n.value));
-    for (const key of Object.keys(managed)) {
+    for (const key of Object.keys(managedOverridePackages(usesVitest))) {
       if (!existing.has(key)) {
         allowAny.add(scalarString(key));
       }
@@ -376,7 +394,7 @@ export function rewritePnpmWorkspaceYaml(
     if (!usesVitest) {
       removeYamlMapVitestEntry(allowedVersions);
     }
-    for (const key of Object.keys(managed)) {
+    for (const key of Object.keys(managedOverridePackages(usesVitest))) {
       // - vite: '*'
       allowedVersions.set(scalarString(key), scalarString('*'));
     }
@@ -575,60 +593,10 @@ export function getCatalogDependencySpec(
 }
 
 /**
- * #1932: under pnpm, an importer that depends on `vite-plus` (which bundles
- * `vitest`) needs a DIRECT `vite` devDep so the `vite` override binds vitest's
- * required `vite` peer to @voidzero-dev/vite-plus-core. Without a direct edge,
- * pnpm's `autoInstallPeers` fabricates a separate upstream `vite` to satisfy the
- * peer, splitting vite-plus / vite / vitest into duplicate instances (the extra
- * vite also lacks vite's `@voidzero-dev/vite-task-client` integration, breaking
- * the `vp test` cache). npm/yarn/bun redirect transitive/peer vite via root
- * overrides/resolutions (and drop the aliased vite), so this is pnpm-only,
- * mirroring the bun root-package branch in `rewriteRootWorkspacePackageJson`.
- *
- * A package that already declares `vite` in ANY dependency field, including
- * `peerDependencies` (e.g. a vite plugin pinning `vite ^6`), is left untouched
- * so its existing version contract is preserved. Call this AFTER `vite-plus`
- * has been ensured in the package, so the dependency check sees it.
- */
-export function ensureDirectViteForPnpm(
-  pkg: {
-    dependencies?: Record<string, string>;
-    devDependencies?: Record<string, string>;
-    optionalDependencies?: Record<string, string>;
-    peerDependencies?: Record<string, string>;
-  },
-  packageManager: PackageManager,
-  supportCatalog: boolean,
-  catalogDependencyResolver?: CatalogDependencyResolver,
-): boolean {
-  const viteOverride = VITE_PLUS_OVERRIDE_PACKAGES.vite;
-  if (packageManager !== PackageManager.pnpm || !viteOverride) {
-    return false;
-  }
-  const dependsOnVitePlus =
-    pkg.dependencies?.[VITE_PLUS_NAME] !== undefined ||
-    pkg.devDependencies?.[VITE_PLUS_NAME] !== undefined;
-  const viteAlreadyDirect =
-    pkg.dependencies?.vite !== undefined ||
-    pkg.devDependencies?.vite !== undefined ||
-    pkg.optionalDependencies?.vite !== undefined ||
-    pkg.peerDependencies?.vite !== undefined;
-  if (!dependsOnVitePlus || viteAlreadyDirect) {
-    return false;
-  }
-  // The catalog-vs-alias choice is driven entirely by supportCatalog and the
-  // (file:/npm:) override spec; the extra getCatalogDependencySpec options only
-  // matter for an existing value or a peerDependencies field, neither of which
-  // applies here (we only reach this for a fresh devDependencies entry).
-  setDirectViteEdge(pkg, supportCatalog, catalogDependencyResolver);
-  return true;
-}
-
-/**
  * Insert (or overwrite) a DIRECT `vite` devDependency edge in SORTED position.
  *
  * Several migration paths need a direct `vite` devDep for different reasons
- * (pnpm peer binding #1932; bun peer pre-resolution oven-sh/bun#8406; npm
+ * (bun peer pre-resolution oven-sh/bun#8406; npm
  * `@vitest/mocker` hoisting for opt-in providers), but they all want the SAME
  * spec and the SAME placement, so both are centralized here. Each caller keeps
  * its OWN gate for WHEN a direct edge is needed; this owns only the spec +
@@ -824,6 +792,46 @@ function getYamlMapScalarStringValue(map: unknown, key: string): string | undefi
   return undefined;
 }
 
+/**
+ * Merge the managed override entries into a pnpm `overrides` record, under the
+ * range-qualified keys (see `pnpmOverrideKey`).
+ *
+ * Both writers of the package.json `pnpm.overrides` sink go through this
+ * helper: the standalone writer and the monorepo-root writer. That sink serves
+ * pnpm 9.5 to 10.6.1. The helper deletes a bare managed key that a pre-#2309
+ * migration left. Two keys for one package would restore the match that
+ * clobbers `catalog:` importer specs.
+ *
+ * A bare key's `catalog:` value moves to the ranged key, so a user's own
+ * `catalog:<name>` choice survives the re-keying. This mirrors
+ * `getCatalogDependencySpec`, which keeps a `catalog:` reference in the
+ * pnpm-workspace.yaml sink. A `file:` managed spec (force-override mode) always
+ * wins, because there is no catalog to resolve against in that mode.
+ *
+ * Force-override mode also appends the `vite-plus` pin, under a BARE key. The
+ * pin only exists in `file:` tgz mode, where migration writes the tgz spec
+ * straight into every manifest instead of a `catalog:` reference. In that mode
+ * there is no catalog provenance for a bare key to strip. This matches the
+ * workspace-yaml force-override path in `rewriteStandaloneProject`.
+ */
+export function mergeManagedPnpmOverrides(
+  overrides: Record<string, string> | undefined,
+  managed: Record<string, string>,
+): Record<string, string> {
+  const next = { ...overrides };
+  for (const [dependencyName, managedSpec] of Object.entries(managed)) {
+    const overrideKey = pnpmOverrideKey(dependencyName);
+    const existing = next[overrideKey] ?? next[dependencyName];
+    delete next[dependencyName];
+    next[overrideKey] =
+      existing?.startsWith('catalog:') && !managedSpec.startsWith('file:') ? existing : managedSpec;
+  }
+  if (isForceOverrideMode()) {
+    next[VITE_PLUS_NAME] = VITE_PLUS_VERSION;
+  }
+  return next;
+}
+
 function pruneYamlMapLegacyWrapperAliases(map: unknown): void {
   if (!(map instanceof YAMLMap)) {
     return;
@@ -936,7 +944,7 @@ function rewriteYamlCatalogAtPath(
     removeYamlMapVitestEntry(catalog);
   }
   for (const [key, value] of Object.entries(managed)) {
-    // ERR_PNPM_CATALOG_IN_OVERRIDES  Could not resolve a catalog in the overrides: The entry for 'vite' in catalog 'default' declares a dependency using the 'file' protocol
+    // ERR_PNPM_CATALOG_IN_OVERRIDES  Could not resolve a catalog in the overrides: The entry for 'vite' in catalog 'default' declares a dependency using the 'file' protocol
     // ignore setting catalog if value starts with 'file:'
     if (value.startsWith('file:') || (!addMissing && !catalog.has(key))) {
       continue;
@@ -1040,12 +1048,13 @@ export function rewriteBunCatalog(
   projectPath: string,
   usesVitest: boolean,
   vitestEcosystemPackages: ReadonlySet<string>,
+  usesWebdriverioProvider = false,
 ): void {
   const packageJsonPath = path.join(projectPath, 'package.json');
   if (!fs.existsSync(packageJsonPath)) {
     return;
   }
-  const managed = managedOverridePackages(usesVitest);
+  const managed = managedOverridePackages(usesVitest, usesWebdriverioProvider);
 
   editJsonFile<{
     workspaces?: NpmWorkspaces;
@@ -1109,7 +1118,8 @@ export function rewriteBunCatalog(
       if (current !== undefined && typeof current !== 'string') {
         continue;
       }
-      overrides[key] = getCatalogDependencySpec(current, value, true);
+      overrides[key] =
+        key === '@vitest/browser' ? value : getCatalogDependencySpec(current, value, true);
     }
     pkg.overrides = overrides;
 
@@ -1146,7 +1156,10 @@ export function rewriteRootWorkspacePackageJson(
   if (!fs.existsSync(packageJsonPath)) {
     return;
   }
-  const managed = managedOverridePackages(workspaceUsesVitest);
+  const managed = managedOverridePackages(
+    workspaceUsesVitest,
+    workspaceUsesWebdriverioProvider(projectPath, packages),
+  );
 
   let movedPnpmSettings: Record<string, unknown> | undefined;
   editJsonFile<{
@@ -1163,13 +1176,8 @@ export function rewriteRootWorkspacePackageJson(
     pruneLegacyWrapperAliases(pkg.resolutions);
     pruneLegacyWrapperAliases(pkg.overrides);
     pruneLegacyWrapperAliases(pkg.pnpm?.overrides);
-    // Drop stale provider overrides/resolutions (REMOVE_PACKAGES + the now
-    // user-owned opt-in providers, webdriverio/playwright) from the npm/bun
-    // `overrides` and yarn `resolutions` sinks before re-merging managed
-    // overrides. A leftover pin would conflict with the migrated direct
-    // `@vitest/browser-webdriverio` / `@vitest/browser-playwright` dep — npm
-    // hard-fails with EOVERRIDE, and yarn/bun would force the stale version over
-    // the bundled-vitest-aligned 4.1.9. (The pnpm sinks are pruned below.)
+    // Remove stale overrides for bundled and official opt-in providers before
+    // aligning them with Vitest. Preserve community-provider overrides.
     dropRemovePackageOverrideKeys(pkg.resolutions);
     dropRemovePackageOverrideKeys(pkg.overrides);
     // Common case (no workspace-wide direct vitest): strip a lingering managed
@@ -1192,6 +1200,11 @@ export function rewriteRootWorkspacePackageJson(
       };
     } else if (packageManager === PackageManager.bun) {
       // bun overrides are handled in rewriteBunCatalog() with catalog: references
+      // The browser override has no catalog entry and was pruned above with
+      // stale bundled-package pins. Restore its current concrete version.
+      if (managed['@vitest/browser']) {
+        pkg.overrides = { ...pkg.overrides, '@vitest/browser': managed['@vitest/browser'] };
+      }
       // Bun walks transitive peer-deps before resolving overrides; vitest 4.1.9
       // declares peer `vite ^6 || ^7 || ^8` and aborts unless `vite` is a direct
       // dep at the workspace root. Mirror the override as a devDep; the override
@@ -1200,7 +1213,7 @@ export function rewriteRootWorkspacePackageJson(
       // to a `catalog:` reference. See https://github.com/oven-sh/bun/issues/8406.
       setDirectViteEdge(pkg, true, catalogDependencyResolver);
     } else if (packageManager === PackageManager.pnpm) {
-      const overrideKeys = Object.keys(managed);
+      const overrideKeys = Object.keys(managedOverridePackages(workspaceUsesVitest));
       const usePnpmWorkspaceSettings = pnpmSupportsWorkspaceSettings(pnpmVersion ?? '');
       if (!usePnpmWorkspaceSettings) {
         // Strip selector-shaped overrides (e.g. `parent>@vitest/browser-playwright`)
@@ -1209,18 +1222,14 @@ export function rewriteRootWorkspacePackageJson(
         dropRemovePackageOverrideKeys(pkg.pnpm?.overrides);
         // Common case: drop a lingering managed `vitest` override before merging.
         if (!workspaceUsesVitest) {
-          removeManagedVitestEntry(pkg.pnpm?.overrides);
+          removeManagedVitestEntry(pkg.pnpm?.overrides, 'pnpm-ranged');
         }
         if (!workspaceUsesVitest && pkg.pnpm?.peerDependencyRules) {
           removeVitestPeerDependencyRule(pkg.pnpm.peerDependencyRules);
         }
         pkg.pnpm = {
           ...pkg.pnpm,
-          overrides: {
-            ...pkg.pnpm?.overrides,
-            ...managed,
-            ...(isForceOverrideMode() ? { [VITE_PLUS_NAME]: VITE_PLUS_VERSION } : {}),
-          },
+          overrides: mergeManagedPnpmOverrides(pkg.pnpm?.overrides, managed),
           peerDependencyRules: {
             ...pkg.pnpm?.peerDependencyRules,
             allowAny: [
@@ -1267,7 +1276,6 @@ export function rewriteRootWorkspacePackageJson(
             : (catalogDependencyResolver?.preferredCatalogSpec ?? 'catalog:'),
       };
     }
-    ensureDirectViteForPnpm(pkg, packageManager, supportCatalog, catalogDependencyResolver);
     return pkg;
   });
 

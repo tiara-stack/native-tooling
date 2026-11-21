@@ -1,1 +1,1 @@
-export type * from '@voidzero-dev/vite-plus-core/types/hmrPayload.d.ts';
+export type * from 'vite/types/hmrPayload.d.ts';

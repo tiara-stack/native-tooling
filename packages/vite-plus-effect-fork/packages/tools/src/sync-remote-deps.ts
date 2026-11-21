@@ -4,6 +4,11 @@ import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 
 import upstreamVersions from '../.upstream-versions.json' with { type: 'json' };
+import {
+  alignVendoredVitestDependencies,
+  REMOVED_VITEST_PACKAGES,
+  VITEST_EXACT_VERSION_PACKAGES,
+} from './vendored-vitest.ts';
 
 interface PnpmWorkspace {
   packages?: string[];
@@ -24,6 +29,8 @@ interface PnpmWorkspace {
 interface PackageJson {
   name?: string;
   version?: string;
+  devDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
   exports?: Record<string, unknown>;
   [key: string]: unknown;
 }
@@ -33,6 +40,7 @@ type ExportValue = string | { [condition: string]: string | ExportValue } | null
 const ROLLDOWN_DIR = 'rolldown';
 const VITE_DIR = 'vite';
 const CORE_PACKAGE_PATH = 'packages/core';
+const VITE_DEVTOOLS_PACKAGE = '@vitejs/devtools';
 
 function log(message: string) {
   console.log(`[sync-rolldown] ${message}`);
@@ -144,155 +152,85 @@ function cloneRepo(repoUrl: string, dir: string, branch: string, hash?: string) 
   }
 }
 
-function transformRolldownExport(exportPath: string, exportValue: unknown): [string, ExportValue] {
-  // Skip package.json
-  if (exportPath === './package.json') {
-    return ['', null];
-  }
-
-  // Transform export path: . -> ./rolldown, ./foo -> ./rolldown/foo
-  const newExportPath = exportPath === '.' ? './rolldown' : `./rolldown${exportPath.slice(1)}`;
-
-  // Transform export value
-  const transformValue = (value: unknown): ExportValue => {
-    if (typeof value === 'string') {
-      // Skip 'dev' condition paths that point to src
-      if (value.startsWith('./src/')) {
-        return null;
-      }
-      // Transform dist paths
-      return value.replace(/^\.\/dist\//, './dist/rolldown/');
+function createExportTransformer(exportPathPrefix: string, distPathPrefix: string) {
+  return (exportPath: string, exportValue: unknown): [string, ExportValue] => {
+    if (exportPath === './package.json') {
+      return ['', null];
     }
 
-    if (value && typeof value === 'object') {
-      const result: Record<string, unknown> = {};
-      for (const [key, val] of Object.entries(value)) {
-        // Skip 'dev' condition
-        if (key === 'dev') {
-          continue;
+    const newExportPath =
+      exportPath === '.' ? exportPathPrefix : `${exportPathPrefix}${exportPath.slice(1)}`;
+
+    const transformValue = (value: unknown): ExportValue => {
+      if (typeof value === 'string') {
+        if (value.startsWith('./src/')) {
+          return null;
         }
+        return value.replace(/^\.\/dist\//, distPathPrefix);
+      }
 
-        const transformed = transformValue(val);
-        if (transformed !== null) {
-          result[key] = transformed;
+      if (value && typeof value === 'object') {
+        const result: Record<string, unknown> = {};
+        for (const [key, val] of Object.entries(value)) {
+          if (key === 'dev') {
+            continue;
+          }
+          const transformed = transformValue(val);
+          if (transformed !== null) {
+            result[key] = transformed;
+          }
+        }
+        return Object.keys(result).length > 0 ? (result as ExportValue) : null;
+      }
+
+      return value as ExportValue;
+    };
+
+    const newValue = transformValue(exportValue);
+
+    if (typeof newValue === 'string') {
+      if (newValue.endsWith('.mjs')) {
+        return [
+          newExportPath,
+          {
+            default: newValue,
+            types: newValue.replace(/\.mjs$/, '.d.mts'),
+          },
+        ];
+      } else if (newValue.endsWith('.js')) {
+        return [
+          newExportPath,
+          {
+            default: newValue,
+            types: newValue.replace(/\.js$/, '.d.ts'),
+          },
+        ];
+      }
+      return [newExportPath, newValue];
+    }
+
+    if (newValue && typeof newValue === 'object') {
+      const importPath = ('import' in newValue ? newValue.import : newValue.default) as
+        | string
+        | undefined;
+      if (importPath && !('types' in newValue)) {
+        if (importPath.endsWith('.mjs')) {
+          newValue.types = importPath.replace(/\.mjs$/, '.d.mts');
+        } else if (importPath.endsWith('.js')) {
+          newValue.types = importPath.replace(/\.js$/, '.d.ts');
         }
       }
-      return Object.keys(result).length > 0 ? (result as ExportValue) : null;
     }
 
-    return value as ExportValue;
-  };
-
-  const newValue = transformValue(exportValue);
-
-  // Handle string values or add types if missing
-  if (typeof newValue === 'string') {
-    // Convert string to object with default and types
-    if (newValue.endsWith('.mjs')) {
-      return [
-        newExportPath,
-        {
-          default: newValue,
-          types: newValue.replace(/\.mjs$/, '.d.mts'),
-        },
-      ];
-    } else if (newValue.endsWith('.js')) {
-      return [
-        newExportPath,
-        {
-          default: newValue,
-          types: newValue.replace(/\.js$/, '.d.ts'),
-        },
-      ];
-    }
     return [newExportPath, newValue];
-  }
-
-  if (newValue && typeof newValue === 'object') {
-    const importPath = ('import' in newValue ? newValue.import : newValue.default) as
-      | string
-      | undefined;
-    if (importPath && !('types' in newValue)) {
-      if (importPath.endsWith('.mjs')) {
-        newValue.types = importPath.replace(/\.mjs$/, '.d.mts');
-      } else if (importPath.endsWith('.js')) {
-        newValue.types = importPath.replace(/\.js$/, '.d.ts');
-      }
-    }
-  }
-
-  return [newExportPath, newValue];
+  };
 }
 
-function transformPluginutilsExport(
-  exportPath: string,
-  exportValue: unknown,
-): [string, ExportValue] {
-  // Skip package.json
-  if (exportPath === './package.json') {
-    return ['', null];
-  }
-
-  // Transform . -> ./rolldown/pluginutils
-  const newExportPath =
-    exportPath === '.' ? './rolldown/pluginutils' : `./rolldown/pluginutils${exportPath.slice(1)}`;
-
-  // Transform paths
-  const transformValue = (value: unknown): ExportValue => {
-    if (typeof value === 'string') {
-      if (value.startsWith('./src/')) {
-        return null;
-      }
-      return value.replace(/^\.\/dist\//, './dist/pluginutils/');
-    }
-
-    if (value && typeof value === 'object') {
-      const result: Record<string, unknown> = {};
-      for (const [key, val] of Object.entries(value)) {
-        if (key === 'dev') {
-          continue;
-        }
-        const transformed = transformValue(val);
-        if (transformed !== null) {
-          result[key] = transformed;
-        }
-      }
-      return Object.keys(result).length > 0 ? (result as ExportValue) : null;
-    }
-
-    return value as ExportValue;
-  };
-
-  const newValue = transformValue(exportValue);
-
-  // Handle string values or add types if missing
-  if (typeof newValue === 'string') {
-    // Convert string to object with default and types
-    if (newValue.endsWith('.js')) {
-      return [
-        newExportPath,
-        {
-          default: newValue,
-          types: newValue.replace(/\.js$/, '.d.ts'),
-        },
-      ];
-    }
-    return [newExportPath, newValue];
-  }
-
-  if (newValue && typeof newValue === 'object') {
-    const importPath = ('import' in newValue ? newValue.import : newValue.default) as
-      | string
-      | undefined;
-    if (importPath && !('types' in newValue)) {
-      if (importPath.endsWith('.js')) {
-        newValue.types = importPath.replace(/\.js$/, '.d.ts');
-      }
-    }
-  }
-
-  return [newExportPath, newValue];
-}
+const transformRolldownExport = createExportTransformer('./rolldown', './dist/rolldown/');
+const transformPluginutilsExport = createExportTransformer(
+  './rolldown/pluginutils',
+  './dist/pluginutils/',
+);
 
 function transformViteExport(exportPath: string, exportValue: unknown): [string, ExportValue] {
   // Skip package.json
@@ -402,6 +340,22 @@ function mergePackageExports(
     );
 }
 
+export function syncViteDevtoolsDependencies(corePkg: PackageJson, vitePkg: PackageJson): void {
+  const devRange = vitePkg.devDependencies?.[VITE_DEVTOOLS_PACKAGE];
+  const peerRange = vitePkg.peerDependencies?.[VITE_DEVTOOLS_PACKAGE];
+
+  if (!devRange || !peerRange) {
+    throw new Error(
+      `Vite package.json must define ${VITE_DEVTOOLS_PACKAGE} in devDependencies and peerDependencies`,
+    );
+  }
+
+  corePkg.devDependencies ??= {};
+  corePkg.peerDependencies ??= {};
+  corePkg.devDependencies[VITE_DEVTOOLS_PACKAGE] = devRange;
+  corePkg.peerDependencies[VITE_DEVTOOLS_PACKAGE] = peerRange;
+}
+
 // Oxc-related packages that should use the higher version on conflict
 const OXC_PACKAGE_PREFIXES = [
   '@oxc-project/',
@@ -421,11 +375,9 @@ const OXC_PACKAGES = new Set([
   'oxlint',
   'oxlint-tsgolint',
 ]);
-const VITEST_DEPS = new Set(['tinybench']);
-
 // These packages should always use the highest version
 function syncedPackages(packageName: string): boolean {
-  if (OXC_PACKAGES.has(packageName) || VITEST_DEPS.has(packageName)) {
+  if (OXC_PACKAGES.has(packageName) || packageName === 'tinybench') {
     return true;
   }
   return OXC_PACKAGE_PREFIXES.some((prefix) => packageName.startsWith(prefix));
@@ -582,26 +534,34 @@ export function mergePnpmWorkspaces(
   packagesSet.add(`${VITE_DIR}/packages/*`);
   result.packages = Array.from(packagesSet);
 
-  // Merge catalog
-  const catalog: Record<string, string> = { ...main.catalog };
-
-  // Add all entries from rolldown catalog
-  for (const [pkg, version] of Object.entries(rolldown.catalog || {})) {
-    if (catalog[pkg]) {
-      // Merge versions
-      catalog[pkg] = mergeSemverVersions(catalog[pkg], version, pkg, semver);
-    } else {
-      catalog[pkg] = version;
-    }
-  }
-
-  // Add all entries from vite catalog (if it has one)
-  for (const [pkg, version] of Object.entries(rolldownVite.catalog || {})) {
-    if (catalog[pkg]) {
-      // Merge versions
-      catalog[pkg] = mergeSemverVersions(catalog[pkg], version, pkg, semver);
-    } else {
-      catalog[pkg] = version;
+  // The upgrade script selects the latest supported Vitest release and updates
+  // the runtime constant with it. Upstream catalogs must not replace that pin.
+  const vitestVersion = main.catalog?.vitest;
+  const catalog: Record<string, string> = {};
+  for (const workspace of [main, rolldown, rolldownVite]) {
+    for (const [pkg, version] of Object.entries(workspace.catalog || {})) {
+      if (REMOVED_VITEST_PACKAGES.has(pkg)) {
+        // Unused upstream entries are harmless; actual dependency uses fail in
+        // alignVendoredVitestDependencies instead of reinstalling removed packages.
+        continue;
+      }
+      if (VITEST_EXACT_VERSION_PACKAGES.has(pkg)) {
+        if (
+          !vitestVersion ||
+          !/^5\.\d+\.\d+$/.test(vitestVersion) ||
+          semver.valid(vitestVersion) !== vitestVersion
+        ) {
+          throw new Error('The root Vitest catalog entry must be an exact stable v5 version');
+        }
+        catalog[pkg] = vitestVersion;
+      } else if (pkg === '@vitest/browser-webdriverio' && main.catalog?.[pkg]) {
+        // This community provider does not share the official release schedule.
+        catalog[pkg] = main.catalog[pkg];
+      } else {
+        catalog[pkg] = catalog[pkg]
+          ? mergeSemverVersions(catalog[pkg], version, pkg, semver)
+          : version;
+      }
     }
   }
 
@@ -953,9 +913,25 @@ export async function syncRemote() {
   // Merge upstream catalogs into the main workspace while preserving its comments.
   const yamlContent = mergeWorkspaceYaml(mainSrc, rolldownSrc, rolldownViteSrc, yaml, semver);
 
+  const vitestVersion = (yaml.parse(yamlContent) as PnpmWorkspace).catalog?.vitest;
+  if (!vitestVersion || !semver.valid(vitestVersion)) {
+    throw new Error('The Vitest catalog entry must be an exact version');
+  }
   writeFileSync(mainWorkspacePath, yamlContent, 'utf-8');
+  alignVendoredVitestDependencies(rootDir, vitestVersion);
 
   log('✓ pnpm-workspace.yaml updated successfully!');
+
+  const corePackagePath = join(rootDir, CORE_PACKAGE_PATH, 'package.json');
+  const rolldownVitePackagePath = join(rootDir, VITE_DIR, 'packages', 'vite', 'package.json');
+  const corePackage = JSON.parse(readFileSync(corePackagePath, 'utf-8')) as PackageJson;
+  const rolldownVitePackage = JSON.parse(
+    readFileSync(rolldownVitePackagePath, 'utf-8'),
+  ) as PackageJson;
+
+  syncViteDevtoolsDependencies(corePackage, rolldownVitePackage);
+  writeFileSync(corePackagePath, JSON.stringify(corePackage, null, 2) + '\n', 'utf-8');
+  log('✓ package.json Vite DevTools ranges updated successfully!');
 
   execCommand('pnpm install --no-frozen-lockfile', rootDir);
 
@@ -966,9 +942,7 @@ export async function syncRemote() {
   // Merge package.json exports
   log('Merging package.json exports...');
 
-  const corePackagePath = join(rootDir, CORE_PACKAGE_PATH, 'package.json');
   const rolldownPackagePath = join(rootDir, ROLLDOWN_DIR, 'packages', 'rolldown', 'package.json');
-  const rolldownVitePackagePath = join(rootDir, VITE_DIR, 'packages', 'vite', 'package.json');
   const pluginutilsPackagePath = join(
     rootDir,
     ROLLDOWN_DIR,
@@ -980,11 +954,7 @@ export async function syncRemote() {
     'package.json',
   );
 
-  const corePackage = JSON.parse(readFileSync(corePackagePath, 'utf-8')) as PackageJson;
   const rolldownPackage = JSON.parse(readFileSync(rolldownPackagePath, 'utf-8')) as PackageJson;
-  const rolldownVitePackage = JSON.parse(
-    readFileSync(rolldownVitePackagePath, 'utf-8'),
-  ) as PackageJson;
   const pluginutilsPackage = JSON.parse(
     readFileSync(pluginutilsPackagePath, 'utf-8'),
   ) as PackageJson;
